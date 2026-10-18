@@ -146,6 +146,18 @@ function resetDetailFilters() {
 }
 
 // ── HERO ──────────────────────────────────────────────────────
+// Mentor Monitoring › School › Mentor — the school level returns
+// to the list pre-filtered to that school, same as the Back button.
+function renderCrumbs(mentorName, mentorSchool) {
+  const nav = document.getElementById('mmCrumbs');
+  if (!nav) return;
+  const school = new URLSearchParams(location.search).get('school') || mentorSchool || '';
+  const sep = '<span class="mm-crumb-sep" aria-hidden="true">&rsaquo;</span>';
+  nav.innerHTML = '<a href="sessions.html">Mentor Monitoring</a>' +
+    (school ? `${sep}<a href="sessions.html?school=${encodeURIComponent(school)}">${escapeHtml(school)}</a>` : '') +
+    `${sep}<span class="mm-crumb-current" aria-current="page">${escapeHtml(mentorName)}</span>`;
+}
+
 function renderHero(mentor, monData) {
   if (!mentor) return;
   const initials = ((mentor.firstName?.[0] || '') + (mentor.lastName?.[0] || '')).toUpperCase();
@@ -156,6 +168,7 @@ function renderHero(mentor, monData) {
   document.getElementById('heroAvatar').textContent = initials;
   document.getElementById('heroAvatar').className   = `hero-avatar av-${avIdx}`;
   document.getElementById('heroName').textContent   = currentMentorName;
+  renderCrumbs(currentMentorName, mentor.school);
 
   // Same icon-per-item layout as the Mentor Monitoring detail hero
   // (School, Department, Email), for visual consistency across every

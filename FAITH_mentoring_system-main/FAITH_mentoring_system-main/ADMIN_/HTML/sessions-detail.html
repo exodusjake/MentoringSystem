@@ -21,6 +21,12 @@
   <div class="main-wrapper">
     <main class="page-content">
 
+      <nav class="mm-crumbs" id="mmCrumbs" aria-label="Breadcrumb">
+        <a href="sessions.html">Mentor Monitoring</a>
+        <span class="mm-crumb-sep" aria-hidden="true">&rsaquo;</span>
+        <span class="mm-crumb-current" aria-current="page">Mentor</span>
+      </nav>
+
       <div class="detail-back-bar">
         <a href="sessions.html" class="btn-back" onclick="event.preventDefault(); var s=new URLSearchParams(location.search).get('school'); window.location.href='sessions.html'+(s?'?school='+encodeURIComponent(s):'');">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -185,6 +191,7 @@
   <script src="/sidebar-indicator.js"></script>
   <script src="/empty-states.js"></script>
   <script src="/smooth-scroll.js"></script>
+  <script src="/ui-dropdown.js"></script>
   <script src="../../config.js"></script>
   <script src="../../print-logsheet-styles.js"></script>
   <script src="../../apiClient.js"></script>

@@ -50,6 +50,16 @@
   width: 150px; flex-shrink: 0;
 }
 .filter-select:focus { outline: none; border-color: var(--blue); }
+/* ui-dropdown.js swaps each <select> for a .dd-trigger button with an inline
+   width:100% — keep the filters at their fixed width on desktop. */
+.dd-trigger.filter-select { height: 42px; }
+@media (min-width: 769px) { .dd-trigger.filter-select { width: 150px !important; flex-shrink: 0; } }
+
+.mm-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 14px; }
+.mm-crumbs a { color: var(--blue); font-weight: 500; text-decoration: none; }
+.mm-crumbs a:hover { text-decoration: underline; }
+.mm-crumb-sep { color: var(--gray-300, #cbd5e1); font-size: 18px; line-height: 1; }
+.mm-crumb-current { color: var(--gray-800, #1f2937); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 
 .filter-reset {
   height: 42px; padding: 0 16px; border: 1px solid #dce3ec;
