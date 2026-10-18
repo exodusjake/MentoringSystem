@@ -103,6 +103,9 @@
       if (session.user) session.user.setupRequired = false;
       localStorage.setItem('user', JSON.stringify(session.user));
 
+      // Queue the one-time portal walkthrough for the dashboard.
+      try { localStorage.setItem('astra_walkthrough_pending_' + userId, '1'); localStorage.removeItem('astra_walkthrough_done_' + userId); } catch (e) {}
+
       window.location.href = DASHBOARD;
 
     } catch (err) {
