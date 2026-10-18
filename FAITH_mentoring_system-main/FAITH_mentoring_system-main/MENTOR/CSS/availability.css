@@ -183,3 +183,21 @@
 @media (max-width: 480px) { .req-card { padding: 14px 16px; gap: 12px; } .req-actions { width: 100%; } .btn-approve, .btn-decline { flex: 1; justify-content: center; } .modal-card { padding: 22px 18px; max-height: 92vh; overflow-y: auto; } .form-row { grid-template-columns: 1fr; } }
 
 .time-range-row .form-row { grid-template-columns: minmax(0, 1fr); }
+
+/* ── BUTTON FEEDBACK ── Smooth hover/press transitions on every button. */
+button {
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.15s cubic-bezier(.22,1,.36,1), opacity 0.18s ease;
+}
+:is(.btn-post-slot, .btn-approve, .btn-decline, .btn-form-cancel, .btn-confirm-danger, .btn-cancel, .btn-save, .btn-add-range):hover:not(:disabled) {
+  transform: translateY(-1px); box-shadow: 0 4px 10px rgba(15,23,42,0.10);
+}
+:is(.btn-post-slot, .btn-approve, .btn-decline, .btn-form-cancel, .btn-confirm-danger, .btn-cancel, .btn-save, .btn-add-range, .slot-delete-btn, .btn-remove-range, .modal-close-btn):active:not(:disabled) {
+  transform: scale(0.94); box-shadow: none; transition-duration: 0.07s;
+}
+.btn-remove-range:active:not(:disabled) { transform: translateY(-50%) scale(0.9); }
+.modal-close-btn:hover { transform: rotate(90deg); }
+.avail-collapse-hdr:active { background: #f1f5f9; }
+@media (prefers-reduced-motion: reduce) {
+  button { transition: none; }
+  button:hover, button:active { transform: none !important; }
+}

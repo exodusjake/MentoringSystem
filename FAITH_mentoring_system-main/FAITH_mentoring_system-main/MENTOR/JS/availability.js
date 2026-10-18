@@ -100,6 +100,7 @@ async function loadSlots() {
   } catch (e) {
     console.error('Failed to load slots:', e);
     document.getElementById('slotsLoading').textContent = 'Failed to load slots.';
+    showToast('Failed to load your availability slots. Please refresh.');
   }
 }
 
@@ -307,6 +308,7 @@ function addTimeRange() {
     </button>`;
   list.appendChild(row);
   updateRemoveBtns();
+  if (list.children.length > 1) showToast('Start time added.', 'info', 2000);
 }
 
 function removeTimeRange(btn) {
@@ -314,6 +316,7 @@ function removeTimeRange(btn) {
   if (list.children.length <= 1) return;
   btn.closest('.time-range-row').remove();
   updateRemoveBtns();
+  showToast('Start time removed.', 'info', 2000);
 }
 
 function updateRemoveBtns() {
@@ -351,9 +354,11 @@ async function submitSlots() {
         { availableDate: date, startTime: range.start, slotName }, true);
     }
     document.getElementById('postModal').classList.remove('open');
+    showToast(`${timeRanges.length} slot${timeRanges.length !== 1 ? 's' : ''} posted successfully.`, 'success');
     await loadSlots();
   } catch (err) {
     showPostError(err.message || 'Failed to post slot.');
+    showToast(err.message || 'Failed to post slot.');
   } finally {
     btn.textContent = 'Post Slots';
     btn.disabled    = false;
@@ -384,6 +389,7 @@ async function confirmDeleteSlot() {
   try {
     await apiRequest(`AvailabilityWorkflow/mentor/${currentUser.userID}/slots/${deleteSlotId}`, 'DELETE', null, true);
     document.getElementById('deleteSlotModal').classList.remove('open');
+    showToast('Availability slot deleted.', 'success');
     await loadSlots();
   } catch (err) {
     showToast(err.message || 'Could not delete slot.');
