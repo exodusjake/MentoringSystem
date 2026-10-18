@@ -1,0 +1,137 @@
+/* Shared viewport rules for Admin, Head, Mentor, and Mentee portals. */
+[data-tooltip-source] { display: none !important; }
+.viewport-tooltip {
+  display: block !important;
+  position: fixed !important;
+  inset: auto;
+  margin: 0 !important;
+  min-width: 0 !important;
+  max-width: calc(100vw - 24px) !important;
+  box-sizing: border-box;
+  overflow: auto;
+  overscroll-behavior: contain;
+  pointer-events: auto !important;
+  transform: none !important;
+  z-index: 20000 !important;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border: 0;
+}
+.viewport-tooltip::before, .viewport-tooltip::after { display: none !important; }
+@media screen {
+  /* Bound toolbar searches on wide screens; let inputs shrink with their container. */
+  body .page-content :is(.search-box, .search-wrap, .ann-search-box) {
+    max-width: min(100%, 380px);
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  body .page-content .search-box-sm { max-width: min(100%, 240px); }
+  body .page-content :is(.search-box, .search-wrap, .ann-search-box, .cal-search-box) input {
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Size session rows by available content space, including the sidebar. */
+  body :is(.session-list, .sessions-cards-list, .sessions-list) { container-type: inline-size; }
+  body :is(.sr-metric, .att-badge, .session-status) { white-space: nowrap; }
+  body .sc-datetime { flex-wrap: wrap; }
+  body .sr-metrics { flex-wrap: wrap; }
+  body .sidebar { height: 100dvh; }
+  body .main-wrapper { min-width: 0; min-height: 100dvh; }
+
+  /* Size filters to their labels, with room for the native dropdown arrow. */
+  body select:is(.filter-select, .log-filter) {
+    width: auto;
+    min-width: min(180px, 100%);
+    max-width: 100%;
+    flex-shrink: 0;
+    padding-inline-end: 32px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  body .main-wrapper > footer {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+  }
+  body .main-wrapper > footer .footer-links {
+    margin-inline: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  body .page-content :is(.search-box, .search-wrap, .ann-search-box) { max-width: 100%; }
+  /* Keep the profile near the top and reserve space beside the close button. */
+  body .sidebar .sb-profile { padding-top: 22px; padding-right: 56px; }
+  body .sidebar .sb-info { min-width: 0; }
+  body .sidebar :is(.sb-name, .sb-role, .sb-dept) { white-space: normal; overflow-wrap: anywhere; }
+  body select:is(.filter-select, .log-filter) { width: 100%; min-width: 0; }
+}
+
+/* Keep session details and actions in separate rows when space is limited. */
+@media screen {
+  @container (max-width: 850px) {
+    body .session-row { flex-wrap: wrap; }
+    body .sr-label { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    body .sr-info { flex-basis: 100%; }
+    body .sr-right { width: 100%; flex-direction: column; align-items: flex-end; }
+    body .sr-metrics { width: 100%; gap: 6px; }
+    body .sr-metrics .sr-metric { font-size: 12px; padding: 4px 8px; }
+    body .sr-metrics .sr-proof-pill { padding: 0; }
+  }
+  @container (max-width: 640px) {
+    body .scm-card { display: grid; grid-template-columns: 76px minmax(0, 1fr); }
+    body .scm-num-block { width: 76px; min-width: 0; }
+    body .scm-right { grid-column: 1 / -1; width: 100%; min-width: 0; border-top: 1px solid #eef1f6; }
+    body .scm-actions { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; }
+    body .scm-meta { align-items: flex-start; }
+  }
+}
+
+/* Short laptops, landscape phones, and windows reduced by browser zoom. */
+@media screen and (max-height: 760px) {
+  body :is(.modal, .modal-card, .settings-modal, .info-modal, .cal-modal,
+           .qr-modal-card, .logout-modal, .edit-modal-card, .history-modal) {
+    max-height: calc(100vh - 48px);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+  }
+
+  body :is(.modal-footer, .form-actions, .info-modal-actions, .logout-modal-btns) {
+    flex-wrap: wrap;
+  }
+}
+
+/* Adapt dense portal content to the space remaining beside the sidebar. */
+@media screen {
+  body .page-content { container-name: portal-content; container-type: inline-size; }
+  body :is(.form-group, .form-row) { min-width: 0; }
+  body :is(.form-input, .form-group input, .form-group select, .form-group textarea) {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  body .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @container portal-content (max-width: 850px) {
+    body .log-card-header { flex-wrap: wrap; align-items: flex-start; }
+    body .log-card-info { flex: 1 1 200px; }
+    body .log-card-actions { width: 100%; flex-wrap: wrap; justify-content: flex-end; }
+    body .ph-fields-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 12px; }
+    body .ph-strip-divider { display: none; }
+    body .ph-strip-field { min-width: 0; overflow-wrap: anywhere; }
+    body .ph-edit-inline { min-width: 0; max-width: 100%; }
+    body .sig-section { max-width: 100%; box-sizing: border-box; }
+    body .mentee-card { flex-direction: column; }
+    body :is(.mc-identity, .mcard-identity) { width: 100%; min-width: 0; box-sizing: border-box; border-right: none; border-bottom: 1px solid #dce3ec; }
+    body :is(.mc-body, .mcard-body) { min-width: 0; width: 100%; box-sizing: border-box; }
+    body .mcard-att-count { white-space: nowrap; }
+    body .mentor-hero { flex-wrap: wrap; align-items: flex-start; }
+    body .hero-info { flex: 1 1 200px; }
+    body .hero-tip-wrap { margin-left: auto; }
+    body .hero-meta-item { min-width: 0; overflow-wrap: anywhere; }
+  }
+}
+@media screen and (max-width: 480px) {
+  body .form-row { grid-template-columns: minmax(0, 1fr); }
+}

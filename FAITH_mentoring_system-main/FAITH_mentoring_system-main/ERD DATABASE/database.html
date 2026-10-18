@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentoring Management System — ERD</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 40px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 32px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 20px;
+  }
+
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .page-header p {
+    font-size: 13px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .caption {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 24px;
+    color: #333;
+    font-style: italic;
+  }
+
+  .erd-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  #erd svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .legend {
+    margin-top: 28px;
+    border-top: 1px solid #ccc;
+    padding-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    font-size: 12px;
+    color: #444;
+  }
+
+  .legend-title {
+    width: 100%;
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-line {
+    width: 30px;
+    height: 2px;
+    background: #555;
+    position: relative;
+  }
+
+  @media print {
+    body { padding: 20px; }
+    .no-print { display: none; }
+  }
+
+  .print-btn {
+    display: block;
+    margin: 0 auto 24px;
+    padding: 10px 28px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: Georgia, serif;
+  }
+
+  .print-btn:hover { background: #333; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="page-header">
+  <h1>Mentoring Management System</h1>
+  <p>Entity Relationship Diagram (ERD) &mdash; Database Schema</p>
+</div>
+
+<div class="erd-container">
+  <div id="erd"></div>
+</div>
+
+<p class="caption">Figure. Entity Relationship Diagram of the Proposed Mentoring Management System</p>
+
+<div class="legend">
+  <div class="legend-title">Notation Guide</div>
+  <div class="legend-item"><div class="legend-line"></div> One-to-many relationship (||--o{)</div>
+  <div class="legend-item"><div class="legend-line"></div> One-to-one relationship (||--o|)</div>
+  <div class="legend-item">PK — Primary Key &nbsp;|&nbsp; FK — Foreign Key</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'default',
+  er: { diagramPadding: 20, layoutDirection: 'TB', minEntityWidth: 100, minEntityHeight: 75, entityPadding: 15, useMaxWidth: true },
+  themeVariables: {
+    fontSize: '13px',
+    fontFamily: 'Georgia, serif',
+    primaryColor: '#f5f5f5',
+    primaryBorderColor: '#1a1a1a',
+    lineColor: '#444444',
+    textColor: '#1a1a1a',
+  }
+});
+
+const diagram = `erDiagram
+  USERS {
+    int UserID PK
+    string FirstName
+    string LastName
+    string Email
+    string PasswordHash
+    string ProfilePicture
+    string ContactNumber
+    string Role
+    bit IsActive
+    datetime CreatedAt
+    datetime UpdatedAt
+  }
+
+  MENTOR_PROFILES {
+    int MentorProfileID PK
+    int UserID FK
+    string Department
+    string Bio
+    string Expertise
+  }
+
+  MENTEE_PROFILES {
+    int MenteeProfileID PK
+    int UserID FK
+    string Course
+    string YearLevel
+    string Section
+  }
+
+  MENTOR_MENTEE {
+    int AssignmentID PK
+    int MentorID FK
+    int MenteeID FK
+    date AssignedDate
+    bit IsActive
+  }
+
+  ANNOUNCEMENTS {
+    int AnnouncementID PK
+    int PostedByUserID FK
+    string Title
+    string Content
+    string TargetAudience
+    datetime PostedAt
+    bit IsActive
+  }
+
+  AVAILABILITY {
+    int AvailabilityID PK
+    int MentorID FK
+    date AvailableDate
+    time StartTime
+    time EndTime
+    bit IsBooked
+  }
+
+  SESSION_REQUESTS {
+    int RequestID PK
+    int MenteeID FK
+    int AvailabilityID FK
+    string Purpose
+    string Status
+    datetime RequestedAt
+    datetime RespondedAt
+  }
+
+  SESSIONS {
+    int SessionID PK
+    int RequestID FK
+    int MentorID FK
+    string QRCodeToken
+    datetime SessionDate
+    string Status
+    string Notes
+  }
+
+  ATTENDANCE {
+    int AttendanceID PK
+    int SessionID FK
+    int MenteeID FK
+    datetime ScannedAt
+    bit IsPresent
+  }
+
+  PROOF_OF_SESSION {
+    int ProofID PK
+    int SessionID FK
+    int UploadedByUserID FK
+    string FilePath
+    string FileType
+    datetime UploadedAt
+  }
+
+  EVALUATION_FORMS {
+    int FormID PK
+    int CreatedByUserID FK
+    string Title
+    string Description
+    string TargetRole
+    datetime CreatedAt
+    bit IsActive
+  }
+
+  FORM_QUESTIONS {
+    int QuestionID PK
+    int FormID FK
+    string QuestionText
+    string QuestionType
+    int OrderNumber
+  }
+
+  FORM_RESPONSES {
+    int ResponseID PK
+    int FormID FK
+    int RespondedByUserID FK
+    datetime SubmittedAt
+  }
+
+  RESPONSE_ANSWERS {
+    int AnswerID PK
+    int ResponseID FK
+    int QuestionID FK
+    int LikertValue
+    string TextAnswer
+  }
+
+  NOTIFICATIONS {
+    int NotificationID PK
+    int RecipientUserID FK
+    string Type
+    string Message
+    int ReferenceID
+    bit IsRead
+    datetime CreatedAt
+  }
+
+  USERS ||--o| MENTOR_PROFILES : "has"
+  USERS ||--o| MENTEE_PROFILES : "has"
+  USERS ||--o{ MENTOR_MENTEE : "mentor in"
+  USERS ||--o{ MENTOR_MENTEE : "mentee in"
+  USERS ||--o{ ANNOUNCEMENTS : "posts"
+  USERS ||--o{ PROOF_OF_SESSION : "uploads"
+  USERS ||--o{ EVALUATION_FORMS : "creates"
+  USERS ||--o{ FORM_RESPONSES : "submits"
+  USERS ||--o{ NOTIFICATIONS : "receives"
+  MENTOR_PROFILES ||--o{ AVAILABILITY : "sets"
+  MENTOR_PROFILES ||--o{ SESSIONS : "leads"
+  MENTEE_PROFILES ||--o{ SESSION_REQUESTS : "requests"
+  MENTEE_PROFILES ||--o{ ATTENDANCE : "has"
+  AVAILABILITY ||--o| SESSION_REQUESTS : "linked to"
+  SESSION_REQUESTS ||--o| SESSIONS : "becomes"
+  SESSIONS ||--o{ ATTENDANCE : "has"
+  SESSIONS ||--o{ PROOF_OF_SESSION : "has"
+  EVALUATION_FORMS ||--o{ FORM_QUESTIONS : "contains"
+  EVALUATION_FORMS ||--o{ FORM_RESPONSES : "receives"
+  FORM_RESPONSES ||--o{ RESPONSE_ANSWERS : "has"
+  FORM_QUESTIONS ||--o{ RESPONSE_ANSWERS : "answered in"
+`;
+
+async function renderERD() {
+  const { svg } = await mermaid.render('erd-svg', diagram);
+  document.getElementById('erd').innerHTML = svg;
+}
+
+renderERD();
+</script>
+</body>
+</html>

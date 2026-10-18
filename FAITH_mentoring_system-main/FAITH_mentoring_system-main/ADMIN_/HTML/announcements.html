@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Announcements — Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/announcements.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <script src="/evaluation-description.js"></script>
+</head>
+<body class="admin-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Announcements</h1>
+          <p>Create and manage announcements for mentors and mentees</p>
+        </div>
+        <button class="btn-primary" id="createFormBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Post Announcement
+        </button>
+      </div>
+
+
+      <div class="forms-section">
+        <div class="forms-section-header">
+          <h2>All Announcements</h2>
+          <span class="forms-section-count" id="annCount"></span>
+        </div>
+
+        <div class="ann-filter-bar">
+          <div class="ann-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="annSearch" placeholder="Search by title or content…" autocomplete="off"/>
+          </div>
+          <select class="ann-filter-select" id="annAudienceFilter">
+            <option value="">All Audiences</option>
+            <option value="Both">Mentors &amp; Mentees</option>
+            <option value="Mentor">Mentors only</option>
+            <option value="Mentee">Mentees only</option>
+          </select>
+        </div>
+
+        <div class="forms-list" id="formsList">
+          <div style="text-align:center;padding:48px 24px;color:#9ca3af;"><span class="spinner"></span> Loading...</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Create / Edit Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Post Announcement</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Title <span style="color:#ef4444;">*</span></label>
+          <input type="text" id="fieldTitle" placeholder="e.g. Mentoring Session Schedule Update" autocomplete="off"/>
+        </div>
+        <div class="form-group">
+          <label>Content <span style="color:#ef4444;">*</span></label>
+          <div class="gc-editor-wrap">
+            <div id="fieldDesc" class="gc-editor" contenteditable="true"
+              data-placeholder="Write a message for your audience..."></div>
+            <div class="gc-toolbar">
+              <button type="button" class="gc-fmt-btn" data-cmd="bold" data-tooltip="Bold" aria-label="Bold" onmousedown="event.preventDefault();formatDoc('bold')"><b>B</b></button>
+              <button type="button" class="gc-fmt-btn" data-cmd="italic" data-tooltip="Italic" aria-label="Italic" onmousedown="event.preventDefault();formatDoc('italic')"><i>I</i></button>
+              <button type="button" class="gc-fmt-btn" data-cmd="underline" data-tooltip="Underline" aria-label="Underline" onmousedown="event.preventDefault();formatDoc('underline')"><u>U</u></button>
+              <button type="button" class="gc-fmt-btn" data-cmd="strikeThrough" data-tooltip="Strikethrough" aria-label="Strikethrough" onmousedown="event.preventDefault();formatDoc('strikeThrough')"><s>S</s></button>
+              <span class="gc-fmt-sep"></span>
+              <button type="button" class="gc-fmt-btn" data-cmd="insertUnorderedList" data-tooltip="Bullet list" aria-label="Bullet list" onmousedown="event.preventDefault();formatDoc('insertUnorderedList')"><i class="ti ti-list"></i></button>
+              <span class="gc-fmt-sep"></span>
+              <button type="button" class="gc-fmt-btn" title="Attach file" onclick="triggerAttachFile()"><i class="ti ti-paperclip"></i></button>
+              <input type="file" id="attachFileInput" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" style="display:none" onchange="handleAttachFiles(event)">
+            </div>
+          </div>
+          <div id="attachList" class="attach-list"></div>
+        </div>
+        <div class="form-group">
+          <label>Who can see this?</label>
+          <select id="fieldAudience">
+            <option value="Both">Both (Mentors & Mentees)</option>
+            <option value="Mentor">Mentors only</option>
+            <option value="Mentee">Mentees only</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" id="modalCancel">Cancel</button>
+        <button class="btn-primary" id="modalSave">Post Announcement</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon" id="confirmIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="info-modal-title" id="confirmTitle">Confirm</h3>
+      <p class="info-modal-message" id="confirmMessage">Are you sure?</p>
+      <div class="info-modal-actions">
+        <button class="btn-outline" onclick="hideConfirmModal()">Cancel</button>
+        <button class="btn-primary" id="confirmOkBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="errorModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="info-modal-title">Something went wrong</h3>
+      <p class="info-modal-message" id="errorMessage">An error occurred.</p>
+      <button class="btn-primary" onclick="hideErrorModal()" style="width:100%;">OK</button>
+    </div>
+  </div>
+
+  <div id="successModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3 class="info-modal-title" id="successTitle">Success</h3>
+      <p class="info-modal-message" id="successMessage">Done!</p>
+      <button class="btn-primary" onclick="hideSuccessModal()" style="width:100%;">OK</button>
+    </div>
+  </div>
+
+  <!-- Attachment lightbox -->
+  <div id="lightboxOverlay" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title" id="lightboxTitle">Attachment</span>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body" id="lightboxBody"></div>
+      <div class="lightbox-footer">
+        <a class="lightbox-download" id="lightboxDownload" href="#" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/ADMIN_/JS/sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../security-utils.js"></script>
+  <script src="/ADMIN_/JS/announcements.js"></script>
+</body>
+</html>

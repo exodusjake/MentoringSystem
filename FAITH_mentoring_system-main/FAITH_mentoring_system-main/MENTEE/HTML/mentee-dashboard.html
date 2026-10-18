@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Mentee Portal</title>
+  <link rel="stylesheet" href="/MENTEE/CSS/mentee-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/mentee-dashboard.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/evaluation-author.css"/>
+  <script src="/evaluation-deadline.js"></script>
+</head>
+<body class="mentee-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 id="welcomeTitle">Dashboard</h1>
+          <p id="dashboardDate">Loading...</p>
+        </div>
+        <span class="semester-badge" id="semesterBadge"></span>
+      </div>
+
+      <!-- My Mentor Card -->
+      <div class="card mentor-preview-card">
+        <div class="card-header-row">
+          <div>
+            <h2>My Mentor</h2>
+            <p class="card-desc">Your assigned mentor for this semester.</p>
+          </div>
+        </div>
+        <div id="mentorPreview" class="mentor-preview">
+          <div class="list-skeleton"><span class="spinner"></span> Loading mentor info...</div>
+        </div>
+      </div>
+
+      <!-- Attendance Card -->
+      <div class="stat-card att-card">
+        <div class="stat-icon-wrap teal">
+          <i class="ti ti-chart-bar"></i>
+        </div>
+        <div class="stat-body">
+          <div class="stat-value">
+            <span id="statAttended"><span class="stat-pulse">—</span></span><span class="stat-frac" id="statRequired">/—</span>
+          </div>
+          <div class="stat-label">Semester Completion</div>
+          <div class="stat-sub" id="statAttSub">Loading...</div>
+        </div>
+      </div>
+
+      <!-- 4-Quadrant Grid: Upcoming/Recent Sessions, Announcements/Evaluation Announcements -->
+      <div class="quad-grid">
+
+        <!-- Upcoming Sessions -->
+        <div class="card sessions-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Upcoming Sessions</h2>
+              <p class="card-desc">Your next mentoring sessions, regular or make-up.</p>
+            </div>
+          </div>
+          <div id="upcomingSessionsList" class="sessions-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading sessions...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="sessions.html" class="card-view-link">View all sessions <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Recent Sessions -->
+        <div class="card sessions-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Recent Sessions</h2>
+              <p class="card-desc">Latest ongoing, past, completed, and cancelled sessions.</p>
+            </div>
+          </div>
+          <div id="recentSessionsList" class="sessions-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading sessions...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="sessions.html" class="card-view-link">View all sessions <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div class="card announcements-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Announcements</h2>
+              <p class="card-desc">Latest from the administration.</p>
+            </div>
+          </div>
+          <div id="announcementsList" class="announcements-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading announcements...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="announcements.html" class="card-view-link">View all announcements <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Evaluation Announcements -->
+        <div class="card announcements-card">
+          <div class="card-header-row">
+            <div>
+              <h2>Evaluation Announcements</h2>
+              <p class="card-desc">Google Form evaluations posted for you.</p>
+            </div>
+          </div>
+          <div id="evaluationsList" class="announcements-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading evaluations...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="announcements.html" class="card-view-link">View all announcements <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/MENTEE/JS/mentee-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/attendance-metrics.js"></script>
+  <script src="../../security-utils.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="/dashboard-sessions.js"></script>
+  <script src="/MENTEE/JS/mentee-dashboard.js"></script>
+</body>
+</html>

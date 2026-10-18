@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sessions — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/sessions.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Sessions</h1>
+          <p id="sessionSubtitle">Your mentoring session log</p>
+        </div>
+        <div class="page-header-right">
+          <button id="logSessionBtn" class="btn-log-session" onclick="openLogSessionModal()">
+            <i class="ti ti-plus"></i> Log Session
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="session-stats-strip">
+        <div class="sstat">
+          <div class="sstat-val" id="sTotalSessions"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Total</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val green" id="sCompleted"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Completed</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val blue" id="sScheduled"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Scheduled</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val gray" id="sCancelled"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Cancelled</div>
+        </div>
+        <div class="sstat"><div class="sstat-val blue" id="sInProgress">&mdash;</div><div class="sstat-lbl">In Progress</div></div>
+        <div class="sstat"><div class="sstat-val gray" id="sClosed">&mdash;</div><div class="sstat-lbl">Closed</div></div>
+      </div>
+
+      <!-- Proof completion indicator -->
+      <div class="sc-proof-bar" id="sProofBar" style="display:none">
+        <span class="sc-proof-pill-bar" id="sProofPill"></span>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="ti ti-search"></i>
+          <input type="text" id="searchInput" placeholder="Search by date or notes..." />
+        </div>
+        <select id="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <select id="periodFilter" class="filter-select">
+          <option value="">All School Years</option>
+        </select>
+      </div>
+
+      <!-- Sessions Cards -->
+      <div id="sessionsList" class="sessions-list">
+        <div class="sessions-loading"><span class="spinner"></span> Loading sessions...</div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Log Session Modal -->
+  <div id="logSessionModal" class="modal-overlay" onclick="closeLogSessionModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeLogSessionModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title">Log a Session</h2>
+      <p class="modal-subtitle">Record a new mentoring session</p>
+      <form id="logSessionForm" onsubmit="submitLogSession(event)">
+        <div class="form-error" id="logSessionError" style="display:none"></div>
+        <div class="form-group" id="sectionPickGroup" style="display:none">
+            <label class="form-label">Course</label>
+          <select id="sessionSectionPick" class="form-input"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Session Slot</label>
+          <select id="sessionSlotPick" class="form-input" required>
+            <option value="" disabled selected>Choose...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" id="sessionDateInput" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Start Time</label>
+          <input type="time" id="sessionTimeStart" class="form-input" required />
+          <small>End time is recorded when you select Save End after the session.</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes <span class="form-optional">(optional)</span></label>
+          <textarea id="sessionNotesInput" class="form-textarea" rows="3" placeholder="Topic or notes for this session..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-form-cancel" onclick="closeLogSessionModal()">Cancel</button>
+          <button type="submit" class="btn-form-submit" id="submitSessionBtn">
+            <i class="ti ti-calendar-plus"></i> Log Session
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Session Modal -->
+  <div id="editSessionModal" class="modal-overlay" onclick="closeEditModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeEditModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title">Edit Session</h2>
+      <p class="modal-subtitle">Update session details or mark as cancelled</p>
+      <form id="editSessionForm" onsubmit="submitEditSession(event)">
+        <div class="form-error" id="editSessionError" style="display:none"></div>
+        <div class="form-group" id="editSectionPickGroup" style="display:none">
+          <label class="form-label">Course</label>
+          <select id="editSectionPick" class="form-input"></select>
+        </div>
+        <div class="form-group" id="editSlotPickGroup">
+          <label class="form-label">Session Slot</label>
+          <select id="editSlotPick" class="form-input" required>
+            <option value="" disabled selected>Choose...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" id="editDateInput" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Start Time</label>
+          <input type="time" id="editTimeStart" class="form-input" required />
+          <small>End time is recorded when you select Save End after the session.</small>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes <span class="form-optional">(optional)</span></label>
+          <textarea id="editNotesInput" class="form-textarea" rows="3" placeholder="Topic or notes..."></textarea>
+        </div>
+        <div class="form-actions form-actions-split">
+          <button type="button" class="btn-cancel-session" onclick="openCancelSessionConfirm()">
+            <i class="ti ti-calendar-x"></i> Cancel Session
+          </button>
+          <div class="form-actions-right">
+            <button type="button" class="btn-form-cancel" onclick="closeEditModal()">Close</button>
+            <button type="submit" class="btn-form-submit" id="submitEditBtn">
+              <i class="ti ti-check"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div id="deleteConfirmModal" class="modal-overlay" onclick="closeDeleteConfirm(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-danger">
+        <i class="ti ti-trash"></i>
+      </div>
+      <h3 class="confirm-title">Delete Session?</h3>
+      <p class="confirm-body">
+        <strong id="deleteConfirmDate"></strong><br>
+        This will permanently remove the session and cannot be undone.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+        <button class="btn-confirm-danger" id="confirmDeleteBtn" onclick="confirmDeleteSession()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Session Confirm Modal -->
+  <div id="cancelConfirmModal" class="modal-overlay" onclick="closeCancelConfirm(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-warn">
+        <i class="ti ti-calendar-x"></i>
+      </div>
+      <h3 class="confirm-title">Cancel this Session?</h3>
+      <p class="confirm-body">
+        <strong id="cancelConfirmDate"></strong><br>
+        This will mark the session as Cancelled.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeCancelConfirm()">Keep Session</button>
+        <button class="btn-confirm-warn" id="confirmCancelBtn" onclick="confirmCancelSession()">
+          <i class="ti ti-calendar-x"></i> Yes, Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Scanner / Attendance Modal -->
+  <div id="qrScanModal" class="modal-overlay" onclick="closeQrScannerOverlay(event)">
+    <div class="modal-card qr-modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeQrScanner()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title">Scan Attendance</h2>
+      <p class="modal-subtitle" id="qrScanDate">—</p>
+
+      <!-- Camera viewfinder -->
+      <div class="qr-reader-wrap">
+        <div id="qr-reader"></div>
+        <div class="qr-status" id="qrStatus">Starting camera...</div>
+      </div>
+
+      <!-- Running count -->
+      <div class="qr-att-summary">
+        <div class="qr-att-label"><i class="ti ti-users"></i> Attendance</div>
+        <div class="qr-att-count" id="qrAttCount">0 / 0 present</div>
+      </div>
+
+      <!-- Read-only QR attendance results -->
+      <div id="qrAttList" class="attendance-list">
+        <div class="list-skeleton"><span class="spinner"></span> Loading...</div>
+      </div>
+
+      <!-- Session End Time -->
+      <div class="qr-end-time-row">
+        <div class="qr-end-label">
+          <i class="ti ti-clock-off"></i>
+          Session End Time
+        </div>
+        <div class="qr-end-display-wrap">
+          <span id="qrEndTimeDisplay" class="qr-end-display">--:-- --</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-form-cancel" onclick="closeQrScanner()">Cancel</button>
+        <button class="btn-form-submit" id="saveQrAttBtn" onclick="saveQrAttendance()">
+          <i class="ti ti-check"></i> Save & Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proof Modal -->
+  <div id="proofModal" class="modal-overlay" onclick="closeProofModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeProofModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title">Upload Proof</h2>
+      <p class="modal-subtitle" id="proofModalDate">—</p>
+      <details class="proof-tips">
+        <summary><i class="ti ti-chevron-right"></i> Accepted Files and iPhone Guidelines</summary>
+        <div class="proof-tips-body">
+          <p>Please upload a clear photograph of the mentoring session or a PDF document. Accepted formats: JPG, JPEG, PNG, GIF, WEBP, and PDF, with a maximum file size of 20 MB.</p>
+          <p>HEIC/HEIF and RAW image formats are not supported. Please export a JPG or PNG copy, or use the Take Photo option below. iPhone users may disable RAW capture under Settings &gt; Camera &gt; Formats &gt; Most Compatible. Files exceeding 20 MB should be resized or compressed while preserving image clarity.</p>
+        </div>
+      </details>
+      <div id="proofErrorMsg" class="proof-error-msg" style="display:none"></div>
+
+      <div class="proof-options" id="proofOptions">
+        <button type="button" class="proof-option-card" onclick="openProofPicker()">
+          <i class="ti ti-cloud-upload"></i>
+          <div class="proof-option-label">Upload Photo</div>
+          <div class="proof-option-hint">JPG/JPEG, PNG, GIF, WEBP, PDF · Max 20 MB</div>
+        </button>
+        <button type="button" class="proof-option-card" onclick="openCamera()">
+          <i class="ti ti-camera"></i>
+          <div class="proof-option-label">Take Photo</div>
+          <div class="proof-option-hint">Phone camera or desktop webcam</div>
+        </button>
+      </div>
+      <p id="proofCameraHint" class="proof-camera-hint" role="status"></p>
+      <div id="proofCameraPanel" hidden>
+        <video id="proofCameraVideo" autoplay muted playsinline aria-label="Webcam preview" onerror="proofCameraFailed()"></video>
+        <img id="proofCameraStill" alt="Captured photo preview" hidden>
+        <div class="proof-camera-actions" id="proofCameraLiveActions">
+          <button type="button" class="proof-camera-primary" onclick="captureProofPhoto()">Capture</button>
+          <button type="button" onclick="clearProofFile()">Cancel Camera</button>
+        </div>
+        <div class="proof-camera-actions" id="proofCameraCapturedActions" hidden>
+          <button type="button" onclick="clearProofFile(); openCamera()">Retake</button>
+          <button type="button" class="proof-camera-primary" onclick="useProofPhoto()">Use Photo</button>
+        </div>
+      </div>
+      <input type="file" id="proofFileInput" accept="image/*,application/pdf"
+             style="display:none" onchange="handleProofFileSelect(event)">
+
+      <div id="proofPreviewWrap" style="display:none">
+        <img id="proofPreviewImg" class="proof-preview-img" alt="" />
+        <div class="proof-file-chosen">
+          <i class="ti ti-file-check"></i>
+          <span id="proofFileName">—</span>
+          <button type="button" class="proof-clear-btn" onclick="clearProofFile()">
+            <i class="ti ti-x"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-actions" id="proofFormActions">
+        <button type="button" class="btn-form-cancel" onclick="closeProofModal()">Cancel</button>
+        <button type="button" class="btn-form-submit" id="submitProofBtn" onclick="submitProof()" disabled>
+          <i class="ti ti-upload"></i> Upload
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Confirmation Modal -->
+  <div id="uploadConfirmOverlay" class="modal-overlay" onclick="ucmBackdropClick(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-primary">
+        <i class="ti ti-upload"></i>
+      </div>
+      <h3 class="confirm-title">Upload this as Session Proof?</h3>
+      <p class="confirm-body">
+        Once uploaded, this session will be marked <strong>Completed</strong> and visible to Admin and Head Admin.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="ucmResolve(false)">Cancel</button>
+        <button class="btn-confirm-primary" onclick="ucmResolve(true)">
+          <i class="ti ti-upload"></i> Upload
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proof Lightbox (view an already-uploaded proof) -->
+  <div id="lightboxOverlay" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title" id="lightboxTitle">Session Proof</span>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body" id="lightboxBody"></div>
+      <div class="lightbox-footer">
+        <a class="lightbox-download" id="lightboxDownload" href="#" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTOR/JS/html5-qrcode.min.js"></script>
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../notify.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="../../checkpoint-window.js"></script>
+<script src="/dashboard-sessions.js"></script>
+<script src="/MENTOR/JS/sessions.js"></script>
+</body>
+</html>

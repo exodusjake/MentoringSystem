@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-dashboard.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 id="welcomeTitle">Dashboard</h1>
+          <p id="dashboardDate">Loading...</p>
+        </div>
+        <span class="semester-badge" id="semesterBadge"></span>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap teal">
+            <i class="ti ti-users"></i>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statMentees"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">My Mentees</div>
+            <div class="stat-sub">Assigned this semester</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap green">
+            <i class="ti ti-circle-check"></i>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statCompleted"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Course Checkpoints Completed</div>
+            <div class="stat-sub">This semester</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap blue">
+            <i class="ti ti-calendar-event"></i>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statUpcoming"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Upcoming Sessions</div>
+            <div class="stat-sub">Scheduled or awaiting attendance</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap">
+            <i class="ti ti-chart-bar"></i>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statAttRate"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Semester Completion</div>
+            <div class="stat-sub">Completed course checkpoints / required course checkpoints</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sessions Row (two side-by-side cards) -->
+      <div class="sessions-row">
+
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <h2>Upcoming Sessions</h2>
+              <p class="card-desc">Scheduled sessions ahead.</p>
+            </div>
+          </div>
+          <div id="upcomingSessionsList" class="sessions-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="sessions.html" class="card-view-link">View all sessions <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-row">
+            <div>
+              <h2>Recent Sessions</h2>
+              <p class="card-desc">Latest completed, cancelled, and past scheduled sessions.</p>
+            </div>
+          </div>
+          <div id="recentSessionsList" class="sessions-list">
+            <div class="list-skeleton"><span class="spinner"></span> Loading...</div>
+          </div>
+          <div class="card-view-footer">
+            <a href="sessions.html" class="card-view-link">View all sessions <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Announcements and published calendar overview -->
+      <div class="dashboard-updates-row">
+      <div class="card announcements-card">
+        <div class="card-header-row">
+          <div>
+            <h2>Announcements</h2>
+            <p class="card-desc">Latest from the administration.</p>
+          </div>
+        </div>
+        <div id="announcementsList" class="announcements-list">
+          <div class="list-skeleton"><span class="spinner"></span> Loading announcements...</div>
+        </div>
+        <div class="card-view-footer">
+          <a href="announcements.html" class="card-view-link">View all announcements <i class="ti ti-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="card calendar-overview-card">
+        <div class="card-header-row"><div><h2>Upcoming Activities &amp; Deadlines</h2><p class="card-desc">Ongoing and upcoming items from the published calendar.</p></div></div>
+        <div id="calendarOverviewList" class="calendar-overview-list" aria-live="polite"><div class="list-skeleton"><span class="spinner"></span> Loading calendar...</div></div>
+        <div class="card-view-footer"><a href="calendar.html" class="card-view-link">View Calendar <i class="ti ti-arrow-right"></i></a></div>
+      </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../security-utils.js"></script>
+  <script src="/dashboard-sessions.js"></script>
+  <script src="/MENTOR/JS/mentor-dashboard.js"></script>
+</body>
+</html>

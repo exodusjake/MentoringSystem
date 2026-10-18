@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AstraMentoring-Backend/AstraMentoring-Backend.csproj" />
+  <Project Path="AstraMentoringAPI/AstraMentoringAPI.csproj" />
+</Solution>

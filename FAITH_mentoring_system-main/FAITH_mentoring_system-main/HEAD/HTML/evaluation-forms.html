@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evaluation Forms — Head Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/evaluation-forms.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/HEAD/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/evaluation-author.css"/>
+  <script src="/evaluation-deadline.js"></script>
+  <script src="/evaluation-description.js"></script>
+</head>
+<body class="admin-polish head-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Evaluation Forms</h1>
+        </div>
+      </div>
+
+      <div class="forms-section">
+        <div class="forms-section-header">
+          <h2>All Evaluation Forms</h2>
+          <span class="eval-count" id="evalCount"></span>
+        </div>
+        <div class="forms-list" id="formsList">
+          <div class="eval-loading"><span class="spinner"></span> Loading...</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Submission detail modal — who has self-reported as submitted -->
+  <div class="modal-overlay" id="submitDetailOverlay" onclick="if(event.target===this) closeSubmissionDetail()">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="submitDetailTitle">Submissions</h3>
+        <button class="modal-close" onclick="closeSubmissionDetail()">&times;</button>
+      </div>
+      <p class="submit-detail-note">
+        Each mentee uploads a screenshot as proof of submission — not cross-checked against the actual Google Form responses.
+      </p>
+      <div class="modal-body" id="submitDetailBody">
+        <div class="eval-empty"><i class="ti ti-loader-2"></i> Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proof screenshot lightbox — same pattern as Sessions' proof viewer -->
+  <div id="lightboxOverlay" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title" id="lightboxTitle">Proof of Submission</span>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body" id="lightboxBody"></div>
+      <div class="lightbox-footer">
+        <a class="lightbox-download" id="lightboxDownload" href="#" download style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+  <script src="/apiClient.js"></script>
+  <script src="/HEAD/JS/sidebar.js"></script>
+  <script src="/security-utils.js"></script>
+  <script src="/HEAD/JS/evaluation-forms.js"></script>
+</body>
+</html>

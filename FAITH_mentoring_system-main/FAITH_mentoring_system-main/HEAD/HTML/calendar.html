@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Academic Calendar — Head Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/calendar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css"/>
+  <style>
+    /* Bridge missing CSS variables that calendar.css expects */
+    :root {
+      --font:       'DM Sans', sans-serif;
+      --teal:       #0f766e;
+      --teal-light: #f0fdfa;
+    }
+  </style>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/calendar-shared.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/HEAD/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish head-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Calendar</h1>
+          <p>Academic schedule — published by Admin, view-only</p>
+        </div>
+      </div>
+
+      <!-- Academic Calendar (published schedule, read-only) -->
+      <div id="pane-program" class="cal-pane">
+
+        <!-- Toolbar -->
+        <div class="cal-toolbar">
+          <div class="cal-toolbar-left">
+            <div class="ev-legend">
+              <div class="ev-legend-item"><span class="ev-dot session"></span>Session Schedule</div>
+              <div class="ev-legend-item"><span class="ev-dot deadline"></span>Deadline</div>
+              <div class="ev-legend-item"><span class="ev-dot exam"></span>Period</div>
+              <div class="ev-legend-item"><span class="ev-dot evaluation"></span>Evaluation</div>
+            </div>
+          </div>
+          <div class="cal-toolbar-right">
+            <div class="cal-search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="calSearch" placeholder="Search events…" autocomplete="off"/>
+            </div>
+            <select class="cal-type-filter" id="typeFilter">
+              <option value="">All Types</option>
+              <option value="Session Schedule">Session Schedule</option>
+              <option value="Deadline">Deadline</option>
+              <option value="Period">Period</option>
+              <option value="Evaluation">Evaluation</option>
+            </select>
+            <button class="btn-export-cal" id="exportBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print / Export
+            </button>
+          </div>
+        </div>
+
+        <!-- Calendar Layout -->
+        <div class="cal-layout">
+
+          <!-- Monthly Grid -->
+          <div class="cal-panel">
+            <div class="cal-header">
+              <button class="cal-nav-btn" id="prevMonth">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span class="cal-month-label" id="calMonthLabel"></span>
+              <button class="cal-nav-btn" id="nextMonth">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+            <div class="cal-dow-row">
+              <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div>
+              <div class="cal-dow">Tue</div><div class="cal-dow">Wed</div>
+              <div class="cal-dow">Thu</div><div class="cal-dow">Fri</div>
+              <div class="cal-dow">Sat</div>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
+
+          <!-- Event List Panel -->
+          <div class="cal-right-panel">
+            <div class="cal-sidebar-header">
+              <div>
+                <div class="cal-sidebar-title" id="sidebarTitle">Loading…</div>
+                <div class="cal-sidebar-sub"  id="sidebarSub"></div>
+              </div>
+              <button class="cal-sidebar-clear" id="clearSelection" style="display:none" onclick="clearDay()">
+                Show all
+              </button>
+            </div>
+            <div class="cal-events-list" id="calEventsList">
+              <div class="cal-loading"><i class="ti ti-loader-2"></i> Loading events…</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="calErrorModal" class="cal-info-modal-overlay" style="display:none;">
+    <div class="cal-info-modal">
+      <div class="cal-info-modal-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="cal-info-modal-title">Something went wrong</h3>
+      <p class="cal-info-modal-message" id="calErrorMessage">An error occurred.</p>
+      <button class="btn-cal-primary" onclick="hideCalError()" style="width:100%">OK</button>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+  <script src="/apiClient.js"></script>
+  <script src="/calendar-sheet.js"></script>
+  <script src="/HEAD/JS/sidebar.js"></script>
+  <script src="/HEAD/JS/calendar.js"></script>
+</body>
+</html>

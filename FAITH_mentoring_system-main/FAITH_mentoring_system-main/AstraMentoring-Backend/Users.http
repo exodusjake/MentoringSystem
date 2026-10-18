@@ -1,0 +1,6 @@
+@baseUrl = http://localhost:5076
+@token = {{adminAccessToken}}
+
+### Admin mentee engagement roster for dashboard drill-down
+GET {{baseUrl}}/api/Users/engagement
+Authorization: Bearer {{token}}

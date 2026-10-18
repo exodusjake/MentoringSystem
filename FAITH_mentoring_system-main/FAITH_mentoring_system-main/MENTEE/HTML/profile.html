@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Mentee Portal</title>
+  <link rel="stylesheet" href="/MENTEE/CSS/mentee-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/profile.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/page-polish.css"/>
+</head>
+<body class="mentee-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <h1>Profile</h1>
+        <p>Your account and academic details</p>
+      </div>
+
+      <div id="profileLoading" class="loading-state"><span class="spinner"></span> Loading profile...</div>
+
+      <div id="profileCard" class="profile-wrapper" style="display:none;">
+        <div class="ph-card">
+
+          <!-- Banner -->
+          <div class="ph-banner"></div>
+
+          <!-- Identity -->
+          <div class="ph-identity">
+            <div class="profile-avatar" id="profileAvatar">MU</div>
+            <div class="ph-identity-info">
+              <div class="ph-name" id="profileName">—</div>
+              <div class="ph-chips">
+                <span class="profile-role-badge">Mentee</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fields Strip -->
+          <div class="ph-fields-strip">
+            <div class="ph-strip-field">
+              <span class="ph-field-label">Email Address</span>
+              <span class="ph-field-value" id="profileEmail">—</span>
+            </div>
+            <div class="ph-strip-divider"></div>
+            <div class="ph-strip-field">
+              <span class="ph-field-label">Contact Number</span>
+              <span class="ph-field-value" id="profileContact">—</span>
+            </div>
+            <div class="ph-strip-divider"></div>
+            <div class="ph-strip-field">
+              <span class="ph-field-label">Student Number</span>
+              <span class="ph-field-value" id="profileStudentNo">—</span>
+            </div>
+            <div class="ph-strip-divider"></div>
+            <div class="ph-strip-field">
+              <span class="ph-field-label">Account Status</span>
+              <span class="ph-field-value">
+                <span class="status-badge active">Active</span>
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Academic Details -->
+        <div class="profile-details-row">
+
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <i class="ti ti-school"></i>
+              Academic Info
+            </div>
+            <div class="detail-grid" id="academicGrid"><span class="stat-pulse">—</span></div>
+          </div>
+
+          <div class="detail-card">
+            <div class="detail-card-header">
+              <i class="ti ti-building"></i>
+              Department &amp; School
+            </div>
+            <div class="detail-grid" id="deptGrid"><span class="stat-pulse">—</span></div>
+          </div>
+
+        </div>
+
+        <!-- Inline Edit Section (was a modal) + Signature, side by side -->
+        <div class="ph-card">
+          <div class="ph-edit-row">
+          <div class="ph-edit-inline" id="profileEditSection">
+            <div class="ph-edit-inline-header">
+              <h3>Edit Profile</h3>
+              <p>Update your contact number or change your password.</p>
+            </div>
+
+            <div id="editError" class="edit-error" style="display:none;"></div>
+
+            <div class="edit-form">
+              <div class="form-group">
+                <label>Contact Number <span class="optional">(optional)</span></label>
+                <input type="text" id="editContact" placeholder="09XXXXXXXXX" autocomplete="tel" />
+              </div>
+              <div class="form-section-label">Change Password</div>
+              <div class="form-group">
+                <label>Current Password <span class="req">*</span></label>
+                <div class="pw-input-wrap">
+                  <input type="password" id="editCurrentPassword" placeholder="Enter your current password" autocomplete="current-password" />
+                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editCurrentPassword',this)" tabindex="-1" aria-label="Show/hide password">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+                <span class="field-error" id="currentPwError"></span>
+              </div>
+              <div class="form-group">
+                <label>New Password <span class="req">*</span></label>
+                <div class="pw-input-wrap">
+                  <input type="password" id="editPassword" placeholder="At least 8 characters" autocomplete="new-password" />
+                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editPassword',this)" tabindex="-1" aria-label="Show/hide password">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+                <span class="field-error" id="newPwError"></span>
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password <span class="req">*</span></label>
+                <div class="pw-input-wrap">
+                  <input type="password" id="editPasswordConfirm" placeholder="Repeat new password" autocomplete="new-password" />
+                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editPasswordConfirm',this)" tabindex="-1" aria-label="Show/hide password">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+                <span class="field-error" id="confirmPwError"></span>
+              </div>
+              <p class="pw-hint">Leave all password fields blank to keep your current password.</p>
+            </div>
+
+            <div class="ph-edit-inline-footer">
+              <button class="btn-cancel" onclick="resetEditSection()">Cancel</button>
+              <button class="btn-save" id="saveBtn" onclick="confirmSave()">Save Changes</button>
+            </div>
+          </div>
+
+          <!-- Signature Section -->
+          <div class="sig-section" id="sigSection" style="display:none;">
+            <div class="sig-section-header">
+              <div class="sig-section-title">My Signature</div>
+              <div class="sig-section-sub">Used in generated logsheets and documents.</div>
+            </div>
+            <div id="sigHasState" style="display:none;">
+              <div class="sig-img-wrap">
+                <img id="sigImg" src="" alt="My signature" class="sig-img" />
+              </div>
+            </div>
+            <div id="sigNoneState" class="sig-none-state">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              <span>No signature on file yet.</span>
+            </div>
+            <button class="btn-change-sig" id="btnChangeSig" onclick="openSigModal()">Upload Signature</button>
+          </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Confirm Save Modal -->
+  <div id="confirmModal" class="modal-overlay" onclick="closeConfirmModal(event)">
+    <div class="edit-modal-card confirm-card" onclick="event.stopPropagation()">
+      <div class="confirm-icon"><i class="ti ti-device-floppy"></i></div>
+      <h2 class="modal-title">Save Changes?</h2>
+      <p class="modal-subtitle">Are you sure you want to save the changes to your profile?</p>
+      <div class="edit-modal-footer" style="justify-content:center; gap:14px;">
+        <button class="btn-cancel" onclick="closeConfirmModal()">Go Back</button>
+        <button class="btn-save" id="confirmSaveBtn" onclick="saveProfile()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signature Upload Modal -->
+  <div id="sigModal" class="modal-overlay" onclick="closeSigModal(event)">
+    <div class="edit-modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeSigModal()"><i class="ti ti-x"></i></button>
+      <div class="confirm-icon"><i class="ti ti-signature"></i></div>
+      <h2 class="modal-title">Update Signature</h2>
+      <p class="modal-subtitle">Upload a clear PNG of your handwritten signature with a transparent background.</p>
+      <div id="sigModalError" class="edit-error" style="display:none;"></div>
+      <label class="sig-dz" id="sigDz">
+        <input type="file" id="sigFileInput" accept="image/png" class="sig-dz-input" />
+        <div id="sigDzIdle" class="sig-dz-idle">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="sig-dz-main">Click or drag image here</span>
+          <span class="sig-dz-hint">PNG with transparent background — max 5 MB</span>
+        </div>
+        <img id="sigDzPreview" class="sig-dz-preview" src="" alt="Preview" style="display:none;" />
+      </label>
+      <div class="setup-privacy-notice">
+        <svg class="pn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <p><strong>Privacy Notice.</strong> Your signature is personal data used only to verify your attendance on mentoring session logsheets, per the Data Privacy Act of 2012 (RA 10173). It is only visible to your assigned mentor and to program administrators.</p>
+      </div>
+      <label class="setup-consent">
+        <input type="checkbox" id="sigConsentModal"/>
+        <span>I confirm this is my own signature and I authorize its use on my mentoring session logsheets, and I have read and agree to the Privacy Notice above.</span>
+      </label>
+      <div class="edit-modal-footer">
+        <button class="btn-cancel" onclick="closeSigModal()">Cancel</button>
+        <button class="btn-save" id="btnSaveSig" onclick="saveSig()" disabled>Save Signature</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTEE/JS/mentee-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/MENTEE/JS/profile.js"></script>
+</body>
+</html>

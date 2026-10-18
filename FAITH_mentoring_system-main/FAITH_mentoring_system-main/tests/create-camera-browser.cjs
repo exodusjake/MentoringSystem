@@ -1,0 +1,1 @@
+const fs=require('fs');let s=fs.readFileSync('tests/proof-attachments-browser.cjs','utf8');const start=s.indexOf('  const checks=[]'),end=s.indexOf('  </script></body>');s=s.slice(0,start)+fs.readFileSync('tests/proof-camera-checks.txt','utf8')+s.slice(end);fs.writeFileSync('tests/proof-camera-browser.cjs',s);

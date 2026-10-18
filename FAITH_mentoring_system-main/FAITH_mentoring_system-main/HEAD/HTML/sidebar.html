@@ -1,0 +1,93 @@
+<!-- HEAD ADMIN Sidebar -->
+<link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <i class="ti ti-menu-2"></i>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+  <a href="account.html" class="sb-profile" id="sbProfileLink">
+    <div class="sb-avatar" id="sidebarAvatar">HA</div>
+    <div class="sb-info">
+      <div class="sb-name" id="sidebarName">Head Admin</div>
+      <div class="sb-role" id="sidebarRole">Head Mentoring Personnel</div>
+    </div>
+  </a>
+
+  <nav class="sidebar-nav" aria-label="Main navigation">
+
+    <div class="nav-section">Overview</div>
+    <a href="head-dashboard.html" class="nav-item" id="nav-dashboard">
+      <i class="ti ti-layout-dashboard"></i>
+      Dashboard
+    </a>
+
+    <div class="nav-section">Monitoring</div>
+    <a href="mentor-performance.html" class="nav-item" id="nav-performance">
+      <i class="ti ti-activity"></i>
+      Mentor Monitoring
+    </a>
+    <a href="attendance-summary.html" class="nav-item" id="nav-attendance">
+      <i class="ti ti-calendar-stats"></i>
+      Attendance Summary
+    </a>
+    <a href="proof-tracking.html" class="nav-item" id="nav-proof">
+      <i class="ti ti-photo-check"></i>
+      Proof Tracking
+    </a>
+    <a href="evaluation-ratings.html" class="nav-item" id="nav-ratings">
+      <i class="ti ti-report"></i>
+      Mentoring Program Report
+    </a>
+
+    <div class="nav-section">Communication</div>
+    <a href="announcements.html" class="nav-item" id="nav-announcements">
+      <i class="ti ti-speakerphone"></i>
+      Announcements
+      <span class="nav-badge" id="annBadge" style="display:none"></span>
+    </a>
+    <a href="evaluation-forms.html" class="nav-item" id="nav-eval">
+      <i class="ti ti-clipboard-check"></i>
+      Evaluation Forms
+    </a>
+
+    <div class="nav-section">Resources</div>
+    <a href="calendar.html" class="nav-item" id="nav-calendar">
+      <i class="ti ti-calendar-event"></i>
+      Calendar
+    </a>
+
+    <div class="nav-section">Account</div>
+    <a href="account.html" class="nav-item" id="nav-profile">
+      <i class="ti ti-user-circle"></i>
+      Profile
+    </a>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="showLogoutModal()">
+      <i class="ti ti-logout"></i>
+      Logout
+    </button>
+  </div>
+
+</aside>
+
+<div id="logoutModal" class="logout-modal-overlay">
+  <div class="logout-modal">
+    <div class="logout-modal-icon">
+      <i class="ti ti-logout"></i>
+    </div>
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="logout-modal-btns">
+      <button class="btn-cancel" onclick="hideLogoutModal()">Cancel</button>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+</div>

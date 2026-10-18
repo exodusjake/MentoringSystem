@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AstraMentoring</title>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+<script>
+    const role = localStorage.getItem('role');
+
+    if (!role) {
+        window.location.href = './LOGIN/HTML/login.html';
+    } else {
+        const lowerRole = role.toLowerCase();
+        if (lowerRole === 'admin') {
+            window.location.href = './ADMIN_/HTML/dashboard.html';
+        } else if (lowerRole === 'head') {
+            window.location.href = './HEAD/HTML/head-dashboard.html';
+        } else if (lowerRole === 'mentor') {
+            window.location.href = './MENTOR/HTML/mentor-dashboard.html';
+        } else if (lowerRole === 'mentee') {
+            window.location.href = './MENTEE/HTML/mentee-dashboard.html';
+        } else {
+            window.location.href = './LOGIN/HTML/login.html';
+        }
+    }
+</script>
+
+</body>
+</html>

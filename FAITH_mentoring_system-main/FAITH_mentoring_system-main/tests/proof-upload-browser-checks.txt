@@ -1,0 +1,29 @@
+  Object.defineProperty(navigator,'mediaDevices',{value:undefined,configurable:true});
+  window.validateUploadFile=file=>file.name.endsWith('.exe')?'Invalid file':null;
+  let writes=0; window.apiRequest=()=>{writes++;};
+  allSessions=[{sessionID:1,presentCount:2,sessionStatus:'Completed',proofFilePath:'/original.jpg'},{sessionID:2,presentCount:1,sessionStatus:'Completed'}];
+  const input=document.getElementById('proofFileInput'),options=document.getElementById('proofOptions'),btn=document.getElementById('submitProofBtn');
+  const pick=name=>{const dt=new DataTransfer();dt.items.add(new File(['photo'],name,{type:'image/png'}));input.files=dt.files;input.dispatchEvent(new Event('change'));};
+  for(const id of [1,2]) {
+    openProofModal(id,'Oct 12');
+    check(getComputedStyle(options).display==='grid','options visible on open '+id);
+    check(btn.disabled,'upload disabled without selection '+id);
+    check(options.querySelectorAll('button').length===2,'keyboard accessible options '+id);
+    check(options.textContent.includes('Upload Photo')&&options.textContent.includes('Take Photo'),'distinct options '+id);
+    pick('selected-photo.png');
+    check(!btn.disabled,'valid selection enables upload '+id);
+    check(document.getElementById('proofFileName').textContent==='selected-photo.png','filename visible '+id);
+    clearProofFile();check(btn.disabled&&getComputedStyle(options).display==='grid','clear restores controls '+id);
+    pick('invalid.exe');check(btn.disabled&&input.files.length===0,'invalid selection rejected '+id);
+    pick('cancelled.png');closeProofModal();
+    check(writes===0&&allSessions[0].proofFilePath==='/original.jpg','cancel preserves saved proof '+id);
+    openProofModal(id,'Oct 12');check(getComputedStyle(options).display==='grid'&&btn.disabled,'reopen after selection resets '+id);
+  }
+  usesProofNativeCamera=()=>true; input.click=()=>{};openCamera();
+  check(document.getElementById('proofCameraHint').textContent.includes('unavailable'),'desktop camera fallback explained');
+  Object.defineProperty(input,'capture',{value:'',configurable:true});
+  const originalMatch=window.matchMedia;window.matchMedia=()=>({matches:true});openCamera();
+  check(input.getAttribute('capture')==='environment','native mobile camera requested');
+  check(document.getElementById('proofCameraHint').textContent.includes('Upload Photo'),'mobile camera fallback explained');
+  window.matchMedia=originalMatch;
+  check(document.querySelector('#proofModal .modal-card').scrollWidth<=document.querySelector('#proofModal .modal-card').clientWidth+1,'modal no horizontal overflow');

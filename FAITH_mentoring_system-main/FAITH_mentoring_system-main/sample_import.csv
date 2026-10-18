@@ -1,0 +1,7 @@
+"First Name","Last Name","Email","Password","Role","Gender","Student Number","Contact Number","School","Department / Course","Assign to Mentor (Email)"
+"Maria","Santos","maria.santos@faith.edu.ph","Faith@2026","Mentor","Female","","09171234567","School of Technology","CCIT",""
+"Jose","Reyes","jose.reyes@faith.edu.ph","Faith@2026","Mentor","Male","","09189876543","School of Humanities","SOM",""
+"Anna","Cruz","anna.cruz@faith.edu.ph","Faith@2026","Mentee","Female","2024-00201","09201112222","School of Technology","BS IT","maria.santos@faith.edu.ph"
+"Carlo","Gomez","carlo.gomez@faith.edu.ph","Faith@2026","Mentee","Male","2024-00202","09203334444","School of Technology","BS IT","maria.santos@faith.edu.ph"
+"Liza","Tan","liza.tan@faith.edu.ph","Faith@2026","Mentee","Female","2024-00203","09205556666","School of Humanities","AB Communication","jose.reyes@faith.edu.ph"
+"Dan","Rivera","dan.rivera@faith.edu.ph","Faith@2026","Admin","Male","","09207778888","","",""

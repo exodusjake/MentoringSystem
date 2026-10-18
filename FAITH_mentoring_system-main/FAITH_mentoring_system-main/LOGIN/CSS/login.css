@@ -1,0 +1,510 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh; /* mobile Safari/Chrome: 100vh is measured against
+    the toolbar-collapsed viewport, so with the address bar showing (the
+    normal state) body/the card end up taller than what's actually
+    visible, forcing a page scroll that shouldn't be there. dvh tracks
+    the real visible viewport; plain vh stays as a fallback for older
+    engines without dvh support. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  /* Guarantees a visible gutter above/below the card on short viewports
+     (a small laptop window, a phone/tablet in landscape) — flex centering
+     alone doesn't leave any margin once the card's own height gets close
+     to or exceeds the viewport height, which is what was making it look
+     edge-to-edge top and bottom on those devices. */
+  padding: 24px 16px;
+}
+
+
+/* =============================
+   WRAPPER – The two-column card
+   (holds left side + right side)
+   ============================= */
+.wrapper {
+  display: flex;
+  /* Scales continuously with the viewport at every width instead of
+     sitting at one fixed size — 90vw tracks the window directly, the
+     320px floor is a safety net before the 900px breakpoint below takes
+     over with its own full-width mobile layout, and 1200px keeps it from
+     stretching into an unreasonably wide card on very large monitors
+     while still noticeably growing past where it used to cap out (900px). */
+  width: clamp(320px, 90vw, 1200px);
+  min-height: 550px;
+  /* Let the page scroll when the form exceeds the available height. */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =============================
+   LEFT SIDE – Dark blue banner
+   ============================= */
+.left-side {
+  /* Percentage instead of a fixed px width so this panel scales together
+     with .wrapper as one cohesive card, rather than staying pinned at one
+     size while only .right-side grows or shrinks around it. min-width is
+     the safety floor that keeps the logo/text from squeezing too tight
+     once .wrapper itself is near its own 320px floor. */
+  width: 38%;
+  min-width: 280px;
+  flex-shrink: 0;
+  background-color: #0b1a5c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 36px;
+  text-align: center;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Logo image on the left side */
+.left-logo-img {
+  width: 200px;     
+  height: auto;     
+  margin-bottom: 24px;
+}
+
+/* Brand name text (e.g. "★ ASTRA MENTORING") */
+.left-brand {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #3b82f6;
+  margin-bottom: 2px;
+}
+
+/* Smaller text under brand name */
+.left-brand-sub {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 40px;
+}
+
+/* Short colored horizontal line */
+.left-divider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #f0b429); /* Blue to gold */
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+/* School name (e.g. "Faith Colleges") */
+.left-school {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+/* Welcome tagline */
+.left-tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+}
+
+/* Bold words inside the tagline */
+.left-tagline strong {
+  color: #ffffff;
+}
+
+
+/* =============================
+   RIGHT SIDE – White login area
+   ============================= */
+.right-side {
+  flex: 1;
+  min-width: 0;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 36px;
+}
+
+/* Small logo shown at the top of the right side */
+.right-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Small logo image on the right side */
+.right-logo-img {
+  width: 150px;      
+  height: auto;  
+  display: block;
+  margin: 0 auto 2px; 
+}
+
+
+/* =============================
+   LOGIN CARD – The white box with
+   the form inside it
+   ============================= */
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+/* "Welcome Back" heading */
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* Small description below heading */
+.card-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+
+/* =============================
+   FORM FIELDS – Each label + input
+   ============================= */
+
+/* Wrapper around each label + input pair */
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* Label text above each input */
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+/* The input box itself */
+.form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;             
+  transition: border-color 0.2s; 
+}
+
+/* Input styling when the user clicks on it (focused state) */
+.form-group input:focus {
+  border-color: #3b82f6;  
+  background-color: #ffffff;
+}
+
+/* Placeholder text color */
+.form-group input::placeholder {
+  color: #94a3b8;
+}
+
+
+/* =============================
+   REMEMBER ME + FORGOT PASSWORD ROW
+   ============================= */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* "Remember me" checkbox + label */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* The checkbox inside "Remember me" */
+.remember-me input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #3b82f6;    
+}
+
+/* "Forgot Password?" button (styled as link) */
+.forgot-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  padding: 0;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+
+/* =============================
+   SIGN IN BUTTON
+   ============================= */
+.btn-signin {
+  width: 100%;
+  padding: 13px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #3b82f6; 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Darker blue when mouse hovers over button */
+.btn-signin:hover {
+  background-color: #2563eb;
+}
+
+/* Slightly shrinks when clicked */
+.btn-signin:active {
+  transform: scale(0.98);
+}
+
+/* Gray out when disabled (during loading) */
+.btn-signin:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+
+/* =============================
+   PASSWORD SHOW/HIDE TOGGLE
+   ============================= */
+.pw-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pw-wrap input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+  transition: color 0.15s;
+}
+
+.pw-toggle:hover { color: #475569; }
+
+.pw-toggle svg {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+/* =============================
+   ERROR BANNER
+   ============================= */
+.error-banner {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* =============================
+   FORGOT PASSWORD MODAL
+   ============================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.forgot-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.forgot-icon {
+  width: 52px;
+  height: 52px;
+  background: #eff6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.forgot-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #2563eb;
+}
+
+.forgot-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.forgot-body {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* =============================
+   "CONTACT ADMINISTRATOR" TEXT
+   ============================= */
+.contact-text {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* =============================
+   BOTTOM LINKS
+   (Terms of Service, Privacy, Help)
+   ============================= */
+.bottom-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.bottom-links a {
+  font-size: 12px;
+  color: #64748b;
+  text-decoration: none;
+}
+
+.bottom-links a:hover {
+  color: #3b82f6;
+}
+
+
+/* =====================================================
+   RESPONSIVE – Makes the page look good on mobile
+   Use a single column when two readable panels no longer fit
+   ===================================================== */
+@media (max-width: 900px) {
+
+  /* Keep the single-column form full-width on narrow screens. */
+  body { padding: 0; }
+
+  /* Stack left and right panels on top of each other */
+  .wrapper {
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh; /* same dvh correction as body's base rule */
+    max-height: none;
+    border-radius: 0;
+  }
+
+  /* Hide left panel on mobile — show login form directly */
+  .left-side {
+    display: none;
+  }
+
+  /* Right side takes full width */
+  .right-side {
+    padding: 32px 20px;
+  }
+
+  /* Smaller card padding */
+  .login-card {
+    padding: 24px 20px;
+  }
+
+}
+@media (max-height: 760px) {
+  .right-side { padding: 24px; }
+  .right-logo { margin-bottom: 16px; }
+  .right-logo-img { width: 100px; }
+  .login-card { padding: 24px; }
+}
+
+@media (max-width: 480px) {
+  .form-group input { font-size: 16px; }
+  .right-side { padding: 24px 16px; }
+  .login-card { padding: 24px 20px; }
+}
+
+.forgot-card { max-height: calc(100dvh - 32px); overflow-y: auto; }
+
+/* Keeps the card and logo still when the error banner appears: a spacer the
+   banner's size sits under the form and gives way when the banner is shown. */
+.right-side::after { content: ''; flex-shrink: 0; height: var(--login-error-space, 56px); }
+.right-side:has(.error-banner:not([style*="none"]))::after { height: 0; }

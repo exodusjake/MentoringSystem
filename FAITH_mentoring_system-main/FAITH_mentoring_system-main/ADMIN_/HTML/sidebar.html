@@ -1,0 +1,108 @@
+<!-- ASTRA Sidebar — sidebar.html -->
+<link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Mobile hamburger -->
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <i class="ti ti-menu-2"></i>
+</button>
+
+<!-- Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+
+  <!-- User profile -->
+  <a href="profile.html" class="sb-profile" id="sbProfileLink">
+    <div class="sb-avatar" id="sidebarAvatar">AU</div>
+    <div class="sb-info">
+      <div class="sb-name" id="sidebarName">Admin User</div>
+      <div class="sb-role" id="sidebarRole">Administrator</div>
+    </div>
+  </a>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav" aria-label="Main navigation">
+
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item" id="nav-dashboard">
+      <i class="ti ti-layout-dashboard"></i>
+      Dashboard
+    </a>
+
+    <div class="nav-section">Management</div>
+    <a href="user-management.html" class="nav-item" id="nav-users">
+      <i class="ti ti-users"></i>
+      User Management
+    </a>
+
+    <div class="nav-section">Monitoring</div>
+    <a href="attendance-logs.html" class="nav-item" id="nav-attendance">
+      <i class="ti ti-calendar-stats"></i>
+      Attendance Logs
+    </a>
+    <a href="sessions.html" class="nav-item" id="nav-sessions">
+      <i class="ti ti-activity"></i>
+      Mentor Monitoring
+    </a>
+    <a href="session-proofs.html" class="nav-item" id="nav-proofs">
+      <i class="ti ti-photo-check"></i>
+      Proof Tracking
+    </a>
+    <a href="evaluation-ratings.html" class="nav-item" id="nav-ratings">
+      <i class="ti ti-report"></i>
+      Mentoring Program Report
+    </a>
+
+    <div class="nav-section">Content</div>
+    <a href="announcements.html" class="nav-item" id="nav-announce">
+      <i class="ti ti-speakerphone"></i>
+      Announcements
+      <span class="nav-badge" id="annBadge" style="display:none"></span>
+    </a>
+    <a href="calendar-events.html" class="nav-item" id="nav-calendar">
+      <i class="ti ti-calendar-event"></i>
+      Calendar &amp; Events
+    </a>
+    <a href="evaluation-forms.html" class="nav-item" id="nav-eval">
+      <i class="ti ti-clipboard-check"></i>
+      Evaluation Forms
+    </a>
+
+    <div class="nav-section nav-section--normal">System</div>
+    <a href="profile.html" class="nav-item" id="nav-profile">
+      <i class="ti ti-user-circle"></i>
+      Profile
+    </a>
+    <a href="settings.html" class="nav-item" id="nav-settings">
+      <i class="ti ti-settings"></i>
+      System Settings
+    </a>
+
+  </nav>
+
+  <!-- Logout -->
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="showLogoutModal()">
+      <i class="ti ti-logout"></i>
+      Logout
+    </button>
+  </div>
+
+</aside>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="logout-modal-overlay">
+  <div class="logout-modal">
+    <div class="logout-modal-icon">
+      <i class="ti ti-logout"></i>
+    </div>
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out of the admin portal?</p>
+    <div class="logout-modal-btns">
+      <button class="btn-cancel" onclick="hideLogoutModal()">Cancel</button>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+</div>

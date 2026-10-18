@@ -1,0 +1,45 @@
+# ── Visual Studio / .NET ──────────────────────────────────────
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.dll
+*.pdb
+*.exe
+*.cache
+*.AssemblyInfo.cs
+*.sourcelink.json
+*.csproj.CoreCompileInputs.cache
+*.csproj.AssemblyReference.cache
+apphost.exe
+
+# ── ASP.NET Core ──────────────────────────────────────────────
+appsettings.Production.json
+appsettings.Staging.json
+publish-out/
+
+# ── Claude Code (AI assistant memory) ────────────────────────
+.claude/
+
+# ── OS junk ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── VS Code ───────────────────────────────────────────────────
+.vscode/
+
+# ── Node (if ever used) ───────────────────────────────────────
+node_modules/
+
+# ── Uploaded files (user data, not source code) ───────────────
+AstraMentoring-Backend/AstraMentoringAPI/wwwroot/uploads/
+
+# ── Capstone paper assets ─────────────────────────────────────
+Chapter3-ERD/
+
+# ── Local release/testing artifacts ───────────────────────────
+DOCUMENTS/
+release-preparation/
+testing/

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Account Setup — Head Admin Portal</title>
+  <link rel="stylesheet" href="/HEAD/CSS/setup.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/HEAD/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish head-polish">
+
+  <div class="setup-page">
+
+    <div class="setup-brand">
+      <img src="/IMAGES/LOGO.png" alt="Astra Mentoring" class="brand-logo"/>
+      <span class="brand-name">AstraMentoring</span>
+    </div>
+
+    <div class="setup-card">
+
+      <h1 class="setup-title">Upload Your Signature</h1>
+      <p class="setup-sub">Your signature is used on your generated documents. Please upload a clear PNG with a transparent background.</p>
+
+      <label id="dropzone" class="sig-dropzone">
+        <input type="file" id="sigFile" accept="image/png" class="sig-file-input"/>
+        <div id="dropzone-idle" class="dz-idle">
+          <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p class="dz-main">Tap or drag &amp; drop your signature</p>
+          <p class="dz-hint">PNG with transparent background · Max 5 MB</p>
+        </div>
+        <img id="sigPreview" class="sig-preview" src="" alt="Signature preview" style="display:none"/>
+      </label>
+
+      <div id="step1Error" class="setup-error" style="display:none;"></div>
+
+      <div class="setup-privacy-notice">
+        <svg class="pn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <p><strong>Privacy Notice.</strong> Your signature is personal data collected and used only to appear on your generated documents, in line with the Data Privacy Act of 2012 (RA 10173). It will only be visible to authorized users of this system and will not be shared with anyone else.</p>
+      </div>
+
+      <label class="setup-consent">
+        <input type="checkbox" id="sigConsent"/>
+        <span>I confirm this is my own signature and I authorize its use on my generated documents, and I have read and agree to the Privacy Notice above.</span>
+      </label>
+
+      <div class="setup-actions">
+        <a href="/LOGIN/HTML/login.html" class="btn-back" onclick="clearSession()">Back to Login</a>
+        <div class="actions-right">
+          <button id="btnRetake" class="btn-retake" style="display:none;" onclick="clearSignature()">Reupload</button>
+          <button id="btnContinue" class="btn-primary" disabled onclick="uploadAndFinish()">Continue</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/HEAD/JS/setup.js"></script>
+</body>
+</html>

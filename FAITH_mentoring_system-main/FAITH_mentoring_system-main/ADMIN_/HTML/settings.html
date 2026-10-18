@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Settings — Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/settings.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <h1>System Settings</h1>
+        <p>School-wide configuration used across the system and on printed documents</p>
+      </div>
+
+      <!-- ── Lock Banner ── -->
+      <div class="settings-lock-banner" id="lockBanner">
+        <div class="slb-left">
+          <div class="slb-icon locked" id="lockIcon">
+            <svg class="icon-locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <svg class="icon-unlocked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-3.4"/></svg>
+          </div>
+          <div>
+            <div class="slb-title" id="lockTitle">Settings are locked</div>
+            <div class="slb-sub" id="lockSub">Enter the settings password to make changes.</div>
+          </div>
+        </div>
+        <div class="slb-right">
+          <div class="slb-actions-locked" id="lockActionsLocked">
+            <button class="slb-btn unlock" onclick="openUnlock()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-3.4"/></svg>
+              Unlock to Edit
+            </button>
+          </div>
+          <div class="slb-actions-unlocked" id="lockActionsUnlocked" style="display:none">
+            <button class="slb-btn-change" onclick="openChangePassword()">Change Password</button>
+            <button class="slb-btn lock-again" onclick="lockSettings()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Lock
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-grid settings-locked" id="settingsGrid">
+
+        <div class="settings-col">
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div>
+                <div class="settings-card-title">Academic Period</div>
+                <div class="settings-card-sub">Current school year and semester shown on logsheets, reports, and every portal's dashboard</div>
+              </div>
+            </div>
+            <div class="settings-fields">
+
+              <div class="settings-field">
+                <label class="settings-label">School Year</label>
+                <input type="text" class="settings-input" id="fieldSchoolYear" placeholder="e.g. 2025-2026" disabled/>
+                <div class="settings-hint">Format: YYYY-YYYY (e.g. 2025-2026)</div>
+              </div>
+
+              <div class="settings-field">
+                <label class="settings-label">Semester</label>
+                <select class="settings-input" id="fieldSemester" disabled>
+                  <option value="1st Semester">1st Semester</option>
+                  <option value="2nd Semester">2nd Semester</option>
+                  <option value="Summer">Summer</option>
+                </select>
+              </div>
+
+              <div class="settings-card-actions">
+                <button class="btn-save" id="saveAcademicPeriodBtn" onclick="saveGroup('academic')">Save</button>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <div class="settings-card-title">Guidance Office</div>
+                <div class="settings-card-sub">Officer name printed on Non-Attendance forms submitted to the Guidance Office</div>
+              </div>
+            </div>
+            <div class="settings-fields">
+
+              <div class="settings-field">
+                <label class="settings-label">Guidance Officer</label>
+                <div class="settings-input-row">
+                  <input type="text" class="settings-input" id="fieldGuidanceOfficer" placeholder="e.g. Ms. Ghenill R. Manto" disabled/>
+                  <button class="btn-save" onclick="saveSetting('GuidanceOfficer','fieldGuidanceOfficer')">Save</button>
+                </div>
+                <div class="settings-hint">Full name with title (e.g. Ms. Juan Dela Cruz)</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="settings-col">
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-icon indigo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
+              </div>
+              <div>
+                <div class="settings-card-title">Calendar Sheet Signatories</div>
+                <div class="settings-card-sub">Printed on the Calendar of Activities sheet (Calendar &amp; Events → Sheet Preview)</div>
+              </div>
+            </div>
+            <div class="settings-fields">
+
+              <div class="settings-fields-2col">
+                <div class="settings-group">
+                  <div class="settings-group-title">Prepared By</div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalPreparedByName">Full Name</label>
+                  <input type="text" class="settings-input" id="fieldcalPreparedByName" placeholder="e.g. Juan Dela Cruz, RPm" disabled/>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalPreparedByTitle">Title</label>
+                  <input type="text" class="settings-input" id="fieldcalPreparedByTitle" placeholder="e.g. Assistant, Guidance and Counseling Office" disabled/>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalPreparedByEmail">Email</label>
+                  <input type="email" class="settings-input" id="fieldcalPreparedByEmail" placeholder="e.g. juan.delacruz@firstasia.edu.ph" disabled/>
+                  <div class="settings-hint">Matches this person's own account — their uploaded e-signature is printed on the sheet automatically. Leave blank to print the name only.</div>
+                </div>
+                </div>
+                <div class="settings-group">
+                  <div class="settings-group-title">Approved By</div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalApprovedByName">Full Name</label>
+                  <input type="text" class="settings-input" id="fieldcalApprovedByName" placeholder="e.g. Maria Santos, EdD" disabled/>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalApprovedByTitle">Title</label>
+                  <input type="text" class="settings-input" id="fieldcalApprovedByTitle" placeholder="e.g. Senior Vice President, Student and Alumni Services" disabled/>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldcalApprovedByEmail">Email</label>
+                  <input type="email" class="settings-input" id="fieldcalApprovedByEmail" placeholder="e.g. maria.santos@firstasia.edu.ph" disabled/>
+                  <div class="settings-hint">Matches this person's own account — their uploaded e-signature is printed on the sheet automatically. Leave blank to print the name only.</div>
+                </div>
+                </div>
+              </div>
+
+              <div class="settings-card-actions">
+                <button class="btn-save" id="saveSignatoriesBtn" onclick="saveGroup('signatories')">Save</button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Settings Unlock Modal -->
+  <div class="settings-modal-overlay" id="unlockOverlay" style="display:none">
+    <div class="settings-modal">
+      <div class="settings-modal-icon lock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3 class="settings-modal-title">Settings Password</h3>
+      <p class="settings-modal-sub">Enter the settings password to edit System Settings.</p>
+      <div class="settings-modal-field">
+        <div class="pwd-wrap">
+          <input type="password" id="unlockPasswordInput" class="settings-modal-input"
+            placeholder="Settings password" autocomplete="off"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();submitUnlock()}"/>
+          <button type="button" class="pwd-eye" onclick="togglePwd('unlockPasswordInput',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="settings-modal-error" id="unlockError"></div>
+      </div>
+      <div class="settings-modal-actions">
+        <button type="button" class="smb-cancel" onclick="closeUnlock()">Cancel</button>
+        <button type="button" class="smb-confirm" id="unlockBtn" onclick="submitUnlock()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Change Password Modal -->
+  <div class="settings-modal-overlay" id="changePassOverlay" style="display:none">
+    <div class="settings-modal">
+      <div class="settings-modal-icon key">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+      </div>
+      <h3 class="settings-modal-title">Change Settings Password</h3>
+      <p class="settings-modal-sub">Choose a new password for unlocking System Settings.</p>
+      <div class="settings-modal-field">
+        <label class="settings-modal-label">Current Password <span class="req">*</span></label>
+        <div class="pwd-wrap">
+          <input type="password" id="cpCurrentInput" class="settings-modal-input" placeholder="Current settings password" autocomplete="off"/>
+          <button type="button" class="pwd-eye" onclick="togglePwd('cpCurrentInput',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="settings-modal-field">
+        <label class="settings-modal-label">New Password <span class="req">*</span></label>
+        <div class="pwd-wrap">
+          <input type="password" id="cpNewInput" class="settings-modal-input" placeholder="New password (min. 6 characters)" autocomplete="new-password"/>
+          <button type="button" class="pwd-eye" onclick="togglePwd('cpNewInput',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="settings-modal-field">
+        <label class="settings-modal-label">Confirm New Password <span class="req">*</span></label>
+        <div class="pwd-wrap">
+          <input type="password" id="cpConfirmInput" class="settings-modal-input" placeholder="Re-enter new password" autocomplete="new-password"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();submitChangePassword()}"/>
+          <button type="button" class="pwd-eye" onclick="togglePwd('cpConfirmInput',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="settings-modal-error" id="cpError"></div>
+      </div>
+      <div class="settings-modal-actions">
+        <button type="button" class="smb-cancel" onclick="closeChangePassword()">Cancel</button>
+        <button type="button" class="smb-confirm" id="cpBtn" onclick="submitChangePassword()">Change Password</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const EYE_ON  = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const EYE_OFF = `<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+    function togglePwd(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const show  = input.type === 'password';
+      input.type  = show ? 'text' : 'password';
+      btn.innerHTML = show ? EYE_OFF : EYE_ON;
+    }
+  </script>
+  <script src="/ADMIN_/JS/sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../notify.js"></script>
+  <script src="/ADMIN_/JS/settings.js"></script>
+</body>
+</html>

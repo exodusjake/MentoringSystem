@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Availability — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/availability.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Availability</h1>
+          <p>Post open time slots so your mentees can request a session.</p>
+        </div>
+        <button class="btn-post-slot" onclick="openPostModal()">
+          <i class="ti ti-plus"></i> Post Slot
+        </button>
+      </div>
+
+      <!-- ── MY SLOTS ─────────────────────────────────────────────────────── -->
+      <div class="avail-section-title">
+        <i class="ti ti-calendar-event"></i>
+        Open Slots
+      </div>
+
+      <div id="slotsLoading" class="avail-loading"><span class="spinner"></span> Loading slots...</div>
+      <div id="slotsEmpty"   class="avail-empty" style="display:none;">
+        <i class="ti ti-calendar-plus"></i>
+        <p>No open slots yet — click <strong>Post Slot</strong> to add one.</p>
+      </div>
+      <div id="slotsGrid" class="avail-grid" style="display:none;"></div>
+
+      <!-- ── COLLAPSIBLE SECTIONS ─────────────────────────────────────────── -->
+      <div class="avail-collapsibles">
+
+        <!-- Recent Bookings — read-only roster of who's attending each posted slot. -->
+        <div class="avail-collapsible is-open" id="reqsCollapsible">
+          <button class="avail-collapse-hdr" onclick="toggleSection('reqsCollapsible')">
+            <span class="coll-title">
+              <i class="ti ti-inbox"></i>
+              Recent Bookings
+            </span>
+            <span class="coll-right">
+              <i class="ti ti-chevron-down coll-chevron"></i>
+            </span>
+          </button>
+          <div class="avail-collapse-body">
+            <div id="reqsLoading" class="avail-loading"><span class="spinner"></span> Loading bookings...</div>
+            <div id="reqsEmpty" class="avail-empty" style="display:none;">
+              <i class="ti ti-calendar-check"></i>
+              <p>No one has booked a slot yet.</p>
+            </div>
+            <div id="reqsList" class="reqs-list" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- 2. Past Slots — starts collapsed, hidden until there are past slots -->
+        <div class="avail-collapsible" id="pastCollapsible" style="display:none;">
+          <button class="avail-collapse-hdr" onclick="toggleSection('pastCollapsible')">
+            <span class="coll-title">
+              <i class="ti ti-history"></i>
+              Past Slots
+            </span>
+            <i class="ti ti-chevron-down coll-chevron"></i>
+          </button>
+          <div class="avail-collapse-body" style="display:none;">
+            <div id="pastSlotsList" class="avail-grid"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── POST SLOT MODAL ───────────────────────────────────────────────────── -->
+  <div id="postModal" class="modal-overlay" onclick="closePostModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closePostModal()"><i class="ti ti-x"></i></button>
+      <h2 class="modal-title">Post Available Slots</h2>
+      <p class="modal-subtitle">Choose a date and start time. The end time is recorded when you finish the session.</p>
+      <div id="postError" class="form-error" style="display:none;"></div>
+      <div class="modal-form">
+        <div class="form-group">
+          <label>Checkpoint</label>
+          <select id="slotName" onchange="onSlotNameChange()">
+            <option value="">Select a checkpoint…</option>
+          </select>
+          <p id="slotWindowHint" class="field-hint" style="display:none;"></p>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="slotDate" disabled />
+        </div>
+        <div id="timeRangesList" class="time-ranges-list"></div>
+        <button type="button" class="btn-add-range" onclick="addTimeRange()">
+          <i class="ti ti-plus"></i> Add Another Start Time
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closePostModal()">Cancel</button>
+        <button class="btn-save" id="postBtn" onclick="submitSlots()">Post Slots</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DELETE SLOT CONFIRM MODAL ─────────────────────────────────────────── -->
+  <div id="deleteSlotModal" class="modal-overlay" onclick="closeDeleteSlotModal(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-red">
+        <i class="ti ti-trash"></i>
+      </div>
+      <h3 class="confirm-title">Delete Availability Slot?</h3>
+      <p class="confirm-body">Delete this availability slot? This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeDeleteSlotModal()">Cancel</button>
+        <button class="btn-confirm-danger" id="confirmDeleteSlotBtn" onclick="confirmDeleteSlot()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../notify.js"></script>
+  <script src="../../checkpoint-window.js"></script>
+<script src="/MENTOR/JS/availability.js"></script>
+</body>
+</html>

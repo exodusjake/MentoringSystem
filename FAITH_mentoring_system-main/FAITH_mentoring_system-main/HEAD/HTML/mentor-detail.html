@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mentor Detail — Head Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sessions.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/monitor-activities.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css"/>
+  <style>
+    /* Neutralize colored stat card accents on this page */
+    .detail-stats-grid .sc-blue,
+    .detail-stats-grid .sc-purple,
+    .detail-stats-grid .sc-orange { border-top: 3px solid #e2e8f0; }
+    .detail-stats-grid .stat-icon.blue,
+    .detail-stats-grid .stat-icon.purple,
+    .detail-stats-grid .stat-icon.orange { background: #f1f5f9; }
+    .detail-stats-grid .stat-icon.blue svg,
+    .detail-stats-grid .stat-icon.purple svg,
+    .detail-stats-grid .stat-icon.orange svg { stroke: #64748b; }
+
+    /* 3-column row for this page's 3 stat cards, not the shared 4-column grid. */
+    .detail-stats-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 700px) { .detail-stats-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .detail-stats-grid { grid-template-columns: 1fr; } }
+
+    /* Mentoring Logsheet — page-scoped .ses-* classes, doesn't touch the shared .session-row. */
+    .ses-section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 14px; flex-wrap: wrap; }
+    .ses-filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 14px 18px; margin-bottom: 20px; }
+    .ses-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; margin-bottom: 28px; }
+    .ses-card { background: #fff; border: 1px solid #dce3ec; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-sm); transition: box-shadow var(--transition); cursor: pointer; }
+    .ses-card:hover { box-shadow: var(--shadow-md); }
+    .ses-card.ses-card--pending { cursor: default; }
+    .ses-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .ses-title-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
+    .ses-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+    .ses-course { font-size: 11px; font-weight: 600; color: var(--gray-500); background: #f4f7fb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1px 7px; flex-shrink: 0; }
+    .ses-when { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 12px; color: var(--gray-400); }
+    .ses-when-line { display: inline-flex; align-items: center; gap: 5px; }
+    .ses-when svg { width: 12px; height: 12px; stroke: var(--gray-400); flex-shrink: 0; }
+    .ses-when-sep { color: var(--gray-300); }
+    .ses-desc { font-size: 12.5px; color: var(--gray-500); line-height: 1.4; }
+    .ses-desc-text { word-break: break-word; }
+    .ses-desc-more { display: inline; background: none; border: none; padding: 0; margin-left: 4px; font-family: var(--font-main); font-size: 12.5px; font-weight: 600; color: var(--blue); cursor: pointer; }
+    .ses-desc-more:hover { text-decoration: underline; }
+    .ses-divider { height: 1px; background: #eef1f6; }
+    .ses-stats { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
+    .ses-footer { display: flex; justify-content: center; }
+    .ses-view-link { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font-family: var(--font-main); font-size: 13px; font-weight: 600; color: var(--blue); cursor: pointer; padding: 2px; }
+    .ses-view-link:hover { text-decoration: underline; }
+    .ses-view-link:disabled { color: var(--gray-400); cursor: default; text-decoration: none; }
+    .ses-view-link svg { width: 13px; height: 13px; stroke: currentColor; }
+
+    /* Share row heights so wrapped titles and descriptions do not shift badges. */
+    .ses-card { display: grid; grid-template-rows: subgrid; grid-row: span 5; min-width: 0; }
+    .ses-top { grid-row: 1; align-items: flex-start; flex-wrap: wrap; }
+    .ses-when { grid-row: 2; }
+    .ses-desc { grid-row: 3; }
+    .ses-card > .ses-divider { display: none; }
+    .ses-stats { grid-row: 4; align-content: start; border-top: 1px solid #eef1f6; padding-top: 12px; }
+    .ses-footer { grid-row: 5; border-top: 1px solid #eef1f6; padding-top: 12px; }
+    .ses-stats .sr-metric { font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+    .ses-stats .sr-proof-pill { padding: 0; }
+
+    /* Proof preview modal — opens the image/PDF inline instead of a new tab. */
+    button.proof-chip { border: none; font-family: inherit; }
+    .proof-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.65); z-index: 1000; align-items: center; justify-content: center; padding: 24px; }
+    .proof-modal-overlay.open { display: flex; }
+    .proof-modal { background: #fff; border-radius: 14px; max-width: 720px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+    .proof-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #dce3ec; font-weight: 700; font-size: 15px; color: #111827; }
+    .proof-modal-close { background: none; border: none; font-size: 22px; line-height: 1; color: #6b7280; cursor: pointer; padding: 2px 8px; border-radius: 6px; }
+    .proof-modal-close:hover { background: #f1f5f9; color: #111827; }
+    .proof-modal-body { padding: 16px 20px; overflow: auto; display: flex; align-items: center; justify-content: center; background: #f8fafc; min-height: 200px; }
+    .proof-modal-body img { max-width: 100%; max-height: 70vh; border-radius: 8px; display: block; }
+    .proof-modal-body iframe { width: 100%; height: 65vh; border: none; border-radius: 8px; background: #fff; }
+    .proof-modal-footer { padding: 14px 20px; border-top: 1px solid #dce3ec; display: flex; justify-content: flex-end; }
+    .proof-modal-download { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: #0d9488; color: #fff; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; }
+    .proof-modal-download:hover { background: #0d6560; }
+  </style>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/HEAD/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish head-polish session-detail">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <!-- Back -->
+      <div class="detail-back-bar">
+        <a href="mentor-performance.html" class="btn-back" id="backBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Mentor Monitoring
+        </a>
+      </div>
+
+      <!-- Hero -->
+      <div class="mentor-hero" id="mentorHero">
+        <div class="hero-avatar av-0" id="heroAvatar">—</div>
+        <div class="hero-info" id="heroInfo">
+          <div class="hero-name-row">
+            <div class="hero-name" id="heroName">Loading…</div>
+            <span class="hero-badge" id="heroBadge"></span>
+          </div>
+          <div class="hero-meta" id="heroMeta"></div>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="detail-stats-grid">
+        <div class="stat-card sc-blue">
+          <div class="stat-top-row">
+            <div class="stat-label">Sessions Done</div>
+            <div class="stat-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" id="dStatCompleted"><span class="stat-pulse">—</span></div>
+          <div class="stat-note" id="dStatRequiredNote">of — required</div>
+          <div class="stat-progress-wrap">
+            <div class="stat-progress-bar"><div class="stat-progress-fill" id="dStatProgressFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="stat-card sc-purple">
+          <div class="stat-top-row">
+            <div class="stat-label">Mentees with Completed Checkpoints</div>
+            <div class="stat-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 11.08 22 12 12 22 2 12 2 11.08"/><path d="M12 22V12"/><path d="M2 11.08l5-5 5 5 5-5 5 5"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" id="dStatActiveMentees"><span class="stat-pulse">—</span></div>
+          <div class="stat-note" id="dStatInactiveNote">— inactive</div>
+        </div>
+
+        <div class="stat-card sc-orange">
+          <div class="stat-top-row">
+            <div class="stat-label">Total Mentees</div>
+            <div class="stat-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" id="dStatTotalMentees"><span class="stat-pulse">—</span></div>
+          <div class="stat-note">assigned mentees</div>
+        </div>
+      </div>
+
+      <!-- Mentoring Logsheet -->
+      <div class="ses-section-head">
+        <div>
+          <span class="section-card-title">Mentoring Logsheet</span>
+          <span id="sessionCount" class="sessions-section-count"></span>
+        </div>
+        <div class="print-btn-group" onclick="event.stopPropagation()">
+          <button class="btn-print-main" onclick="headExportAll('all')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print All
+          </button>
+          <button class="btn-print-caret" onclick="headTogglePrintMenu('all')">
+            <i class="ti ti-chevron-down"></i>
+          </button>
+          <div class="print-dropdown" id="headPrintMenu-all">
+            <button class="print-drop-item" onclick="headExportAll('all');headClosePrintMenu()"><i class="ti ti-files"></i> All Forms</button>
+            <button class="print-drop-item" onclick="headExportAll('logsheet');headClosePrintMenu()"><i class="ti ti-clipboard-list"></i> Logsheet</button>
+            <button class="print-drop-item" onclick="headExportAll('notes');headClosePrintMenu()"><i class="ti ti-notes"></i> Mentor's Notes</button>
+            <button class="print-drop-item" onclick="headExportAll('nonattend');headClosePrintMenu()"><i class="ti ti-user-x"></i> Non-Attendance</button>
+          </div>
+        </div>
+      </div>
+      <div class="ses-filter-bar">
+        <select class="filter-select filter-select-sm" id="sessionStatusFilter" onchange="applySessionFilter()">
+          <option value="">All Statuses</option>
+          <option value="Completed">Completed</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <select class="filter-select filter-select-sm" id="sessionPeriodFilter" onchange="applySessionFilter()">
+          <option value="">All School Years</option>
+        </select>
+      </div>
+      <div class="ses-card-grid" id="sessionCardsGrid">
+        <div class="empty-state"><span class="spinner"></span> Loading…</div>
+      </div>
+
+      <!-- Assigned Mentees -->
+      <div class="section-card">
+        <div class="section-card-head">
+          <span class="section-card-title">Assigned Mentees</span>
+          <span id="menteeCount" style="font-size:13px;color:#6b7280;"></span>
+        </div>
+        <div class="section-filter-bar">
+          <div class="search-box search-box-sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="menteeSearch" placeholder="Search mentee…" autocomplete="off" oninput="applyMenteeFilter()"/>
+          </div>
+          <a id="menteeAttendanceLink" class="btn-primary" href="attendance-summary.html">
+            <i class="ti ti-calendar-stats"></i> View Attendance Details
+          </a>
+        </div>
+        <div id="menteeAccordion" class="section-accordion"></div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Logsheet Viewer Modal (same shape as Admin's Sessions Detail page) -->
+  <div class="modal-overlay" id="logsheetOverlay" style="display:none;" onclick="closeLogsheet(event)">
+    <div class="logsheet-modal" onclick="event.stopPropagation()">
+
+      <div class="lm-header">
+        <div>
+          <div class="lm-title-row">
+            <div class="lm-title" id="lmSessionLabel">Mentoring Logsheet</div>
+            <span class="lm-logstatus-badge" id="lmLogStatusBadge" style="display:none"></span>
+          </div>
+          <div class="lm-sub" id="lmSubtitle"></div>
+        </div>
+        <button class="lm-close" onclick="closeLogsheet()">&times;</button>
+      </div>
+
+      <div class="lm-tabs">
+        <button class="lm-tab active" data-tab="logsheet"  onclick="switchTab('logsheet')">Mentoring Logsheet</button>
+        <button class="lm-tab"        data-tab="notes"     onclick="switchTab('notes')">Mentor's Notes</button>
+        <button class="lm-tab"        data-tab="nonattend" onclick="switchTab('nonattend')">Non-Attendance Report</button>
+      </div>
+
+      <div class="lm-body">
+        <div id="tabContent">
+          <div class="tab-loading"><span class="spinner"></span> Loading…</div>
+        </div>
+      </div>
+
+      <div class="lm-footer">
+        <button class="btn-outline" onclick="closeLogsheet()">Close</button>
+        <button class="btn-primary" onclick="printCurrentTab()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Print / Export PDF
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Proof Preview Modal -->
+  <div class="proof-modal-overlay" id="proofModalOverlay" onclick="if(event.target===this) closeProofModal()">
+    <div class="proof-modal">
+      <div class="proof-modal-header">
+        <span>Session Proof</span>
+        <button class="proof-modal-close" onclick="closeProofModal()" aria-label="Close">&times;</button>
+      </div>
+      <div class="proof-modal-body" id="proofModalBody"></div>
+      <div class="proof-modal-footer">
+        <a class="proof-modal-download" id="proofModalDownload" href="#">
+          <i class="ti ti-download"></i> Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+  <script src="/print-logsheet-styles.js"></script>
+  <script src="/apiClient.js"></script>
+  <script src="/notify.js"></script>
+  <script src="/HEAD/JS/sidebar.js"></script>
+  <script src="/security-utils.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="/dashboard-sessions.js"></script>
+<script src="/HEAD/JS/mentor-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/dashboard-approved.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/mentor-section-progress.css"/>
+  <script src="/mentor-section-progress.js"></script>
+  <link rel="stylesheet" href="/ADMIN_/CSS/approved-page-ui.css"/>
+</head>
+<body class="admin-dashboard portal-ui">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="page-header-top">
+          <h1>Admin Dashboard</h1>
+          <span class="period-chip" id="academicPeriod">Loading…</span>
+        </div>
+        <p id="dashboardDate">Loading...</p>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stats-grid mobile-summary-scroll" role="region" aria-label="Dashboard summary cards" tabindex="0">
+
+        <a class="stat-card stat-card-link" href="sessions.html" aria-label="View all mentors in Mentor Monitoring">
+          <div class="stat-icon-wrap purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statMentors"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Total Mentors</div>
+            <div class="stat-sub">Active mentor accounts</div>
+          </div>
+        </a>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statMentees"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Total Mentees</div>
+            <div class="stat-sub" id="statMenteesSub">— unassigned · — dropped out</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <line x1="9" y1="12" x2="15" y2="12"/>
+              <line x1="9" y1="16" x2="13" y2="16"/>
+            </svg>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value" id="statPending"><span class="stat-pulse">—</span></div>
+            <div class="stat-label">Sessions w/o Proof</div>
+            <div class="stat-sub">All-time completed sessions missing proof</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dash-grid">
+      <div class="dash-row dash-row-2">
+
+        <!-- Mentee Engagement Overview -->
+        <div class="card engagement-card">
+          <div class="card-header">
+            <h2>Mentee Engagement</h2>
+            <div class="dash-tip-wrap">
+              <i class="ti ti-alert-circle dash-tip-icon"></i>
+              <div class="dash-tip-box" id="engTipBox"></div>
+            </div>
+          </div>
+          <div class="eng-grid">
+            <a class="eng-cell eng-cell-link green" href="user-management.html?role=Mentee&amp;engagement=attended" aria-label="View mentees who attended this semester">
+              <div class="eng-cell-num" id="engAssignedActive"><span class="stat-pulse">—</span></div>
+              <div class="eng-cell-label">Attended this semester</div>
+            </a>
+            <a class="eng-cell eng-cell-link gray" href="user-management.html?role=Mentee&amp;engagement=no-attendance" aria-label="View assigned mentees with no attendance this semester">
+              <div class="eng-cell-num" id="engAssignedInactive"><span class="stat-pulse">—</span></div>
+              <div class="eng-cell-label">No attendance this semester</div>
+            </a>
+            <a class="eng-cell eng-cell-link orange" href="user-management.html?role=Mentee&amp;engagement=unassigned" aria-label="View unassigned mentees">
+              <div class="eng-cell-num" id="engUnassigned"><span class="stat-pulse">—</span></div>
+              <div class="eng-cell-label">Unassigned</div>
+            </a>
+          </div>
+          <div class="eng-breakdown">
+            <div class="eng-breakdown-title">Attendance This Semester</div>
+            <div class="eng-breakdown-list">
+              <a class="eng-breakdown-row eng-breakdown-link" href="user-management.html?role=Mentee&amp;engagement=excellent" aria-label="View mentees with excellent attendance">
+                <span class="eng-status-badge excellent">Excellent</span>
+                <span class="eng-bd-track"><span class="eng-bd-fill excellent" id="engBarExcellent"></span></span>
+                <span class="eng-bd-val" id="engStatusExcellent"><span class="stat-pulse">—</span></span>
+              </a>
+              <a class="eng-breakdown-row eng-breakdown-link" href="user-management.html?role=Mentee&amp;engagement=on-track" aria-label="View mentees with on-track attendance">
+                <span class="eng-status-badge on-track">On Track</span>
+                <span class="eng-bd-track"><span class="eng-bd-fill on-track" id="engBarOnTrack"></span></span>
+                <span class="eng-bd-val" id="engStatusOnTrack"><span class="stat-pulse">—</span></span>
+              </a>
+              <a class="eng-breakdown-row eng-breakdown-link" href="user-management.html?role=Mentee&amp;engagement=needs-attention" aria-label="View mentees needing attendance follow-up">
+                <span class="eng-status-badge needs-attention">Needs Attention</span>
+                <span class="eng-bd-track"><span class="eng-bd-fill needs-attention" id="engBarNeedsAttention"></span></span>
+                <span class="eng-bd-val" id="engStatusNeedsAttention"><span class="stat-pulse">—</span></span>
+              </a>
+              <a class="eng-breakdown-row eng-breakdown-link" href="user-management.html?role=Mentee&amp;engagement=no-completed-sessions" aria-label="View assigned mentees with no completed checkpoints this semester">
+                <span class="eng-status-badge no-sessions">No Completed Sessions</span>
+                <span class="eng-bd-track"><span class="eng-bd-fill no-sessions" id="engBarNoSessions"></span></span>
+                <span class="eng-bd-val" id="engStatusNoSessions"><span class="stat-pulse">—</span></span>
+              </a>
+            </div>
+          </div>
+          <div class="engagement-total">
+            <span>Total Mentees</span>
+            <a class="engagement-link" href="user-management.html?role=Mentee&amp;engagement=all" aria-label="View all active mentee accounts"><span id="engTotal"><span class="stat-pulse">—</span></span></a>
+          </div>
+          <div class="engagement-dropout">
+            <span><i class="ti ti-user-x"></i> Dropped Out</span>
+            <a class="engagement-link" href="user-management.html?role=Mentee&amp;engagement=dropped-out" aria-label="View dropped-out mentees"><span id="engDroppedOut"><span class="stat-pulse">—</span></span></a>
+          </div>
+        </div>
+
+        <div class="card chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h2>Mentor Performance</h2>
+              <p class="chart-desc" id="chartDesc">Current-semester performance of active mentor accounts.</p>
+            </div>
+            <div class="dash-tip-wrap">
+              <i class="ti ti-alert-circle dash-tip-icon" title="About mentor performance"></i>
+              <div class="dash-tip-box">
+                <div class="dash-tip-title">Overall Performance</div>
+                <div class="dash-tip-row">Timeliness (25%) + Completeness (25%) + Evaluation Rating (50%).</div>
+                <div class="dash-tip-row">The chart groups active mentor accounts by overall-performance tier for the current semester.</div>
+                <div class="dash-tip-row">Select a bar or status below to view matching mentors.</div>
+              </div>
+            </div>
+            <span class="semester-badge" id="semesterBadge">Loading…</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="sessionChart"></canvas>
+          </div>
+          <div class="chart-action-guide">
+            <a class="chart-action-item" href="sessions.html?status=Not%20Started" aria-label="View mentors not started">
+              <span class="action-dot notstarted"></span>
+              <div>
+                <div class="action-title">Not Started</div>
+                <div class="action-desc">No completed sessions and overall score below 50%.</div>
+              </div>
+            </a>
+            <a class="chart-action-item" href="sessions.html?status=Needs%20Attention" aria-label="View mentors needing attention">
+              <span class="action-dot needsattention"></span>
+              <div>
+                <div class="action-title">Needs Attention</div>
+                <div class="action-desc">Follow up to understand delays.</div>
+              </div>
+            </a>
+            <a class="chart-action-item" href="sessions.html?status=On%20Track" aria-label="View on-track mentors">
+              <span class="action-dot on-track"></span>
+              <div>
+                <div class="action-title">On Track</div>
+                <div class="action-desc">No action needed, monitor normally.</div>
+              </div>
+            </a>
+            <a class="chart-action-item" href="sessions.html?status=Excellent" aria-label="View excellent mentors">
+              <span class="action-dot excellent"></span>
+              <div>
+                <div class="action-title">Excellent</div>
+                <div class="action-desc">Performing excellently.</div>
+              </div>
+            </a>
+            <div class="chart-action-item">
+              <span class="action-dot pending"></span>
+              <div>
+                <div class="action-title">Pending</div>
+                <div class="action-desc">No checkpoint deadline has passed yet, so no score.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="dash-row dash-row-3">
+
+        <!-- System Alerts -->
+        <div class="card alerts-card">
+          <div class="card-header">
+            <h2>System Alerts</h2>
+            <div class="dash-tip-wrap">
+              <i class="ti ti-alert-circle dash-tip-icon"></i>
+              <div class="dash-tip-box">
+                <div class="dash-tip-title">Priority Levels</div>
+                <div class="dash-tip-row"><strong>Urgent</strong> — requires immediate action</div>
+                <div class="dash-tip-row"><strong>Warning</strong> — follow up soon</div>
+                <div class="dash-tip-row"><strong>Review</strong> — audit recommended</div>
+                <div class="dash-tip-row"><strong>All Clear</strong> — no action needed</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="card-desc-text">Priority-ordered notifications requiring immediate action. Critical issues appear first.</p>
+            <div class="alerts-list" id="alertsList">
+              <div class="alert-item red">
+                <div class="alert-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title-row">
+                    <span class="alert-title" id="alertTitle1"><span class="spinner"></span> Loading...</span>
+                    <span class="alert-priority-badge" id="alertBadge1"></span>
+                  </div>
+                  <div class="alert-detail-row">
+                    <div class="alert-sub" id="alertSub1"></div>
+                    <a href="sessions.html" class="alert-link">View Details.</a>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item orange">
+                <div class="alert-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title-row">
+                    <span class="alert-title" id="alertTitle2"><span class="spinner"></span> Loading...</span>
+                    <span class="alert-priority-badge" id="alertBadge2"></span>
+                  </div>
+                  <div class="alert-detail-row">
+                    <div class="alert-sub" id="alertSub2"></div>
+                    <a href="user-management.html" class="alert-link">View Details.</a>
+                  </div>
+                </div>
+              </div>
+              <div class="alert-item blue">
+                <div class="alert-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+                </div>
+                <div class="alert-body">
+                  <div class="alert-title-row">
+                    <span class="alert-title" id="alertTitle3"><span class="spinner"></span> Loading...</span>
+                    <span class="alert-priority-badge" id="alertBadge3"></span>
+                  </div>
+                  <div class="alert-detail-row">
+                    <div class="alert-sub" id="alertSub3"></div>
+                    <a href="session-proofs.html" class="alert-link">View Details.</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 3 Mentors -->
+        <div class="card top3-card">
+          <div class="card-header">
+            <h2>Top 3 Mentors</h2>
+            <div class="dash-tip-wrap">
+              <i class="ti ti-alert-circle dash-tip-icon"></i>
+              <div class="dash-tip-box">
+                <div class="dash-tip-title">Ranked by</div>
+                <div class="dash-tip-row">Ranked by overall performance: Timeliness (25%) + Completeness (25%) + Evaluation Rating (50%). Mentors with 0% score are not ranked yet.</div>
+              </div>
+            </div>
+          </div>
+          <div id="top3List" class="top3-list">
+            <p style="color:#9ca3af;font-size:var(--text-2);padding:var(--space-4) var(--space-5);"><span class="spinner"></span> Loading...</p>
+          </div>
+          <div class="card-view-footer">
+            <a href="evaluation-ratings.html" class="card-view-link">View full ranking <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Third card in this row, alongside System Alerts and Top 3 Mentors. -->
+        <div class="card recent-card">
+          <div class="card-header">
+            <h2>Recent Activities</h2>
+          </div>
+          <div class="activity-list" id="recentActivities">
+            <div class="activity-skeleton"><span class="spinner"></span> Loading activities...</div>
+          </div>
+        </div>
+
+      </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/ADMIN_/JS/chart.umd.min.js"></script>
+  <script src="/ADMIN_/JS/sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/ADMIN_/JS/dashboard.js"></script>
+</body>
+</html>

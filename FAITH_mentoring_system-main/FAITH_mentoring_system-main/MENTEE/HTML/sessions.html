@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sessions — Mentee Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css">
+  <link rel="stylesheet" href="/MENTEE/CSS/mentee-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/sessions.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/page-polish.css"/>
+</head>
+<body class="mentee-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <h1>Sessions</h1>
+        <p id="sessionSubtitle">Your mentoring session log</p>
+      </div>
+
+      <!-- Attendance Progress Banner -->
+      <div id="attendanceBanner" class="att-progress-banner" style="display:none;">
+        <div class="att-progress-top">
+          <div class="att-progress-left">
+            <div class="att-progress-title">Semester Completion</div>
+            <div class="att-progress-sub" id="attProgressSub">Loading...</div>
+          </div>
+          <div class="att-progress-nums">
+            <span class="att-num" id="attNum"><span class="stat-pulse">—</span></span>
+            <span class="att-denom" id="attDenom">/ — sessions</span>
+          </div>
+        </div>
+        <div class="att-bar-track">
+          <div class="att-bar-fill" id="attBarFill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="session-stats-strip">
+        <div class="sstat">
+          <div class="sstat-val" id="sTotalSessions"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Total</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val green" id="sCompleted"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Completed</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val blue" id="sScheduled"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Scheduled / In Progress</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-val gray" id="sCancelled"><span class="stat-pulse">—</span></div>
+          <div class="sstat-lbl">Cancelled</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="ti ti-search"></i>
+          <input type="text" id="searchInput" placeholder="Search by date or topic..." />
+        </div>
+        <select id="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="In Progress">In Progress</option>
+<option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <!-- Sessions List -->
+      <div id="sessionsBody" class="sessions-cards-list">
+        <div class="loading-cell"><span class="spinner"></span> Loading...</div>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Session Detail Modal -->
+  <div id="sessionModal" class="modal-overlay" onclick="closeSessionModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeSessionModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title" id="sessionModalTitle">Session Details</h2>
+      <p class="modal-subtitle" id="sessionModalDate">—</p>
+      <div id="sessionModalBody" class="session-modal-body">
+        <div class="list-skeleton"><span class="spinner"></span> Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="qr-modal-overlay" onclick="closeQrModal(event)">
+    <div class="qr-modal-card" onclick="event.stopPropagation()">
+      <button class="qr-close-btn" onclick="closeQrModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <div class="qr-label">Show this QR to your mentor</div>
+      <div class="qr-session-info" id="qrSessionInfo">—</div>
+      <div class="qr-canvas-wrap">
+        <canvas id="qrCanvas"></canvas>
+      </div>
+      <div class="qr-countdown" id="qrCountdown">Generating...</div>
+      <p class="qr-hint">Your mentor will scan this to mark your attendance.</p>
+    </div>
+  </div>
+
+  <script src="/MENTEE/JS/qrcode.min.js"></script>
+  <script src="/MENTEE/JS/mentee-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/attendance-metrics.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="../../checkpoint-window.js"></script>
+<script src="/MENTEE/JS/sessions.js"></script>
+</body>
+</html>

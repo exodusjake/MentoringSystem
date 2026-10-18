@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Announcements — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/announcements.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <script src="/evaluation-description.js"></script>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Announcements</h1>
+          <p id="announceSubtitle">Loading...</p>
+        </div>
+        <button class="btn-post-announce" onclick="openPostModal()">
+          <i class="ti ti-plus"></i> Post Announcement
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="ann-tabs">
+        <button class="ann-tab active" id="tab-notifications" onclick="switchTab('notifications')">
+          <i class="ti ti-building"></i> Administration
+          <span class="ann-unread-dot" id="dot-notifications" style="display:none"></span>
+        </button>
+        <button class="ann-tab" id="tab-mine" onclick="switchTab('mine')">
+          <i class="ti ti-speakerphone"></i> My Announcements
+          <span class="ann-unread-dot" id="dot-mine" style="display:none"></span>
+        </button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <i class="ti ti-search"></i>
+          <input type="text" id="searchInput" placeholder="Search announcements..." />
+        </div>
+      </div>
+
+      <!-- List -->
+      <div id="announcementsList" class="announcements-list">
+        <div class="list-skeleton"><span class="spinner"></span> Loading announcements...</div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Post / Edit Announcement Modal -->
+  <div id="postModal" class="modal-overlay" onclick="closePostModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closePostModal()">
+        <i class="ti ti-x"></i>
+      </button>
+      <h2 class="modal-title" id="postModalTitle">Post Announcement</h2>
+      <form id="postForm" onsubmit="submitPostAnnouncement(event)">
+        <div class="form-group" id="postSectionGroup" style="display:none">
+          <label class="form-label">Post to</label>
+          <select id="postSectionPick" class="form-input">
+            <option value="Mentee">All My Mentees</option>
+          </select>
+        </div>
+        <input type="text" id="postTitleInput" class="gc-title-input"
+          placeholder="Title" required />
+        <div class="gc-editor-wrap">
+          <div id="postContentInput" class="gc-editor" contenteditable="true"
+            data-placeholder="Share something with your class..."></div>
+          <div class="gc-toolbar">
+            <button type="button" class="gc-fmt-btn" data-cmd="bold" data-tooltip="Bold" aria-label="Bold" onmousedown="event.preventDefault();formatDoc('bold')"><b>B</b></button>
+            <button type="button" class="gc-fmt-btn" data-cmd="italic" data-tooltip="Italic" aria-label="Italic" onmousedown="event.preventDefault();formatDoc('italic')"><i>I</i></button>
+            <button type="button" class="gc-fmt-btn" data-cmd="underline" data-tooltip="Underline" aria-label="Underline" onmousedown="event.preventDefault();formatDoc('underline')"><u>U</u></button>
+            <button type="button" class="gc-fmt-btn" data-cmd="strikeThrough" data-tooltip="Strikethrough" aria-label="Strikethrough" onmousedown="event.preventDefault();formatDoc('strikeThrough')"><s>S</s></button>
+            <span class="gc-fmt-sep"></span>
+            <button type="button" class="gc-fmt-btn" data-cmd="insertUnorderedList" data-tooltip="Bullet list" aria-label="Bullet list" onmousedown="event.preventDefault();formatDoc('insertUnorderedList')"><i class="ti ti-list"></i></button>
+            <span class="gc-fmt-sep"></span>
+            <button type="button" class="gc-fmt-btn" title="Attach file" onclick="triggerAttachFile()"><i class="ti ti-paperclip"></i></button>
+            <input type="file" id="attachFileInput" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt" style="display:none" onchange="handleAttachFiles(event)">
+          </div>
+        </div>
+        <div id="attachList" class="attach-list"></div>
+        <div id="postFormError" class="form-error" style="display:none"></div>
+        <div class="form-actions">
+          <button type="button" class="btn-form-cancel" onclick="closePostModal()">Cancel</button>
+          <button type="submit" class="btn-form-submit" id="submitPostBtn">
+            <i class="ti ti-send"></i> Post
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Post / Update Confirm Modal -->
+  <div id="postConfirmModal" class="modal-overlay" onclick="closePostConfirmModal(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-primary">
+        <i class="ti ti-send" id="postConfirmIcon"></i>
+      </div>
+      <h3 class="confirm-title" id="postConfirmTitle">Post Announcement</h3>
+      <p class="confirm-body" id="postConfirmBody">Are you sure you want to post this announcement?</p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closePostConfirmModal()">Cancel</button>
+        <button class="btn-confirm-primary" id="confirmPostBtn" onclick="doSubmitAnnouncement()">
+          <i class="ti ti-send" id="postConfirmBtnIcon"></i>
+          <span id="postConfirmBtnText">Post</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div id="deleteAnnounceModal" class="modal-overlay" onclick="closeDeleteAnnounce(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-danger">
+        <i class="ti ti-trash"></i>
+      </div>
+      <h3 class="confirm-title">Delete Announcement?</h3>
+      <p class="confirm-body">
+        <strong id="deleteAnnounceTitle"></strong><br>
+        This will permanently remove the announcement.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeDeleteAnnounce()">Cancel</button>
+        <button class="btn-confirm-danger" id="confirmDeleteAnnounceBtn" onclick="confirmDeleteAnnounce()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Attachment Confirm Modal -->
+  <div id="deleteAttachModal" class="modal-overlay" onclick="closeDeleteAttachModal(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-danger">
+        <i class="ti ti-trash"></i>
+      </div>
+      <h3 class="confirm-title">Remove Attachment?</h3>
+      <p class="confirm-body">Remove this attachment? This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeDeleteAttachModal()">Cancel</button>
+        <button class="btn-confirm-danger" onclick="confirmDeleteAttach()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Comment Confirm Modal -->
+  <div id="deleteCommentModal" class="modal-overlay" onclick="closeDeleteCommentModal(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-danger">
+        <i class="ti ti-trash"></i>
+      </div>
+      <h3 class="confirm-title">Delete Comment?</h3>
+      <p class="confirm-body">Are you sure you want to delete this comment? This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="closeDeleteCommentModal()">Cancel</button>
+        <button class="btn-confirm-danger" onclick="confirmDeleteComment()">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Attachment lightbox -->
+  <div id="lightboxOverlay" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title" id="lightboxTitle">Attachment</span>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body" id="lightboxBody"></div>
+      <div class="lightbox-footer">
+        <a class="lightbox-download" id="lightboxDownload" href="#" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../security-utils.js"></script>
+  <script src="/MENTOR/JS/announcements.js"></script>
+</body>
+</html>

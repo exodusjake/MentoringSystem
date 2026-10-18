@@ -1,0 +1,23 @@
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'HasLoggedIn'
+)
+BEGIN
+    ALTER TABLE Users ADD HasLoggedIn BIT NOT NULL DEFAULT 0;
+    UPDATE Users SET HasLoggedIn = 1; -- existing users skip onboarding
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'MentorProfiles' AND COLUMN_NAME = 'SignatureFilePath'
+)
+    ALTER TABLE MentorProfiles ADD SignatureFilePath NVARCHAR(500) NULL;
+GO
+
+IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'MenteeProfiles' AND COLUMN_NAME = 'SignatureFilePath'
+)
+    ALTER TABLE MenteeProfiles ADD SignatureFilePath NVARCHAR(500) NULL;
+GO

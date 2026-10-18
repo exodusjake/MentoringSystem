@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attendance Overview — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/my-activities.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <h1>Attendance Overview</h1>
+        <p>Review mentee attendance toward the semester requirement.</p>
+      </div>
+
+      <!-- Hero card -->
+      <div class="mentor-hero" id="mentorHero">
+        <div class="hero-avatar av-0" id="heroAvatar">—</div>
+        <div class="hero-info" id="heroInfo">
+          <div class="hero-name" id="heroName">Loading…</div>
+          <div class="hero-meta" id="heroMeta"></div>
+        </div>
+        <div class="hero-tip-wrap">
+          <span class="hero-badge" id="heroBadge"></span>
+          <details class="attendance-help hero-help"><summary aria-label="Overall performance guide"><i class="ti ti-info-circle" aria-hidden="true"></i></summary><div class="hero-tip-box" id="heroTipBox"></div></details>
+        </div>
+      </div>
+
+
+      <!-- Mentee Attendance Overview -->
+      <div class="section-card section-card--tip-overflow">
+        <div class="section-card-head">
+          <span class="section-card-title">Attendance Overview</span>
+          <span id="menteeCount" class="section-card-count"></span>
+        </div>
+        <div class="section-filter-bar">
+          <div class="search-box">
+            <i class="ti ti-search"></i>
+            <input type="text" id="menteeSearch" placeholder="Search mentee…" autocomplete="off"/>
+          </div>
+          <select class="filter-select" id="menteeStatusFilter"><option value="">All Completion Statuses</option><option value="not-started">Not Started</option><option value="in-progress">In Progress</option><option value="complete">Complete</option><option value="not-configured">No Requirement Set</option></select>
+          <details class="attendance-help"><summary aria-label="Semester completion guide"><i class="ti ti-info-circle" aria-hidden="true"></i></summary><div class="info-tip-box"></div></details>
+        </div>
+        <div id="sectionAccordion" class="section-accordion"></div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/attendance-metrics.js"></script>
+  <script src="/MENTOR/JS/my-activities.js"></script>
+</body>
+</html>

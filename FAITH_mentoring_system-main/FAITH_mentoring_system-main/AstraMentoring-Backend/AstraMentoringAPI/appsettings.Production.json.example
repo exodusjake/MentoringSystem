@@ -1,0 +1,20 @@
+{
+  "_comment": "Copy this file to appsettings.Production.json on the EC2 server and fill in real values. appsettings.Production.json is gitignored — it never gets committed, so real secrets stay off GitHub. ASP.NET Core loads it automatically when ASPNETCORE_ENVIRONMENT=Production, layered on top of appsettings.json.",
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=AstraMentoring;User Id=astra_app;Password=REPLACE_ME;TrustServerCertificate=True;MultipleActiveResultSets=True"
+  },
+
+  "Jwt": {
+    "Key": "REPLACE_ME_WITH_A_LONG_RANDOM_SECRET_NEVER_COMMITTED",
+    "Issuer": "AstraMentoringAPI",
+    "Audience": "AstraMentoringClient"
+  },
+
+  "Cors": {
+    "_comment": "List EVERY origin the deployed frontend is served from. This REPLACES the dev list from appsettings.json — it does not merge with it, so don't rely on localhost entries still being allowed.",
+    "AllowedOrigins": [
+      "https://REPLACE_WITH_YOUR_EC2_PUBLIC_DNS_OR_DOMAIN"
+    ]
+  }
+}

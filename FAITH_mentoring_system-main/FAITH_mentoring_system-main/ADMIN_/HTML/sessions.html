@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mentor Monitoring — Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sessions.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/monitor-activities.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/monitoring-mobile.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Mentor Monitoring</h1>
+        <p>Track mentoring progress and session attendance across all mentors</p>
+      </div>
+
+      <!-- School filter chips — toggle, not a gate. -->
+      <div class="school-landing">
+        <div class="sl-grid monitoring-school-strip" role="region" aria-label="School summary cards" tabindex="0">
+
+          <div class="sl-card sl-card--blue" id="schoolChip-technology" onclick="toggleSchool('School of Technology')">
+            <div class="sl-icon-wrap sl-blue">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="sl-content">
+              <div class="sl-name">School of Technology</div>
+              <div class="sl-meta"><strong id="sotMentors"><span class="stat-pulse">—</span></strong> mentors · <strong id="sotMentees"><span class="stat-pulse">—</span></strong> mentees</div>
+              <div class="sl-dept-tags">
+                <span class="sl-dept-tag">COE</span>
+                <span class="sl-dept-tag">CCIT</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sl-card sl-card--green" id="schoolChip-humanities" onclick="toggleSchool('School of Humanities')">
+            <div class="sl-icon-wrap sl-green">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="sl-content">
+              <div class="sl-name">School of Humanities</div>
+              <div class="sl-meta"><strong id="sohMentors"><span class="stat-pulse">—</span></strong> mentors · <strong id="sohMentees"><span class="stat-pulse">—</span></strong> mentees</div>
+              <div class="sl-dept-tags"><span class="sl-dept-tag">CASE</span><span class="sl-dept-tag">CHC</span><span class="sl-dept-tag">CCJ</span></div>
+            </div>
+          </div>
+
+          <div class="sl-card sl-card--amber" id="schoolChip-management" onclick="toggleSchool('School of Management')">
+            <div class="sl-icon-wrap sl-amber">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
+            <div class="sl-content">
+              <div class="sl-name">School of Management</div>
+              <div class="sl-meta"><strong id="somMentors"><span class="stat-pulse">—</span></strong> mentors · <strong id="somMentees"><span class="stat-pulse">—</span></strong> mentees</div>
+              <div class="sl-dept-tags"><span class="sl-dept-tag">CBMA</span><span class="sl-dept-tag">CTHM</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Mentor list — combined across all schools by default. -->
+      <div id="mentorView">
+
+      <!-- Mentors panel -->
+      <div class="panel-header">
+        <div>
+          <span class="panel-title" id="mentorViewTitle">All Schools</span>
+          <span class="panel-count" id="mentorCount"></span>
+        </div>
+        <div class="panel-actions">
+          <button class="btn-export" onclick="exportCSV()" title="Download as CSV">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+          <button class="btn-primary" onclick="printProgressReport()" title="Open printable report">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search mentors…" autocomplete="off"/>
+        </div>
+        <select class="filter-select" id="statusFilter">
+          <option value="">All Statuses</option>
+          <option value="Not Started">Not Started</option>
+          <option value="Needs Attention">Needs Attention</option>
+          <option value="On Track">On Track</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Pending">Pending</option>
+        </select>
+        <select class="filter-select" id="courseFilter">
+          <option value="">All Courses</option>
+        </select>
+        <select class="filter-select" id="schoolYearFilter">
+          <option value="">Current Semester</option>
+        </select>
+      </div>
+
+      <!-- Mentor rows -->
+      <div class="mentor-list" id="mentorCardsGrid">
+        <div class="empty-state"><span class="spinner"></span> Loading mentors…</div>
+      </div>
+
+      </div><!-- end #mentorView -->
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/ADMIN_/JS/sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../notify.js"></script>
+  <script src="../../mentor-schools.js"></script>
+  <script src="/ADMIN_/JS/sessions.js"></script>
+</body>
+</html>

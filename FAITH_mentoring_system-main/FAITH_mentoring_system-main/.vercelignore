@@ -1,0 +1,15 @@
+# Backend source code — this is a .NET API, not part of the static frontend.
+# It stays deployed on AWS EC2; nothing here should ever be publicly served.
+AstraMentoring-Backend/
+
+# Database scripts — not for public serving.
+SQL/
+ERD DATABASE/
+
+# Old draft portal, superseded by MENTEE/ — see project_prelaunch_audit memory.
+Mentees/
+
+# Capstone paper assets, admin scripts, sample data — not part of the live site.
+ARCHITECTURE.md
+export-accounts.ps1
+sample_import.csv

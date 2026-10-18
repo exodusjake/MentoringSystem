@@ -1,0 +1,27 @@
+.mentor-section-progress { min-width: 0; margin-top: 10px; text-align: left; }
+.mentor-section-heading { font-size: 11px; font-weight: 600; color: #526175; margin-bottom: 4px; }
+.mentor-section-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px;
+  padding: 5px 0; border-bottom: 1px solid #e5e7eb; color: #283444; font-size: 12px; }
+.mentor-section-row:last-child { border-bottom: 0; }
+.mentor-section-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.mentor-section-count { white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mentor-section-note, .mentor-section-row small { font-size: 11px; color: #526175; }
+.top3-row { flex-wrap: wrap; }
+.top3-row > .mentor-section-progress { flex-basis: 100%; width: 100%; margin-top: 0; }
+.top3-score-label { display: block; font-size: 11px; color: #526175; }
+.mentor-section-progress--compact {
+  display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 16px;
+}
+.mentor-section-chip { display: inline-flex; align-items: baseline; gap: 4px;
+  max-width: 100%; padding: 0; border: 0;
+  background: transparent; color: #526175; font-size: 12px; line-height: 1.5; }
+.mentor-section-chip > span { min-width: 0; overflow-wrap: anywhere; }
+.mentor-section-chip > strong { white-space: nowrap; font-weight: 600; color: #374151; font-variant-numeric: tabular-nums; }
+.dash-row-3 > .top3-card { height: 430px; min-height: 0; }
+.top3-card > .card-header,
+.top3-card > .card-view-footer { flex-shrink: 0; }
+.top3-card > .top3-list { flex: 1; min-height: 0; overflow-y: auto; }
+.top3-list > .top3-row,
+.top3-list > .top3-note { flex-shrink: 0; }
+.mentor-card > .mentor-section-progress { margin: 0 20px 12px; }
+.hero-info > .mentor-section-progress, #heroInfo > .mentor-section-progress { max-width: 480px; }

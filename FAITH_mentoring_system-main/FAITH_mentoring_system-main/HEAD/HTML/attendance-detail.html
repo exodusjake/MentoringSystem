@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Attendance Detail — Head Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/attendance-logs.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/HEAD/CSS/page-polish.css"/>
+</head>
+<body class="admin-polish head-polish attendance-detail">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <a href="attendance-summary.html" class="btn-back" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Attendance Summary
+      </a>
+
+      <!-- Mentor hero -->
+      <div class="mentor-hero" id="mentorHero">
+        <div class="hero-avatar av-0" id="heroAvatar">—</div>
+        <div class="hero-info">
+          <div class="hero-name" id="heroName">Loading…</div>
+          <div class="hero-meta" id="heroMeta"></div>
+        </div>
+      </div>
+
+      <!-- Sections accordion -->
+      <div class="sections-wrapper">
+        <div class="sections-head">
+          <span class="sections-title">Sections</span>
+          <span id="sectionCount" class="sections-count"></span>
+        </div>
+
+        <div class="att-toolbar" style="margin-bottom:14px;">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="sectionSearch" placeholder="Filter by section or course…" autocomplete="off"/>
+          </div>
+          <select id="statusFilter" class="filter-select" onchange="setStatusFilter(this.value)"><option value="">All Completion Statuses</option><option value="not-started">Not Started</option><option value="in-progress">In Progress</option><option value="complete">Complete</option><option value="not-configured">No Requirement Set</option></select>
+          <div class="att-tip-wrap">
+            <i class="ti ti-alert-circle att-tip-icon"></i>
+            <div class="att-tip-box" id="attTipBox"></div>
+          </div>
+          <button class="filter-reset" onclick="resetAllFilters()">Clear</button>
+        </div>
+
+        <div class="section-cards-list" id="sectionCardsGrid">
+          <div class="empty-state"><span class="spinner"></span> Loading…</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Attendance History Modal -->
+  <div class="modal-overlay" id="historyOverlay" style="display:none;" onclick="closeHistory(event)">
+    <div class="history-modal" onclick="event.stopPropagation()">
+
+      <div class="hm-header">
+        <div>
+          <div class="hm-title" id="hmTitle">Attendance History</div>
+          <div class="hm-sub"  id="hmSub"></div>
+        </div>
+        <button class="hm-close" onclick="closeHistory()">&times;</button>
+      </div>
+
+      <div class="hm-body">
+        <div id="historyContent">
+          <div class="empty-state"><span class="spinner"></span> Loading…</div>
+        </div>
+      </div>
+
+      <div class="hm-footer">
+        <button class="btn-outline" onclick="closeHistory()">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="info-modal-title">Something went wrong</h3>
+      <p class="info-modal-message" id="errorMessage">An error occurred.</p>
+      <button class="btn-primary" onclick="hideErrorModal()" style="width:100%;justify-content:center;">OK</button>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+  <script src="/apiClient.js"></script>
+  <script src="/attendance-metrics.js"></script>
+  <script src="/HEAD/JS/sidebar.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="/HEAD/JS/attendance-detail.js"></script>
+</body>
+</html>

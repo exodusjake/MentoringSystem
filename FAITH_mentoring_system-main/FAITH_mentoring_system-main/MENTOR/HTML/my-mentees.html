@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Mentees — Mentor Portal</title>
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/my-mentees.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <h1>My Mentees</h1>
+        <p id="menteeSubtitle">Loading your assigned mentees...</p>
+      </div>
+
+      <!-- Section filter cards — shown only for a mentor with more than one section. -->
+      <div id="sectionCards" class="section-cards-grid" style="display:none;"></div>
+
+      <!-- Mentee List -->
+      <div id="menteeListPanel">
+
+        <!-- Search -->
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by name or course..." />
+          </div>
+        </div>
+
+        <!-- Mentee Cards -->
+        <div id="menteesGrid" class="mentees-grid">
+          <div class="mentees-empty"><span class="spinner" style="width:20px;height:20px;border-width:2.5px;display:block;margin:0 auto 12px;"></span>Loading...</div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/MENTOR/JS/my-mentees.js"></script>
+</body>
+</html>

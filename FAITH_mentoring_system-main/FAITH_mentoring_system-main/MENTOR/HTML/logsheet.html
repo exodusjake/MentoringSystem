@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logsheet — Mentor Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css">
+  <link rel="stylesheet" href="/MENTOR/CSS/mentor-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTOR/CSS/logsheet.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Mentoring Logsheet</h1>
+          <p id="logsheetSubtitle">Loading…</p>
+        </div>
+        <div class="print-btn-group" onclick="event.stopPropagation()">
+          <button class="btn-export-main" onclick="exportAllSessions('all')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print All
+          </button>
+          <button class="btn-export-caret" onclick="togglePrintMenu('all')">
+            <i class="ti ti-chevron-down"></i>
+          </button>
+          <div class="print-dropdown" id="printMenu-all">
+            <button class="print-drop-item" onclick="exportAllSessions('all');closePrintMenu()"><i class="ti ti-files"></i> All Forms</button>
+            <button class="print-drop-item" onclick="exportAllSessions('logsheet');closePrintMenu()"><i class="ti ti-clipboard-list"></i> Logsheet</button>
+            <button class="print-drop-item" onclick="exportAllSessions('notes');closePrintMenu()"><i class="ti ti-notes"></i> Mentor's Notes</button>
+            <button class="print-drop-item" onclick="exportAllSessions('nonattend');closePrintMenu()"><i class="ti ti-user-x"></i> Non-Attendance</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- How this works -->
+      <div class="log-info-banner">
+        <i class="ti ti-info-circle"></i>
+        <span>This logsheet is auto-generated from your <strong>Sessions</strong> records — attendance, time, and mentees are pulled automatically. To log a new session, go to <a href="sessions.html">Sessions</a>.</span>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="log-stats-strip">
+        <div class="lstat lstat-progress">
+          <div class="lstat-progress-top">
+            <div class="lstat-val green" id="lStatCompleted"><span class="stat-pulse">—</span></div>
+            <div class="lstat-progress-req" id="lStatRequired">Loading target...</div>
+          </div>
+          <div class="lstat-progress-bar">
+            <div class="lstat-progress-fill" id="lStatProgressFill" style="width:0%"></div>
+          </div>
+          <div class="lstat-lbl">Checkpoints Completed This Semester <details class="lstat-help"><summary aria-label="About checkpoints completed this semester"><i class="ti ti-info-circle" aria-hidden="true"></i></summary><div class="lstat-help-text"><div class="lstat-help-title">Semester Progress</div>Checkpoint progress is for the current semester.</div></details></div>
+        </div>
+        <div class="lstat">
+          <div class="lstat-val" id="lStatTotal"><span class="stat-pulse">—</span></div>
+          <div class="lstat-lbl">Total Sessions on Record <details class="lstat-help"><summary aria-label="About total sessions on record"><i class="ti ti-info-circle" aria-hidden="true"></i></summary><div class="lstat-help-text"><div class="lstat-help-title">Session Records</div>Session totals include all records across school years and semesters.</div></details></div>
+        </div>
+        <div class="lstat">
+          <div class="lstat-val blue" id="lStatScheduled"><span class="stat-pulse">—</span></div>
+          <div class="lstat-lbl">Scheduled</div>
+        </div>
+        <div class="lstat"><div class="lstat-val gray" id="lStatClosed">&mdash;</div><div class="lstat-lbl">Closed (not conducted) <details class="lstat-help"><summary aria-label="About closed (not conducted)"><i class="ti ti-info-circle" aria-hidden="true"></i></summary><div class="lstat-help-text"><div class="lstat-help-title">Closed Sessions</div>Closed means the session was not conducted before its calendar deadline.</div></details></div></div>
+        <div class="lstat">
+          <div class="lstat-val gray" id="lStatCancelled"><span class="stat-pulse">—</span></div>
+          <div class="lstat-lbl">Cancelled</div>
+        </div>
+      </div>
+      <!-- Remarks completion indicator -->
+      <div class="log-remarks-bar" id="logRemarksBar" style="display:none">
+        <span class="log-remarks-pill" id="logRemarksPill"></span>
+        <div class="log-remarks-info-wrap">
+          <span class="log-remarks-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </span>
+          <div class="log-remarks-tooltip">
+            <strong>Logsheet status</strong><br>
+            A session counts as <em>not yet logged</em> until you click <em>Upload Logsheet</em> inside it — that's when it's marked Submitted and visible to Admin.<br><br>
+            The <em>Logsheet</em> button turns green once submitted, orange while a Completed session is still waiting to be submitted.
+          </div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="log-toolbar">
+        <div class="search-wrap">
+          <i class="ti ti-search"></i>
+          <input type="text" id="logSearch" placeholder="Search sessions…" autocomplete="off"/>
+        </div>
+        <select class="log-filter" id="logStatusFilter">
+          <option value="">All Statuses</option>
+          <option value="Completed">Completed</option>
+          <option value="Scheduled">Scheduled</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Closed">Closed (not conducted)</option>
+        </select>
+        <select class="log-filter" id="logPeriodFilter">
+          <option value="">All School Years</option>
+        </select>
+      </div>
+
+      <!-- Session Cards -->
+      <div id="logCards" class="log-cards">
+        <div class="log-loading"><i class="ti ti-loader"></i> Loading sessions…</div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Logsheet Preview Modal -->
+  <div id="logsheetPreviewOverlay" class="lpm-overlay" style="display:none" onclick="closePreviewModal(event)">
+    <div class="lpm-modal lpm-modal-wide">
+
+      <!-- Header -->
+      <div class="lpm-header">
+        <div>
+          <div class="lpm-title" id="lpmTitle"></div>
+          <div class="lpm-sub" id="lpmSub"></div>
+        </div>
+        <div class="lpm-header-right">
+          <button class="lpm-close-btn" onclick="requestClosePreviewModal()">×</button>
+        </div>
+      </div>
+
+      <!-- Split Body -->
+      <div class="lpm-split-body">
+
+        <!-- Left: editable remarks -->
+        <div class="lpm-left-panel">
+          <div class="lpm-panel-heading" id="lpmPanelHeading">Attendance &amp; Remarks</div>
+          <div class="lpm-remarks-list" id="lpmRemarksForm"></div>
+          <div class="lpm-left-footer">
+            <div class="lpm-footer-top">
+              <span class="lpm-log-status-badge" id="lpmLogStatusBadge"></span>
+              <span class="lpm-save-status" id="lpmSaveStatus"></span>
+            </div>
+            <div class="lpm-footer-btns">
+              <button class="lpm-btn-draft" id="lpmDraftBtn" onclick="saveDraft()">
+                Save Draft
+              </button>
+              <button class="lpm-btn-next" id="lpmNextBtn" onclick="goToNextPreviewTab()">
+                Next <i class="ti ti-arrow-right"></i>
+              </button>
+              <button class="lpm-btn-upload" id="lpmUploadBtn" onclick="handleLogsheetSubmitToggle()">
+                Upload Logsheet
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: document preview -->
+        <div class="lpm-right-panel">
+          <div class="lpm-preview-tabs">
+            <button class="lpm-ptab active" data-tab="logsheet" onclick="switchPreviewTab('logsheet')">Logsheet</button>
+            <button class="lpm-ptab" data-tab="notes" onclick="switchPreviewTab('notes')">Mentor's Notes</button>
+            <button class="lpm-ptab" data-tab="nonattend" onclick="switchPreviewTab('nonattend')">Non-Attendance</button>
+          </div>
+          <div class="lpm-preview-scroll">
+            <div class="lpm-body" id="lpmContent"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Confirmation Modal -->
+  <div id="uploadConfirmOverlay" class="modal-overlay" onclick="ucmBackdropClick(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-primary">
+        <i class="ti ti-upload"></i>
+      </div>
+      <h3 class="confirm-title">Upload Logsheet for Review?</h3>
+      <p class="confirm-body">
+        This marks it <strong>Submitted</strong> and visible to the Admin.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="ucmResolve(false)">Cancel</button>
+        <button class="btn-confirm-primary" id="confirmUploadBtn" onclick="ucmResolve(true)">
+          <i class="ti ti-upload"></i> Upload Logsheet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unsubmit Confirmation Modal -->
+  <div id="unsubmitConfirmOverlay" class="modal-overlay" onclick="ucmUnsubmitBackdropClick(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-warn">
+        <i class="ti ti-arrow-back-up"></i>
+      </div>
+      <h3 class="confirm-title">Unsubmit this Logsheet?</h3>
+      <p class="confirm-body">
+        This will revert the logsheet to <strong>Draft</strong> and hide it from Admin until you resubmit.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="ucmUnsubmitResolve(false)">Cancel</button>
+        <button class="btn-confirm-warn" id="confirmUnsubmitBtn" onclick="ucmUnsubmitResolve(true)">
+          <i class="ti ti-arrow-back-up"></i> Unsubmit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unsaved Changes Confirmation Modal -->
+  <div id="unsavedChangesOverlay" class="modal-overlay" onclick="ucmUnsavedBackdropClick(event)">
+    <div class="modal-card modal-card-sm" onclick="event.stopPropagation()">
+      <div class="confirm-icon confirm-icon-warn">
+        <i class="ti ti-alert-triangle"></i>
+      </div>
+      <h3 class="confirm-title">Unsaved Changes</h3>
+      <p class="confirm-body">
+        You have unsaved remarks — save them as a draft or discard them.
+      </p>
+      <div class="confirm-actions">
+        <button class="btn-form-cancel" onclick="discardAndClosePreview()">Discard &amp; Close</button>
+        <button class="btn-confirm-primary" id="confirmSaveDraftBtn" onclick="saveDraftAndClosePreview()">
+          <i class="ti ti-device-floppy"></i> Save Draft
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTOR/JS/mentor-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../print-logsheet-styles.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../notify.js"></script>
+  <script src="/logsheet-data.js"></script>
+  <script src="/checkpoint-window.js"></script>
+  <script src="/dashboard-sessions.js"></script>
+  <script src="/MENTOR/JS/logsheet.js"></script>
+</body>
+</html>

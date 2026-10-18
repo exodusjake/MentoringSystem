@@ -1,0 +1,438 @@
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using AstraMentoring_Backend.Model;
+
+namespace AstraMentoring_Backend.Services
+{
+    // Sends transactional emails via Brevo's REST API for three events:
+    // new Announcement, new EvaluationLink, and a Session log being
+    // finalized (LogStatus -> "Submitted"). See Program.cs (AddHttpClient +
+    // AddScoped<EmailService>) for wiring, and appsettings.json/User Secrets
+    // for the "Brevo:*" / "Frontend:BaseUrl" configuration this reads.
+    //
+    // Deliberately never throws out of a public method — a down/misconfigured
+    // email provider must never fail the caller's real operation (the
+    // announcement/evaluation link/session log is already saved by the time
+    // any of these run). Failures are logged only.
+    //
+    // Every send is one recipient at a time (never a shared "to" list) —
+    // Brevo's "to" array puts every address on the same email's To header,
+    // which would let recipients see each other's email addresses.
+    public class EmailService
+    {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<EmailService> _logger;
+        private readonly string _connectionString;
+        private readonly string _apiKey;
+        private readonly string _senderEmail;
+        private readonly string _brandName;
+        private readonly string _frontendBaseUrl;
+
+        public EmailService(IHttpClientFactory httpClientFactory, IConfiguration config, ILogger<EmailService> logger)
+        {
+            _httpClientFactory = httpClientFactory;
+            _logger = logger;
+            _connectionString = config.GetConnectionString("DefaultConnection")
+                ?? "Server=(localdb)\\MSSQLLocalDB;Database=AstraMentoring;Trusted_Connection=True;MultipleActiveResultSets=True";
+            _apiKey          = config["Brevo:ApiKey"]      ?? string.Empty;
+            _senderEmail     = config["Brevo:SenderEmail"] ?? string.Empty;
+            _brandName       = config["Brevo:SenderName"]  ?? "AstraMentoring";
+            _frontendBaseUrl = (config["Frontend:BaseUrl"] ?? "http://localhost:5501").TrimEnd('/');
+        }
+
+        // ── Core send — one recipient, never throws ────────────────────────
+        private async Task SendEmailAsync(string recipientEmail, string senderName, string subject, string htmlBody)
+        {
+            if (string.IsNullOrWhiteSpace(recipientEmail)) return;
+
+            if (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail))
+            {
+                _logger.LogWarning("EmailService: Brevo:ApiKey or Brevo:SenderEmail is not configured — skipping send.");
+                return;
+            }
+
+            try
+            {
+                var payload = new
+                {
+                    sender = new { name = senderName, email = _senderEmail },
+                    to = new[] { new { email = recipientEmail } },
+                    subject,
+                    htmlContent = htmlBody
+                };
+
+                var client = _httpClientFactory.CreateClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email")
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("api-key", _apiKey);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var response = await client.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("EmailService: Brevo send failed ({Status}) for subject '{Subject}': {Body}",
+                        response.StatusCode, subject, body);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: exception while sending email with subject '{Subject}'.", subject);
+            }
+        }
+
+        // A person's own name for a personal touch ("Juan Dela Cruz via
+        // AstraMentoring") when the content genuinely comes from one
+        // individual — a Mentor or Mentee's own action (posting an
+        // announcement, logging a session, posting/booking a slot); the
+        // institutional name alone for anything office-wide (Admin/Head
+        // announcements, evaluation links, calendar publishing).
+        private string SenderNameFor(string? actorRole, string? actorFullName) =>
+            (actorRole == "Mentor" || actorRole == "Mentee") && !string.IsNullOrWhiteSpace(actorFullName)
+                ? $"{actorFullName} via {_brandName}"
+                : _brandName;
+
+        // Shared, professional-looking HTML shell — header band with the
+        // brand name, a body slot, an optional CTA button, and a footer
+        // note. Kept deliberately simple (inline styles only, single accent
+        // color) since most email clients strip <style> blocks.
+        // User-entered text going into an email's HTML body.
+        private static string Enc(string? text) => WebUtility.HtmlEncode(text ?? string.Empty);
+
+        // heading is plain text; bodyHtml must already have its user text encoded.
+        private static string BuildEmailHtml(string heading, string bodyHtml, string? ctaText = null, string? ctaUrl = null)
+        {
+            heading = Enc(heading);
+            var ctaHtml = !string.IsNullOrWhiteSpace(ctaUrl)
+                ? $@"<a href=""{ctaUrl}"" style=""display:inline-block;margin-top:22px;background:#2563eb;color:#ffffff;
+                       text-decoration:none;padding:11px 24px;border-radius:6px;font-weight:600;font-size:14px;
+                       font-family:Arial,Helvetica,sans-serif;"">{ctaText}</a>"
+                : string.Empty;
+
+            return $@"
+                <div style=""font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;background:#f3f4f6;padding:24px 12px;"">
+                  <div style=""background:#2563eb;padding:18px 28px;border-radius:10px 10px 0 0;"">
+                    <span style=""color:#ffffff;font-size:17px;font-weight:700;letter-spacing:.01em;"">AstraMentoring</span>
+                  </div>
+                  <div style=""background:#ffffff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 10px 10px;padding:28px;"">
+                    <h2 style=""margin:0 0 12px;font-size:18px;color:#111827;font-family:Arial,Helvetica,sans-serif;"">{heading}</h2>
+                    <div style=""font-size:14px;line-height:1.6;color:#374151;font-family:Arial,Helvetica,sans-serif;"">{bodyHtml}</div>
+                    {ctaHtml}
+                    <p style=""margin-top:28px;padding-top:16px;border-top:1px solid #f0f1f3;font-size:11px;color:#9ca3af;
+                       font-family:Arial,Helvetica,sans-serif;"">This is an automated message from AstraMentoring. Please do not reply to this email.</p>
+                  </div>
+                </div>";
+        }
+
+        // Rich-text announcement content arrives as HTML from the poster's
+        // editor — strip tags for a short plain-text excerpt in the email.
+        private static string PlainTextExcerpt(string html, int maxLength = 200)
+        {
+            if (string.IsNullOrWhiteSpace(html)) return string.Empty;
+            var text = Regex.Replace(html, "<[^>]+>", " ");
+            text = WebUtility.HtmlDecode(text);
+            text = Regex.Replace(text, @"\s+", " ").Trim();
+            return text.Length > maxLength ? text[..maxLength] + "…" : text;
+        }
+
+        // ── Announcement ─────────────────────────────────────────────────
+        public async Task NotifyNewAnnouncementAsync(Announcement data)
+        {
+            // "Admin only" announcements are not emailed to mentors or mentees.
+            if (string.Equals(data.TargetAudience, "Admin", StringComparison.OrdinalIgnoreCase)) return;
+
+            using var conn = new SqlConnection(_connectionString);
+
+            var poster = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName, string Role)>(
+                "SELECT FirstName, LastName, Role FROM Users WHERE UserID = @Id",
+                new { Id = data.PostedByUserID });
+
+            List<(string Email, string Role)> recipients;
+            if (data.TargetAudience == "Mentee" && poster.Role == "Mentor")
+            {
+                recipients = (await conn.QueryAsync<(string Email, string Role)>(
+                    @"SELECT u.Email, u.Role FROM MentorMentee mm
+                      JOIN Users u ON u.UserID = mm.MenteeID
+                      WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
+                    new { MentorID = data.PostedByUserID })).ToList();
+            }
+            else if (data.TargetAudience == "Mentee")
+            {
+                recipients = (await conn.QueryAsync<(string Email, string Role)>(
+                    "SELECT Email, Role FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
+            }
+            else if (data.TargetAudience == "Mentor")
+            {
+                recipients = (await conn.QueryAsync<(string Email, string Role)>(
+                    "SELECT Email, Role FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
+            }
+            else // "Both" or anything else unrecognized falls back to the widest audience
+            {
+                recipients = (await conn.QueryAsync<(string Email, string Role)>(
+                    "SELECT Email, Role FROM Users WHERE Role IN ('Mentor','Mentee') AND IsActive = 1")).ToList();
+            }
+
+            var posterName  = poster.FirstName != null ? $"{poster.FirstName} {poster.LastName}".Trim() : "Someone";
+            var senderName  = SenderNameFor(poster.Role, posterName);
+            var subject     = $"New Announcement: {data.Title}";
+            var excerpt     = PlainTextExcerpt(data.Content);
+
+            foreach (var (email, role) in recipients)
+            {
+                // Each role reads announcements on its own portal page.
+                var portalPath = role == "Mentor" ? "MENTOR" : "MENTEE";
+                var ctaUrl     = $"{_frontendBaseUrl}/{portalPath}/HTML/announcements.html?id={data.AnnouncementID}";
+
+                var body = $@"
+                    <p><strong>{Enc(posterName)}</strong> posted a new announcement.</p>
+                    <p>{Enc(excerpt)}</p>";
+
+                var html = BuildEmailHtml(data.Title, body, "View Announcement", ctaUrl);
+                await SendEmailAsync(email, senderName, subject, html);
+            }
+        }
+
+        // ── Evaluation Link ──────────────────────────────────────────────
+        public async Task NotifyNewEvaluationLinkAsync(EvaluationLink data)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var recipients = (await conn.QueryAsync<string>(
+                "SELECT Email FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
+
+            var deadlineLine = data.Deadline.HasValue
+                ? $"<p><strong>Deadline:</strong> {data.Deadline.Value:MMMM d, yyyy}</p>"
+                : string.Empty;
+
+            var subject = $"New Evaluation Form: {data.Title}";
+            var body = $@"
+                <p>A new evaluation form has been posted.</p>
+                <p>{data.Description}</p>
+                {deadlineLine}";
+            var html = BuildEmailHtml(data.Title, body, "Open Evaluation", $"{_frontendBaseUrl}/MENTEE/HTML/announcements.html?id=eval-{data.LinkID}");
+
+            foreach (var email in recipients)
+                await SendEmailAsync(email, _brandName, subject, html);
+        }
+
+        // ── Session logged (LogStatus -> "Submitted") ───────────────────
+        // Sent only to mentees on the Attendance roster of this specific
+        // session (present or absent) — not every mentee assigned to the
+        // mentor — since the email body reports that mentee's own
+        // attendance status for this session.
+        public async Task NotifySessionLoggedAsync(int sessionId)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var session = await conn.QueryFirstOrDefaultAsync<(DateTime SessionDate, string MentorFirstName, string MentorLastName, string? SlotName)>(
+                @"SELECT s.SessionDate, u.FirstName AS MentorFirstName, u.LastName AS MentorLastName, s.SlotName
+                  FROM Sessions s
+                  JOIN Users u ON u.UserID = s.MentorID
+                  WHERE s.SessionID = @SessionID",
+                new { SessionID = sessionId });
+
+            if (session.MentorFirstName == null) return; // session/mentor not found — nothing to notify
+
+            var attendees = await conn.QueryAsync<(string Email, bool IsPresent)>(
+                @"SELECT u.Email, a.IsPresent
+                  FROM Attendance a
+                  JOIN Users u ON u.UserID = a.MenteeID
+                  WHERE a.SessionID = @SessionID AND u.IsActive = 1",
+                new { SessionID = sessionId });
+
+            var mentorName = $"{session.MentorFirstName} {session.MentorLastName}".Trim();
+            var senderName = SenderNameFor("Mentor", mentorName);
+            var dateStr    = session.SessionDate.ToString("MMMM d, yyyy");
+            var ctaUrl     = $"{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}";
+            // Null for a makeup session or one logged before slots existed —
+            // falls back to the date-only phrasing that was already here.
+            var slotLine   = !string.IsNullOrWhiteSpace(session.SlotName) ? $" ({session.SlotName})" : "";
+
+            foreach (var attendee in attendees)
+            {
+                if (string.IsNullOrWhiteSpace(attendee.Email)) continue;
+
+                var statusLabel = attendee.IsPresent ? "Present" : "Absent";
+                var subject = $"Session Logged — {dateStr}{slotLine}";
+                var body = $@"
+                    <p>Your mentoring session with <strong>{Enc(mentorName)}</strong> on <strong>{dateStr}</strong>{Enc(slotLine)} has been logged.</p>
+                    <p>Your recorded attendance status: <strong>{statusLabel}</strong></p>";
+                var html = BuildEmailHtml("Session Logged", body, "View Session", ctaUrl);
+
+                await SendEmailAsync(attendee.Email, senderName, subject, html);
+            }
+        }
+
+        private static string FormatAvailabilityStart(DateTime date, TimeSpan start) =>
+            $"{date:MMMM d, yyyy}, {DateTime.Today.Add(start):h:mm tt}";
+
+        // ── Calendar published (Admin's "Publish to Mentors" action) ────
+        // Fires once per event that newly transitions Unpublished -> Published
+        // (see CalendarEventsController.Put) — not on every edit of an
+        // already-published event, and not on the initial draft creation.
+        public async Task NotifyCalendarUpdatedAsync(CalendarEvent data)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var recipients = (await conn.QueryAsync<string>(
+                "SELECT Email FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
+
+            var dateLine = data.StartDate.Date == data.EndDate.Date
+                ? data.StartDate.ToString("MMMM d, yyyy")
+                : $"{data.StartDate:MMMM d, yyyy} – {data.EndDate:MMMM d, yyyy}";
+
+            var subject = "Academic Calendar Updated";
+            var body = $@"
+                <p>A new item has been published to the academic calendar:</p>
+                <p><strong>{Enc(data.Title)}</strong> ({Enc(data.EventType)})</p>
+                <p>{dateLine}</p>";
+            var html = BuildEmailHtml("Calendar Updated", body, "View Calendar", $"{_frontendBaseUrl}/MENTOR/HTML/calendar.html");
+
+            foreach (var email in recipients)
+                await SendEmailAsync(email, _brandName, subject, html);
+        }
+
+        // ── Mentor posts a new availability slot ────────────────────────
+        // Notifies that mentor's own active mentees only — a slot only
+        // matters to the mentees who could actually book it.
+        public async Task NotifyNewAvailabilitySlotAsync(int mentorId, DateTime availableDate, TimeSpan startTime)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+            if (mentor.FirstName == null) return;
+
+            var recipients = (await conn.QueryAsync<string>(
+                @"SELECT u.Email FROM MentorMentee mm
+                  JOIN Users u ON u.UserID = mm.MenteeID
+                  WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
+                new { MentorID = mentorId })).ToList();
+
+            var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+            var senderName = SenderNameFor("Mentor", mentorName);
+            var subject    = "New Available Session Slot";
+            var body = $@"
+                <p><strong>{Enc(mentorName)}</strong> posted a new available session slot:</p>
+                <p>{FormatAvailabilityStart(availableDate, startTime)}</p>";
+            var html = BuildEmailHtml("New Available Slot", body, "Book This Slot", $"{_frontendBaseUrl}/MENTEE/HTML/schedule-session.html");
+
+            foreach (var email in recipients)
+                await SendEmailAsync(email, senderName, subject, html);
+        }
+
+        // ── Mentee books a posted slot (auto-confirmed session) ─────────
+        // Notifies only that slot's own mentor — a single recipient.
+        public async Task NotifySlotBookedAsync(int menteeId, int availabilityId, string? purpose)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var slot = await conn.QueryFirstOrDefaultAsync<(string MentorEmail, DateTime AvailableDate, TimeSpan StartTime, TimeSpan? EndTime)>(
+                @"SELECT u.Email AS MentorEmail, a.AvailableDate, a.StartTime, a.EndTime
+                  FROM Availability a
+                  JOIN Users u ON u.UserID = a.MentorID
+                  WHERE a.AvailabilityID = @Id",
+                new { Id = availabilityId });
+            if (slot.MentorEmail == null) return;
+
+            var mentee = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = menteeId });
+
+            var menteeName  = mentee.FirstName != null ? $"{mentee.FirstName} {mentee.LastName}".Trim() : "A mentee";
+            var senderName  = SenderNameFor("Mentee", menteeName);
+            var purposeLine = !string.IsNullOrWhiteSpace(purpose) ? $"<p><strong>Purpose:</strong> {Enc(purpose)}</p>" : string.Empty;
+
+            var subject = "Your Slot Has Been Booked";
+            var body = $@"
+                <p><strong>{Enc(menteeName)}</strong> booked your available slot:</p>
+                <p>{FormatAvailabilityStart(slot.AvailableDate, slot.StartTime)}</p>
+                {purposeLine}";
+            var html = BuildEmailHtml("Slot Booked", body, "View Availability", $"{_frontendBaseUrl}/MENTOR/HTML/availability.html");
+
+            await SendEmailAsync(slot.MentorEmail, senderName, subject, html);
+        }
+
+        // ── Mentor schedules a regular (non-makeup) session ──────────────
+        // A make-up session (RequestID set) comes from the mentee's own
+        // booking — they already know, so only NotifySlotBookedAsync (the
+        // mentor) applies there. A regular session is scheduled unilaterally
+        // by the mentor for a whole section, so the mentees genuinely have
+        // no other way to know until they revisit the portal.
+        //
+        // Recipient filtering mirrors MENTEE/JS/sessions.js's own
+        // isSessionForMySection(): no [SECTION] prefix -> every one of the
+        // mentor's mentees; a prefix (comma-separated sections allowed) ->
+        // only mentees whose own section is in that list.
+        //
+        // The section a mentee is matched against must be the SAME composed
+        // value the rest of the app uses — vw_MenteeDetails.SectionCode
+        // (COALESCE(Sections.SectionCode, MenteeProfiles.Section), e.g.
+        // "BSIT 1A" from the Sections table when SectionID is set, falling
+        // back to the bare MenteeProfiles.Section letter otherwise) — NOT
+        // MenteeProfiles.Section alone, which is often just a letter like
+        // "A" and would silently fail to match a session's "[BSIT 1A]" tag.
+        public async Task NotifySessionScheduledAsync(int sessionId, int mentorId, DateTime sessionDate, string? sectionCode, string? slotName)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+            if (mentor.FirstName == null) return;
+
+            var course = await conn.QuerySingleOrDefaultAsync<CourseGroup>(
+                "SELECT c.School,c.CourseCode FROM SessionCourseScopes c JOIN Sessions s ON s.SessionID=c.SessionID WHERE c.SessionID=@SessionID AND c.Origin='Regular' AND s.MentorID=@MentorID",
+                new { SessionID=sessionId, MentorID=mentorId });
+            var mentees = await conn.QueryAsync<(string Email, string? Section, string? School, string? Course)>(
+                @"SELECT vmd.Email, vmd.SectionCode AS Section, vmd.School, vmd.Course
+                  FROM MentorMentee mm
+                  JOIN vw_MenteeDetails vmd ON vmd.UserID = mm.MenteeID
+                  WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND vmd.IsActive = 1
+                    AND (@CourseScoped=0 OR EXISTS(SELECT 1 FROM MenteeProfiles mp WHERE mp.UserID=mm.MenteeID AND ISNULL(mp.IsDropOut,0)=0))",
+                new { MentorID = mentorId, CourseScoped=course!=null });
+
+            IEnumerable<string> recipients;
+            if (course != null)
+            {
+                recipients = mentees.Where(m => string.Equals(m.School,course.School,StringComparison.OrdinalIgnoreCase)
+                    && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course)==AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode)).Select(m=>m.Email);
+            }
+            else if (string.IsNullOrWhiteSpace(sectionCode))
+            {
+                recipients = mentees.Select(m => m.Email);
+            }
+            else
+            {
+                var wantedSections = sectionCode.Split(',').Select(s => s.Trim()).ToHashSet();
+                recipients = mentees.Where(m => m.Section != null && wantedSections.Contains(m.Section)).Select(m => m.Email);
+            }
+
+            var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+            var senderName = SenderNameFor("Mentor", mentorName);
+            var sectionLine = course != null ? $"<p><strong>Course:</strong> {Enc(course.CourseCode)}</p>"
+                : !string.IsNullOrWhiteSpace(sectionCode) ? $"<p><strong>Section:</strong> {Enc(sectionCode)}</p>" : string.Empty;
+            // Null for a makeup session — a makeup slot comes from the
+            // mentee's own booking request, which already has its own
+            // notification (NotifySlotBookedAsync), not this one.
+            var slotSuffix  = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
+
+            var subject = $"New Session Scheduled{slotSuffix}";
+            var body = $@"
+                <p><strong>{Enc(mentorName)}</strong> scheduled a new session{Enc(slotSuffix)}:</p>
+                <p>{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}</p>
+                {sectionLine}";
+            var html = BuildEmailHtml("Session Scheduled", body, "View Session", $"{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}");
+
+            foreach (var email in recipients)
+                await SendEmailAsync(email, senderName, subject, html);
+        }
+    }
+}

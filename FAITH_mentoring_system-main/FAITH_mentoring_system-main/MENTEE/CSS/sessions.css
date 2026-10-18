@@ -1,0 +1,234 @@
+/* ============================================================
+   ASTRA MENTEE — sessions.css
+   ============================================================ */
+
+/* ── ATTENDANCE PROGRESS BANNER ── */
+.att-progress-banner {
+  display: flex; flex-direction: column; gap: 12px;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  border-radius: 16px; padding: 20px 26px; margin-bottom: 22px; color: #fff;
+  box-shadow: 0 4px 16px rgba(79,70,229,0.28);
+}
+.att-progress-top   { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.att-progress-left  { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.att-progress-title { font-size: 15px; font-weight: 700; letter-spacing: .02em; }
+.att-progress-sub   { font-size: 13px; opacity: .85; }
+.att-progress-nums  { display: flex; align-items: baseline; gap: 4px; flex-shrink: 0; }
+.att-num   { font-size: 32px; font-weight: 900; line-height: 1; }
+.att-denom { font-size: 14px; opacity: .8; }
+.att-bar-track { width: 100%; height: 7px; background: rgba(255,255,255,0.25); border-radius: 99px; overflow: hidden; }
+.att-bar-fill  { height: 100%; background: #fff; border-radius: 99px; transition: width 0.5s ease; }
+
+/* ── STATS STRIP ── */
+.session-stats-strip {
+  display: flex; gap: 0; background: #fff; border: 1px solid #dce3ec;
+  border-radius: 16px; overflow: hidden; margin-bottom: 22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+}
+.sstat { flex: 1; padding: 18px 22px; text-align: center; border-right: 1px solid #dce3ec; }
+.sstat:last-child { border-right: none; }
+.sstat-val { font-size: 28px; font-weight: 700; color: #111827; line-height: 1; }
+.sstat-val.green { color: #16a34a; }
+.sstat-val.blue  { color: #2563eb; }
+.sstat-val.gray  { color: #6B7280; }
+.sstat-lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: #9CA3AF; margin-top: 5px; }
+
+/* ── TOOLBAR ── */
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+.search-wrap { display: flex; align-items: center; gap: 9px; background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 15px; flex: 1; min-width: 200px; max-width: 380px; }
+.search-wrap i { font-size: 16px; color: #9CA3AF; flex-shrink: 0; }
+.search-wrap input { border: none; outline: none; font-family: var(--font); font-size: 14px; color: #374151; background: transparent; width: 100%; }
+.search-wrap input::placeholder { color: #9CA3AF; }
+.filter-select { font-family: var(--font); font-size: 14px; color: #374151; background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 14px; cursor: pointer; outline: none; }
+
+/* ── SESSIONS CARDS LIST ── */
+.sessions-cards-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.loading-cell, .empty-cell { text-align: center; color: #9CA3AF; font-size: 14px; padding: 56px 22px; }
+
+/* ── SESSION CARD ── */
+.scm-card {
+  /* Top-aligned, not centered — keeps this pinned to the top when the
+     left SESSION block wraps to multiple lines. */
+  display: flex; align-items: flex-start; gap: 0; background: #fff;
+  border: 1px solid #dce3ec; border-radius: 16px; border-left: 4px solid var(--indigo);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden; transition: box-shadow 0.15s;
+}
+.scm-card:hover { box-shadow: 0 6px 18px rgba(0,0,0,0.11); }
+
+.scm-completed { border-left-color: #16a34a; }
+.scm-today     { border-left-color: #0f766e; }
+.scm-cancelled { border-left-color: #dc2626; background: #fff5f5; }
+
+/* Deep link from a "Session Logged" email — same treatment as announcements.css's deep-link-highlight */
+.scm-card.deep-link-highlight { background: var(--indigo-lt); box-shadow: 0 0 0 2px var(--indigo); }
+
+/* ── NUM BLOCK ── */
+/* Sized for wrapped multi-word checkpoint names (e.g. "After Midterms"),
+   not just a short number — wider box, smaller font, word-boundary wrap. */
+.scm-num-block {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  width: 96px; min-width: 96px; padding: 14px 10px; text-align: center;
+  border-right: 1px solid #eef1f6; align-self: stretch; background: #f4f7fb;
+}
+.scm-cancelled .scm-num-block { background: #fff0f0; border-right-color: #fecaca; }
+.scm-completed .scm-num-block { background: #f0fdf4; border-right-color: #bbf7d0; }
+.scm-today     .scm-num-block { background: #f0fdfa; border-right-color: #99f6e4; }
+
+.scm-num-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 3px; }
+.scm-num-value { font-size: 14px; font-weight: 700; line-height: 1.25; color: var(--indigo); overflow-wrap: normal; word-break: normal; }
+.scm-completed .scm-num-value { color: #16a34a; }
+.scm-today     .scm-num-value { color: #0f766e; }
+.scm-cancelled .scm-num-value { color: #dc2626; }
+.scm-num-cancelled .scm-num-value { font-size: 20px; }
+.scm-num-total { font-size: 10px; color: #9CA3AF; margin-top: 3px; }
+
+/* ── CARD BODY ── */
+/* Split top/bottom: date pinned to top, day/time/tags anchored to bottom. */
+.scm-body {
+  flex: 1; padding: 16px 20px; min-width: 0; align-self: stretch;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.scm-date-row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 4px; }
+.scm-date { font-size: 15px; font-weight: 700; color: #111827; }
+.scm-cancelled .scm-date { color: #dc2626; }
+/* One row that wraps as a whole, so a card with room for all four pieces
+   takes one line instead of always reserving two. */
+.scm-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font-size: 13px; color: #6B7280; margin-bottom: 0; }
+.scm-meta i { font-size: 14px; margin-right: 2px; vertical-align: middle; }
+
+/* ── CARD RIGHT ── */
+.scm-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; padding: 16px 18px; flex-shrink: 0; min-width: 130px; }
+.scm-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
+
+/* ── STATUS & TYPE BADGES ── */
+.session-status { display: inline-flex; align-items: center; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.status-scheduled { background: #dbeafe; color: #2563eb; }
+.status-completed  { background: #dcfce7; color: #16a34a; }
+.status-cancelled  { background: #fee2e2; color: #dc2626; }
+
+.topic-section-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--indigo-lt); color: var(--indigo); white-space: nowrap; letter-spacing: .02em; }
+.topic-section-tag.topic-makeup { background: #dcfce7; color: #16a34a; }
+
+.att-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.att-badge i { font-size: 13px; }
+.att-present { background: #dcfce7; color: #16a34a; }
+.att-absent  { background: #fee2e2; color: #dc2626; }
+.att-pending { background: #F3F4F6; color: #6B7280; }
+
+.btn-detail {
+  font-size: 12px; font-weight: 600; color: var(--indigo); background: var(--indigo-lt);
+  border: 1px solid #c7d2fe; border-radius: 8px; padding: 6px 13px;
+  cursor: pointer; font-family: var(--font); transition: background 0.15s; white-space: nowrap;
+}
+.btn-detail:hover { background: #e0e7ff; }
+
+.btn-detail-disabled { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #fca5a5; background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px; padding: 6px 13px; cursor: not-allowed; font-family: var(--font); white-space: nowrap; user-select: none; }
+.tag-cancelled { background: #fee2e2 !important; color: #dc2626 !important; }
+
+/* ── SESSION MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); z-index: 9999; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+
+.modal-card { background: #fff; border-radius: 16px; padding: 30px 26px; width: 100%; max-width: 500px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.18); max-height: 80vh; overflow-y: auto; }
+.modal-close-btn { position: absolute; top: 14px; right: 14px; background: none; border: none; cursor: pointer; color: #6B7280; padding: 4px; display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; }
+.modal-close-btn i { font-size: 20px; }
+.modal-close-btn:hover { color: #111827; }
+.modal-title    { font-size: 17px; font-weight: 700; color: #111827; margin-bottom: 5px; }
+.modal-subtitle { font-size: 13px; color: #9CA3AF; margin-bottom: 22px; }
+
+.session-modal-body { display: flex; flex-direction: column; gap: 16px; }
+.modal-detail-row { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; background: #f4f7fb; border-radius: 10px; }
+.modal-detail-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #9CA3AF; }
+.modal-detail-value { font-size: 14px; color: #111827; font-weight: 500; }
+
+.list-skeleton { text-align: center; padding: 24px; color: #9CA3AF; font-size: 14px; }
+
+/* ── QR BUTTON ── */
+.btn-qr { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #fff; background: var(--indigo); border: none; border-radius: 9px; padding: 7px 14px; cursor: pointer; font-family: var(--font); transition: background 0.15s; white-space: nowrap; }
+.btn-qr:hover { background: #4338ca; }
+.btn-qr i { font-size: 14px; }
+
+/* ── QR MODAL ── */
+.qr-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); z-index: 10000; align-items: center; justify-content: center; padding: 16px; }
+.qr-modal-overlay.open { display: flex; }
+.qr-modal-card { background: #fff; border-radius: 20px; padding: 36px 30px 30px; width: 100%; max-width: 360px; position: relative; text-align: center; box-shadow: 0 24px 80px rgba(0,0,0,0.25); }
+.qr-close-btn { position: absolute; top: 14px; right: 14px; background: #F3F4F6; border: none; border-radius: 10px; cursor: pointer; color: #6B7280; padding: 7px; display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; transition: background 0.15s; }
+.qr-close-btn:hover { background: #E5E7EB; color: #111827; }
+.qr-close-btn i { font-size: 17px; }
+.qr-label        { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 5px; }
+.qr-session-info { font-size: 12px; color: #9CA3AF; margin-bottom: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qr-canvas-wrap  { display: flex; justify-content: center; align-items: center; background: #fff; border: 2px solid #dce3ec; border-radius: 16px; padding: 16px; margin-bottom: 18px; }
+.qr-canvas-wrap canvas { display: block; border-radius: 7px; }
+.qr-countdown { font-size: 13px; font-weight: 600; color: var(--indigo); margin-bottom: 11px; letter-spacing: .02em; }
+.qr-hint      { font-size: 12px; color: #9CA3AF; line-height: 1.5; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .session-stats-strip { display: grid; grid-template-columns: 1fr 1fr; }
+  .sstat { border-right: 1px solid #dce3ec; border-bottom: 1px solid #dce3ec; }
+  .modal-card { padding: 22px 18px; max-height: 90vh; }
+  .qr-canvas-wrap canvas { max-width: 100%; height: auto !important; }
+  .scm-right { padding: 12px 14px; min-width: 96px; }
+  .scm-num-block { width: 76px; min-width: 76px; }
+  .scm-body { padding: 12px 14px; }
+  /* Scaled below the stat strip's own numbers (22-28px) so it reads as
+     a compact status strip at phone width, not a hero banner. */
+  .att-progress-banner { padding: 10px 14px; gap: 5px; border-radius: 12px; }
+  .att-progress-title  { font-size: 12px; }
+  .att-progress-sub    { font-size: 10.5px; }
+  .att-num   { font-size: 18px; }
+  .att-denom { font-size: 10.5px; }
+  .att-bar-track { height: 5px; }
+}
+@media (max-width: 480px) {
+  .scm-num-block { width: 76px; min-width: 76px; padding: 12px 6px; }
+  .scm-num-value { font-size: 12px; }
+  .scm-body { padding: 12px 14px; }
+  .scm-date { font-size: 14px; }
+  .scm-meta { font-size: 12px; gap: 8px; }
+}
+@media (max-width: 420px) {
+  .sstat { padding: 14px 10px; }
+  .sstat-val { font-size: 22px; }
+  .toolbar { gap: 8px; }
+  .search-wrap { min-width: 0; max-width: 100%; }
+}
+
+/* Compact session listing only; status conditions and QR modal unchanged. */
+.mentee-polish .scm-card .scm-body { display:flex; padding:12px 14px; justify-content:flex-start; gap:4px; }
+.mentee-polish .scm-card .scm-num-block { padding:12px 8px; }
+.mentee-polish .scm-card .scm-date-row { display:flex; gap:6px 12px; margin-bottom:0; }
+.mentee-polish .scm-card .scm-status-stack { display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; gap:6px; min-width:0; }
+.mentee-polish .scm-card .scm-right { padding:10px 12px; min-width:0; align-self:center; }
+.mentee-polish .scm-card .scm-actions { gap:6px; }
+.mentee-polish .scm-card .scm-meta { gap:5px 10px; }
+@media (max-width:640px) {
+ .mentee-polish .scm-card .scm-body { padding:10px; }
+ .mentee-polish .scm-card .scm-right { padding:10px; }
+ .mentee-polish .scm-card .scm-num-block { padding:10px 6px; }
+ .mentee-polish .scm-card .btn-qr, .mentee-polish .scm-card .btn-detail { min-height:44px; }
+}
+@media (max-width:480px) {
+ .mentee-polish .scm-card { flex-wrap:wrap; }
+ .mentee-polish .scm-card .scm-body { flex-basis:calc(100% - 76px); box-sizing:border-box; }
+ .mentee-polish .scm-card .scm-right { width:100%; box-sizing:border-box; padding:0 10px 10px; }
+ .mentee-polish .scm-card .scm-actions { flex-direction:row; flex-wrap:wrap; justify-content:flex-end; }
+}
+
+/* Session cards follow the Mentor Logsheet layout: full-height checkpoint
+   panel, details stacked, equal-width actions at the bottom right. */
+.mentee-polish .sessions-cards-list .scm-card { display: flex; align-items: stretch; }
+.mentee-polish .sessions-cards-list .scm-card .scm-num-block { width: 104px; min-width: 104px; align-self: stretch; justify-content: center; align-items: center; text-align: center; padding: 14px 8px; border-bottom: 0; }
+.mentee-polish .sessions-cards-list .scm-card .scm-body { display: flex; flex-direction: column; justify-content: flex-start; gap: 6px; flex: 1; min-width: 0; padding: 14px 16px; }
+.mentee-polish .sessions-cards-list .scm-card .scm-date-row { display: block; margin: 0; }
+.mentee-polish .sessions-cards-list .scm-card .scm-meta { margin: 0; }
+.mentee-polish .sessions-cards-list .scm-card .scm-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.mentee-polish .sessions-cards-list .scm-card .scm-status-stack { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px; }
+.mentee-polish .sessions-cards-list .scm-card .scm-actions { display: flex; flex-direction: row; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.mentee-polish .sessions-cards-list .scm-card .scm-actions > * { flex: 0 0 146px; justify-content: center; min-height: 40px; box-sizing: border-box; }
+@media (max-width: 620px) {
+  .mentee-polish .sessions-cards-list .scm-card { flex-direction: column; }
+  .mentee-polish .sessions-cards-list .scm-card .scm-num-block { width: auto; min-width: 0; padding: 10px 12px; border-right: 0; }
+  .mentee-polish .sessions-cards-list .scm-card .scm-body { padding: 12px; }
+  .mentee-polish .sessions-cards-list .scm-card .scm-actions > * { flex: 1 1 0; min-height: 44px; }
+}

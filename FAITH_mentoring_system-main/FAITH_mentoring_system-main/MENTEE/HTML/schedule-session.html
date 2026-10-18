@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Schedule Session — Mentee Portal</title>
+  <link rel="stylesheet" href="/MENTEE/CSS/mentee-sidebar.css"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/schedule-session.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/MENTEE/CSS/page-polish.css"/>
+</head>
+<body class="mentee-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Schedule a Session</h1>
+          <p>Pick an available time slot your mentor has opened and submit a request.</p>
+        </div>
+      </div>
+
+      <!-- Info banner -->
+      <div class="info-banner">
+        <i class="ti ti-info-circle"></i>
+        <span>Submitting a request books that slot right away — the session will appear in your Sessions page immediately.</span>
+      </div>
+
+      <!-- Slots -->
+      <div id="slotsLoading" class="sch-loading"><span class="spinner"></span> Loading available slots...</div>
+
+      <div id="slotsEmpty" class="sch-empty" style="display:none;">
+        <i class="ti ti-calendar-off"></i>
+        <p>Your mentor has no open slots right now.<br>Check back later or reach out to your mentor directly.</p>
+      </div>
+
+      <div id="slotsGrid" class="sch-grid" style="display:none;"></div>
+
+      <!-- Request History -->
+      <div id="historySection" class="hist-section" style="display:none;">
+        <div class="hist-header">
+          <div>
+            <h2>Request History</h2>
+            <p>Your past scheduling requests and their outcomes.</p>
+          </div>
+        </div>
+        <div id="historyList" class="hist-list"></div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ── REQUEST MODAL ─────────────────────────────────────────────────────── -->
+  <div id="requestModal" class="modal-overlay" onclick="closeRequestModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeRequestModal()"><i class="ti ti-x"></i></button>
+      <h2 class="modal-title">Request Session</h2>
+      <p class="modal-subtitle" id="requestSlotDesc">—</p>
+
+      <div id="requestError" class="form-error" style="display:none;"></div>
+
+      <div class="modal-form">
+        <div class="form-group">
+          <label>Purpose / Topic <span class="optional">(optional)</span></label>
+          <textarea id="requestPurpose" rows="3"
+            placeholder="What do you want to discuss in this session?"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeRequestModal()">Cancel</button>
+        <button class="btn-save" id="requestBtn" onclick="submitRequest()">Send Request</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/MENTEE/JS/mentee-sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="/MENTEE/JS/schedule-session.js"></script>
+</body>
+</html>

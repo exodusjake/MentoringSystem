@@ -1,0 +1,75 @@
+<!-- MENTEE Sidebar — mentee-sidebar.html -->
+<link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<button class="hamburger" id="hamburger" aria-label="Toggle menu">
+  <i class="ti ti-menu-2"></i>
+</button>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+  <a href="profile.html" class="sb-profile" id="sbProfileLink">
+    <div class="sb-avatar" id="sidebarAvatar">MU</div>
+    <div class="sb-info">
+      <div class="sb-name" id="sidebarName">Mentee User</div>
+      <div class="sb-role">Mentee</div>
+    </div>
+  </a>
+
+  <nav class="sidebar-nav" aria-label="Main navigation">
+
+    <div class="nav-section">Overview</div>
+    <a href="mentee-dashboard.html" class="nav-item" id="nav-dashboard">
+      <i class="ti ti-layout-dashboard"></i>
+      Dashboard
+    </a>
+
+    <div class="nav-section">Mentoring</div>
+    <a href="sessions.html" class="nav-item" id="nav-sessions">
+      <i class="ti ti-calendar-event"></i>
+      Sessions
+    </a>
+    <a href="schedule-session.html" class="nav-item" id="nav-schedule">
+      <i class="ti ti-clock-plus"></i>
+      Schedule Session
+    </a>
+
+    <div class="nav-section">Content</div>
+    <a href="announcements.html" class="nav-item" id="nav-announce">
+      <i class="ti ti-speakerphone"></i>
+      Announcements &amp; Evaluations
+      <span class="nav-badge" id="annBadge" style="display:none"></span>
+    </a>
+
+    <div class="nav-section">Account</div>
+    <a href="profile.html" class="nav-item" id="nav-profile">
+      <i class="ti ti-user-circle"></i>
+      Profile
+    </a>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" onclick="showLogoutModal()">
+      <i class="ti ti-logout"></i>
+      Logout
+    </button>
+  </div>
+
+</aside>
+
+<div id="logoutModal" class="logout-modal-overlay">
+  <div class="logout-modal">
+    <div class="logout-modal-icon">
+      <i class="ti ti-logout"></i>
+    </div>
+    <h3>Confirm Logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="logout-modal-btns">
+      <button class="btn-cancel" onclick="hideLogoutModal()">Cancel</button>
+      <button class="btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+</div>

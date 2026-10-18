@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Astra Mentoring – Log in</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/LOGIN/CSS/login.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <!-- Left panel -->
+    <div class="left-side">
+      <img src="/IMAGES/LOGO.png" alt="Astra Mentoring" class="left-logo-img"/>
+      <div class="left-divider"></div>
+      <h2 class="left-school">FAITH Colleges</h2>
+      <p class="left-tagline">
+        Welcome to the <strong>HOME</strong> of the <strong>BRAVEHEARTS</strong>
+      </p>
+    </div>
+
+    <!-- Right panel -->
+    <div class="right-side">
+
+      <div class="right-logo">
+        <img src="/IMAGES/LOGO.png" alt="Astra Mentoring" class="right-logo-img"/>
+      </div>
+
+      <div class="login-card">
+
+        <h1 class="card-title">Welcome Back</h1>
+        <p class="card-subtitle">Log in with your institutional email address</p>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="yourname@faith.edu.ph" autocomplete="email"/>
+        </div>
+
+        <!-- Password with show/hide toggle -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="pw-wrap">
+            <input type="password" id="password" placeholder="••••••••••" autocomplete="current-password"/>
+            <button type="button" class="pw-toggle" onclick="togglePassword()" tabindex="-1" aria-label="Toggle password visibility">
+              <!-- Eye open -->
+              <svg id="eyeShow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <!-- Eye closed (hidden by default) -->
+              <svg id="eyeHide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Options row -->
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" id="remember"/>
+            Remember me
+          </label>
+          <button type="button" class="forgot-link" onclick="showForgotModal()">Forgot Password?</button>
+        </div>
+
+        <!-- Error banner (hidden by default) -->
+        <div class="error-banner" id="errorBanner" style="display:none;"></div>
+
+        <!-- Log in button -->
+        <button class="btn-signin" id="signinBtn" onclick="handleSignIn()">
+          Log in
+        </button>
+
+        <p class="contact-text">
+          Cannot log in? Contact the Guidance Office.
+        </p>
+
+      </div>
+
+      <div class="bottom-links">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Help</a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotModal" style="display:none;" onclick="closeForgotModal(event)">
+    <div class="forgot-card" onclick="event.stopPropagation()">
+      <div class="forgot-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <h3 class="forgot-title">Forgot Password?</h3>
+      <p class="forgot-body">
+        Password resets are handled by the Guidance Office.
+        Please visit or contact the Guidance Office for assistance.
+      </p>
+      <button class="btn-signin" onclick="closeForgotModal()">Got it</button>
+    </div>
+  </div>
+
+<script src="../../config.js"></script>
+<script src="../../apiClient.js"></script>
+<script src="/LOGIN/JS/login.js"></script>
+
+</body>
+</html>

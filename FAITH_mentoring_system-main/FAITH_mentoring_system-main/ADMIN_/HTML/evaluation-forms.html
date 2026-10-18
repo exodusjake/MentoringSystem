@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evaluation Forms — Admin Portal</title>
+  <link rel="stylesheet" href="/ADMIN_/CSS/tabler-icons.min.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/evaluation-forms.css"/>
+  <link rel="icon" href="/IMAGES/fav-con.png"/>
+  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="stylesheet" href="/ADMIN_/CSS/page-polish.css"/>
+  <link rel="stylesheet" href="/evaluation-author.css"/>
+  <script src="/evaluation-deadline.js"></script>
+  <script src="/evaluation-description.js"></script>
+</head>
+<body class="admin-polish">
+
+  <div id="sidebar-container"></div>
+
+  <div class="main-wrapper">
+    <main class="page-content">
+
+      <div class="page-header">
+        <div>
+          <h1>Evaluation Forms</h1>
+        </div>
+        <button class="btn-primary" id="createFormBtn">
+          <i class="ti ti-plus"></i> Add Evaluation Form
+        </button>
+      </div>
+
+      <div class="forms-section">
+        <div class="forms-section-header">
+          <h2>All Evaluation Forms</h2>
+          <span class="eval-count" id="evalCount"></span>
+        </div>
+        <div class="forms-list" id="formsList">
+          <div class="eval-loading"><span class="spinner"></span> Loading...</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer>
+      <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Support</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Create / Edit Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Evaluation Form</h3>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Evaluation Title <span class="req">*</span></label>
+          <input type="text" id="fieldTitle" placeholder="Example: End-of-Semester Mentoring Evaluation" autocomplete="off"/>
+        </div>
+        <div class="form-group">
+          <label>Instructions <span style="font-weight:400;color:#64748b;">(optional)</span></label>
+          <div class="rich-editor-wrap">
+            <div class="rich-editor-body" id="fieldDesc" contenteditable="true" data-placeholder="Provide instructions for completing the evaluation and submitting proof."></div>
+            <div class="rich-editor-toolbar">
+              <button type="button" class="rfmt-btn" data-cmd="bold"                onmousedown="event.preventDefault();evalFormatDoc('bold')"><b>B</b></button>
+              <button type="button" class="rfmt-btn" data-cmd="italic"              onmousedown="event.preventDefault();evalFormatDoc('italic')"><i>I</i></button>
+              <button type="button" class="rfmt-btn" data-cmd="underline"           onmousedown="event.preventDefault();evalFormatDoc('underline')"><u>U</u></button>
+              <button type="button" class="rfmt-btn" data-cmd="strikeThrough"       onmousedown="event.preventDefault();evalFormatDoc('strikeThrough')"><s>S</s></button>
+              <span class="rfmt-sep"></span>
+              <button type="button" class="rfmt-btn" data-cmd="insertUnorderedList" onmousedown="event.preventDefault();evalFormatDoc('insertUnorderedList')"><i class="ti ti-list"></i></button>
+              <span class="rfmt-sep"></span>
+              <button type="button" class="rfmt-btn" title="Attach file" onclick="triggerEvalAttachFile()"><i class="ti ti-paperclip"></i></button>
+              <input type="file" id="evalAttachFileInput" multiple
+                accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+                style="display:none" onchange="handleEvalAttachFiles(event)"/>
+            </div>
+          </div>
+          <div id="evalAttachList" class="attach-list"></div>
+        </div>
+        <div class="form-group">
+          <label>Google Form Link <span class="req">*</span></label>
+          <input type="url" id="fieldUrl" placeholder="https://forms.gle/..." autocomplete="off"/>
+        </div>
+        <div class="form-group">
+          <label>Evaluation Deadline <span style="font-weight:400;color:#9ca3af;">(optional)</span></label>
+          <input type="datetime-local" id="fieldDeadline"/>
+          <small>Specify when access to the form closes in this portal. Leave blank if no deadline applies.</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" id="modalCancel">Cancel</button>
+        <button class="btn-primary" id="modalSave">Add Evaluation Form</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submission detail modal — who has self-reported as submitted -->
+  <div class="modal-overlay" id="submitDetailOverlay" onclick="if(event.target===this) closeSubmissionDetail()">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="submitDetailTitle">Submissions</h3>
+        <button class="modal-close" onclick="closeSubmissionDetail()">&times;</button>
+      </div>
+      <p class="submit-detail-note">
+        Each mentee uploads a screenshot as proof of submission — not cross-checked against the actual Google Form responses.
+      </p>
+      <div class="modal-body" id="submitDetailBody">
+        <div class="eval-empty"><i class="ti ti-loader-2"></i> Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proof screenshot lightbox — same pattern as Sessions' proof viewer -->
+  <div id="lightboxOverlay" class="lightbox-overlay" style="display:none;" onclick="closeLightbox(event)">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <div class="lightbox-header">
+        <span class="lightbox-title" id="lightboxTitle">Proof of Submission</span>
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+      </div>
+      <div class="lightbox-body" id="lightboxBody"></div>
+      <div class="lightbox-footer">
+        <a class="lightbox-download" id="lightboxDownload" href="#" download style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm modal -->
+  <div id="confirmModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon" id="confirmIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="info-modal-title" id="confirmTitle">Confirm</h3>
+      <p class="info-modal-message" id="confirmMessage">Are you sure?</p>
+      <div class="info-modal-actions">
+        <button class="btn-outline" onclick="hideConfirmModal()">Cancel</button>
+        <button class="btn-primary" id="confirmOkBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error modal -->
+  <div id="errorModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 class="info-modal-title">Something went wrong</h3>
+      <p class="info-modal-message" id="errorMessage">An error occurred.</p>
+      <button class="btn-primary" onclick="hideErrorModal()" style="width:100%;">OK</button>
+    </div>
+  </div>
+
+  <!-- Success modal -->
+  <div id="successModal" class="info-modal-overlay" style="display:none;">
+    <div class="info-modal">
+      <div class="info-modal-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3 class="info-modal-title" id="successTitle">Success</h3>
+      <p class="info-modal-message" id="successMessage">Done!</p>
+      <button class="btn-primary" onclick="hideSuccessModal()" style="width:100%;">OK</button>
+    </div>
+  </div>
+
+  <script src="/ADMIN_/JS/sidebar.js"></script>
+  <script src="../../config.js"></script>
+  <script src="../../apiClient.js"></script>
+  <script src="../../security-utils.js"></script>
+  <script src="/ADMIN_/JS/evaluation-forms.js"></script>
+</body>
+</html>
