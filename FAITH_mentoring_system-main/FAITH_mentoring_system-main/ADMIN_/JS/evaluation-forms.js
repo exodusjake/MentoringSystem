@@ -183,9 +183,11 @@ function toggleKebab(event, id) {
 async function togglePin(id) {
   document.getElementById(`kebab-${id}`)?.classList.remove('open');
   openKebabId = null;
+  const wasPinned = !!allForms.find(x => x.linkID === id)?.isPinned;
   try {
     await apiRequest(`EvaluationLinks/${id}/pin`, 'PATCH', null, true);
     await loadForms();
+    showToast(wasPinned ? 'Evaluation form unpinned.' : 'Evaluation form pinned.', 'success');
   } catch (e) {
     // The kebab menu that holds this button only renders for links you
     // posted yourself now, so this should be unreachable in normal use —
@@ -420,7 +422,7 @@ async function doSaveForm() {
 
     closeModal();
     await loadForms();
-    showToast(currentEditingId ? '✓ Form link updated' : '✓ Form link added');
+    showToast(currentEditingId ? 'Evaluation form updated.' : 'Evaluation form added.', 'success');
 
   } catch (err) {
     showErrorModal(err.message || 'Failed to save form. Please try again.');
@@ -442,7 +444,7 @@ function askDelete(id) {
       try {
         await apiRequest(`EvaluationLinks/${id}`, 'DELETE', null, true);
         await loadForms();
-        showToast('✓ Form link deleted');
+        showToast('Evaluation form deleted.', 'success');
       } catch (err) {
         showErrorModal('Failed to delete form link. Please try again.');
       }
@@ -466,11 +468,11 @@ function handleEvalAttachFiles(e) {
   const files    = Array.from(e.target.files || []);
 
   if (room <= 0) {
-    showToast(`Maximum ${MAX_ATTACHMENTS} attachments per post.`);
+    showToast(`Maximum ${MAX_ATTACHMENTS} attachments per post.`, 'error');
     return;
   }
   if (files.length > room) {
-    showToast(`Only ${room} more file${room === 1 ? '' : 's'} added — maximum ${MAX_ATTACHMENTS} attachments per post.`);
+    showToast(`Only ${room} more file${room === 1 ? '' : 's'} added — maximum ${MAX_ATTACHMENTS} attachments per post.`, 'info');
   }
   pendingAttachFiles.push(...files.slice(0, room));
   renderEvalAttachList(existing);
@@ -611,14 +613,7 @@ function showErrorModal(msg) {
 function hideErrorModal() { document.getElementById('errorModal').style.display = 'none'; }
 function hideSuccessModal() { document.getElementById('successModal').style.display = 'none'; }
 
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:500;z-index:99999;opacity:0;transition:opacity 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.style.opacity = '1', 10);
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
-}
+// Toasts come from the shared /notify.js (showToast(message, type)).
 
 // ── UTILITIES ─────────────────────────────────────────────────
 function jsonAttr(value) {

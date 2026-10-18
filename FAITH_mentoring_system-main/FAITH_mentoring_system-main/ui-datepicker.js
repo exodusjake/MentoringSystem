@@ -1,9 +1,9 @@
 /* ============================================================
    ui-datepicker.js
-   Replaces the native <input type="date"> popup with a themed calendar
+   Replaces the native <input type="date"> / <input type="datetime-local"> popup with a themed calendar
    (blue accents, rounded panel, month navigation, Today / Clear), matching
    ui-dropdown.js. The real <input> stays in the DOM and remains the source
-   of truth (value is always "YYYY-MM-DD"), so existing page code (.value,
+   of truth (value is always "YYYY-MM-DD", or "YYYY-MM-DDTHH:mm" for datetime-local), so existing page code (.value,
    input/change events, min/max, disabled toggling) keeps working unchanged.
    Usage: include the script on a page; every date input is enhanced.
    Opt an input out with data-native="1".
@@ -53,6 +53,12 @@
     '.dp-foot{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f6}',
     '.dp-link{border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:#2563eb;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .12s}',
     '.dp-link:hover{background:#eff6ff}',
+    '.dp-time{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f6}',
+    '.dp-tin{width:42px;height:34px;box-sizing:border-box;text-align:center;font-family:inherit;font-size:14px;font-weight:600;color:#1f2937;border:1px solid #dce3ec;border-radius:8px;background:#fff;outline:none;padding:0;transition:border-color .15s,box-shadow .15s}',
+    '.dp-tin:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}',
+    '.dp-colon{font-weight:700;color:#6b7280}',
+    '.dp-ampm{height:34px;padding:0 12px;border:1px solid #dce3ec;border-radius:8px;background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:#2563eb;cursor:pointer;transition:background .12s,border-color .12s}',
+    '.dp-ampm:hover{background:#eff6ff;border-color:#93c5fd}',
     '@media (prefers-reduced-motion:reduce){.dp-menu{transition:none}}'
   ].join('');
   var styleEl = document.createElement('style');
@@ -66,20 +72,31 @@
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function iso(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d); }
   function parse(v) {
-    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v || '');
     if (!m) return null;
     var y = +m[1], mo = +m[2] - 1, d = +m[3];
     var dt = new Date(y, mo, d);
     return dt.getFullYear() === y && dt.getMonth() === mo && dt.getDate() === d ? { y: y, m: mo, d: d } : null;
   }
   function today() { var t = new Date(); return { y: t.getFullYear(), m: t.getMonth(), d: t.getDate() }; }
-  function fmt(p) { return MONTHS[p.m].slice(0, 3) + ' ' + p.d + ', ' + p.y; }
+  function parseTime(v) {
+    var m = /T(\d{2}):(\d{2})/.exec(v || '');
+    return m ? { h: +m[1], mi: +m[2] } : null;
+  }
+  function h12(h) { return h % 12 || 12; }
+  function fmt(p, t) {
+    var out = MONTHS[p.m].slice(0, 3) + ' ' + p.d + ', ' + p.y;
+    if (t) out += ', ' + h12(t.h) + ':' + pad(t.mi) + ' ' + (t.h >= 12 ? 'PM' : 'AM');
+    return out;
+  }
 
   function Picker(input) {
     this.input = input;
     this.trigger = null;
     this.menu = null;
     this.view = null; // {y, m} month being shown
+    this.dt = input.type === 'datetime-local';
+    this.time = { h: 23, mi: 59 }; // time used when a day is picked (datetime-local)
     this.build();
   }
 
@@ -105,7 +122,7 @@
     btn.innerHTML = '<span class="dp-label"></span>' + CAL;
     this.label = btn.querySelector('.dp-label');
     this.trigger = btn;
-    this.placeholder = inp.getAttribute('placeholder') || 'Select date';
+    this.placeholder = inp.getAttribute('placeholder') || (this.dt ? 'Select date & time' : 'Select date');
 
     inp.classList.add('dp-native');
     inp.tabIndex = -1;
@@ -143,19 +160,19 @@
 
   Picker.prototype.refresh = function () {
     var p = parse(this.input.value);
-    this.label.textContent = p ? fmt(p) : this.placeholder;
+    this.label.textContent = p ? fmt(p, this.dt ? parseTime(this.input.value) : null) : this.placeholder;
     this.label.classList.toggle('is-placeholder', !p);
     this.trigger.disabled = this.input.disabled;
     if (this.isOpen()) this.render();
   };
 
   Picker.prototype.inRange = function (s) {
-    var min = this.input.min, max = this.input.max;
+    var min = (this.input.min || '').slice(0, 10), max = (this.input.max || '').slice(0, 10);
     return !(min && s < min) && !(max && s > max);
   };
 
   Picker.prototype.render = function () {
-    var self = this, v = this.view, sel = this.input.value, t = today();
+    var self = this, v = this.view, sel = (this.input.value || '').slice(0, 10), t = today();
     var first = new Date(v.y, v.m, 1);
     var start = first.getDay();
     var html = '<div class="dp-head">' +
@@ -171,20 +188,83 @@
         (dt.getFullYear() === t.y && dt.getMonth() === t.m && dt.getDate() === t.d ? ' today' : '');
       html += '<button type="button" class="' + cls + '" data-date="' + s + '"' + (this.inRange(s) ? '' : ' disabled') + '>' + dt.getDate() + '</button>';
     }
-    html += '</div><div class="dp-foot"><button type="button" class="dp-link" data-act="clear">Clear</button>' +
-      '<button type="button" class="dp-link" data-act="today">Today</button></div>';
+    html += '</div>';
+    if (this.dt) {
+      var tm = this.time;
+      html += '<div class="dp-time"><input class="dp-tin" data-t="h" inputmode="numeric" maxlength="2" aria-label="Hour" value="' + h12(tm.h) + '">' +
+        '<span class="dp-colon">:</span>' +
+        '<input class="dp-tin" data-t="mi" inputmode="numeric" maxlength="2" aria-label="Minute" value="' + pad(tm.mi) + '">' +
+        '<button type="button" class="dp-ampm" data-act="ampm" aria-label="Toggle AM or PM">' + (tm.h >= 12 ? 'PM' : 'AM') + '</button></div>';
+    }
+    html += '<div class="dp-foot"><button type="button" class="dp-link" data-act="clear">Clear</button>' +
+      '<button type="button" class="dp-link" data-act="today">Today</button>' +
+      (this.dt ? '<button type="button" class="dp-link" data-act="done">Done</button>' : '') + '</div>';
     this.menu.innerHTML = html;
     this.menu.querySelectorAll('.dp-nav').forEach(function (b) {
       b.addEventListener('click', function () { self.shift(+b.getAttribute('data-nav')); });
     });
     this.menu.querySelectorAll('.dp-day').forEach(function (b) {
-      b.addEventListener('click', function () { self.choose(b.getAttribute('data-date')); });
+      b.addEventListener('click', function () { self.pick(b.getAttribute('data-date')); });
+    });
+    var done = this.menu.querySelector('[data-act="done"]');
+    if (done) done.addEventListener('click', function () { self.close(true); });
+    var ampm = this.menu.querySelector('[data-act="ampm"]');
+    if (ampm) ampm.addEventListener('click', function () { self.time.h = (self.time.h + 12) % 24; self.timeChanged(); });
+    this.menu.querySelectorAll('.dp-tin').forEach(function (inp) {
+      inp.addEventListener('focus', function () { inp.select(); });
+      inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); self.step(inp.getAttribute('data-t'), e.key === 'ArrowUp' ? 1 : -1); }
+      });
+      inp.addEventListener('change', function () { self.setTimePart(inp.getAttribute('data-t'), parseInt(inp.value, 10)); });
     });
     this.menu.querySelector('[data-act="clear"]').addEventListener('click', function () { self.choose(''); });
     this.menu.querySelector('[data-act="today"]').addEventListener('click', function () {
       var n = today(), s = iso(n.y, n.m, n.d);
-      if (self.inRange(s)) self.choose(s); else { self.view = { y: n.y, m: n.m }; self.render(); }
+      if (!self.inRange(s)) { self.view = { y: n.y, m: n.m }; self.render(); }
+      else if (self.dt) { self.pick(s); self.view = { y: n.y, m: n.m }; self.render(); }
+      else self.choose(s);
     });
+  };
+
+  // datetime-local: set the date (keeping the chosen time) without closing.
+  Picker.prototype.pick = function (dateStr) {
+    if (!this.dt) { this.choose(dateStr); return; }
+    this.commit(dateStr + 'T' + pad(this.time.h) + ':' + pad(this.time.mi));
+    this.render();
+  };
+
+  Picker.prototype.commit = function (value) {
+    var inp = this.input;
+    var changed = valueDesc.get.call(inp) !== value;
+    valueDesc.set.call(inp, value);
+    this.refresh();
+    if (changed) {
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  };
+
+  Picker.prototype.timeChanged = function () {
+    var cur = this.input.value;
+    if (parse(cur)) this.commit(cur.slice(0, 10) + 'T' + pad(this.time.h) + ':' + pad(this.time.mi));
+    this.render();
+  };
+
+  Picker.prototype.setTimePart = function (part, n) {
+    if (isNaN(n)) { this.render(); return; }
+    if (part === 'h') {
+      n = Math.min(12, Math.max(1, n));
+      this.time.h = (n % 12) + (this.time.h >= 12 ? 12 : 0);
+    } else {
+      this.time.mi = Math.min(59, Math.max(0, n));
+    }
+    this.timeChanged();
+  };
+
+  Picker.prototype.step = function (part, dir) {
+    if (part === 'h') this.setTimePart('h', ((h12(this.time.h) - 1 + dir + 12) % 12) + 1);
+    else this.setTimePart('mi', (this.time.mi + dir + 60) % 60);
   };
 
   Picker.prototype.shift = function (d) {
@@ -215,6 +295,7 @@
     var self = this;
     var p = parse(this.input.value) || today();
     this.view = { y: p.y, m: p.m };
+    if (this.dt) { var pt = parseTime(this.input.value); if (pt) this.time = pt; }
     this.menu = document.createElement('div');
     this.menu.className = 'dp-menu';
     this.menu.setAttribute('role', 'dialog');
@@ -270,7 +351,7 @@
   };
 
   function enhance(inp) {
-    if (inp.dataset.dp || inp.dataset.native || inp.type !== 'date') return;
+    if (inp.dataset.dp || inp.dataset.native || (inp.type !== 'date' && inp.type !== 'datetime-local')) return;
     inp.dataset.dp = '1';
     new Picker(inp);
   }
@@ -278,7 +359,7 @@
   function scan(root) {
     if (root.nodeType !== 1) return;
     if (root.tagName === 'INPUT') enhance(root);
-    var list = root.querySelectorAll ? root.querySelectorAll('input[type="date"]') : [];
+    var list = root.querySelectorAll ? root.querySelectorAll('input[type="date"],input[type="datetime-local"]') : [];
     for (var i = 0; i < list.length; i++) enhance(list[i]);
   }
 

@@ -226,3 +226,12 @@ html:has(#formsList) footer { flex-shrink: 0; }
 .lightbox-footer { padding: 14px 20px; border-top: 1px solid #dce3ec; display: flex; justify-content: flex-end; }
 .lightbox-download { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: #2563eb; color: #fff; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; }
 .lightbox-download:hover { background: #1d4ed8; }
+
+/* Add Evaluation Form: tactile hover/press so the click reads before the
+   dialog (modal-motion.js) rises in. */
+#createFormBtn { transition: background 0.15s, transform .15s cubic-bezier(.22,1,.36,1), box-shadow .2s ease; }
+#createFormBtn i { display: inline-block; transition: transform .3s cubic-bezier(.22,1,.36,1); }
+#createFormBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(37,99,235,.25); }
+#createFormBtn:hover i { transform: rotate(90deg); }
+#createFormBtn:active { transform: translateY(0) scale(.96); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { #createFormBtn, #createFormBtn i { transition: none; } }
