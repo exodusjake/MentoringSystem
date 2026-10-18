@@ -709,9 +709,11 @@ async function postComment(announcementId) {
     document.getElementById(`ctrigger-${announcementId}`).style.display = '';
     const list = document.getElementById(`clist-${announcementId}`);
     if (list) list.dataset.showAll = 'true';
+    showToast('Comment posted.', 'success');
     await loadCommentsInline(announcementId);
   } catch (e) {
     console.error('Post comment failed:', e);
+    showToast(e.message || 'Failed to post comment. Please try again.');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -753,9 +755,11 @@ async function saveEditComment(commentId, announcementId) {
   if (!content || content === '<br>') return;
   try {
     await apiRequest(`AnnouncementComments/${commentId}`, 'PUT', { Content: content }, true);
+    showToast('Comment updated.', 'success');
     await loadCommentsInline(announcementId);
   } catch (e) {
     console.error('Edit comment failed:', e);
+    showToast(e.message || 'Failed to update comment. Please try again.');
   }
 }
 
@@ -785,9 +789,11 @@ async function confirmDeleteComment() {
 
   try {
     await apiRequest(`AnnouncementComments/${commentId}`, 'DELETE', null, true);
+    showToast('Comment deleted.', 'success');
     await loadCommentsInline(announcementId);
   } catch (e) {
     console.error('Delete comment failed:', e);
+    showToast(e.message || 'Failed to delete comment. Please try again.');
   }
 }
 
