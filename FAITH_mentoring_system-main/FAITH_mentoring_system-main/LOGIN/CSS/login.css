@@ -508,3 +508,41 @@ body {
    banner's size sits under the form and gives way when the banner is shown. */
 .right-side::after { content: ''; flex-shrink: 0; height: var(--login-error-space, 56px); }
 .right-side:has(.error-banner:not([style*="none"]))::after { height: 0; }
+
+/* ── No page scroll: the login screen fits the window ─────
+   The card is capped to the viewport. If the window is really tiny,
+   only the form side scrolls inside the card, never the whole page. */
+html, body { height: 100%; overflow: hidden; }
+body { min-height: 0; padding: 16px; }
+.wrapper { min-height: 0; height: min(640px, calc(100dvh - 32px)); }
+.right-side { position: relative; overflow: hidden; }
+.right-side { justify-content: flex-start; }
+.right-side > .right-logo { margin-top: auto; }
+.right-side > .bottom-links { margin-bottom: auto; }
+@media (max-width: 900px) {
+  body { padding: 0; }
+  .wrapper { height: 100dvh; max-height: 100dvh; }
+}
+
+/* ── Home button (back to landing page) ───────────────── */
+.back-home {
+  position: absolute; top: 16px; left: 16px; z-index: 5;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: #0b1a5c; background: #f4f7fb; border: 1px solid #dce3ec;
+  transition: background .2s, color .2s, border-color .2s, transform .15s;
+}
+.back-home svg { width: 20px; height: 20px; }
+.back-home:hover { background: #f0b429; border-color: #f0b429; transform: translateY(-1px); }
+.back-home:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+/* ── Error banner never moves the layout ──────────────────
+   Its slot is always reserved (just invisible when there is no error), so
+   showing a wrong-credentials message doesn't push the card or the
+   Terms / Privacy / Help links. This replaces the old spacer trick. */
+.error-banner {
+  display: flex !important; align-items: center; justify-content: center;
+  height: 46px; margin-bottom: 14px; padding: 4px 12px; line-height: 1.3; overflow: hidden;
+}
+.error-banner[style*="none"] { visibility: hidden; }
+.right-side::after, .right-side:has(.error-banner:not([style*="none"]))::after { height: 0 !important; }
