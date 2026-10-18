@@ -1,5 +1,5 @@
-// The backend's HTTPS host (EC2 + Nginx reverse proxy, valid Let's Encrypt cert).
-const BACKEND_HTTPS_HOST = '46-137-221-251.sslip.io';
+// The backend's HTTPS host (EC2 + Nginx reverse proxy, Let's Encrypt cert; Nginx also serves the static frontend).
+const BACKEND_HTTPS_HOST = '18-136-217-232.sslip.io';
 
 const CONFIG = {
     // HTTPS frontends must call the backend over HTTPS too (mixed-content
