@@ -72,11 +72,11 @@
               <option value="Period">Period</option>
               <option value="Evaluation">Evaluation</option>
             </select>
-            <button onclick="exportCSV()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#2563eb;border:1px solid #2563eb;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='#2563eb';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#2563eb'">
+            <button class="cal-act-btn" onclick="exportCSV()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#fff;color:#2563eb;border:1px solid #2563eb;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='#2563eb';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#2563eb'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Export CSV
             </button>
-            <button onclick="printReport()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#2563eb;color:#fff;border:1px solid #2563eb;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+            <button class="cal-act-btn" onclick="printReport()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#2563eb;color:#fff;border:1px solid #2563eb;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               Print / Save as PDF
             </button>
@@ -293,8 +293,12 @@
   <script src="/sidebar-indicator.js"></script>
   <script src="/empty-states.js"></script>
   <script src="/smooth-scroll.js"></script>
+  <script src="/ui-dropdown.js"></script>
+  <script src="/ui-datepicker.js"></script>
+  <script src="/modal-motion.js"></script>
   <script src="../../config.js"></script>
   <script src="../../apiClient.js"></script>
+  <script src="../../notify.js?v=2"></script>
   <script src="../../calendar-sheet.js"></script>
   <script src="/ADMIN_/JS/calendar-events.js"></script>
 </body>

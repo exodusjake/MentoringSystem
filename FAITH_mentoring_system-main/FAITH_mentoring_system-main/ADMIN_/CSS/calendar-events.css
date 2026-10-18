@@ -25,6 +25,29 @@
 
 .cal-type-filter { padding: 9px 14px; border: 1px solid #dce3ec; border-radius: 10px; font-size: 14px; color: #374151; background: #f4f7fb; cursor: pointer; outline: none; transition: border-color 0.15s; font-family: inherit; }
 .cal-type-filter:focus { border-color: #2563eb; background: #fff; }
+/* ui-dropdown.js swaps the <select> for a .dd-trigger button (inline width:100%). */
+.dd-trigger.cal-type-filter:hover:not(:disabled) { background: #fff; }
+@media (min-width: 769px) { .dd-trigger.cal-type-filter { width: 170px !important; flex-shrink: 0; } }
+
+/* Tactile hover/press for Add Activity, Generate Sheet, Export CSV and Print,
+   so a click reads before the dialog or download follows. */
+#addEventBtn, #generateSheetBtn, .cal-act-btn {
+  transition: transform .15s cubic-bezier(.22,1,.36,1), box-shadow .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+#addEventBtn svg { transition: transform .3s cubic-bezier(.22,1,.36,1); }
+#addEventBtn:hover svg { transform: rotate(90deg); }
+#addEventBtn:hover, #generateSheetBtn:hover, .cal-act-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(37,99,235,.22); }
+#addEventBtn:active, #generateSheetBtn:active, .cal-act-btn:active { transform: translateY(0) scale(.96); box-shadow: none; }
+
+/* Generate Sheet preview: fade the backdrop and let the sheet rise in. */
+@keyframes calSheetBackdrop { from { opacity: 0; } to { opacity: 1; } }
+@keyframes calSheetRise { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: none; } }
+.sheet-overlay { animation: calSheetBackdrop .24s ease both; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.sheet-overlay > .sheet-container { animation: calSheetRise .38s cubic-bezier(.22,1,.36,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  #addEventBtn, #generateSheetBtn, .cal-act-btn, #addEventBtn svg { transition: none; }
+  .sheet-overlay, .sheet-overlay > .sheet-container { animation: none; }
+}
 
 /* Generate Sheet button area */
 /* Keeps it pinned right if it wraps onto its own line. */

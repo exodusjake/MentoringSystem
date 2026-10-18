@@ -519,7 +519,7 @@ async function doSaveEvent(type, slotted, slot, title, start, end, note) {
     }
     closeModal();
     await loadEvents();
-    showToast(editingId ? '✓ Activity updated' : '✓ Activity added');
+    showToast(editingId ? 'Activity updated.' : 'Activity added.', 'success');
   } catch (err) {
     showErrorModal(err.message || 'Failed to save activity. Please try again.');
   } finally {
@@ -560,7 +560,7 @@ async function doDelete(id) {
   try {
     await apiRequest(`CalendarEvents/${id}`, 'DELETE', null, true);
     await loadEvents();
-    showToast('✓ Activity deleted');
+    showToast('Activity deleted.', 'success');
   } catch (err) {
     showErrorModal('Failed to delete activity. Please try again.');
   }
@@ -638,7 +638,7 @@ function renderSheetPreview() {
 function publishCalendar() {
   const toPublish = allEvents.filter(ev => !ev.isPublished);
   if (!toPublish.length) {
-    showToast('All activities are already published.');
+    showToast('All activities are already published.', 'info');
     return;
   }
   const count = toPublish.length;
@@ -682,7 +682,7 @@ async function doPublishCalendar() {
 
     await loadEvents();
     closeSheetPreview();
-    showToast(`✓ Published — ${allEvents.length} activit${allEvents.length !== 1 ? 'ies are' : 'y is'} now visible to mentors`);
+    showToast(`Published — ${allEvents.length} activit${allEvents.length !== 1 ? 'ies are' : 'y is'} now visible to mentors.`, 'success');
   } catch (err) {
     showErrorModal(err.message || 'Failed to publish. Please try again.');
   } finally {
@@ -724,7 +724,7 @@ function escCsv(v) {
 
 function exportCSV() {
   const events = getFilteredEvents().slice().sort((a, b) => parseDate(a.startDate) - parseDate(b.startDate));
-  if (!events.length) { showToast('No activities to export.'); return; }
+  if (!events.length) { showToast('No activities to export.', 'info'); return; }
 
   const header = ['Type', 'Activity', 'Start Date', 'End Date', 'Status', 'Venue', 'Note'];
   const rows   = events.map(ev => [
@@ -745,31 +745,19 @@ function exportCSV() {
   a.download = `calendar-activities-${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  showToast(`Exported ${events.length} activit${events.length !== 1 ? 'ies' : 'y'} to CSV.`, 'success');
 }
 
 async function printReport() {
  const events=getFilteredEvents();
- if(!events.length) { showToast('No activities to print.'); return; }
+ if(!events.length) { showToast('No activities to print.', 'info'); return; }
  const popup=window.open('', '_blank', 'width=900,height=700');
  if(!popup) { showErrorModal('Pop-up blocked. Please allow pop-ups for this page.'); return; }
  const data=await fetchCalendarSheetData();
  openCalendarSheetPrintWindow(buildCalendarSheetPrintHtml({...data,events}),popup);
 }
 
-// ── TOAST ─────────────────────────────────────────────────────
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `
-    position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
-    background:#111827;color:#fff;padding:12px 24px;
-    border-radius:8px;font-size:14px;font-weight:500;
-    z-index:99999;opacity:0;transition:opacity 0.3s;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.style.opacity = '1', 10);
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
-}
+// Toasts come from the shared /notify.js (showToast(message, type)).
 
 // ── ERROR MODAL ───────────────────────────────────────────────
 function showErrorModal(msg) {
