@@ -15,6 +15,8 @@
   var NAV_DELAY = 340;
 
   var css = [
+    'html{scroll-behavior:smooth}',
+    '.sidebar{scroll-behavior:smooth;overscroll-behavior:contain}',
     '.sidebar-nav{position:relative}',
     '.nav-item{white-space:nowrap;min-height:42px}',
     '#nav-ratings{font-size:14px}',
@@ -40,7 +42,7 @@
     '.page-skel .sk-block.short{height:140px}',
     '@keyframes sk-shimmer{to{background-position:-200% 0}}',
     '@media (max-width:768px){.page-skel{left:0;padding:70px 16px 16px}.page-skel .sk-row{grid-template-columns:1fr 1fr}}',
-    '@media (prefers-reduced-motion:reduce){.sb-indicator.animate,.nav-item,.nav-item i,.page-skel{transition:none!important}.page-skel .sk{animation:none!important}}'
+    '@media (prefers-reduced-motion:reduce){html,.sidebar{scroll-behavior:auto}.sb-indicator.animate,.nav-item,.nav-item i,.page-skel{transition:none!important}.page-skel .sk{animation:none!important}}'
   ].join('');
 
   var style = document.createElement('style');
@@ -120,7 +122,7 @@
     var sb = document.querySelector('.sidebar');
     if (!sb) return;
     var y = parseInt(sget(SCROLL_KEY), 10);
-    if (y > 0) sb.scrollTop = y;
+    if (y > 0) sb.scrollTo({ top: y, behavior: 'instant' }); // not animated
     if (!sb.dataset.scrollBound) {
       sb.dataset.scrollBound = '1';
       sb.addEventListener('scroll', function () { sset(SCROLL_KEY, String(sb.scrollTop)); }, { passive: true });
