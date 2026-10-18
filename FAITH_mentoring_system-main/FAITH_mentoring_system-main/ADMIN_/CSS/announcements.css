@@ -52,6 +52,17 @@ html:has(#formsList) footer {
   margin-top: 4px;
 }
 
+/* Post Announcement: tactile hover/press so the click reads before the
+   dialog (modal-motion.js) rises in. */
+#createFormBtn { transition: background 0.15s, transform .15s cubic-bezier(.22,1,.36,1), box-shadow .2s ease; }
+#createFormBtn svg { transition: transform .3s cubic-bezier(.22,1,.36,1); }
+#createFormBtn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(37,99,235,.25); }
+#createFormBtn:hover svg { transform: rotate(90deg); }
+#createFormBtn:active { transform: translateY(0) scale(.96); box-shadow: none; }
+/* ui-dropdown.js triggers keep the filter's fixed width (inline width:100%). */
+@media (min-width: 769px) { .dd-trigger.ann-filter-select { width: 140px !important; flex-shrink: 0; } }
+@media (prefers-reduced-motion: reduce) { #createFormBtn, #createFormBtn svg { transition: none; } }
+
 /* ===== BUTTONS ===== */
 .btn-primary {
   display: flex; align-items: center; justify-content: center; gap: 6px;

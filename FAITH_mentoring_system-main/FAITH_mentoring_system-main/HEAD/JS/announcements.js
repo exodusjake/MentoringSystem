@@ -231,9 +231,11 @@ function toggleKebab(event, id) {
 }
 
 async function togglePin(id) {
+  const wasPinned = !!allAnnouncements.find(x => x.announcementID === id)?.isPinned;
   try {
     await apiRequest(`Announcements/${id}/pin`, 'PATCH', null, true);
     await loadAnnouncements();
+    showToast(wasPinned ? 'Announcement unpinned.' : 'Announcement pinned.', 'success');
   } catch (e) {
     // The kebab menu that holds this button only renders for isMine posts,
     // so this should be unreachable in normal use — kept as a visible
@@ -480,11 +482,11 @@ function handleAttachFiles(e) {
   const files    = Array.from(e.target.files || []);
 
   if (room <= 0) {
-    showToast(`Maximum ${MAX_ATTACHMENTS} attachments per post.`);
+    showToast(`Maximum ${MAX_ATTACHMENTS} attachments per post.`, 'error');
     return;
   }
   if (files.length > room) {
-    showToast(`Only ${room} more file${room === 1 ? '' : 's'} added — maximum ${MAX_ATTACHMENTS} attachments per post.`);
+    showToast(`Only ${room} more file${room === 1 ? '' : 's'} added — maximum ${MAX_ATTACHMENTS} attachments per post.`, 'info');
   }
   pendingAttachFiles.push(...files.slice(0, room));
   renderAttachList(existing);
@@ -715,7 +717,7 @@ async function doSaveAnnouncement() {
 
     closeModal();
     await loadAnnouncements();
-    showToast(currentEditingId ? '✓ Announcement updated' : '✓ Announcement posted');
+    showToast(currentEditingId ? 'Announcement updated.' : 'Announcement posted.', 'success');
   } catch (err) {
     showErrorModal(err.message || 'Failed to save. Please try again.');
   } finally {
@@ -734,7 +736,7 @@ function askDelete(id) {
       try {
         await apiRequest(`Announcements/${id}`, 'DELETE', null, true);
         await loadAnnouncements();
-        showToast('✓ Announcement deleted');
+        showToast('Announcement deleted.', 'success');
       } catch (err) {
         showErrorModal('Failed to delete. Please try again.');
       }
@@ -771,19 +773,7 @@ function hideConfirmModal() {
 }
 
 // ── UTILITIES ─────────────────────────────────────────────────
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `
-    position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
-    background:#111827;color:#fff;padding:12px 24px;
-    border-radius:8px;font-size:14px;font-weight:500;
-    z-index:99999;opacity:0;transition:opacity 0.3s;
-    box-shadow:0 4px 12px rgba(0,0,0,.2);white-space:nowrap;`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.style.opacity = '1', 10);
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
-}
+// Toasts come from the shared /notify.js (showToast(message, type)).
 
 function showErrorModal(msg) {
   document.getElementById('errorMessage').textContent = msg;
