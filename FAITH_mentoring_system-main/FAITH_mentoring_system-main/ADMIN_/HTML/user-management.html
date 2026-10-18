@@ -661,6 +661,19 @@
     </div>
   </div>
 
+  <!-- Can't-delete explainer -->
+  <div id="deleteBlockedModal" class="info-modal-overlay" onclick="if(event.target===this)hideDeleteBlocked()">
+    <div class="info-modal db-modal" role="dialog" aria-modal="true" aria-labelledby="dbTitle">
+      <div class="db-icon" id="dbIcon"></div>
+      <h3 class="info-modal-title" id="dbTitle"></h3>
+      <div class="db-subject" id="dbSubject"></div>
+      <p class="db-reason" id="dbReason"></p>
+      <ul class="db-list" id="dbList" style="display:none"></ul>
+      <div class="db-steps" id="dbSteps"></div>
+      <div class="db-actions" id="dbActions"></div>
+    </div>
+  </div>
+
   <!-- Import Start Modal -->
   <style>
     /* Replace the native <summary> triangle with our own chevron. */
@@ -877,9 +890,11 @@
   <script src="/sidebar-indicator.js"></script>
   <script src="/empty-states.js"></script>
   <script src="/smooth-scroll.js"></script>
+  <script src="/ui-dropdown.js"></script>
+  <script src="/modal-motion.js"></script>
   <script src="../../config.js"></script>
   <script src="../../apiClient.js"></script>
-  <script src="../../notify.js"></script>
+  <script src="../../notify.js?v=2"></script>
   <script src="../../security-utils.js"></script>
   <script src="/ADMIN_/JS/user-management.js"></script>
   <div id="umConfirmModal" class="info-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="umConfirmTitle">

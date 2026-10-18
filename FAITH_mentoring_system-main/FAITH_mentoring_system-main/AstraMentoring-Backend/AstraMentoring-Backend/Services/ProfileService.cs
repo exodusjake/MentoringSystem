@@ -200,6 +200,12 @@ namespace AstraMentoring_Backend.Services
 
             if (role == "Mentor")
             {
+                var activeMentees = await conn.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(DISTINCT MenteeID) FROM dbo.MentorMentee WHERE MentorID = @UserID AND IsActive = 1",
+                    new { UserID = id });
+                if (activeMentees > 0)
+                    return $"This mentor still has {activeMentees} active mentee assignment{(activeMentees == 1 ? "" : "s")}. Remove or reassign them first, or use Deactivate instead.";
+
                 var sessionCount = await conn.ExecuteScalarAsync<int>(
                     "SELECT COUNT(*) FROM Sessions WHERE MentorID = @UserID", new { UserID = id });
                 if (sessionCount > 0)
@@ -207,6 +213,17 @@ namespace AstraMentoring_Backend.Services
             }
             else if (role == "Admin" || role == "Head")
             {
+                if (role == "Admin")
+                {
+                    // Never leave the system without an active administrator.
+                    var otherActiveAdmins = await conn.ExecuteScalarAsync<int>(
+                        "SELECT COUNT(*) FROM Users WHERE Role = 'Admin' AND IsActive = 1 AND UserID <> @UserID",
+                        new { UserID = id });
+                    var targetActive = await conn.ExecuteScalarAsync<bool>(
+                        "SELECT CAST(ISNULL(IsActive, 1) AS bit) FROM Users WHERE UserID = @UserID", new { UserID = id });
+                    if (targetActive && otherActiveAdmins == 0)
+                        return "This is the only active administrator account. Deleting it would leave the system with no admin. Create or activate another admin first.";
+                }
                 var postCount = await conn.ExecuteScalarAsync<int>(
                     @"SELECT (SELECT COUNT(*) FROM Announcements WHERE PostedByUserID = @UserID)
                            + (SELECT COUNT(*) FROM EvaluationLinks WHERE PostedByUserID = @UserID)",
@@ -216,6 +233,16 @@ namespace AstraMentoring_Backend.Services
             }
             else if (role == "Mentee")
             {
+                var isDropOut = await conn.ExecuteScalarAsync<bool>(
+                    "SELECT CAST(ISNULL(IsDropOut, 0) AS bit) FROM MenteeProfiles WHERE UserID = @UserID", new { UserID = id });
+                if (isDropOut)
+                    return "This student is marked as Drop Out. Their attendance and assignment history are kept for reporting, so a dropped-out student can't be permanently deleted. Reinstate the student first if this account really has to be erased.";
+
+                var activeAssignments = await conn.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(*) FROM dbo.MentorMentee WHERE MenteeID = @UserID AND IsActive = 1", new { UserID = id });
+                if (activeAssignments > 0)
+                    return "This student is currently assigned to a mentor. Remove the assignment first (Assignments tab), or mark them as Drop Out instead.";
+
                 // A makeup session a mentee requested is only safe to fully
                 // delete along with them (see sp_DeleteUser) when they were
                 // its only real participant. Approved makeup slots can be

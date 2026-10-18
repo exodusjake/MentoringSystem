@@ -70,14 +70,59 @@ let dashboardEngagementFilter = '';
 let dashboardEngagementByUser = new Map();
 
 // ── TAB SWITCHING ──
+let tabSwitchToken = 0;
+const TAB_NAMES = ['users', 'assignments', 'sections'];
+
+// Sliding highlight behind the active tab.
+function updateTabPill(animate = true) {
+  const bar = document.querySelector('.um-tabs');
+  const btn = document.querySelector('.um-tab.active');
+  if (!bar || !btn) return;
+  let pill = bar.querySelector('.um-tab-pill');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'um-tab-pill';
+    bar.insertBefore(pill, bar.firstChild);
+    bar.classList.add('has-pill');
+    animate = false;
+  }
+  pill.style.transition = animate ? '' : 'none';
+  pill.style.width = btn.offsetWidth + 'px';
+  pill.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+  if (!animate) { void pill.offsetWidth; pill.style.transition = ''; }
+  // Keep the active tab visible when the bar scrolls sideways on small screens.
+  const left = btn.offsetLeft - 12, right = btn.offsetLeft + btn.offsetWidth + 12;
+  if (left < bar.scrollLeft) bar.scrollTo({ left, behavior: 'smooth' });
+  else if (right > bar.scrollLeft + bar.clientWidth) bar.scrollTo({ left: right - bar.clientWidth, behavior: 'smooth' });
+}
+
 function switchTab(tab) {
-  ['users', 'assignments', 'sections'].forEach(t => {
-    document.getElementById(`tab-${t}`).style.display       = t === tab ? '' : 'none';
-    document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === tab);
-  });
+  const nextPanel = document.getElementById('tab-' + tab);
+  const current = TAB_NAMES.map(t => document.getElementById('tab-' + t)).find(p => p && p.style.display !== 'none');
+  TAB_NAMES.forEach(t => document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab));
+  updateTabPill();
+
   if (tab === 'sections' && !sectionsTabLoaded) {
     sectionsTabLoaded = true;
     fetchSectionMentorView();
+  }
+  if (current === nextPanel) return;
+
+  const token = ++tabSwitchToken;
+  const show = () => {
+    if (token !== tabSwitchToken) return;
+    TAB_NAMES.forEach(t => {
+      const p = document.getElementById('tab-' + t);
+      p.classList.remove('tab-leave', 'tab-enter');
+      p.style.display = t === tab ? '' : 'none';
+    });
+    nextPanel.classList.add('tab-enter');
+  };
+  if (current && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    current.classList.add('tab-leave');       // fade the old panel out…
+    setTimeout(show, 140);                    // …then bring the new one in
+  } else {
+    show();
   }
 }
 
@@ -2757,7 +2802,9 @@ function openPermanentDeleteConfirm() {
   const user = allUsers.find(u => u.userID === editingId);
   if (!user) { showToast('Could not find this account. Please reopen it and try again.', 'error'); return; }
   const isSelf = String(editingId) === String(getSession()?.user?.userID ?? '');
-  if (isSelf) { showToast('You cannot delete your own account.', 'error'); return; }
+  if (isSelf) { showDeleteBlocked({ user, kind: 'self' }); return; }
+  const blocked = clientDeleteBlock(user);
+  if (blocked) { showDeleteBlocked({ user, kind: blocked }); return; }
 
   permanentDeleteTargetId = editingId;
   document.getElementById('permanentDeleteMessage').innerHTML =
@@ -2786,9 +2833,150 @@ async function confirmPermanentDelete() {
     showStatusSuccess('Account Deleted', `${name}'s account has been permanently deleted.`);
   } catch (err) {
     closePermanentDeleteModal();
-    showErrorModal(err.message || 'Failed to delete account. Please try again.');
+    if (err && err.status === 400 && user) {
+      showDeleteBlocked({ user, kind: classifyDeleteBlock(user, err.message), message: err.message });
+    } else {
+      showErrorModal(err.message || 'Failed to delete account. Please try again.');
+    }
   }
 }
+
+// ── "Can't delete" explainer ────────────────────────────────────────
+// Turns the reasons an account can't be hard-deleted into a clear message
+// with the next step, instead of a bare error popup.
+const DB_ICONS = {
+  info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  lock: '<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+};
+
+// Reasons we can tell from data the page already has (no server round trip).
+function clientDeleteBlock(user) {
+  if (user.role === 'Mentee') {
+    const m = allMenteesWithDept.find(x => x.userID === user.userID);
+    if (m?.isDropOut) return 'dropout';
+  }
+  return null;
+}
+
+// Maps the server's message to a scenario.
+function classifyDeleteBlock(user, message = '') {
+  const t = message.toLowerCase();
+  if (t.includes('drop out') && t.includes('marked as')) return 'dropout';
+  if (t.includes('only active administrator')) return 'lastAdmin';
+  if (t.includes('assigned to a mentor') || t.includes('active mentee assignment')) return 'assigned';
+  if (t.includes('announcements') || t.includes('evaluation links')) return 'posts';
+  if (t.includes('sessions') || t.includes('makeup')) return user?.role === 'Mentee' ? 'sharedHistory' : 'history';
+  return 'generic';
+}
+
+function deleteBlockContent(kind, user) {
+  const name = user ? `${user.firstName} ${user.lastName}` : 'this account';
+  const isMentee = user?.role === 'Mentee';
+  const act = {
+    reinstate:   { label: 'Reinstate student',  primary: true, run: () => { editingId = user.userID; openDropOutConfirm(); } },
+    assignments: { label: 'Go to Assignments',  primary: true, run: () => switchTab('assignments') },
+    deactivate:  { label: 'Deactivate instead', primary: true, run: () => { editingId = user.userID; openActiveConfirm(); } },
+    dropout:     { label: 'Mark as Drop Out',   primary: true, run: () => { editingId = user.userID; openDropOutConfirm(); } }
+  };
+  switch (kind) {
+    case 'self':
+      return { icon: 'lock', tone: 'stop', title: "You can't delete your own account",
+        reason: 'Deleting the account you are signed in with would lock you out of the system.',
+        steps: ['Ask another administrator to remove this account if it is no longer needed.'], actions: [] };
+    case 'dropout':
+      return { icon: 'lock', tone: 'warn', title: "Can't delete a dropped-out student",
+        reason: `${name} is marked as Drop Out. Their attendance and assignment history are kept for reporting, so a dropped-out student can't be permanently deleted.`,
+        steps: ['Keep the student as Drop Out. Nothing else is needed.',
+                'Only if the account must truly be erased (for example an accidental duplicate): reinstate the student first, then delete.'],
+        actions: [act.reinstate] };
+    case 'assigned':
+      return { icon: 'info', tone: 'warn', title: isMentee ? 'Student is still assigned to a mentor' : 'Mentor still has active mentees',
+        reason: isMentee
+          ? `${name} is currently assigned to a mentor, so their account can't be deleted yet.`
+          : `${name} still has mentees assigned to them, so their account can't be deleted yet.`,
+        steps: ['Open the Assignments tab and remove or reassign the active assignments.',
+                'Then try deleting again, or use ' + (isMentee ? 'Drop Out' : 'Deactivate') + ' to keep the history.'],
+        actions: [act.assignments, isMentee ? act.dropout : act.deactivate] };
+    case 'history':
+      return { icon: 'lock', tone: 'warn', title: 'This mentor has session history',
+        reason: `${name} has conducted sessions with mentee attendance on record. Deleting the account would also erase those mentees' records.`,
+        steps: ['Deactivate the account. It keeps all history and can be reactivated later.'], actions: [act.deactivate] };
+    case 'sharedHistory':
+      return { icon: 'lock', tone: 'warn', title: 'Student shares records with others',
+        reason: `${name} shares a makeup session with other students. Deleting the account would also affect their records.`,
+        steps: ['Mark the student as Drop Out. It keeps the shared records intact.'], actions: [act.dropout] };
+    case 'posts':
+      return { icon: 'lock', tone: 'warn', title: 'This account has posted content',
+        reason: `${name} has posted announcements or evaluation links that other users have commented on or answered. Deleting the account would erase those too.`,
+        steps: ['Deactivate the account. The posts and replies stay.'], actions: [act.deactivate] };
+    case 'lastAdmin':
+      return { icon: 'lock', tone: 'stop', title: 'This is the only active admin',
+        reason: 'Deleting the last active administrator would leave nobody able to manage the system.',
+        steps: ['Create or activate another admin account first, then try again.'], actions: [] };
+    default:
+      return { icon: 'info', tone: 'warn', title: "This account can't be deleted",
+        reason: null,
+        steps: ['Use Deactivate' + (isMentee ? ' or Drop Out' : '') + ' instead. Both keep records and can be undone.'],
+        actions: [act.deactivate] };
+  }
+}
+
+function showDeleteBlocked({ user, kind, message, deleted, failures }) {
+  const $ = id => document.getElementById(id);
+  const esc = escapeHtml;
+  $('dbList').style.display = 'none';
+  $('dbList').innerHTML = '';
+  const actions = [];
+
+  if (kind === 'bulk') {
+    $('dbIcon').className = 'db-icon warn';
+    $('dbIcon').innerHTML = DB_ICONS.info;
+    $('dbTitle').textContent = deleted > 0 ? 'Some accounts were deleted' : "These accounts can't be deleted";
+    $('dbSubject').innerHTML = (deleted > 0 ? `<span class="db-chip role">${deleted} deleted</span>` : '') +
+      `<span class="db-chip status">${failures.length} not deleted</span>`;
+    $('dbReason').textContent = 'These accounts have records that must be kept, so they were left as they are:';
+    $('dbList').style.display = '';
+    $('dbList').innerHTML = failures.map(f =>
+      `<li><strong>${esc(f.name)}${f.user ? ' · ' + esc(f.user.role) : ''}</strong>${esc(f.message)}</li>`).join('');
+    $('dbSteps').innerHTML = '<h4>What you can do</h4><ol><li>Use <b>Deactivate</b> (or <b>Drop Out</b> for students). Both keep records and can be undone.</li></ol>';
+  } else {
+    const c = deleteBlockContent(kind, user);
+    $('dbIcon').className = 'db-icon ' + c.tone;
+    $('dbIcon').innerHTML = DB_ICONS[c.icon];
+    $('dbTitle').textContent = c.title;
+    const status = !user ? '' : (kind === 'dropout' ? '<span class="db-chip status">Drop Out</span>'
+                   : user.isActive === false ? '<span class="db-chip status">Inactive</span>' : '');
+    $('dbSubject').innerHTML = user
+      ? `<span class="db-chip">${esc(user.firstName)} ${esc(user.lastName)}</span><span class="db-chip role">${esc(user.role)}</span>${status}` : '';
+    // Use the server's own wording for a case that has no scripted explanation.
+    $('dbReason').textContent = c.reason || message || 'This account has records that must be kept.';
+    $('dbSteps').innerHTML = c.steps.length ? '<h4>What you can do</h4><ol>' + c.steps.map(s => `<li>${esc(s)}</li>`).join('') + '</ol>' : '';
+    actions.push(...c.actions);
+  }
+
+  const box = $('dbActions');
+  box.innerHTML = '';
+  actions.forEach(a => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = a.primary ? 'primary' : '';
+    b.textContent = a.label;
+    b.addEventListener('click', () => { hideDeleteBlocked(); a.run(); });
+    box.appendChild(b);
+  });
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.textContent = 'Close';
+  close.addEventListener('click', hideDeleteBlocked);
+  box.appendChild(close);
+
+  $('deleteBlockedModal').style.display = 'flex';
+}
+
+function hideDeleteBlocked() {
+  document.getElementById('deleteBlockedModal').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideDeleteBlocked(); });
 
 // ── BULK PERMANENT DELETE — same true hard-delete, applied to every
 //    selected user. Excludes the caller's own row the same way the single
@@ -2824,7 +3012,7 @@ async function confirmBulkPermanentDelete() {
       } catch (e) {
         const user = allUsers.find(u => u.userID === id);
         const name = user ? `${user.firstName} ${user.lastName}` : `User #${id}`;
-        failures.push(`${name}: ${e.message || 'Unknown error'}`);
+        failures.push({ name, user, message: e.message || 'Unknown error' });
       }
     }
     selectedUserIds.clear();
@@ -2835,7 +3023,7 @@ async function confirmBulkPermanentDelete() {
   closeBulkPermanentDeleteModal();
   const deleted = ids.length - failures.length;
   if (failures.length > 0) {
-    showErrorModal(`${deleted} account(s) deleted. ${failures.length} account(s) could not be deleted:\n\n${failures.join('\n')}`);
+    showDeleteBlocked({ kind: 'bulk', deleted, failures });
   } else if (deleted > 0) {
     showStatusSuccess('Accounts Deleted', `${deleted} account(s) have been permanently deleted.`);
   }
@@ -2963,3 +3151,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sectionDeptFilter')?.addEventListener('change', renderSectionTab);
   document.getElementById('fieldCourse')?.addEventListener('change', onMenteeCourseChange);
 });
+
+// Place the tab pill once layout (and fonts) are ready, and keep it aligned on resize.
+window.addEventListener('load', () => updateTabPill(false));
+window.addEventListener('resize', () => updateTabPill(false));
+if (document.readyState !== 'loading') updateTabPill(false);
+else document.addEventListener('DOMContentLoaded', () => updateTabPill(false));
