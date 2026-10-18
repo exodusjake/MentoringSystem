@@ -179,15 +179,51 @@ function scrollToDeepLinkedAnnouncement() {
 }
 
 // ── TABS ──────────────────────────────────────────────────────────────────────
+let switchTimer = null;
 function switchTab(tab) {
+  const changed = tab !== activeTab;
   activeTab = tab;
   document.querySelectorAll('.ann-tab').forEach(b => b.classList.remove('active'));
   document.getElementById(`tab-${tab}`).classList.add('active');
   document.getElementById('searchInput').value = '';
   markTabRead(tab);
   updateTabDots();
-  applyFilters();
+  moveTabIndicator();
+  const list = document.getElementById('announcementsList');
+  if (!changed || !list) { applyFilters(); return; }
+  // fade the old list out, swap it, then let the new cards rise in one after another
+  clearTimeout(switchTimer);
+  list.classList.remove('ann-in');
+  list.classList.add('ann-out');
+  switchTimer = setTimeout(() => {
+    applyFilters();
+    list.classList.remove('ann-out');
+    void list.offsetWidth;
+    list.classList.add('ann-in');
+  }, 140);
 }
+
+// Sliding pill behind the active tab.
+function moveTabIndicator() {
+  const wrap = document.querySelector('.ann-tabs');
+  const active = wrap?.querySelector('.ann-tab.active');
+  if (!wrap) return;
+  let pill = wrap.querySelector('.ann-tab-indicator');
+  if (!pill) { pill = document.createElement('span'); pill.className = 'ann-tab-indicator'; wrap.prepend(pill); }
+  if (!active) { if (wrap.classList.contains('has-indicator')) wrap.classList.remove('has-indicator'); return; }
+  pill.style.width  = active.offsetWidth + 'px';
+  pill.style.height = active.offsetHeight + 'px';
+  pill.style.transform = `translate(${active.offsetLeft}px, ${active.offsetTop}px)`;
+  if (!wrap.classList.contains('has-indicator')) wrap.classList.add('has-indicator');
+}
+window.addEventListener('resize', moveTabIndicator);
+window.addEventListener('load', moveTabIndicator);
+document.addEventListener('DOMContentLoaded', () => {
+  moveTabIndicator();
+  // keep the pill in step even when the active class is changed elsewhere (e.g. the walkthrough)
+  const wrap = document.querySelector('.ann-tabs');
+  if (wrap) new MutationObserver(moveTabIndicator).observe(wrap, { subtree: true, attributes: true, attributeFilter: ['class'] });
+});
 
 // ── UNREAD DOT TRACKING ───────────────────────────────────────────────────────
 const nowLocalIso = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, -1); };
