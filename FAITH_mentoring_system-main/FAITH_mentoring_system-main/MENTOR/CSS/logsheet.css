@@ -632,3 +632,13 @@ footer p { font-size: 12px; color: var(--gray-400); }
 }
 /* One card per row at every width. */
 .log-cards .log-section-cards { grid-template-columns: minmax(0, 1fr); }
+
+/* Search + both dropdowns on one line, same height; ui-dropdown.js triggers get a fixed width. */
+.log-toolbar { flex-wrap: nowrap; }
+.log-toolbar > .search-wrap, .log-toolbar > .dd-trigger { height: 42px; box-sizing: border-box; }
+.log-toolbar > .dd-trigger { width: 190px !important; flex: 0 0 190px; }
+@media (max-width: 640px) {
+  .log-toolbar { flex-wrap: wrap; }
+  .log-toolbar > .search-wrap { flex-basis: 100%; }
+  .log-toolbar > .dd-trigger { flex: 1 1 140px; width: auto !important; }
+}

@@ -353,3 +353,13 @@ tbody tr:hover { background: #f4f7fb; }
 @media (min-width: 769px) and (max-width: 1250px) {
   .mentee-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Search + dropdown on one line, same height. */
+.section-filter-bar { flex-wrap: nowrap; }
+.section-filter-bar > .search-box, .section-filter-bar > .dd-trigger { height: 40px; box-sizing: border-box; }
+.section-filter-bar > .dd-trigger { width: 220px !important; flex: 0 0 220px; }
+@media (max-width: 640px) {
+  .section-filter-bar { flex-wrap: wrap; }
+  .section-filter-bar > .search-box { max-width: none; flex-basis: 100%; }
+  .section-filter-bar > .dd-trigger { flex: 1 1 140px; width: auto !important; }
+}
