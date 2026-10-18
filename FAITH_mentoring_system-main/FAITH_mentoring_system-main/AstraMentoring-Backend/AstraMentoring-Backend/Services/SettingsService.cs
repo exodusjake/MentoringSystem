@@ -64,6 +64,7 @@ namespace AstraMentoring_Backend.Services
             var stored = await conn.QueryFirstOrDefaultAsync<string>(
                 "SELECT SettingValue FROM SystemSettings WHERE SettingKey = 'SettingsPassword'");
             if (stored == null) return false;
+            stored = stored.Trim(); // tolerate padding/whitespace from manual DB edits
 
             // If not yet hashed (first use), hash and store it now
             if (!stored.StartsWith("$2"))

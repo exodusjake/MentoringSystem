@@ -321,3 +321,16 @@ footer {
 .footer-links { display: flex; gap: 18px; }
 .footer-links a { color: #9ca3af; text-decoration: none; }
 .footer-links a:hover { color: #374151; }
+
+/* ── Show/hide password eye ── */
+.pwd-wrap { position: relative; display: block; width: 100%; }
+.pwd-wrap .settings-modal-input { width: 100%; padding-right: 44px; }
+.pwd-eye {
+  position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+  width: 32px; height: 32px; padding: 0; border: none; border-radius: 8px;
+  background: transparent; color: #6B7280; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s ease, color .15s ease;
+}
+.pwd-eye:hover { background: #F3F4F6; color: #111827; }
+.pwd-eye svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
