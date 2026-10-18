@@ -232,3 +232,11 @@
   .mentee-polish .sessions-cards-list .scm-card .scm-body { padding: 12px; }
   .mentee-polish .sessions-cards-list .scm-card .scm-actions > * { flex: 1 1 0; min-height: 44px; }
 }
+
+/* Search + dropdown on one line, same height; the ui-dropdown.js trigger gets a fixed width. */
+.toolbar > .search-wrap, .toolbar > .dd-trigger { height: 42px; box-sizing: border-box; }
+.toolbar > .dd-trigger { width: 190px !important; flex: 0 0 190px; }
+@media (max-width: 640px) {
+  .search-wrap { max-width: none; flex-basis: 100%; }
+  .toolbar > .dd-trigger { flex: 1 1 140px; width: auto !important; }
+}
