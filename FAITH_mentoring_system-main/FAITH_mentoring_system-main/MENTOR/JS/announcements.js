@@ -354,10 +354,15 @@ function applyFilters() {
 }
 
 async function togglePin(id) {
+  const wasPinned = !!allAnnouncements.find(a => a.announcementID === id)?.isPinned;
   try {
     await apiRequest(`Announcements/${id}/pin`, 'PATCH', null, true);
+    showToast(wasPinned ? 'Announcement unpinned.' : 'Announcement pinned to top.', 'success');
     await loadAnnouncements();
-  } catch (e) { console.error('Toggle pin failed:', e); }
+  } catch (e) {
+    console.error('Toggle pin failed:', e);
+    showToast(e.message || 'Could not update pin. Please try again.');
+  }
 }
 
 // ── POST MODAL ────────────────────────────────────────────────────────────────
@@ -511,9 +516,11 @@ async function doSubmitAnnouncement() {
     }
 
     document.getElementById('postModal').classList.remove('open');
+    showToast(editAnnounceId ? 'Announcement updated successfully.' : 'Announcement posted successfully.', 'success');
     await loadAnnouncements();
   } catch (err) {
     console.error('Post announcement failed:', err);
+    showToast(err.message || 'Something went wrong. Please try again.');
     errorEl.textContent   = err.message || 'Something went wrong. Please try again.';
     errorEl.style.display = 'block';
     submitBtn.disabled  = false;
@@ -654,9 +661,11 @@ async function saveEditComment(commentId, announcementId) {
   if (!content || content === '<br>') return;
   try {
     await apiRequest(`AnnouncementComments/${commentId}`, 'PUT', { Content: content }, true);
+    showToast('Comment updated.', 'success');
     await loadCommentsInline(announcementId);
   } catch (e) {
     console.error('Edit comment failed:', e);
+    showToast(e.message || 'Failed to update comment.');
   }
 }
 
@@ -678,9 +687,11 @@ async function confirmDeleteComment() {
   document.getElementById('deleteCommentModal').classList.remove('open');
   try {
     await apiRequest(`AnnouncementComments/${deleteCommentId}`, 'DELETE', null, true);
+    showToast('Comment deleted.', 'success');
     await loadCommentsInline(deleteCommentAnnouncementId);
   } catch (e) {
     console.error('Delete comment failed:', e);
+    showToast(e.message || 'Failed to delete comment.');
   }
   deleteCommentId = null;
   deleteCommentAnnouncementId = null;
@@ -706,10 +717,13 @@ function handleAttachFiles(e) {
   }
   pendingAttachFiles.push(...files.slice(0, room));
   renderAttachList(existing);
+  const added = Math.min(files.length, room);
+  if (added) showToast(`${added} file${added === 1 ? '' : 's'} attached.`, 'info', 2500);
 }
 
 function removeAttach(index) {
   pendingAttachFiles.splice(index, 1);
+  showToast('Attachment removed.', 'info', 2000);
   renderAttachList(editAnnounceId ? allAttachments.filter(a => a.announcementID === editAnnounceId) : []);
 }
 
@@ -736,31 +750,17 @@ async function doDeleteExistingAttach(attachmentID) {
     allAttachments = allAttachments.filter(a => a.attachmentID !== attachmentID);
     const existing = editAnnounceId ? allAttachments.filter(a => a.announcementID === editAnnounceId) : [];
     renderAttachList(existing);
-  } catch (e) { console.error('Delete attachment failed', e); }
+    showToast('Attachment removed.', 'success');
+  } catch (e) {
+    console.error('Delete attachment failed', e);
+    showToast(e.message || 'Failed to remove attachment.');
+  }
 }
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `
-    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
-    background: #111827; color: #fff; padding: 12px 24px;
-    border-radius: 8px; font-size: 14px; font-weight: 500;
-    z-index: 99999; opacity: 0; transition: opacity 0.3s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2); white-space: nowrap;
-  `;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.style.opacity = '1', 10);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => toast.remove(), 300);
-  }, 2500);
 }
 
 function attachIcon(name) {
@@ -963,9 +963,11 @@ async function postComment(announcementId) {
     document.getElementById(`ctrigger-${announcementId}`).style.display = '';
     const list = document.getElementById(`clist-${announcementId}`);
     if (list) list.dataset.showAll = 'true';
+    showToast('Comment posted.', 'success');
     await loadCommentsInline(announcementId);
   } catch (e) {
     console.error('Post comment failed:', e);
+    showToast(e.message || 'Failed to post comment.');
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -1002,9 +1004,11 @@ async function confirmDeleteAnnounce() {
   try {
     await apiRequest(`Announcements/${deleteAnnounceId}`, 'DELETE', null, true);
     document.getElementById('deleteAnnounceModal').classList.remove('open');
+    showToast('Announcement deleted.', 'success');
     await loadAnnouncements();
   } catch (err) {
     console.error('Delete announcement failed:', err);
+    showToast(err.message || 'Failed to delete announcement.');
     btn.disabled  = false;
     btn.innerHTML = '<i class="ti ti-trash"></i> Delete';
   }
