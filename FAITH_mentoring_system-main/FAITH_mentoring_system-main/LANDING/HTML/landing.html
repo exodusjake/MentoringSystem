@@ -8,11 +8,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css"/>
   <link rel="stylesheet" href="/LANDING/CSS/landing.css"/>
+  <link rel="stylesheet" href="/LANDING/CSS/motion.css"/>
   <link rel="icon" href="/IMAGES/fav-con.png"/>
   <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
   <link rel="manifest" href="/manifest.json"/>
 </head>
 <body>
+<div class="scroll-progress" aria-hidden="true"></div>
 
 <!-- NAV -->
 <header class="nav">
@@ -299,6 +301,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
 <script src="/LANDING/JS/smooth-scroll.js"></script>
+<script src="/LANDING/JS/effects.js"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
   const t = document.getElementById('navToggle'), l = document.getElementById('navLinks');
