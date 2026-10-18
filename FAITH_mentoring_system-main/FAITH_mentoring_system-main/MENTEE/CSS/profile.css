@@ -150,8 +150,8 @@
 .sig-none-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px; color: #9CA3AF; font-size: 14px; text-align: center; background: #f9fafb; border: 1.5px dashed #dce3ec; border-radius: 12px; }
 .sig-none-state svg { color: #d1d5db; }
 
-.btn-change-sig { font-family: var(--font); font-size: 13px; font-weight: 600; color: #fff; background: #0f766e; border: none; border-radius: 10px; padding: 10px; cursor: pointer; width: 100%; margin-top: 14px; transition: background .15s; }
-.btn-change-sig:hover { background: #115e59; }
+.btn-change-sig { font-family: var(--font); font-size: 13px; font-weight: 600; color: #fff; background: #4f46e5; border: none; border-radius: 10px; padding: 10px; cursor: pointer; width: 100%; margin-top: 14px; transition: background .15s; }
+.btn-change-sig:hover { background: #4338ca; }
 
 .sig-dz { display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #dce3ec; border-radius: 12px; background: #f9fafb; min-height: 150px; cursor: pointer; transition: border-color .15s, background .15s; position: relative; overflow: hidden; }
 .sig-dz:hover, .sig-dz.drag-over { border-color: #0f766e; background: #f0fdfa; }
