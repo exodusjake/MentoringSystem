@@ -546,3 +546,76 @@ body { min-height: 0; padding: 16px; }
 }
 .error-banner[style*="none"] { visibility: hidden; }
 .right-side::after, .right-side:has(.error-banner:not([style*="none"]))::after { height: 0 !important; }
+
+/* =====================================================
+   ENHANCEMENTS – polish only; layout/no-scroll rules above still apply
+   ===================================================== */
+
+/* ── Left panel: depth, glow, floating shapes ─────────── */
+.left-side {
+  position: relative; overflow: hidden;
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(59,130,246,.38), transparent 46%),
+    radial-gradient(circle at 85% 92%, rgba(240,180,41,.22), transparent 42%),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(160deg, #0b1a5c 0%, #0a1550 55%, #07123f 100%);
+  background-size: auto, auto, 40px 40px, 40px 40px, auto;
+}
+.left-side > :not(.shape) { position: relative; z-index: 1; }
+.left-logo-img { filter: drop-shadow(0 10px 24px rgba(0,0,0,.35)); animation: floaty 6s ease-in-out infinite; }
+.left-divider { width: 56px; height: 3px; }
+
+.left-points { list-style: none; margin-top: 26px; display: grid; gap: 10px; text-align: left; }
+.left-points li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,.78); }
+.left-points svg { width: 18px; height: 18px; padding: 3px; border-radius: 50%; background: rgba(240,180,41,.2); color: #f0b429; flex-shrink: 0; }
+
+.shape { position: absolute; z-index: 0; opacity: .9; animation: floaty 7s ease-in-out infinite; pointer-events: none; }
+.shape.s1 { width: 16px; height: 16px; border-radius: 50%; background: #f0b429; top: 12%; right: 14%; }
+.shape.s2 { width: 34px; height: 34px; border-radius: 50%; border: 5px solid rgba(147,197,253,.55); bottom: 14%; left: 10%; animation-delay: -2s; }
+.shape.s3 { width: 46px; height: 46px; background: rgba(37,99,235,.55); border-radius: 100% 0 0 0; top: 8%; left: 8%; animation-delay: -4s; }
+.shape.s4 { width: 22px; height: 22px; background: #f0b429; bottom: 20%; right: 12%; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); animation-delay: -1s; }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* ── Card: soft entrance + accent ─────────────────────── */
+.login-card { border-color: #e6ebf3; box-shadow: 0 10px 34px rgba(11,26,92,.09); animation: cardIn .55s cubic-bezier(.2,.7,.2,1) both; }
+.right-logo { animation: cardIn .5s cubic-bezier(.2,.7,.2,1) both; }
+.bottom-links { animation: cardIn .6s .1s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.card-title::after { content: ''; display: block; width: 38px; height: 3px; border-radius: 2px; margin: 8px auto 0; background: linear-gradient(90deg, #3b82f6, #f0b429); }
+
+/* ── Inputs: icons + focus glow ───────────────────────── */
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap input { padding-left: 40px; }
+.input-icon { position: absolute; left: 13px; width: 17px; height: 17px; color: #94a3b8; pointer-events: none; transition: color .2s; }
+.input-wrap:focus-within .input-icon { color: #2563eb; }
+.form-group input { transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.form-group input:focus { box-shadow: 0 0 0 4px rgba(59,130,246,.15); }
+.form-group label { position: relative; }
+.caps-hint { position: absolute; right: 0; top: 0; font-size: 11px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 1px 8px; border-radius: 999px; }
+
+/* ── Button: gradient, lift, spinner ──────────────────── */
+.btn-signin {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 6px 16px rgba(37,99,235,.28);
+  transition: transform .15s, box-shadow .2s, filter .2s;
+}
+.btn-signin:hover { background: linear-gradient(135deg, #1d4ed8, #2563eb); box-shadow: 0 8px 20px rgba(37,99,235,.36); transform: translateY(-1px); }
+.btn-signin:active { transform: scale(.98); }
+.btn-signin:disabled { background: linear-gradient(135deg, #93c5fd, #93c5fd); box-shadow: none; transform: none; }
+.btn-signin:disabled::before {
+  content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 9px; vertical-align: -2px;
+  border: 2px solid rgba(255,255,255,.5); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-signin:focus-visible, .forgot-link:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+/* ── Error banner: attention shake when it appears ────── */
+.error-banner:not([style*="none"]) { animation: shake .4s ease; }
+@keyframes shake { 20%,60% { transform: translateX(-5px); } 40%,80% { transform: translateX(5px); } }
+
+/* ── Short windows: drop extras so the form keeps its room ── */
+@media (max-height: 700px) { .left-points { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .left-logo-img, .shape, .login-card, .right-logo, .bottom-links, .error-banner { animation: none !important; }
+}

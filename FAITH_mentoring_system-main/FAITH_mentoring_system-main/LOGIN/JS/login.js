@@ -122,3 +122,20 @@ if (typeof isLoggedIn === 'function' && isLoggedIn()) {
     window.location.href = routes[role] || '/LOGIN/HTML/login.html';
   }
 }
+
+// ── Caps Lock hint (password field) ───────────────────────
+(function () {
+  const pw   = document.getElementById('password');
+  const hint = document.getElementById('capsHint');
+  if (!pw || !hint) return;
+  const check = e => { hint.style.display = e.getModifierState && e.getModifierState('CapsLock') ? '' : 'none'; };
+  pw.addEventListener('keydown', check);
+  pw.addEventListener('keyup', check);
+  pw.addEventListener('blur', () => { hint.style.display = 'none'; });
+})();
+
+// ── Start with the email field ready (desktop only, so phones don't pop the keyboard) ──
+if (window.matchMedia('(hover: hover)').matches) {
+  const first = document.getElementById('email');
+  if (first && !first.value) first.focus();
+}
