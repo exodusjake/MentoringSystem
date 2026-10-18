@@ -415,9 +415,17 @@ async function confirmSaveRatings() {
   try {
     await saveRatings(entries);
     closeConfirmSaveModal();
+    const removed = entries.filter(([, v]) => v === '').length;
+    const saved   = entries.length - removed;
+    const parts   = [];
+    if (saved)   parts.push(`${saved} rating${saved !== 1 ? 's' : ''} saved`);
+    if (removed) parts.push(`${removed} rating${removed !== 1 ? 's' : ''} removed`);
+    showToast(parts.join(', ') + '.', 'success');
   } catch (err) {
     closeConfirmSaveModal();
-    if (errEl) { errEl.textContent = err.message || 'Failed to save one or more ratings. Please try again.'; errEl.style.display = ''; }
+    const msg = err.message || 'Failed to save one or more ratings. Please try again.';
+    if (errEl) { errEl.textContent = msg; errEl.style.display = ''; }
+    showToast(msg, 'error');
     updateSaveButton();
   } finally {
     confirmBtn.disabled = false;
@@ -471,7 +479,7 @@ function exportCSV() {
 // Same report-window pattern as ADMIN_/JS/sessions.js's printProgressReport
 // — builds a standalone printable HTML document and opens it in a new tab.
 function printRatings() {
-  if (!allMentors.length) { showToast('No mentors to print.'); return; }
+  if (!allMentors.length) { showToast('No mentors to print.', 'info'); return; }
   const slots   = slotsForSemester(sysSettings.Semester);
   const now     = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const logoUrl = `${window.location.origin}/IMAGES/FAITH-Colleges-Logo.png`;
@@ -556,6 +564,32 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
 // mentor list Tab 1 already fetched (no separate API call) — everything
 // needed (departmentName, menteeCount, slotAttendance) is already on each
 // row from sp_GetMentorOverview.
+// Sliding highlight behind the active tab. Positioned from the active tab's
+// own box, so it follows any label/width change; the first placement skips
+// the transition so it doesn't fly in from the left.
+function moveRptPill(instant) {
+  const bar = document.querySelector('.rpt-tabs');
+  const active = bar && bar.querySelector('.rpt-tab.active');
+  if (!bar || !active || !active.offsetWidth) return;
+  let pill = bar.querySelector('.rpt-tab-pill');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'rpt-tab-pill';
+    pill.setAttribute('aria-hidden', 'true');
+    bar.insertBefore(pill, bar.firstChild);
+    bar.classList.add('has-pill');
+    instant = true;
+  }
+  if (instant) pill.style.transition = 'none';
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.transform = `translateX(${active.offsetLeft}px)`;
+  if (instant) { void pill.offsetWidth; pill.style.transition = ''; }
+}
+document.addEventListener('DOMContentLoaded', () => moveRptPill(true));
+window.addEventListener('load', () => moveRptPill(true));
+window.addEventListener('resize', () => moveRptPill(true));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveRptPill(true));
+
 function switchRptTab(tab) {
   const rankingsPanel = document.getElementById('tabPanel-rankings');
   const prPanel       = document.getElementById('tabPanel-programreport');
@@ -563,9 +597,25 @@ function switchRptTab(tab) {
   const prBtn         = document.getElementById('tabBtn-programreport');
   const isRankings    = tab === 'rankings';
 
-  rankingsPanel.style.display = isRankings ? '' : 'none';
-  prPanel.style.display       = isRankings ? 'none' : '';
+  // Cross-fade: the visible panel fades out, then the other eases in. The
+  // pill under the tabs slides to the new tab straight away.
+  const shown  = isRankings ? rankingsPanel : prPanel;
+  const hidden = isRankings ? prPanel : rankingsPanel;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const token  = (switchRptTab._t = (switchRptTab._t || 0) + 1);
+  const reveal = () => {
+    if (token !== switchRptTab._t) return;
+    hidden.style.display = 'none';
+    hidden.classList.remove('rpt-panel-out');
+    shown.style.display = '';
+    shown.classList.remove('rpt-panel-in');
+    void shown.offsetWidth;
+    shown.classList.add('rpt-panel-in');
+  };
+  if (reduce || hidden.style.display === 'none') reveal();
+  else { hidden.classList.add('rpt-panel-out'); setTimeout(reveal, 130); }
   rankingsBtn.classList.toggle('active', isRankings);
+  moveRptPill();
   prBtn.classList.toggle('active', !isRankings);
   rankingsBtn.setAttribute('aria-selected', String(isRankings));
   prBtn.setAttribute('aria-selected', String(!isRankings));
@@ -718,7 +768,7 @@ function exportProgramReportCSV() {
 }
 
 function printProgramReport() {
-  if (!allMentors.length) { showToast('No mentors to print.'); return; }
+  if (!allMentors.length) { showToast('No mentors to print.', 'info'); return; }
   const { slots, deptNames, groups } = buildProgramReportGroups();
   const now     = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const logoUrl = `${window.location.origin}/IMAGES/FAITH-Colleges-Logo.png`;
@@ -803,17 +853,4 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
   w.document.close();
 }
 
-// ── TOAST ─────────────────────────────────────────────────────
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.textContent = message;
-  toast.style.cssText = `
-    position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
-    background:#111827;color:#fff;padding:12px 24px;
-    border-radius:8px;font-size:14px;font-weight:500;
-    z-index:99999;opacity:0;transition:opacity 0.3s;
-    box-shadow:0 4px 12px rgba(0,0,0,0.2);white-space:nowrap;`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.style.opacity = '1', 10);
-  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
-}
+// Toasts come from the shared /notify.js (showToast(message, type)).

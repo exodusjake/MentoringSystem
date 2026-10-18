@@ -32,7 +32,31 @@
   cursor: pointer; transition: background var(--transition), color var(--transition), box-shadow var(--transition);
 }
 .rpt-tab:hover { background: rgba(255,255,255,0.6); color: #374151; }
-.rpt-tab.active { background: #ea580c; color: #fff; font-weight: 600; box-shadow: 0 2px 8px rgba(234,88,12,0.35); }
+.rpt-tab.active { background: #2563eb; color: #fff; font-weight: 600; box-shadow: 0 2px 8px rgba(37,99,235,0.35); }
+
+/* Smoothness: panels ease in when switching tabs (see switchRptTab), and the
+   ui-dropdown.js trigger keeps the filter's fixed width. */
+@keyframes rptPanelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rpt-panel-in { animation: rptPanelIn .28s cubic-bezier(.22,1,.36,1); }
+.rpt-panel-out { opacity: 0; transform: translateY(-4px); transition: opacity .13s ease, transform .13s ease; pointer-events: none; }
+
+/* Sliding pill (moveRptPill in evaluation-ratings.js): once it exists, the
+   active tab itself goes transparent and the pill supplies the blue. */
+.rpt-tabs { position: relative; }
+.rpt-tab { position: relative; z-index: 1; }
+.rpt-tab-pill {
+  position: absolute; z-index: 0; top: 5px; bottom: 5px; left: 0; border-radius: 10px;
+  background: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+  transition: transform .32s cubic-bezier(.22,1,.36,1), width .32s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+.rpt-tabs.has-pill .rpt-tab.active { background: transparent; box-shadow: none; }
+.rpt-tabs.has-pill .rpt-tab.active:hover { background: transparent; }
+@media (prefers-reduced-motion: reduce) { .rpt-tab-pill { transition: none; } .rpt-panel-out { transition: none; } }
+.rpt-tab:active { transform: scale(.97); }
+.rpt-tab { transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .12s ease; }
+@media (min-width: 769px) { .dd-trigger.filter-select { width: 170px !important; flex-shrink: 0; } }
+@media (prefers-reduced-motion: reduce) { .rpt-panel-in { animation: none; } .rpt-tab { transition: none; } }
 
 /* ===== STAT CARDS ===== */
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 16px; }

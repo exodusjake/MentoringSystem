@@ -447,6 +447,32 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
 // needed (departmentName, menteeCount, slotAttendance) is already on each
 // row from sp_GetMentorOverview. Same as Admin's copy — read-only either
 // way, this tab has no editable cells for Admin's copy either.
+// Sliding highlight behind the active tab. Positioned from the active tab's
+// own box, so it follows any label/width change; the first placement skips
+// the transition so it doesn't fly in from the left.
+function moveRptPill(instant) {
+  const bar = document.querySelector('.rpt-tabs');
+  const active = bar && bar.querySelector('.rpt-tab.active');
+  if (!bar || !active || !active.offsetWidth) return;
+  let pill = bar.querySelector('.rpt-tab-pill');
+  if (!pill) {
+    pill = document.createElement('span');
+    pill.className = 'rpt-tab-pill';
+    pill.setAttribute('aria-hidden', 'true');
+    bar.insertBefore(pill, bar.firstChild);
+    bar.classList.add('has-pill');
+    instant = true;
+  }
+  if (instant) pill.style.transition = 'none';
+  pill.style.width = active.offsetWidth + 'px';
+  pill.style.transform = `translateX(${active.offsetLeft}px)`;
+  if (instant) { void pill.offsetWidth; pill.style.transition = ''; }
+}
+document.addEventListener('DOMContentLoaded', () => moveRptPill(true));
+window.addEventListener('load', () => moveRptPill(true));
+window.addEventListener('resize', () => moveRptPill(true));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveRptPill(true));
+
 function switchRptTab(tab) {
   const rankingsPanel = document.getElementById('tabPanel-rankings');
   const prPanel       = document.getElementById('tabPanel-programreport');
@@ -454,9 +480,25 @@ function switchRptTab(tab) {
   const prBtn         = document.getElementById('tabBtn-programreport');
   const isRankings    = tab === 'rankings';
 
-  rankingsPanel.style.display = isRankings ? '' : 'none';
-  prPanel.style.display       = isRankings ? 'none' : '';
+  // Cross-fade: the visible panel fades out, then the other eases in. The
+  // pill under the tabs slides to the new tab straight away.
+  const shown  = isRankings ? rankingsPanel : prPanel;
+  const hidden = isRankings ? prPanel : rankingsPanel;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const token  = (switchRptTab._t = (switchRptTab._t || 0) + 1);
+  const reveal = () => {
+    if (token !== switchRptTab._t) return;
+    hidden.style.display = 'none';
+    hidden.classList.remove('rpt-panel-out');
+    shown.style.display = '';
+    shown.classList.remove('rpt-panel-in');
+    void shown.offsetWidth;
+    shown.classList.add('rpt-panel-in');
+  };
+  if (reduce || hidden.style.display === 'none') reveal();
+  else { hidden.classList.add('rpt-panel-out'); setTimeout(reveal, 130); }
   rankingsBtn.classList.toggle('active', isRankings);
+  moveRptPill();
   prBtn.classList.toggle('active', !isRankings);
   rankingsBtn.setAttribute('aria-selected', String(isRankings));
   prBtn.setAttribute('aria-selected', String(!isRankings));
