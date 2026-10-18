@@ -101,6 +101,11 @@
    means these boxes never move regardless of what's loaded into them. */
 .filter-select { border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 13px; font-size: 14px; color: var(--gray-700); font-family: var(--font-main); background: #fff; cursor: pointer; outline: none; width: 150px; flex-shrink: 0; }
 .filter-select:focus { border-color: var(--blue); }
+/* ui-dropdown.js swaps each <select> for a .dd-trigger button with an inline
+   width:100% — keep the filters at their fixed width on desktop. */
+@media (min-width: 769px) { .dd-trigger.filter-select { width: 150px !important; flex-shrink: 0; } }
+/* Same for the themed date picker (ui-datepicker.js). */
+@media (min-width: 769px) { .dp-trigger.filter-date { width: 150px !important; flex-shrink: 0; } }
 
 .filter-date { border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 13px; font-size: 14px; color: var(--gray-700); font-family: var(--font-main); background: #fff; outline: none; cursor: pointer; width: 150px; flex-shrink: 0; }
 .filter-date:focus { border-color: var(--blue); }
