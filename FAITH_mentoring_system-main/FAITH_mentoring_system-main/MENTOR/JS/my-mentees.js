@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadMentees();
 
   document.getElementById('searchInput').addEventListener('input', applySearch);
+  document.getElementById('sortFilter').addEventListener('change', applySearch);
 });
+
 
 // ── LOAD ──────────────────────────────────────────────────────
 async function loadMentees() {
@@ -87,11 +89,24 @@ function renderCards(mentees) {
     return [user.lastName || detail.lastName || m.menteeLastName || '',
       user.firstName || detail.firstName || m.menteeFirstName || m.menteeName || ''].join(' ').trim();
   };
-  mentees = [...mentees].sort((a, b) =>
-    (a.sectionCode || '').localeCompare(b.sectionCode || '', undefined, { numeric: true, sensitivity: 'base' }) ||
-    nameKey(a).localeCompare(nameKey(b), undefined, { sensitivity: 'base' }) ||
-    Number(a.menteeUserID) - Number(b.menteeUserID)
-  );
+  const sortMode = document.getElementById('sortFilter')?.value || 'section';
+  const byName   = (a, b) => nameKey(a).localeCompare(nameKey(b), undefined, { sensitivity: 'base' });
+  // A–Z / Z–A follow the name as shown on the card.
+  const byDisplayName = (a, b) => (a.menteeName || '').localeCompare(b.menteeName || '', undefined, { sensitivity: 'base' });
+  const bySection = (a, b) => (a.sectionCode || '').localeCompare(b.sectionCode || '', undefined, { numeric: true, sensitivity: 'base' });
+  const bySchool  = (a, b) => (a.school || '').localeCompare(b.school || '', undefined, { sensitivity: 'base' });
+  const byId      = (a, b) => Number(a.menteeUserID) - Number(b.menteeUserID);
+  const comparators = {
+    section: [bySection, byName, byId],
+    az:      [byDisplayName, byId],
+    za:      [(a, b) => byDisplayName(b, a), byId],
+    school:  [bySchool, byName, byId],
+  };
+  const cmps = comparators[sortMode] || comparators.section;
+  mentees = [...mentees].sort((a, b) => {
+    for (const c of cmps) { const r = c(a, b); if (r) return r; }
+    return 0;
+  });
 
   if (!mentees.length) {
     grid.innerHTML = '<div class="mentees-empty"><i class="ti ti-users-off"></i>No mentees found.</div>';
@@ -213,6 +228,7 @@ function applySearch() {
   let filtered = activeSectionFilter
     ? allMentees.filter(m => (m.sectionCode || '—') === activeSectionFilter)
     : allMentees;
+
 
   if (q) {
     filtered = filtered.filter(m => {

@@ -41,6 +41,20 @@
 .search-wrap input { border: none; outline: none; font-family: var(--font); font-size: 14px; color: #374151; background: transparent; width: 100%; }
 .search-wrap input::placeholder { color: #9CA3AF; }
 
+/* Dropdown popup/trigger behaviour comes from the shared /ui-dropdown.js;
+   this only supplies the trigger's box (it copies the select's border/padding). */
+.filter-wrap { position: relative; display: flex; align-items: center; min-width: 200px; }
+.filter-wrap > i { position: absolute; left: 13px; font-size: 16px; color: #9CA3AF; pointer-events: none; z-index: 1; }
+.mentee-filter {
+  padding: 10px 14px 10px 38px; border: 1px solid #dce3ec; border-radius: 10px;
+  font-family: var(--font); font-size: 14px; color: #374151; background: #fff;
+}
+@media (max-width: 640px) {
+  .toolbar { flex-wrap: wrap; }
+  .search-wrap { max-width: none; flex-basis: 100%; }
+  .filter-wrap { flex: 1; }
+}
+
 /* ── MENTEE LIST ── */
 .mentees-grid {
   display: flex;

@@ -35,6 +35,15 @@
             <i class="ti ti-search"></i>
             <input type="text" id="searchInput" placeholder="Search by name or course..." />
           </div>
+          <div class="filter-wrap">
+            <i class="ti ti-arrows-sort"></i>
+            <select class="mentee-filter" id="sortFilter" aria-label="Sort mentees">
+              <option value="section">Sort: By Section</option>
+              <option value="az">Sort: Name A–Z</option>
+              <option value="za">Sort: Name Z–A</option>
+              <option value="school">Sort: By School</option>
+            </select>
+          </div>
         </div>
 
         <!-- Mentee Cards -->
@@ -61,6 +70,7 @@
   <script src="/sidebar-indicator.js"></script>
   <script src="/empty-states.js"></script>
   <script src="/smooth-scroll.js"></script>
+  <script src="/ui-dropdown.js"></script>
   <script src="../../config.js"></script>
   <script src="../../apiClient.js"></script>
   <script src="/MENTOR/JS/my-mentees.js"></script>
