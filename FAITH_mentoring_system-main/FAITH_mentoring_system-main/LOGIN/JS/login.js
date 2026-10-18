@@ -1,3 +1,33 @@
+// ── Post-login loading screen ─────────────────────────────
+// Shown after a successful sign-in while the dashboard is being fetched, so
+// the page doesn't just freeze on the form.
+function goWithLoading(url) {
+  if (!document.getElementById('loginLoadingCss')) {
+    const st = document.createElement('style');
+    st.id = 'loginLoadingCss';
+    st.textContent =
+      '.login-loading{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;' +
+      'background:rgba(255,255,255,.94);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s ease;font-family:inherit}' +
+      '.login-loading.show{opacity:1}' +
+      '.login-loading .ll-ring{width:52px;height:52px;border-radius:50%;border:4px solid #e5e7eb;border-top-color:#2563eb;animation:ll-spin .8s linear infinite}' +
+      '.login-loading .ll-title{font-size:16px;font-weight:600;color:#111827}' +
+      '.login-loading .ll-sub{font-size:13px;color:#6b7280;margin-top:-10px}' +
+      '.login-loading .ll-bar{width:180px;height:4px;border-radius:4px;background:#e5e7eb;overflow:hidden}' +
+      '.login-loading .ll-bar i{display:block;height:100%;width:40%;border-radius:4px;background:#2563eb;animation:ll-bar 1.1s ease-in-out infinite}' +
+      '@keyframes ll-spin{to{transform:rotate(360deg)}}' +
+      '@keyframes ll-bar{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}';
+    document.head.appendChild(st);
+  }
+  const ov = document.createElement('div');
+  ov.className = 'login-loading';
+  ov.setAttribute('role', 'status');
+  ov.innerHTML = '<div class="ll-ring"></div><div class="ll-title">Signing you in…</div>' +
+    '<div class="ll-sub">Preparing your dashboard</div><div class="ll-bar"><i></i></div>';
+  document.body.appendChild(ov);
+  requestAnimationFrame(() => ov.classList.add('show'));
+  setTimeout(() => { window.location.href = url; }, 1100);
+}
+
 // ── Log in ────────────────────────────────────────────────
 async function handleSignIn() {
   const email    = document.getElementById('email').value.trim();
@@ -33,7 +63,7 @@ async function handleSignIn() {
       head:   '/HEAD/HTML/setup.html'
     };
     if (data.user?.setupRequired === true && setupRoutes[role]) {
-      window.location.href = setupRoutes[role];
+      goWithLoading(setupRoutes[role]);
       return;
     }
 
@@ -44,7 +74,7 @@ async function handleSignIn() {
       mentee: '/MENTEE/HTML/mentee-dashboard.html'
     };
 
-    window.location.href = routes[role] || '/LOGIN/HTML/login.html';
+    goWithLoading(routes[role] || '/LOGIN/HTML/login.html');
 
   } catch (err) {
     showError(err.message || 'Invalid email or password.');

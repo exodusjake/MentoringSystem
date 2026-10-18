@@ -29,13 +29,23 @@ async function loadAcademicPeriod() {
   const chipEl  = document.getElementById('academicPeriod');
   const badgeEl = document.getElementById('semesterBadge');
   if (!chipEl && !badgeEl) return;
+  const paint = (sem, sy) => {
+    if (chipEl)  chipEl.textContent  = `${sem} · S.Y. ${sy}`;
+    if (badgeEl) badgeEl.textContent = `${sem} · S.Y. ${sy}`;
+  };
   try {
     const settings = await apiRequest('Settings', 'GET', null, true);
     const sy  = settings?.SchoolYear || settings?.schoolYear || '—';
     const sem = settings?.Semester   || settings?.semester   || '—';
-    if (chipEl)  chipEl.textContent  = `${sem} · S.Y. ${sy}`;
-    if (badgeEl) badgeEl.textContent = `${sem} ${sy}`;
-  } catch (e) { /* leave the placeholder rather than show nothing */ }
+    paint(sem, sy);
+    try { localStorage.setItem('astraPeriod', JSON.stringify({ sem, sy })); } catch (e) {}
+  } catch (e) {
+    // Request failed: show the last known period instead of an endless "Loading…".
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem('astraPeriod')); } catch (e2) {}
+    if (last) paint(last.sem, last.sy);
+    else paint('—', '—');
+  }
 }
 
 async function loadDashboard() {
