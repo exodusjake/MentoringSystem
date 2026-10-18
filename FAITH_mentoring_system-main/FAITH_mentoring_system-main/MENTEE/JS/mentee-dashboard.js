@@ -315,7 +315,10 @@ function renderUpcomingSessions(sessions, attMap = {}) {
     // Makeup sessions are private — only show if this mentee has a real attendance record.
     if (s.isMakeup === true) return attMap.hasOwnProperty(s.sessionID);
     if (!menteeSection) return true;
-    return s.sectionCode === menteeSection;
+    // Session.SectionCode holds the course code ("BEEd") while the mentee's
+    // section comes from Sections.SectionCode ("BEED") — compare loosely.
+    const norm = v => String(v || '').replace(/\s+/g, '').toUpperCase();
+    return norm(s.sectionCode) === norm(menteeSection);
   });
 
   // "Upcoming" really means "not yet resolved" — a session whose date
