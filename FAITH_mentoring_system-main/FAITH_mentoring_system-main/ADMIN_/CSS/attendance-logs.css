@@ -290,6 +290,11 @@
 /* "Back" button used on detail pages (mentor-detail.html, attendance-detail.html). */
 .btn-back { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; background: #fff; border: 1px solid #dce3ec; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--gray-700); cursor: pointer; font-family: var(--font-main); transition: background 0.15s ease; text-decoration: none; margin-bottom: 22px; }
 .btn-back:hover { background: #f4f7fb; }
+.att-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 14px; }
+.att-crumbs a { color: var(--blue); font-weight: 500; text-decoration: none; }
+.att-crumbs a:hover { text-decoration: underline; }
+.att-crumb-sep { color: var(--gray-300, #cbd5e1); font-size: 18px; line-height: 1; }
+.att-crumb-current { color: var(--gray-800, #1f2937); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .btn-back svg { width: 16px; height: 16px; }
 
 /* ===== RESPONSIVE ===== */
@@ -377,6 +382,13 @@ body .att-filter-group > .filter-reset { width: auto; }
 .att-action-group > button { min-height: 44px; justify-content: center; flex: 0 0 auto; max-width: 100%; }
 @media (max-width: 768px) {
   body .att-filter-group > .filter-select { flex: 1 1 220px; }
+}
+
+/* ui-dropdown.js swaps each <select> for a .dd-trigger button and forces an
+   inline width:100% — keep the filters at their intended widths. */
+body .att-filter-group > .dd-trigger.filter-select { width: 220px !important; max-width: 100%; }
+@media (min-width: 769px) {
+  body.attendance-detail .att-toolbar > .dd-trigger.filter-select { width: 220px !important; flex-shrink: 0; }
 }
 
 /* Match the approved Admin pages without changing shared portal layouts. */

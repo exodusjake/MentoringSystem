@@ -86,6 +86,19 @@ function clampPercent(value) {
   return Math.min(100, Math.max(0, value));
 }
 
+// Attendance Logs › School › Mentor — the school level links back to the
+// list pre-filtered to that school, same as the Back button.
+function renderCrumbs(mentorName, mentorSchool) {
+  const nav = document.getElementById('attCrumbs');
+  if (!nav) return;
+  const school = new URLSearchParams(location.search).get('school') || mentorSchool || '';
+  const sep = '<span class="att-crumb-sep" aria-hidden="true">&rsaquo;</span>';
+  nav.innerHTML =
+    '<a href="attendance-logs.html">Attendance Logs</a>' +
+    (school ? `${sep}<a href="attendance-logs.html?school=${encodeURIComponent(school)}">${escHtml(school)}</a>` : '') +
+    `${sep}<span class="att-crumb-current" aria-current="page">${escHtml(mentorName)}</span>`;
+}
+
 function renderHero(mentor) {
   if (!mentor) return;
   const initials = ((mentor.firstName?.[0] || '') + (mentor.lastName?.[0] || '')).toUpperCase();
@@ -94,6 +107,7 @@ function renderHero(mentor) {
   document.getElementById('heroAvatar').textContent = initials;
   document.getElementById('heroAvatar').className   = `hero-avatar av-${avIdx}`;
   document.getElementById('heroName').textContent   = `${mentor.firstName} ${mentor.lastName}`;
+  renderCrumbs(`${mentor.firstName} ${mentor.lastName}`, mentor.school);
 
   // Same icon-per-item layout as the Mentor Monitoring detail hero
   // (School, Department, Email), for visual consistency across every
