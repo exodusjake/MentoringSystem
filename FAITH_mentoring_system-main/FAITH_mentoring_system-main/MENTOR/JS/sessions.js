@@ -437,7 +437,8 @@ async function submitLogSession(e) {
   if(!checkpointDateAllowed(checkpointWindow(sessionCalendar,slotName,currentSchoolYear,currentSemester),date)) {
     const error=document.getElementById('logSessionError');
     error.textContent='Choose an available checkpoint and a date within its session window.';
-    error.style.display=''; return;
+    error.style.display='';
+    showToast(error.textContent); return;
   }
 
   btn.disabled    = true;
@@ -455,6 +456,7 @@ async function submitLogSession(e) {
       SlotName:    slotName,
     }, true);
     document.getElementById('logSessionModal').classList.remove('open');
+    showToast('Session logged successfully.', 'success');
     await loadSessions();
   } catch (err) {
     console.error('Log session failed:', err);
@@ -463,6 +465,7 @@ async function submitLogSession(e) {
       errEl.textContent  = err.message || 'Failed to log session. Please try again.';
       errEl.style.display = '';
     }
+    showToast(err.message || 'Failed to log session. Please try again.');
     btn.disabled  = false;
     btn.innerHTML = '<i class="ti ti-calendar-plus"></i> Log Session';
   }
@@ -575,6 +578,7 @@ async function submitEditSession(e) {
       SlotName:    slotName,
     }, true);
     document.getElementById('editSessionModal').classList.remove('open');
+    showToast('Session updated successfully.', 'success');
     await loadSessions();
   } catch (err) {
     console.error('Edit session failed:', err);
@@ -582,6 +586,7 @@ async function submitEditSession(e) {
       errEl.textContent  = err.message || 'Failed to save changes. Please try again.';
       errEl.style.display = '';
     }
+    showToast(err.message || 'Failed to save changes. Please try again.');
     btn.disabled  = false;
     btn.innerHTML = '<i class="ti ti-check"></i> Save Changes';
   }
@@ -629,9 +634,11 @@ async function confirmCancelSession() {
       TimeEnd:     s.timeEnd || null,
     }, true);
     document.getElementById('cancelConfirmModal').classList.remove('open');
+    showToast('Session cancelled.', 'info');
     await loadSessions();
   } catch (err) {
     console.error('Cancel session failed:', err);
+    showToast(err.message || 'Failed to cancel session. Please try again.');
     btn.disabled  = false;
     btn.innerHTML = '<i class="ti ti-calendar-x"></i> Yes, Cancel';
   }
@@ -661,6 +668,7 @@ async function confirmDeleteSession() {
   try {
     await apiRequest(`Sessions/${deleteSessionId}`, 'DELETE', null, true);
     document.getElementById('deleteConfirmModal').classList.remove('open');
+    showToast('Session deleted.', 'success');
     await loadSessions();
   } catch (err) {
     console.error('Delete session failed:', err);
@@ -847,6 +855,7 @@ async function handleQrScan(decodedText) {
 
     if (!result.success) {
       showQrStatus(result.message || 'Invalid or expired QR', 'error');
+      showToast(result.message || 'Invalid or expired QR code.', 'error', 3000);
       return;
     }
 
@@ -859,6 +868,7 @@ async function handleQrScan(decodedText) {
 
     if (scannedIds.has(menteeId)) {
       showQrStatus(`${menteeName} already scanned`, 'warn');
+      showToast(`${menteeName} was already scanned.`, 'info', 2500);
       return;
     }
 
@@ -875,6 +885,7 @@ async function handleQrScan(decodedText) {
     row.scannedAt = localISO();
     renderQrAttList();
     flashScanSuccess(menteeName);
+    showToast(`${menteeName} marked present.`, 'success', 2500);
   } catch (e) {
     console.error('QR scan failed:', e);
     showQrStatus('Scan failed — try again', 'error');
@@ -928,9 +939,11 @@ async function saveQrAttendance() {
     clearInterval(qrClockInterval);
     await stopQrScanner();
     document.getElementById('qrScanModal').classList.remove('open');
+    showToast('Attendance saved and session finished.', 'success');
     await loadSessions();
   } catch (err) {
     console.error('Save attendance failed:', err);
+    showToast(err.message || 'Failed to save attendance. Please try again.');
     btn.disabled = !canFinishAttendance(allSessions.find(s => s.sessionID === currentAttSid));
     btn.innerHTML = '<i class="ti ti-check"></i> Save & Close';
   }
@@ -1000,6 +1013,7 @@ function handleProofFileSelect(event) {
   clearProofError();
   document.getElementById('submitProofBtn').disabled = false;
   document.getElementById('proofFileName').textContent = file.name;
+  showToast(`${file.name} attached.`, 'info', 2500);
   // Once something's picked, the Upload File / Take Photo cards would just
   // sit there doing nothing above the preview -- hide them instead of
   // leaving both visible at once; clearProofFile() (the × on the preview)
@@ -1023,6 +1037,7 @@ function showProofError(msg) {
   const el = document.getElementById('proofErrorMsg');
   el.innerHTML = `<i class="ti ti-alert-circle"></i> ${msg}`;
   el.style.display = 'flex';
+  showToast(msg);
 }
 
 function clearProofError() {
@@ -1196,6 +1211,7 @@ async function submitProof() {
     await apiRequest('ProofOfSession/upload', 'POST', formData, true);
 
     document.getElementById('proofModal').classList.remove('open');
+    showToast('Proof uploaded. Session marked as completed.', 'success');
     await loadSessions();
   } catch (err) {
     console.error('Proof upload failed:', err);

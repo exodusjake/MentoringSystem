@@ -61,6 +61,15 @@
 .search-wrap input::placeholder { color: #9CA3AF; }
 .filter-select { font-family: var(--font); font-size: 14px; color: #374151; background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 14px; cursor: pointer; outline: none; }
 
+/* Search + both dropdowns share one row and one height; the dropdown triggers
+   (built by ui-dropdown.js with an inline width:100%) get a fixed width. */
+.toolbar > .search-wrap, .toolbar > .dd-trigger { height: 42px; box-sizing: border-box; }
+.toolbar > .dd-trigger { width: 190px !important; flex: 0 0 190px; }
+@media (max-width: 640px) {
+  .search-wrap { max-width: none; flex-basis: 100%; }
+  .toolbar > .dd-trigger { flex: 1 1 140px; width: auto !important; }
+}
+
 /* ── SESSION CARDS LIST ── */
 .sessions-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
 .sessions-loading { text-align: center; padding: 48px; color: #9CA3AF; font-size: 14px; }
@@ -460,4 +469,24 @@
   .sc-actions { display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; }
   .sc-secondary-actions { margin-left: 0; justify-content: flex-end; }
   .proof-attachment-actions { flex-wrap: wrap; }
+}
+
+/* ── BUTTON FEEDBACK ── Smooth hover/press transitions on every action button. */
+button, .btn-log-session, .btn-sc-qr, .btn-sc-proof-upload, .btn-sc-proof-view, .btn-sc-edit, .btn-sc-delete,
+.btn-form-cancel, .btn-form-submit, .btn-cancel-session, .btn-confirm-danger, .btn-confirm-warn, .btn-confirm-primary, .proof-option-card {
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.15s cubic-bezier(.22,1,.36,1), opacity 0.18s ease;
+}
+:is(.btn-log-session, .btn-sc-qr, .btn-sc-proof-upload, .btn-sc-proof-view, .btn-sc-edit, .btn-sc-delete,
+    .btn-form-cancel, .btn-form-submit, .btn-cancel-session, .btn-confirm-danger, .btn-confirm-warn, .btn-confirm-primary, .proof-option-card):hover:not(:disabled) {
+  transform: translateY(-1px); box-shadow: 0 4px 10px rgba(15,23,42,0.10);
+}
+:is(.btn-log-session, .btn-sc-qr, .btn-sc-proof-upload, .btn-sc-proof-view, .btn-sc-edit, .btn-sc-delete,
+    .btn-form-cancel, .btn-form-submit, .btn-cancel-session, .btn-confirm-danger, .btn-confirm-warn, .btn-confirm-primary, .proof-option-card, .modal-close-btn):active:not(:disabled) {
+  transform: translateY(0) scale(0.96); box-shadow: none; transition-duration: 0.07s;
+}
+.modal-close-btn { transition: background-color 0.18s ease, transform 0.2s ease; }
+.modal-close-btn:hover { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) {
+  button, .btn-log-session, .btn-form-submit { transition: none; }
+  button:hover, button:active { transform: none !important; }
 }
