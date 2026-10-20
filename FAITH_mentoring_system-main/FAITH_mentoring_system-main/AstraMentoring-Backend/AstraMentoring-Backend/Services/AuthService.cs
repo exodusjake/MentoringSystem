@@ -121,30 +121,8 @@ namespace AstraMentoring_Backend.Services
         // ── Login ───────────────────────────────────────────────────────────
         public async Task<LoginResponse?> LoginAsync(LoginRequest request)
         {
-            var (user, deactivated) = await AuthenticateAsync(request);
-            if (user == null) return null;
-            if (deactivated) return new LoginResponse { IsDeactivated = true };
-            return await BuildLoginResponseAsync(user, request.RememberMe);
-        }
-
-        public async Task MarkEmailVerifiedAsync(int userId)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            await conn.ExecuteAsync(
-                "UPDATE Users SET EmailVerifiedAt = @Now WHERE UserID = @Id AND EmailVerifiedAt IS NULL",
-                new { Id = userId, Now = DateTime.Now });
-        }
-
-        public User? GetUserById(int userId)
-            => _userRepo.GetAll().FirstOrDefault(u => u.UserID == userId);
-
-        // Password check only — no token. Login is two-step (see
-        // AuthController): this proves the password, then an emailed code
-        // must be verified before BuildLoginResponseAsync issues the JWT.
-        public async Task<(User? User, bool IsDeactivated)> AuthenticateAsync(LoginRequest request)
-        {
             var user = GetUserByEmail(request.Email);
-            if (user == null) return (null, false);
+            if (user == null) return null;
 
             bool passwordValid = false;
             try
@@ -166,19 +144,14 @@ namespace AstraMentoring_Backend.Services
                 }
             }
 
-            if (!passwordValid) return (null, false);
+            if (!passwordValid) return null;
 
             // Correct password, but the account has been deactivated (User
             // Management's Activate/Deactivate control) — block the login
             // instead of issuing a token. Returned as a distinct result so the
             // controller can tell the user why, rather than "wrong password".
-            if (!user.IsActive) return (user, true);
+            if (!user.IsActive) return new LoginResponse { IsDeactivated = true };
 
-            return (user, false);
-        }
-
-        public async Task<LoginResponse> BuildLoginResponseAsync(User user, bool rememberMe)
-        {
             bool setupRequired = false;
             if (user.Role.Equals("Mentor", StringComparison.OrdinalIgnoreCase) ||
                 user.Role.Equals("Mentee", StringComparison.OrdinalIgnoreCase) ||
@@ -201,7 +174,7 @@ namespace AstraMentoring_Backend.Services
 
             return new LoginResponse
             {
-                Token = GenerateToken(user, rememberMe),
+                Token = GenerateToken(user, request.RememberMe),
                 Role = user.Role,
                 User = new
                 {

@@ -34,12 +34,6 @@ namespace AstraMentoring_Backend.Services
         private readonly string _senderEmail;
         private readonly string _brandName;
         private readonly string _frontendBaseUrl;
-        private readonly bool _isDevelopment;
-        private readonly string _smtpHost;
-        private readonly int _smtpPort;
-        private readonly string _smtpUser;
-        private readonly string _smtpPassword;
-        private readonly string _smtpFrom;
 
         public EmailService(IHttpClientFactory httpClientFactory, IConfiguration config, ILogger<EmailService> logger)
         {
@@ -51,61 +45,17 @@ namespace AstraMentoring_Backend.Services
             _senderEmail     = config["Brevo:SenderEmail"] ?? string.Empty;
             _brandName       = config["Brevo:SenderName"]  ?? "AstraMentoring";
             _frontendBaseUrl = (config["Frontend:BaseUrl"] ?? "http://localhost:5501").TrimEnd('/');
-            _isDevelopment   = string.Equals(config["ASPNETCORE_ENVIRONMENT"], "Development", StringComparison.OrdinalIgnoreCase);
-            _smtpHost        = config["Smtp:Host"] ?? "smtp.gmail.com";
-            _smtpPort        = int.TryParse(config["Smtp:Port"], out var sp) ? sp : 587;
-            _smtpUser        = config["Smtp:User"] ?? string.Empty;
-            _smtpPassword    = (config["Smtp:Password"] ?? string.Empty).Replace(" ", "");
-            _smtpFrom        = config["Smtp:From"] ?? _smtpUser;
         }
 
-
-        // ── SMTP (preferred when Smtp:User/Smtp:Password are set) ──────────
-        // Sending through the sender's own mail server (e.g. Gmail with an
-        // app password) passes SPF/DKIM/DMARC for that address, which is
-        // what keeps these emails out of spam.
-        private bool SmtpConfigured =>
-            !string.IsNullOrWhiteSpace(_smtpUser) && !string.IsNullOrWhiteSpace(_smtpPassword);
-
-        private async Task<bool> SendViaSmtpAsync(string recipientEmail, string senderName, string subject, string htmlBody)
-        {
-            try
-            {
-                using var message = new System.Net.Mail.MailMessage
-                {
-                    From = new System.Net.Mail.MailAddress(_smtpFrom, senderName),
-                    Subject = subject,
-                    Body = htmlBody,
-                    IsBodyHtml = true
-                };
-                message.To.Add(recipientEmail);
-
-                using var client = new System.Net.Mail.SmtpClient(_smtpHost, _smtpPort)
-                {
-                    EnableSsl = true,
-                    Credentials = new NetworkCredential(_smtpUser, _smtpPassword),
-                    Timeout = 20000
-                };
-                await client.SendMailAsync(message);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "EmailService: SMTP send failed for subject '{Subject}'.", subject);
-                return false;
-            }
-        }
         // ── Core send — one recipient, never throws ────────────────────────
-        private async Task<bool> SendEmailAsync(string recipientEmail, string senderName, string subject, string htmlBody)
+        private async Task SendEmailAsync(string recipientEmail, string senderName, string subject, string htmlBody)
         {
-            if (string.IsNullOrWhiteSpace(recipientEmail)) return false;
-
-            if (SmtpConfigured) return await SendViaSmtpAsync(recipientEmail, senderName, subject, htmlBody);
+            if (string.IsNullOrWhiteSpace(recipientEmail)) return;
 
             if (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail))
             {
                 _logger.LogWarning("EmailService: Brevo:ApiKey or Brevo:SenderEmail is not configured — skipping send.");
-                return false;
+                return;
             }
 
             try
@@ -132,14 +82,11 @@ namespace AstraMentoring_Backend.Services
                     var body = await response.Content.ReadAsStringAsync();
                     _logger.LogWarning("EmailService: Brevo send failed ({Status}) for subject '{Subject}': {Body}",
                         response.StatusCode, subject, body);
-                    return false;
                 }
-                return true;
             }
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "EmailService: exception while sending email with subject '{Subject}'.", subject);
-                return false;
             }
         }
 
@@ -195,28 +142,6 @@ namespace AstraMentoring_Backend.Services
             text = WebUtility.HtmlDecode(text);
             text = Regex.Replace(text, @"\s+", " ").Trim();
             return text.Length > maxLength ? text[..maxLength] + "…" : text;
-        }
-
-        // ── Login verification code ──────────────────────────────────────
-        // Returns false when the email could not be delivered so the caller
-        // can tell the user instead of leaving them waiting for a code that
-        // will never arrive.
-        public async Task<bool> SendLoginCodeAsync(string recipientEmail, string? firstName, string code, int validMinutes)
-        {
-            if (!SmtpConfigured && (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail)) && _isDevelopment)
-            {
-                // Local dev without a Brevo key: surface the code in the console so login still works.
-                _logger.LogWarning("EmailService (Development): login code for {Email} is {Code}", recipientEmail, code);
-                return true;
-            }
-
-            var body = $@"
-                <p>Hi {Enc(firstName)},</p>
-                <p>Use this code to finish signing in to AstraMentoring:</p>
-                <p style=""font-size:30px;font-weight:700;letter-spacing:8px;color:#111827;margin:18px 0;"">{code}</p>
-                <p>This code expires in {validMinutes} minutes. If you did not try to sign in, you can ignore this email — your password may need changing.</p>";
-            var html = BuildEmailHtml("Your sign-in code", body);
-            return await SendEmailAsync(recipientEmail, _brandName, "Your AstraMentoring sign-in code", html);
         }
 
         // ── Announcement ─────────────────────────────────────────────────

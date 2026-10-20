@@ -90,8 +90,7 @@ namespace AstraMentoring_Backend.Services
                 UPDATE Users SET FirstName=@FirstName, LastName=@LastName,
                     Email=@Email, PasswordHash=@PasswordHash, ProfilePicture=@ProfilePicture,
                     ContactNumber=@ContactNumber, StudentNumber=@StudentNumber,
-                    Role=@Role, Gender=@Gender, UpdatedAt=@UpdatedAt,
-                    EmailVerifiedAt = CASE WHEN Email <> @Email THEN NULL ELSE EmailVerifiedAt END
+                    Role=@Role, Gender=@Gender, UpdatedAt=@UpdatedAt
                 WHERE UserID=@UserID", updatedUser) > 0;
         }
 

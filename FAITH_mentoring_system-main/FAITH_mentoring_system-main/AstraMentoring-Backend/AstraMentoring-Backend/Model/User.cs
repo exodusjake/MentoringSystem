@@ -23,9 +23,6 @@ namespace AstraMentoring_Backend.Model
         public string? Semester { get; set; }
         public string? Gender { get; set; }
         public bool HasLoggedIn { get; set; } = false;
-        // Set the first time the user confirms the emailed login code; null means
-        // the next login must verify the email (new accounts added by an Admin).
-        public DateTime? EmailVerifiedAt { get; set; }
         // Admin and Head have no dedicated profile table (unlike Mentor/
         // Mentee's MentorProfiles/MenteeProfiles), so their e-signature
         // lives directly on Users.
