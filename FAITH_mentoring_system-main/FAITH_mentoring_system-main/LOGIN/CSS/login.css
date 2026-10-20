@@ -897,3 +897,50 @@ html[data-theme="dark"] .forgot-body strong { color: #f1f5f9; }
 @media (max-width: 480px) {
   .login-card:not(.contact-card) { padding: 28px 22px; }
 }
+
+/* ===== Login form: medium size, no card box (form sits straight on the panel) ===== */
+.login-card:not(.contact-card) {
+  max-width: 400px !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.login-card:not(.contact-card)::before { display: none !important; }
+.login-card:not(.contact-card) .card-title { font-size: 26px; }
+.login-card:not(.contact-card) .card-subtitle { font-size: 13.5px; margin-bottom: 22px; }
+.login-card:not(.contact-card) .form-group { margin-bottom: 16px; }
+.login-card:not(.contact-card) .form-group label { font-size: 13.5px; margin-bottom: 7px; }
+.login-card:not(.contact-card) .form-group input { padding: 12px 14px; font-size: 14.5px; }
+.login-card:not(.contact-card) .input-wrap input { padding-left: 44px; }
+.login-card:not(.contact-card) .btn-signin { padding: 13px; font-size: 15px; }
+.login-card:not(.contact-card) .remember-me,
+.login-card:not(.contact-card) .forgot-link { font-size: 13px; }
+@media (max-height: 760px) {
+  .login-card:not(.contact-card) { padding: 0 !important; }
+  .login-card:not(.contact-card) .form-group { margin-bottom: 12px; }
+}
+@media (max-width: 480px) {
+  .login-card:not(.contact-card) { padding: 0 4px !important; }
+}
+
+/* "Login now" in the blue panel: same size and look as the "Forgot Password?" link */
+.slide-btn {
+  margin-top: 22px;
+  padding: 0;
+  gap: 6px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.slide-btn svg { width: 14px; height: 14px; }
+.slide-btn:hover { background: none; text-decoration: underline; }
+.slide-btn:active { transform: none; }
