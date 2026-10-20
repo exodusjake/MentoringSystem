@@ -371,3 +371,26 @@
 .announce-item-eval .eval-upload-instructions summary { font-size: 12px; font-weight: 600; padding: 7px 0; list-style-position: inside; }
 .announce-item-eval .eval-upload-instructions[open] { padding-bottom: 10px; max-height: 150px; overflow-y: auto; }
 .announce-item-eval .eval-upload-error { order: 4; flex-basis: 100%; }
+
+/* ===== Fill the space: Mentor + Semester Completion share one row; paired cards match heights ===== */
+.top-row { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
+.top-row > .mentor-preview-card { margin: 0; display: flex; flex-direction: column; }
+.top-row .mentor-preview { flex: 1; }
+.top-row > .att-card {
+  max-width: none; margin: 0; padding: 22px 26px; align-items: center; gap: 18px;
+}
+.top-row > .att-card .stat-icon-wrap { width: 54px; height: 54px; flex-shrink: 0; }
+.top-row > .att-card .stat-icon-wrap i { font-size: 26px; }
+.top-row > .att-card .stat-value { font-size: 38px; line-height: 1.05; }
+.top-row > .att-card .stat-frac { font-size: 20px; }
+.top-row > .att-card .stat-label { font-size: 13px; margin-top: 4px; }
+.top-row > .att-card .stat-sub { font-size: 13px; }
+@media (max-width: 960px) { .top-row { grid-template-columns: minmax(0, 1fr); } }
+
+.quad-grid { align-items: stretch; }
+.quad-grid .announcements-card { align-self: stretch; }
+.quad-grid .announcements-card .announcements-list { flex: 1 1 auto; min-height: 0; max-height: min(420px, 55vh); }
+.quad-grid .sessions-list { min-height: 0; }
+.quad-grid .sessions-list > .empty-state,
+.quad-grid .announcements-list > .empty-state { margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.quad-grid .card-view-footer { margin-top: auto; }
