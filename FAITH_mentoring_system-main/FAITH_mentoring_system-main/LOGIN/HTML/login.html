@@ -218,21 +218,53 @@
 
   </div>
 
-  <!-- Forgot Password Modal -->
+  <!-- Forgot Password Modal: email -> emailed code + new password -->
   <div class="modal-overlay" id="forgotModal" style="display:none;" onclick="closeForgotModal(event)">
-    <div class="forgot-card" onclick="event.stopPropagation()">
+    <div class="forgot-card" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
       <div class="forgot-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
       </div>
-      <h3 class="forgot-title">Forgot Password?</h3>
-      <p class="forgot-body">
-        Password resets are handled by the Guidance Office.
-        Please visit or contact the Guidance Office for assistance.
-      </p>
-      <button class="btn-signin" onclick="closeForgotModal()">Got it</button>
+
+      <!-- Step 1 -->
+      <div class="forgot-step" id="forgotStep1">
+        <h3 class="forgot-title" id="forgotTitle">Forgot Password?</h3>
+        <p class="forgot-body">Enter your email address and we'll send you a code to reset your password.</p>
+        <div class="form-group">
+          <label for="forgotEmail">Email Address</label>
+          <input type="email" id="forgotEmail" placeholder="yourname@faith.edu.ph" autocomplete="email"/>
+        </div>
+        <div class="error-banner" id="forgotBanner1" style="display:none;"></div>
+        <button class="btn-signin" id="forgotSendBtn" onclick="handleForgotSend()">Send Code</button>
+        <button type="button" class="forgot-link" onclick="closeForgotModal()">Back to log in</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="forgot-step" id="forgotStep2" style="display:none;">
+        <h3 class="forgot-title">Reset Password</h3>
+        <p class="forgot-body">If <strong id="forgotEmailShown"></strong> is registered, a 6-digit code is on its way. It expires in 10 minutes. Check your spam folder too.</p>
+        <div class="form-group">
+          <label for="resetCode">6-digit code</label>
+          <input type="text" id="resetCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="123456"/>
+        </div>
+        <div class="form-group">
+          <label for="resetPw">New password</label>
+          <input type="password" id="resetPw" autocomplete="new-password" placeholder="At least 8 characters"/>
+        </div>
+        <div class="form-group">
+          <label for="resetPw2">Confirm new password</label>
+          <input type="password" id="resetPw2" autocomplete="new-password" placeholder="Repeat the password"/>
+        </div>
+        <p class="forgot-hint">Use at least 8 characters with a letter and a number.</p>
+        <div class="error-banner" id="forgotBanner2" style="display:none;"></div>
+        <button class="btn-signin" id="forgotResetBtn" onclick="handleResetPassword()">Reset Password</button>
+        <div class="forgot-links">
+          <button type="button" class="forgot-link" onclick="forgotBack()">Change email</button>
+          <button type="button" class="forgot-link" id="forgotResend" onclick="handleForgotSend(true)">Resend code</button>
+        </div>
+      </div>
     </div>
   </div>
 

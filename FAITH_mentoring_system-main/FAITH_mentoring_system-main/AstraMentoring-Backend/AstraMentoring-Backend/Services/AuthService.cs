@@ -135,6 +135,16 @@ namespace AstraMentoring_Backend.Services
                 new { Id = userId, Now = DateTime.Now });
         }
 
+        // Used by forgot-password once the emailed code is confirmed. Proving
+        // access to the inbox also counts as verifying the email.
+        public async Task SetPasswordAsync(int userId, string newPassword)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync(
+                "UPDATE Users SET PasswordHash = @Hash, UpdatedAt = @Now, EmailVerifiedAt = COALESCE(EmailVerifiedAt, @Now) WHERE UserID = @Id",
+                new { Id = userId, Hash = HashPassword(newPassword), Now = DateTime.Now });
+        }
+
         public User? GetUserById(int userId)
             => _userRepo.GetAll().FirstOrDefault(u => u.UserID == userId);
 

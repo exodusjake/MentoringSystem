@@ -209,15 +209,36 @@ namespace AstraMentoring_Backend.Services
                 return true;
             }
 
-            var html = BuildLoginCodeEmailHtml(firstName, code, validMinutes);
+            var html = BuildCodeEmailHtml(firstName, code, validMinutes, "Verify your email",
+                "Use the code below to finish signing in to AstraMentoring.",
+                "You only need to do this once.",
+                "If you didn’t try to sign in, you can safely ignore this email. If you keep getting these, please tell the Guidance Office so your password can be changed.",
+                "a sign-in was started with this address on AstraMentoring");
             return await SendEmailAsync(recipientEmail, _brandName, "Your AstraMentoring sign-in code", html);
         }
 
-        // Branded layout for the sign-in code: navy header with the logo, white
+        // Forgot-password: emails a one-time code the user enters on the login page.
+        public async Task<bool> SendPasswordResetCodeAsync(string recipientEmail, string? firstName, string code, int validMinutes)
+        {
+            if (!SmtpConfigured && (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail)) && _isDevelopment)
+            {
+                _logger.LogWarning("EmailService (Development): password reset code for {Email} is {Code}", recipientEmail, code);
+                return true;
+            }
+
+            var html = BuildCodeEmailHtml(firstName, code, validMinutes, "Reset your password",
+                "We received a request to reset the password for your AstraMentoring account. Enter the code below on the login page to choose a new password.",
+                "Never share this code with anyone.",
+                "If you didn’t ask to reset your password, you can safely ignore this email — your password will stay the same.",
+                "a password reset was requested for this address on AstraMentoring");
+            return await SendEmailAsync(recipientEmail, _brandName, "Reset your AstraMentoring password", html);
+        }
+
+        // Branded layout for the emailed codes: navy header with the logo, white
         // card with the code, a help box, and a footer with site links. Table
         // based with inline styles so it renders in Gmail/Outlook/mobile clients.
         // Colours follow the app: navy #0b1a5c, blue #2563eb, gold #f0b429.
-        private string BuildLoginCodeEmailHtml(string? firstName, string code, int validMinutes)
+        private string BuildCodeEmailHtml(string? firstName, string code, int validMinutes, string title, string intro, string expiryNote, string ignoreNote, string reason)
         {
             var baseUrl = _frontendBaseUrl;
             var logoUrl = baseUrl + "/IMAGES/LOGO.png";
@@ -244,15 +265,15 @@ namespace AstraMentoring_Backend.Services
     <tr><td style=""background:#f0b429;height:4px;line-height:4px;font-size:0;"">&nbsp;</td></tr>
     <tr>
       <td style=""background:#ffffff;padding:34px 32px 30px;"">
-        <h1 style=""margin:0 0 14px;text-align:center;font-size:26px;color:#0b1a5c;{font}"">Verify your email</h1>
+        <h1 style=""margin:0 0 14px;text-align:center;font-size:26px;color:#0b1a5c;{font}"">{Enc(title)}</h1>
         <p style=""margin:0 0 6px;font-size:15px;line-height:1.6;color:#475569;{font}"">Hi {Enc(firstName)},</p>
-        <p style=""margin:0 0 22px;font-size:15px;line-height:1.6;color:#475569;{font}"">Use the code below to finish signing in to AstraMentoring.</p>
+        <p style=""margin:0 0 22px;font-size:15px;line-height:1.6;color:#475569;{font}"">{Enc(intro)}</p>
 
         <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto 14px;""><tr>{digits}</tr></table>
 
-        <p style=""margin:0 0 22px;text-align:center;font-size:13px;color:#64748b;{font}"">This code expires in <strong style=""color:#0b1a5c;"">{validMinutes} minutes</strong>. You only need to do this once.</p>
+        <p style=""margin:0 0 22px;text-align:center;font-size:13px;color:#64748b;{font}"">This code expires in <strong style=""color:#0b1a5c;"">{validMinutes} minutes</strong>. {Enc(expiryNote)}</p>
 
-        <p style=""margin:0;font-size:14px;line-height:1.6;color:#475569;{font}"">If you didn’t try to sign in, you can safely ignore this email. If you keep getting these, please tell the Guidance Office so your password can be changed.</p>
+        <p style=""margin:0;font-size:14px;line-height:1.6;color:#475569;{font}"">{Enc(ignoreNote)}</p>
       </td>
     </tr>
     <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
@@ -270,7 +291,7 @@ namespace AstraMentoring_Backend.Services
         <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
         <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
         <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
-        <p style=""margin:0;"">You received this email because a sign-in was started with this address on AstraMentoring.</p>
+        <p style=""margin:0;"">You received this email because {Enc(reason)}.</p>
         <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
         <p style=""margin:12px 0 0;color:#ffffff;font-weight:700;"">AstraMentoring · FAITH Colleges</p>
       </td>

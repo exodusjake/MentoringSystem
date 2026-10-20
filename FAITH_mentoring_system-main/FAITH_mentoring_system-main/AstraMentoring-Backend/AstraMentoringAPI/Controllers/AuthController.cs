@@ -17,14 +17,16 @@ namespace AstraMentoringAPI.Controllers
         private readonly LoginAttemptTracker _attempts;
         private readonly LoginCodeStore _codes;
         private readonly EmailService _email;
+        private readonly PasswordResetStore _resets;
 
-        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email)
+        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email, PasswordResetStore resets)
         {
             _service = service;
             _config = config;
             _attempts = attempts;
             _codes = codes;
             _email = email;
+            _resets = resets;
         }
 
         // Creates a user with an ARBITRARY role (including Admin/Head) from the
@@ -189,6 +191,71 @@ namespace AstraMentoringAPI.Controllers
                 return StatusCode(503, new { message = "We couldn't send your verification code. Please try again shortly." });
 
             return Ok(new { message = "A new code has been sent." });
+        }
+
+        public class ForgotPasswordRequest
+        {
+            public string Email { get; set; } = string.Empty;
+        }
+
+        public class ResetPasswordRequest
+        {
+            public string Email { get; set; } = string.Empty;
+            public string Code { get; set; } = string.Empty;
+            public string NewPassword { get; set; } = string.Empty;
+        }
+
+        // Forgot password, step 1: emails a one-time code. The reply is always
+        // the same, whether or not the address belongs to an account, so this
+        // can't be used to discover who is registered.
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        [EnableRateLimiting("login")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            const string generic = "If that email belongs to an account, a reset code has been sent to it.";
+            var email = (request.Email ?? string.Empty).Trim();
+            if (email.Length == 0 || email.Length > 150)
+                return BadRequest(new { message = "Please enter your email address." });
+
+            var user = _service.GetUserByEmail(email);
+            if (user != null && user.IsActive)
+            {
+                var code = _resets.TryCreate(user.UserID);
+                if (code != null)
+                    await _email.SendPasswordResetCodeAsync(user.Email, user.FirstName, code, (int)PasswordResetStore.Lifetime.TotalMinutes);
+            }
+            return Ok(new { message = generic });
+        }
+
+        // Forgot password, step 2: exchanges the emailed code for a new password.
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        [EnableRateLimiting("login")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            const string invalid = "That code is incorrect or has expired. Please request a new one.";
+            var pw = request.NewPassword ?? string.Empty;
+            if (pw.Length < 8 || pw.Length > 100 || !pw.Any(char.IsLetter) || !pw.Any(char.IsDigit))
+                return BadRequest(new { message = "Password must be at least 8 characters and include a letter and a number." });
+
+            var user = _service.GetUserByEmail((request.Email ?? string.Empty).Trim());
+            if (user == null || !user.IsActive)
+                return BadRequest(new { message = invalid });
+
+            switch (_resets.Verify(user.UserID, request.Code))
+            {
+                case PasswordResetStore.VerifyStatus.Ok:
+                    break;
+                case PasswordResetStore.VerifyStatus.Invalid:
+                    return BadRequest(new { message = "Incorrect code. Please check your email and try again." });
+                default:
+                    return BadRequest(new { message = invalid, restart = true });
+            }
+
+            await _service.SetPasswordAsync(user.UserID, pw);
+            _attempts.RecordSuccess(user.Email);
+            return Ok(new { message = "Your password has been reset. You can now log in." });
         }
 
         private static object ToLoginPayload(LoginResponse r) => new { token = r.Token, role = r.Role, user = r.User };
