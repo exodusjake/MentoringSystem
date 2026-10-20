@@ -225,3 +225,7 @@
     * { scrollbar-width: thin; scrollbar-color: #b9c8de transparent; }
   }
 }
+
+/* Scrolling inside the sidebar or a modal never chains to the page behind it. */
+.sidebar, .modal, .modal-body, .edit-modal-card, .info-modal, .logout-modal, .cal-modal,
+[class*="modal-overlay"], [class*="-modal-card"] { overscroll-behavior: contain; }

@@ -304,3 +304,45 @@ function playLogoutEffect() {
     setTimeout(() => { window.location.href = '/LOGIN/HTML/login.html'; }, 1300);
 }
 window.playLogoutEffect = playLogoutEffect;
+
+// Scroll containment: wheel/touch over the sidebar or an open modal never scrolls the page behind it.
+// If something inside can still scroll in that direction it does; otherwise the event is swallowed
+// instead of chaining to the page.
+(function scrollContainment() {
+    if (window.__astraScrollContainment) return;
+    window.__astraScrollContainment = true;
+
+    const LAYER = '.sidebar, [class*="overlay"], [class*="modal"]';
+
+    function canScroll(el, dy) {
+        const cs = getComputedStyle(el);
+        if (!/(auto|scroll|overlay)/.test(cs.overflowY)) return false;
+        if (el.scrollHeight <= el.clientHeight + 1) return false;
+        return dy < 0 ? el.scrollTop > 0 : el.scrollTop + el.clientHeight < el.scrollHeight - 1;
+    }
+
+    // Returns true when the event should be blocked (it started inside a fixed sidebar/modal layer
+    // and nothing between the target and that layer can scroll further in that direction).
+    function shouldBlock(target, dy) {
+        for (let el = target; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+            if (el.nodeType !== 1) continue;
+            if (canScroll(el, dy)) return false;
+            if (el.matches(LAYER) && getComputedStyle(el).position === 'fixed') return true;
+        }
+        return false;
+    }
+
+    document.addEventListener('wheel', e => {
+        if (e.ctrlKey || !e.deltaY) return;
+        if (shouldBlock(e.target, e.deltaY)) e.preventDefault();
+    }, { passive: false });
+
+    let lastY = 0;
+    document.addEventListener('touchstart', e => { lastY = e.touches[0] ? e.touches[0].clientY : 0; }, { passive: true });
+    document.addEventListener('touchmove', e => {
+        const y = e.touches[0] ? e.touches[0].clientY : lastY;
+        const dy = lastY - y;               // finger up => content scrolls down
+        lastY = y;
+        if (dy && shouldBlock(e.target, dy)) e.preventDefault();
+    }, { passive: false });
+})();
