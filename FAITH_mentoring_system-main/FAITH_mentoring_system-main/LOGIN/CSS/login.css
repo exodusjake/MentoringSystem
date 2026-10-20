@@ -1011,12 +1011,3 @@ html[data-theme="dark"] .back-home:hover {
   border-color: #2563eb !important;
   color: #ffffff !important;
 }
-
-/* New logo has dark lettering, so it sits on a white rounded plate on the navy panel. */
-.left-logo-img {
-  width: min(210px, 72%);
-  background: #ffffff;
-  border-radius: 22px;
-  padding: 16px 18px;
-  box-sizing: border-box;
-}
