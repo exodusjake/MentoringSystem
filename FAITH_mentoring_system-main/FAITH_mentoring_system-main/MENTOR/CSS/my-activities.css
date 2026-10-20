@@ -363,3 +363,34 @@ tbody tr:hover { background: #f4f7fb; }
   .section-filter-bar > .search-box { max-width: none; flex-basis: 100%; }
   .section-filter-bar > .dd-trigger { flex: 1 1 140px; width: auto !important; }
 }
+
+/* ===== Attendance Overview: one type scale, one muted-text colour, no faded text ===== */
+/* Hero: name 20/700, details 13/400 in the same grey, badge a proper pill like the others. */
+.mentor-hero .hero-name { font-size: 20px; font-weight: 700; line-height: 1.25; color: #111827; }
+.hero-meta-item { font-size: 13px; font-weight: 400; line-height: 1.4; color: #6b7280; }
+.hero-meta-item i { font-size: 15px; color: #6b7280; opacity: 1; }
+.hero-badge {
+  font-size: 13px; font-weight: 600; line-height: 1.2; padding: 7px 16px; border-radius: 999px;
+  text-transform: none; letter-spacing: 0; white-space: nowrap;
+  background: #f1f5f9; color: #475569;                 /* default (e.g. Pending) */
+}
+.hero-badge.pending { background: #fef3c7; color: #92400e; }
+.hero-tip-icon, .attendance-help summary { color: #64748b; opacity: 1; }
+.hero-tip-wrap:hover .hero-tip-icon, .attendance-help summary:hover { color: #334155; }
+
+/* Secondary text: same readable grey everywhere (was a mix of #9CA3AF / #D1D5DB). */
+.stat-note, .td-sub, .section-card-count, .sec-group-count, .mcard-date, .mentee-card-empty, th, .empty-state { color: #6b7280; opacity: 1; }
+.mcard-bar-info { color: #94a3b8; }
+.mcard-bar-info:hover { color: #64748b; }
+.mcard-status.no-sessions { color: #6b7280; }
+
+/* Same sizes for the same roles. */
+.stat-label { font-size: 11px; font-weight: 600; }
+.stat-note, .td-sub, .mcard-sub { font-size: 12px; }
+.mcard-name, .td-name { font-size: 14px; font-weight: 600; color: #111827; }
+.mcard-att-label, .mcard-date { font-size: 12.5px; }
+.mcard-att-count { font-size: 14px; font-weight: 700; color: #111827; }
+.section-card-title { font-size: 16px; font-weight: 700; }
+.sec-group-name { font-size: 14px; font-weight: 600; }
+.badge, .proof-chip, .mcard-status, .mcard-dropout-chip { font-size: 11.5px; font-weight: 600; }
+.search-box input, .filter-select { font-family: inherit; font-size: 13px; }
