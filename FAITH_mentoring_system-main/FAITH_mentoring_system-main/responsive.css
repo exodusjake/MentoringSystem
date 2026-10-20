@@ -184,3 +184,13 @@
   html[data-theme="dark"] .viewport-tooltip strong { color: #000000 !important; }
   html[data-theme="dark"] .viewport-tooltip [class$="-tip-note"] { color: #3d5178 !important; }
 }
+
+/* Log-out button: small transitions */
+.logout-btn { transition: background .2s ease, transform .15s ease, color .2s ease; }
+.logout-btn i { transition: transform .25s ease; }
+.logout-btn:hover i { transform: translateX(3px); }
+.logout-btn:active { transform: scale(.97); }
+.btn-logout { transition: background .2s ease, transform .15s ease, box-shadow .2s ease; }
+.btn-logout:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(220, 38, 38, .28); transform: translateY(-1px); }
+.btn-logout:active:not(:disabled) { transform: scale(.96); }
+.btn-logout:disabled { opacity: .75; cursor: progress; }

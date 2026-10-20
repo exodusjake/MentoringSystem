@@ -190,6 +190,9 @@ function hideLogoutModal() {
 }
 
 function handleLogout() {
+  const btn = document.getElementById('btnLogoutConfirm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Logging out…'; }
+  if (typeof playLogoutEffect === 'function') { playLogoutEffect(); return; }
   if (typeof clearSession === 'function') clearSession();
   window.location.href = '/LOGIN/HTML/login.html';
 }
