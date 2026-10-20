@@ -442,3 +442,62 @@ window.playLogoutEffect = playLogoutEffect;
         return p.finally(end);
     };
 })();
+
+// Confirmation dialogs (all portals): any small "title + message + Cancel/Confirm" dialog is restyled in one
+// layout — left-aligned title with a close (X), message, and a grey footer bar with Cancel and the main action.
+// Dialogs are recognised by structure, so existing markup and click handlers keep working unchanged.
+(function confirmDialogs() {
+    if (window.__astraConfirmDialogs) return;
+    window.__astraConfirmDialogs = true;
+
+    const CARD    = '.confirm-card,.logout-modal,.nf-confirm-card,.info-modal,.modal-card,.modal-card-sm,.edit-modal-card,.modal';
+    const ACTIONS = '.confirm-actions,.info-modal-actions,.logout-modal-btns,.edit-modal-footer,.nf-confirm-actions,.modal-footer,.modal-actions';
+    const TITLE   = '.confirm-title,.info-modal-title,.nf-confirm-title,.logout-modal h3,.modal-title,h3,h2';
+    const BODY    = '.confirm-body,.info-modal-message,.nf-confirm-message,.modal-subtitle,.logout-modal p';
+    const ICON    = '.confirm-icon,.info-modal-icon,.logout-modal-icon';
+    const X_SVG   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    function enhance(card) {
+        if (card.dataset.astraConfirm) return;
+        if (card.querySelector('input:not([type="hidden"]),select,textarea,table,canvas,img,iframe')) return;   // forms / rich content stay as they are
+        if ((card.textContent || '').length > 700) return;
+        const actions = card.querySelector(ACTIONS);
+        if (!actions) return;
+        const btns = Array.prototype.filter.call(actions.children, n => n.tagName === 'BUTTON');
+        if (btns.length < 2 || btns.length > 3) return;
+        const title = card.querySelector(TITLE);
+        if (!title || actions.contains(title)) return;
+        if (title.compareDocumentPosition(actions) & Node.DOCUMENT_POSITION_PRECEDING) return;   // title must come first
+
+        card.dataset.astraConfirm = '1';
+        title.dataset.ac = 'title';
+        actions.dataset.ac = 'actions';
+        card.querySelectorAll(BODY).forEach(el => { if (!actions.contains(el) && el !== title) el.dataset.ac = 'body'; });
+        card.querySelectorAll(ICON).forEach(el => { el.dataset.ac = 'icon'; });
+        if (!card.querySelector('[data-ac="body"]')) card.classList.add('astra-confirm-nobody');
+
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'astra-confirm-x';
+        x.setAttribute('aria-label', 'Close');
+        x.innerHTML = X_SVG;
+        x.addEventListener('click', e => {
+            e.stopPropagation();
+            btns[0].click();            // the first button is always the Cancel / Go Back one
+        });
+        card.appendChild(x);
+    }
+
+    let queued = false;
+    function scan() {
+        queued = false;
+        document.querySelectorAll(CARD).forEach(enhance);
+    }
+    function schedule() { if (!queued) { queued = true; requestAnimationFrame(scan); } }
+
+    function start() {
+        scan();
+        new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+    }
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();

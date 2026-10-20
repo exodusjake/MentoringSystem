@@ -229,3 +229,79 @@
 /* Scrolling inside the sidebar or a modal never chains to the page behind it. */
 .sidebar, .modal, .modal-body, .edit-modal-card, .info-modal, .logout-modal, .cal-modal,
 [class*="modal-overlay"], [class*="-modal-card"] { overscroll-behavior: contain; }
+
+/* ===== Confirmation dialogs (all portals) =====
+   Left-aligned title + close (X), message, and a grey footer bar with Cancel and the main action.
+   Applied by apiClient.js to any small confirm-style dialog (see confirmDialogs there). */
+[data-astra-confirm] {
+  position: relative !important;
+  padding: 0 !important;
+  width: 100%;
+  max-width: 440px !important;
+  text-align: left !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, .28) !important;
+  animation: astraConfirmIn .24s cubic-bezier(.22, 1, .36, 1);
+}
+@keyframes astraConfirmIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+
+[data-astra-confirm] [data-ac="icon"] { display: none !important; }
+
+[data-astra-confirm] [data-ac="title"] {
+  margin: 0 !important;
+  padding: 24px 56px 0 28px !important;
+  font-size: 18px !important; font-weight: 600 !important; line-height: 1.35 !important;
+  color: #1f2937 !important; text-align: left !important;
+}
+[data-astra-confirm] [data-ac="body"] {
+  margin: 0 !important;
+  padding: 14px 28px 26px !important;
+  font-size: 14px !important; line-height: 1.6 !important;
+  color: #4b5563 !important; text-align: left !important;
+}
+[data-astra-confirm] [data-ac="body"] strong { color: #1f2937; }
+.astra-confirm-nobody [data-ac="title"] { padding-bottom: 24px !important; }
+
+[data-astra-confirm] [data-ac="actions"] {
+  display: flex !important; justify-content: flex-end !important; align-items: center !important;
+  gap: 10px !important; margin: 0 !important; padding: 14px 22px !important;
+  background: #f4f6f9 !important; border: 0 !important; border-top: 1px solid #eceff4 !important;
+  max-width: none !important;
+}
+/* Cancel: plain text button */
+[data-astra-confirm] [data-ac="actions"] > button:first-child {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+  color: #374151 !important; font-weight: 600 !important; font-size: 14px !important;
+  padding: 10px 16px !important; border-radius: 8px !important; cursor: pointer;
+  transition: background .15s, color .15s;
+}
+[data-astra-confirm] [data-ac="actions"] > button:first-child:hover { background: #e8ecf2 !important; color: #111827 !important; }
+/* Main action keeps its own colour (red for destructive, blue for normal) */
+[data-astra-confirm] [data-ac="actions"] > button:last-child {
+  font-size: 14px !important; font-weight: 600 !important;
+  padding: 10px 24px !important; border-radius: 8px !important;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: filter .15s, transform .12s, box-shadow .15s;
+}
+[data-astra-confirm] [data-ac="actions"] > button:last-child:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 6px 16px rgba(15, 23, 42, .18); }
+[data-astra-confirm] [data-ac="actions"] > button:last-child:active:not(:disabled) { transform: scale(.97); }
+
+/* Close (X) */
+.astra-confirm-x {
+  position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 0; border-radius: 8px; color: #9ca3af; cursor: pointer;
+  transition: background .15s, color .15s, transform .15s;
+}
+.astra-confirm-x svg { width: 18px; height: 18px; }
+.astra-confirm-x:hover { background: #f1f3f7; color: #374151; transform: rotate(90deg); }
+.astra-confirm-x:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+@media (max-width: 480px) {
+  [data-astra-confirm] [data-ac="title"] { padding-left: 20px !important; }
+  [data-astra-confirm] [data-ac="body"] { padding-left: 20px !important; padding-right: 20px !important; }
+  [data-astra-confirm] [data-ac="actions"] { padding: 12px 16px !important; }
+}
+@media (prefers-reduced-motion: reduce) { [data-astra-confirm] { animation: none; } .astra-confirm-x:hover { transform: none; } }

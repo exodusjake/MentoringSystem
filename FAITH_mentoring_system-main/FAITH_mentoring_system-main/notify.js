@@ -188,12 +188,14 @@
       overlay.className = 'nf-confirm-overlay';
       overlay.innerHTML = `
         <div class="nf-confirm-card">
+          <h3 class="nf-confirm-title"></h3>
           <p class="nf-confirm-message"></p>
           <div class="nf-confirm-actions">
             <button class="nf-confirm-btn nf-confirm-cancel"></button>
             <button class="nf-confirm-btn nf-confirm-ok"></button>
           </div>
         </div>`;
+      overlay.querySelector('.nf-confirm-title').textContent = options.title || (options.variant === 'primary' ? 'Please confirm' : 'Are you sure?');
       overlay.querySelector('.nf-confirm-message').textContent = message;
       overlay.querySelector('.nf-confirm-cancel').textContent = options.cancelText || 'Cancel';
       const okBtn = overlay.querySelector('.nf-confirm-ok');
