@@ -346,3 +346,99 @@ window.playLogoutEffect = playLogoutEffect;
         if (dy && shouldBlock(e.target, dy)) e.preventDefault();
     }, { passive: false });
 })();
+
+// Global loading indicator: any apiRequest() that takes longer than a moment shows a slim progress bar
+// along the top of the page, and a short "still loading" note if the server is slow to answer.
+(function apiLoadingIndicator() {
+    if (window.__astraLoadingIndicator || typeof apiRequest !== 'function') return;
+    window.__astraLoadingIndicator = true;
+
+    const SHOW_AFTER_MS = 300;     // quick requests never flash the bar
+    const SLOW_AFTER_MS = 3500;    // first "taking longer" note
+    const VERY_SLOW_MS  = 12000;   // second, reassuring note
+
+    let active = 0, bar = null, fill = null, pill = null, pillText = null;
+    let showTimer, slowTimer, verySlowTimer, hideTimer, progTimer, progress = 0;
+
+    function build() {
+        if (bar || !document.body) return;
+        const st = document.createElement('style');
+        st.textContent =
+            '.astra-lbar{position:fixed;top:0;left:0;right:0;height:3px;z-index:2147483001;pointer-events:none;opacity:0;transition:opacity .25s ease}' +
+            '.astra-lbar.on{opacity:1}' +
+            '.astra-lbar i{display:block;height:100%;width:0;border-radius:0 3px 3px 0;background:linear-gradient(90deg,#3b82f6,#60a5fa 60%,#f0b429);' +
+            'box-shadow:0 0 10px rgba(59,130,246,.55);transition:width .25s ease}' +
+            '.astra-lbar.on::after{content:"";position:absolute;top:0;bottom:0;width:90px;left:-90px;' +
+            'background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:astra-lbar-sheen 1.1s ease-in-out infinite}' +
+            '@keyframes astra-lbar-sheen{to{left:100%}}' +
+            '.astra-lpill{position:fixed;top:14px;left:50%;z-index:2147483001;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 28px);' +
+            'padding:10px 16px;border-radius:999px;background:#fff;color:#374151;border:1px solid #dce3ec;box-shadow:0 10px 30px rgba(11,26,92,.16);' +
+            'font:500 13px/1.3 "DM Sans","Poppins",system-ui,sans-serif;opacity:0;transform:translate(-50%,-12px);pointer-events:none;' +
+            'transition:opacity .3s ease,transform .35s cubic-bezier(.22,1,.36,1)}' +
+            '.astra-lpill.show{opacity:1;transform:translate(-50%,0)}' +
+            '.astra-lpill b{width:16px;height:16px;border-radius:50%;border:2.5px solid #dbeafe;border-top-color:#2563eb;animation:astra-lspin .8s linear infinite;flex-shrink:0}' +
+            '@keyframes astra-lspin{to{transform:rotate(360deg)}}' +
+            '@media (prefers-reduced-motion:reduce){.astra-lbar.on::after,.astra-lpill b{animation-duration:2.4s}}';
+        document.head.appendChild(st);
+        bar = document.createElement('div');
+        bar.className = 'astra-lbar';
+        bar.setAttribute('role', 'progressbar');
+        bar.setAttribute('aria-hidden', 'true');
+        fill = document.createElement('i');
+        bar.appendChild(fill);
+        pill = document.createElement('div');
+        pill.className = 'astra-lpill';
+        pill.setAttribute('role', 'status');
+        pill.setAttribute('aria-live', 'polite');
+        pill.innerHTML = '<b></b><span></span>';
+        pillText = pill.lastChild;
+        document.body.appendChild(bar);
+        document.body.appendChild(pill);
+    }
+
+    function show() {
+        build();
+        if (!bar) return;
+        clearTimeout(hideTimer);
+        progress = 8;
+        fill.style.width = progress + '%';
+        bar.classList.add('on');
+        clearInterval(progTimer);
+        progTimer = setInterval(() => {            // creeps toward 90% and waits for the response
+            progress += (90 - progress) * 0.07;
+            fill.style.width = progress.toFixed(1) + '%';
+        }, 200);
+        slowTimer = setTimeout(() => {
+            pillText.textContent = 'Still loading… the server is taking longer than usual.';
+            pill.classList.add('show');
+        }, SLOW_AFTER_MS - SHOW_AFTER_MS);
+        verySlowTimer = setTimeout(() => {
+            pillText.textContent = 'Almost there — the server is responding slowly. Please keep this page open.';
+            pill.classList.add('show');
+        }, VERY_SLOW_MS - SHOW_AFTER_MS);
+    }
+
+    function begin() {
+        active++;
+        if (active === 1) { clearTimeout(hideTimer); showTimer = setTimeout(show, SHOW_AFTER_MS); }
+    }
+
+    function end() {
+        active = Math.max(0, active - 1);
+        if (active > 0) return;
+        clearTimeout(showTimer); clearTimeout(slowTimer); clearTimeout(verySlowTimer); clearInterval(progTimer);
+        if (pill) pill.classList.remove('show');
+        if (bar && bar.classList.contains('on')) {
+            fill.style.width = '100%';
+            hideTimer = setTimeout(() => { bar.classList.remove('on'); setTimeout(() => { fill.style.width = '0'; }, 260); }, 280);
+        }
+    }
+
+    const original = apiRequest;
+    window.apiRequest = apiRequest = function (...args) {
+        begin();
+        let p;
+        try { p = original.apply(this, args); } catch (e) { end(); throw e; }
+        return p.finally(end);
+    };
+})();
