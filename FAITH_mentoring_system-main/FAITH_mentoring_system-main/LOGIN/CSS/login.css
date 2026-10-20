@@ -833,3 +833,18 @@ html[data-theme="dark"] .error-banner.success { background: #0f2a1c; border-colo
 @media (prefers-reduced-motion: reduce) {
   .left-side, .right-side:not(.contact-side), .contact-side { transition: none !important; }
 }
+
+/* Contact panel: compact so the whole form fits inside the card height. */
+.contact-side { padding: 20px 28px; }
+.contact-side .right-logo { margin-bottom: 8px; }
+.contact-side .right-logo-img { width: 70px; }
+.contact-card { padding: 18px 24px; }
+.contact-card .card-title { font-size: 22px; }
+.contact-card .card-subtitle { margin-bottom: 10px; font-size: 12.5px; }
+.contact-card .form-group { margin-bottom: 8px; }
+.contact-card .form-group label { margin-bottom: 4px; font-size: 12.5px; }
+.contact-card .form-group input,
+.contact-card .form-group select,
+.contact-card .form-group textarea { padding: 8px 12px; font-size: 13px; }
+.contact-card .btn-signin { padding: 10px; }
+.contact-side .bottom-links { margin-top: 8px; }
