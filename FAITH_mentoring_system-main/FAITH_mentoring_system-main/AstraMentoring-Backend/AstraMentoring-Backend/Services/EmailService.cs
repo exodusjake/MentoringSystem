@@ -254,7 +254,7 @@ namespace AstraMentoring_Backend.Services
     <tr>
       <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:14px 22px;"">
         <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto;""><tr>
-          <td style=""padding-right:12px;vertical-align:middle;""><img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""38"" style=""display:block;border:0;height:auto;max-width:38px;background:#ffffff;border-radius:50%;padding:3px;"" /></td>
+          <td style=""padding-right:12px;vertical-align:middle;""><img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""44"" style=""display:block;border:0;height:auto;max-width:44px;"" /></td>
           <td style=""vertical-align:middle;text-align:left;"">
             <div style=""color:#ffffff;font-size:14px;font-weight:700;letter-spacing:.05em;{font}"">ASTRA MENTORING</div>
             <div style=""color:#b6c4f2;font-size:11px;margin-top:1px;{font}"">FAITH Colleges</div>
