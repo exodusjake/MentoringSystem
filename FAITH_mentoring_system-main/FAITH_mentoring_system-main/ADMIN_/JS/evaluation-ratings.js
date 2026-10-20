@@ -590,39 +590,84 @@ window.addEventListener('load', () => moveRptPill(true));
 window.addEventListener('resize', () => moveRptPill(true));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveRptPill(true));
 
+// Wraps both panels once so the switch can animate the page height instead of
+// letting it jump when one panel is hidden and the other shown.
+function ensureRptWrap(a, b) {
+  let wrap = a.parentNode.classList && a.parentNode.classList.contains('rpt-panels') ? a.parentNode : null;
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'rpt-panels';
+    a.parentNode.insertBefore(wrap, a);
+    wrap.appendChild(a);
+    wrap.appendChild(b);
+  }
+  return wrap;
+}
+
 function switchRptTab(tab) {
   const rankingsPanel = document.getElementById('tabPanel-rankings');
   const prPanel       = document.getElementById('tabPanel-programreport');
   const rankingsBtn   = document.getElementById('tabBtn-rankings');
   const prBtn         = document.getElementById('tabBtn-programreport');
   const isRankings    = tab === 'rankings';
-
-  // Cross-fade: the visible panel fades out, then the other eases in. The
-  // pill under the tabs slides to the new tab straight away.
   const shown  = isRankings ? rankingsPanel : prPanel;
   const hidden = isRankings ? prPanel : rankingsPanel;
+
+  // Tab buttons, pill and subtitle update straight away.
+  rankingsBtn.classList.toggle('active', isRankings);
+  prBtn.classList.toggle('active', !isRankings);
+  rankingsBtn.setAttribute('aria-selected', String(isRankings));
+  prBtn.setAttribute('aria-selected', String(!isRankings));
+  moveRptPill();
+  document.getElementById('periodSub').textContent = isRankings
+    ? `Mentor performance rankings for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`
+    : `Per-checkpoint mentee attendance and honorarium computation for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`;
+
+  const wrap   = ensureRptWrap(rankingsPanel, prPanel);
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const token  = (switchRptTab._t = (switchRptTab._t || 0) + 1);
-  const reveal = () => {
+  clearTimeout(switchRptTab._timer);
+  const finish = () => {
+    wrap.style.height = '';
+    wrap.classList.remove('rpt-switching');
+    hidden.style.display = 'none';
+    hidden.classList.remove('rpt-panel-out');
+    shown.style.display = '';
+    shown.classList.remove('rpt-panel-out');
+  };
+
+  // Already showing this panel (e.g. the user flipped back mid-switch).
+  if (shown.style.display !== 'none' && hidden.style.display === 'none') { finish(); return; }
+  if (reduce) { finish(); return; }
+
+  // Hold the current height, fade the old panel out, then grow/shrink to the
+  // new panel's height while it fades in.
+  const fromH = wrap.offsetHeight;
+  wrap.style.height = fromH + 'px';
+  wrap.classList.add('rpt-switching');
+  shown.classList.remove('rpt-panel-out');
+  if (hidden.style.display === 'none') { hidden.style.display = ''; }
+  hidden.classList.add('rpt-panel-out');
+
+  switchRptTab._timer = setTimeout(() => {
     if (token !== switchRptTab._t) return;
     hidden.style.display = 'none';
     hidden.classList.remove('rpt-panel-out');
     shown.style.display = '';
+    wrap.style.height = 'auto';
+    const toH = wrap.offsetHeight;
+    wrap.style.height = fromH + 'px';
+    void wrap.offsetHeight;
     shown.classList.remove('rpt-panel-in');
     void shown.offsetWidth;
     shown.classList.add('rpt-panel-in');
-  };
-  if (reduce || hidden.style.display === 'none') reveal();
-  else { hidden.classList.add('rpt-panel-out'); setTimeout(reveal, 130); }
-  rankingsBtn.classList.toggle('active', isRankings);
-  moveRptPill();
-  prBtn.classList.toggle('active', !isRankings);
-  rankingsBtn.setAttribute('aria-selected', String(isRankings));
-  prBtn.setAttribute('aria-selected', String(!isRankings));
-
-  document.getElementById('periodSub').textContent = isRankings
-    ? `Mentor performance rankings for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`
-    : `Per-checkpoint mentee attendance and honorarium computation for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`;
+    wrap.style.height = toH + 'px';
+    switchRptTab._timer = setTimeout(() => {
+      if (token !== switchRptTab._t) return;
+      wrap.style.height = '';
+      wrap.classList.remove('rpt-switching');
+    }, 340);
+  }, 140);
 }
 
 function formatPeso(n) {
