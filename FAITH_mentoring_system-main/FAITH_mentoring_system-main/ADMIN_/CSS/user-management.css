@@ -1326,3 +1326,15 @@ body:has(#modalOverlay.active), body:has(#importStartModal[style*="flex"]) { ove
   .info-modal:not(.db-modal) { padding: 26px 20px 20px; }
   .info-modal-actions { flex-direction: column-reverse; }
 }
+
+/* ===== Users table: fits the card, no horizontal scrolling (all columns kept) ===== */
+.user-table { table-layout: auto; width: 100%; }
+.user-table thead th,
+.user-table tbody td { white-space: normal; padding: 12px 8px; font-size: 13px; }
+.user-table thead th { font-size: 12.5px; }
+.user-table th.col-check, .user-table td.col-check { width: 36px; padding: 12px 0 12px 12px; }
+.user-table tbody td:nth-child(3) { overflow-wrap: anywhere; word-break: normal; min-width: 150px; }
+.user-table td .badge, .user-table td > span { white-space: nowrap; }
+.user-table .badge { padding: 4px 10px; font-size: 11.5px; }
+.user-table thead th .status-th { white-space: nowrap; }
+.user-table td:last-child, .user-table th:last-child { padding-right: 14px; }
