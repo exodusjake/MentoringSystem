@@ -964,3 +964,40 @@ html[data-theme="dark"] .back-home:hover {
 
 /* Left panel logo: same logo and size, just no white plate behind it. */
 .left-logo-img { background: none; border-radius: 0; padding: 0; }
+
+/* Light theme: plain white form side, with a thin outline around the form */
+html:not([data-theme="dark"]) .right-side { background: #ffffff; }
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+}
+html:not([data-theme="dark"]) .contact-card {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 6px 24px rgba(11, 26, 92, .08);
+}
+html:not([data-theme="dark"]) .contact-card::before { display: none; }
+html:not([data-theme="dark"]) .contact-card .form-group input,
+html:not([data-theme="dark"]) .contact-card .form-group select,
+html:not([data-theme="dark"]) .contact-card .form-group textarea {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+}
+.login-card:not(.contact-card) {
+  border: 1px solid #dbe3ee !important;
+  border-radius: 16px !important;
+  padding: 30px !important;
+}
+html[data-theme="dark"] .login-card:not(.contact-card) { border-color: rgba(255, 255, 255, .16) !important; }
+@media (max-height: 760px) { .login-card:not(.contact-card) { padding: 22px 26px !important; } }
+@media (max-width: 480px)  { .login-card:not(.contact-card) { padding: 22px 18px !important; } }
