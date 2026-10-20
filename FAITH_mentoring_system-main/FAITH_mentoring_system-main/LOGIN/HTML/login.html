@@ -54,6 +54,7 @@
 
         <h1 class="card-title">Welcome Back</h1>
         <p class="card-subtitle">Log in with your institutional email address</p>
+        <div id="loginStep">
 
         <!-- Email -->
         <div class="form-group">
@@ -102,8 +103,44 @@
         <button class="btn-signin" id="signinBtn" onclick="handleSignIn()">
           Log in
         </button>
+        </div>
 
-        <p class="contact-text">
+        <!-- Step 2: one-time email verification (first login only) -->
+        <div id="codeStep" class="otp-step" style="display:none;">
+          <div class="otp-icon" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none">
+              <rect x="10" y="18" width="44" height="30" rx="4" fill="#fff" stroke="#0b1a5c" stroke-width="2.5"/>
+              <path d="m12 21 20 16 20-16" stroke="#0b1a5c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="49" cy="17" r="8" fill="#f0b429"/>
+              <path d="m45.5 17 2.5 2.5 4.5-5" stroke="#0b1a5c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 class="card-title">Verify Your Email</h1>
+          <p class="otp-sub">A 6-digit code has been sent to<br/><strong id="otpEmail"></strong>
+            <button type="button" class="forgot-link" onclick="backToLogin()">Change</button></p>
+
+          <div class="otp-boxes" id="otpBoxes">
+            <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1"/>
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2"/>
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3"/>
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4"/>
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5"/>
+            <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6"/>
+          </div>
+
+          <div class="error-banner" id="codeErrorBanner" style="display:none;"></div>
+
+          <ul class="otp-notes">
+            <li>This code expires in <strong id="otpTimer">10:00</strong></li>
+            <li>Didn't receive the code? <button type="button" class="forgot-link" id="resendBtn" onclick="handleResendCode()">Resend</button></li>
+            <li>Check your spam folder if you can't find it.</li>
+          </ul>
+
+          <button class="btn-signin" id="verifyBtn" onclick="handleVerifyCode()">Verify</button>
+          <p class="otp-once">You only need to do this once. After your email is verified, you can log in with your password alone.</p>
+        </div>
+
+        <p class="contact-text" id="contactText">
           Cannot log in? Contact the Guidance Office.
         </p>
 
