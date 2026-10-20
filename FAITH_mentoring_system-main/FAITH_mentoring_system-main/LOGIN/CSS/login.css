@@ -692,3 +692,34 @@ body { min-height: 0; padding: 16px; }
 .otp-step .otp-notes { margin-bottom: 14px; }
 .otp-step .otp-notes li { margin-bottom: 4px; }
 .otp-step .otp-once { margin-top: 10px; }
+
+/* ===== Glass style (light theme) =====
+   Soft tinted gradient behind the form with a frosted-glass card on top. */
+html:not([data-theme="dark"]) .right-side {
+  background:
+    radial-gradient(circle at 15% 12%, rgba(59,130,246,.22), transparent 42%),
+    radial-gradient(circle at 88% 85%, rgba(240,180,41,.22), transparent 40%),
+    radial-gradient(circle at 80% 8%, rgba(147,197,253,.30), transparent 38%),
+    linear-gradient(135deg, #eef4ff 0%, #f8fbff 50%, #fff7e6 100%);
+}
+html:not([data-theme="dark"]) .login-card {
+  background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.38));
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255,255,255,.75);
+  box-shadow: 0 12px 40px rgba(11,26,92,.12), inset 0 1px 0 rgba(255,255,255,.9);
+}
+html:not([data-theme="dark"]) .form-group input {
+  background-color: rgba(255,255,255,.55);
+  border-color: rgba(148,163,184,.45);
+}
+html:not([data-theme="dark"]) .form-group input:focus { background-color: rgba(255,255,255,.9); }
+html:not([data-theme="dark"]) .btn-signin {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: 0 6px 18px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.35);
+}
+html:not([data-theme="dark"]) .back-home {
+  background: rgba(255,255,255,.65);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
