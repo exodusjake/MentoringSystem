@@ -135,9 +135,3 @@
 @media screen and (max-width: 480px) {
   body .form-row { grid-template-columns: minmax(0, 1fr); }
 }
-
-/* Sidebar brand row (logo + name) shown above the user profile in every portal. */
-.sb-brand { display: flex; align-items: center; gap: 10px; padding: 16px 18px 12px; flex-shrink: 0; }
-.sb-brand img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; }
-.sb-brand span { font-family: 'DM Sans', 'Poppins', sans-serif; font-size: 16px; font-weight: 700; color: #14527f; letter-spacing: .01em; }
-.sb-brand + .sb-profile { padding-top: 12px; }
