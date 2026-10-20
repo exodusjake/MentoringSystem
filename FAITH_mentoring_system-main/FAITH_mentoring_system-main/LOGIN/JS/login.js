@@ -274,9 +274,10 @@ function clearError() {
 }
 
 // ── Forgot password (inline in the login card) ──────────────
-// Step 1: email -> emailed 6-digit code. Step 2: code + new password. Same look as the email-verification step.
+// Three steps in the same card: 1) email  2) the emailed code only  3) new password (after the code is verified).
 let fpResendTimer = null;
 let fpCodeTimer = null;
+let fpToken = null;
 
 function fpBoxes() { return Array.from(document.querySelectorAll('#fpBoxes input')); }
 function fpCode()  { return fpBoxes().map(i => i.value).join(''); }
@@ -284,6 +285,8 @@ function fpClearBoxes() {
   fpBoxes().forEach(i => { i.value = ''; i.classList.remove('filled'); });
   const first = fpBoxes()[0]; if (first) first.focus();
 }
+
+function fpRefit() { if (typeof window.refitLogin === 'function') window.refitLogin(); }
 
 function fpMsg(n, text, ok) {
   const el = document.getElementById('fpBanner' + n);
@@ -301,7 +304,13 @@ function fpTogglePw(id, btn) {
   btn.style.opacity = hide ? '1' : '';
 }
 
-function fpRefit() { if (typeof window.refitLogin === 'function') window.refitLogin(); }
+function fpPane(name) {
+  ['fpEmailPane', 'fpCodePane', 'fpNewPane'].forEach(id => {
+    document.getElementById(id).style.display = id === name ? '' : 'none';
+  });
+  [1, 2, 3].forEach(n => fpMsg(n, ''));
+  fpRefit();
+}
 
 function fpShowCard(on) {
   document.getElementById('loginStep').style.display = on ? 'none' : '';
@@ -324,17 +333,16 @@ function showForgotModal() { showForgotStep(); }   // kept for older markup
 
 function forgotShowEmail() {
   clearInterval(fpResendTimer); clearInterval(fpCodeTimer);
-  document.getElementById('fpEmailPane').style.display = '';
-  document.getElementById('fpResetPane').style.display = 'none';
-  fpMsg(1, ''); fpMsg(2, '');
-  fpRefit();
+  fpToken = null;
+  fpPane('fpEmailPane');
   setTimeout(() => document.getElementById('fpEmail').focus(), 40);
 }
 
 function forgotBackToLogin() {
   clearInterval(fpResendTimer); clearInterval(fpCodeTimer);
+  fpToken = null;
   fpShowCard(false);
-  fpMsg(1, ''); fpMsg(2, '');
+  [1, 2, 3].forEach(n => fpMsg(n, ''));
   ['fpNewPw', 'fpNewPw2'].forEach(id => { const el = document.getElementById(id); el.value = ''; el.type = 'password'; });
   fpClearBoxes();
   const typed = document.getElementById('fpEmail').value.trim();
@@ -367,10 +375,11 @@ function fpStartTimers() {
   fpCodeTimer = setInterval(tock, 1000);
 }
 
+// Step 1 -> 2 (also used by "Resend")
 async function handleForgotSend(isResend) {
   const email = document.getElementById('fpEmail').value.trim();
   const banner = isResend ? 2 : 1;
-  fpMsg(1, ''); fpMsg(2, '');
+  [1, 2, 3].forEach(n => fpMsg(n, ''));
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fpMsg(banner, 'Please enter a valid email address.'); return; }
 
   const btn = document.getElementById('fpSendBtn');
@@ -383,9 +392,7 @@ async function handleForgotSend(isResend) {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) { fpMsg(banner, data.message || 'Something went wrong. Please try again.'); return; }
     document.getElementById('fpEmailShown').textContent = email;
-    document.getElementById('fpEmailPane').style.display = 'none';
-    document.getElementById('fpResetPane').style.display = '';
-    fpRefit();
+    fpPane('fpCodePane');
     fpStartTimers();
     fpClearBoxes();
     if (isResend) fpMsg(2, 'A new code has been requested.', true);
@@ -396,30 +403,62 @@ async function handleForgotSend(isResend) {
   }
 }
 
-async function handleResetPassword() {
+// Step 2 -> 3: check the code on its own; only then does the new-password step appear.
+async function handleVerifyResetCode() {
   const email = document.getElementById('fpEmail').value.trim();
   const code = fpCode();
-  const pw = document.getElementById('fpNewPw').value;
-  const pw2 = document.getElementById('fpNewPw2').value;
+  const btn = document.getElementById('fpVerifyBtn');
   fpMsg(2, '');
-
   if (!/^\d{6}$/.test(code)) { fpMsg(2, 'Enter the 6-digit code from your email.'); return; }
-  if (pw.length < 8 || !/[A-Za-z]/.test(pw) || !/\d/.test(pw)) { fpMsg(2, 'Password must be at least 8 characters and include a letter and a number.'); return; }
-  if (pw !== pw2) { fpMsg(2, 'The passwords do not match.'); return; }
+  if (btn.disabled) return;
 
-  const btn = document.getElementById('fpResetBtn');
-  btn.disabled = true; btn.textContent = 'Resetting…';
+  btn.disabled = true; btn.textContent = 'Verifying…';
   try {
-    const res = await fetch(CONFIG.getUrl('Auth/reset-password'), {
+    const res = await fetch(CONFIG.getUrl('Auth/verify-reset-code'), {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code, newPassword: pw })
+      body: JSON.stringify({ email, code })
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       fpMsg(2, data.message || 'Something went wrong. Please try again.');
       const boxes = document.getElementById('fpBoxes');
       boxes.classList.remove('shake'); void boxes.offsetWidth; boxes.classList.add('shake');
-      if (!data.restart) fpClearBoxes();
+      if (data.restart) setTimeout(forgotShowEmail, 2200); else fpClearBoxes();
+      return;
+    }
+    fpToken = data.token;
+    clearInterval(fpResendTimer); clearInterval(fpCodeTimer);
+    fpPane('fpNewPane');
+    setTimeout(() => document.getElementById('fpNewPw').focus(), 60);
+  } catch (err) {
+    fpMsg(2, 'Could not reach the server. Please check your connection.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verify';
+  }
+}
+
+// Step 3: set the new password.
+async function handleResetPassword() {
+  const email = document.getElementById('fpEmail').value.trim();
+  const pw = document.getElementById('fpNewPw').value;
+  const pw2 = document.getElementById('fpNewPw2').value;
+  fpMsg(3, '');
+
+  const policy = window.PasswordPolicy ? PasswordPolicy.validate(pw) : null;
+  if (policy) { fpMsg(3, policy); return; }
+  if (pw !== pw2) { fpMsg(3, 'The passwords do not match.'); return; }
+
+  const btn = document.getElementById('fpResetBtn');
+  btn.disabled = true; btn.textContent = 'Resetting…';
+  try {
+    const res = await fetch(CONFIG.getUrl('Auth/reset-password'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, token: fpToken, newPassword: pw })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      fpMsg(3, data.message || 'Something went wrong. Please try again.');
+      if (data.restart) setTimeout(forgotShowEmail, 2200);
       return;
     }
 
@@ -432,13 +471,13 @@ async function handleResetPassword() {
     banner.style.display = 'block';
     document.getElementById('password').focus();
   } catch (err) {
-    fpMsg(2, 'Could not reach the server. Please check your connection.');
+    fpMsg(3, 'Could not reach the server. Please check your connection.');
   } finally {
     btn.disabled = false; btn.textContent = 'Reset Password';
   }
 }
 
-// One-digit code boxes (same behaviour as the email-verification step).
+// One-digit code boxes (same behaviour as the email-verification step); the full code submits itself.
 (function () {
   const boxes = fpBoxes();
   boxes.forEach((box, i) => {
@@ -446,7 +485,7 @@ async function handleResetPassword() {
       box.value = box.value.replace(/\D/g, '').slice(-1);
       box.classList.toggle('filled', !!box.value);
       if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
-      else if (box.value && fpCode().length === boxes.length) document.getElementById('fpNewPw').focus();
+      if (fpCode().length === boxes.length) handleVerifyResetCode();
     });
     box.addEventListener('keydown', e => {
       if (e.key === 'Backspace' && !box.value && i > 0) { boxes[i - 1].focus(); boxes[i - 1].value = ''; boxes[i - 1].classList.remove('filled'); }
@@ -459,6 +498,7 @@ async function handleResetPassword() {
       e.preventDefault();
       digits.split('').forEach((d, k) => { boxes[k].value = d; boxes[k].classList.add('filled'); });
       boxes[Math.min(digits.length, boxes.length - 1)].focus();
+      if (digits.length === boxes.length) handleVerifyResetCode();
     });
   });
 })();
@@ -466,7 +506,7 @@ async function handleResetPassword() {
 // ── Keyboard shortcut ──────────────────────────────────────
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter') { if (e.target.closest && e.target.closest('.contact-side')) return;
-    if (e.target.closest && e.target.closest('#forgotStep')) { if (e.target.id === 'fpEmail') handleForgotSend(); else if (e.target.tagName === 'INPUT' && e.target.closest('#fpResetPane')) handleResetPassword(); return; } if (loginChallengeId) handleVerifyCode(); else handleSignIn(); }
+    if (e.target.closest && e.target.closest('#forgotStep')) { if (e.target.id === 'fpEmail') handleForgotSend(); else if (e.target.closest('#fpCodePane')) handleVerifyResetCode(); else if (e.target.tagName === 'INPUT' && e.target.closest('#fpNewPane')) handleResetPassword(); return; } if (loginChallengeId) handleVerifyCode(); else handleSignIn(); }
   if (e.key === 'Escape' && document.getElementById('forgotStep').style.display !== 'none') forgotBackToLogin();
 });
 

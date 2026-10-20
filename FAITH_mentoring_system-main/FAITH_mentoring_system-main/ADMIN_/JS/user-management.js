@@ -2450,6 +2450,10 @@ function openSaveUserConfirm() {
     showErrorModal('A password is required when creating a new user.');
     return;
   }
+  if (password) {
+    const passwordProblem = PasswordPolicy.validate(password);
+    if (passwordProblem) { showErrorModal(passwordProblem); return; }
+  }
   if (!gender) {
     showErrorModal('Please select a gender.');
     return;

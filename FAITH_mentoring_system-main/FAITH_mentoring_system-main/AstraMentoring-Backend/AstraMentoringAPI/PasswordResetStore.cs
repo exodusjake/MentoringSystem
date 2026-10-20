@@ -22,6 +22,8 @@ public sealed class PasswordResetStore
         public DateTimeOffset ExpiresAt;
         public DateTimeOffset LastSentAt;
         public int Attempts;
+        public string? Token;
+        public DateTimeOffset TokenExpiresAt;
     }
 
     private readonly ConcurrentDictionary<int, Entry> _entries = new();
@@ -32,7 +34,7 @@ public sealed class PasswordResetStore
     {
         var now = DateTimeOffset.UtcNow;
         foreach (var kv in _entries)
-            if (kv.Value.ExpiresAt <= now) _entries.TryRemove(kv.Key, out _);
+            if (kv.Value.ExpiresAt <= now && kv.Value.TokenExpiresAt <= now) _entries.TryRemove(kv.Key, out _);
     }
 
     // Returns null when a code was already sent within the cooldown (the
@@ -49,7 +51,39 @@ public sealed class PasswordResetStore
         return code;
     }
 
-    public VerifyStatus Verify(int userId, string? code)
+    // Checks the emailed code; on success the code is spent and a short-lived token is returned,
+    // which must accompany the new password.
+    public VerifyStatus VerifyForToken(int userId, string? code, out string? token)
+    {
+        token = null;
+        var status = Verify(userId, code, keepEntry: true);
+        if (status != VerifyStatus.Ok) return status;
+        if (_entries.TryGetValue(userId, out var e))
+        {
+            lock (e)
+            {
+                e.ExpiresAt = DateTimeOffset.UtcNow;                // the code itself is single-use
+                e.Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(24));
+                e.TokenExpiresAt = DateTimeOffset.UtcNow + Lifetime;
+                token = e.Token;
+            }
+        }
+        return status;
+    }
+
+    public bool ConsumeToken(int userId, string? token)
+    {
+        if (string.IsNullOrEmpty(token) || !_entries.TryGetValue(userId, out var e)) return false;
+        lock (e)
+        {
+            if (e.Token == null || e.TokenExpiresAt <= DateTimeOffset.UtcNow) return false;
+            if (!CryptographicOperations.FixedTimeEquals(Hash(token), Hash(e.Token))) return false;
+            _entries.TryRemove(userId, out _);
+            return true;
+        }
+    }
+
+    public VerifyStatus Verify(int userId, string? code, bool keepEntry = false)
     {
         if (!_entries.TryGetValue(userId, out var e)) return VerifyStatus.Expired;
         lock (e)
@@ -64,7 +98,7 @@ public sealed class PasswordResetStore
                 return VerifyStatus.Invalid;
             }
 
-            _entries.TryRemove(userId, out _);
+            if (!keepEntry) _entries.TryRemove(userId, out _);
             return VerifyStatus.Ok;
         }
     }

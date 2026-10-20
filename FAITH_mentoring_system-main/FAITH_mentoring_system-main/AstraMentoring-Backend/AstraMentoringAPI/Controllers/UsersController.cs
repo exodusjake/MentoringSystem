@@ -157,6 +157,8 @@ namespace AstraMentoringAPI.Controllers
             if (!string.IsNullOrWhiteSpace(newUser.PasswordHash) &&
                 !newUser.PasswordHash.StartsWith("$2"))
             {
+                var policyError = PasswordPolicy.Validate(newUser.PasswordHash);
+                if (policyError != null) return BadRequest(new { message = policyError });
                 var auth = HttpContext.RequestServices.GetRequiredService<AuthService>();
                 newUser.PasswordHash = auth.HashPassword(newUser.PasswordHash);
             }
@@ -214,6 +216,8 @@ namespace AstraMentoringAPI.Controllers
 
             if (!string.IsNullOrWhiteSpace(request.NewPassword))
             {
+                var newPasswordError = PasswordPolicy.Validate(request.NewPassword);
+                if (newPasswordError != null) return BadRequest(new { message = newPasswordError });
                 if (isSelf)
                 {
                     // Self-service change — prove you know the current
@@ -321,6 +325,11 @@ namespace AstraMentoringAPI.Controllers
             if (account == null) return NotFound();
             if (account.HasLoggedIn)
                 return BadRequest(new { message = "Setup is already complete. Use your profile to change your password." });
+            if (!string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                var setupPasswordError = PasswordPolicy.Validate(request.NewPassword);
+                if (setupPasswordError != null) return BadRequest(new { message = setupPasswordError });
+            }
             var result = await _service.CompleteSetupAsync(id, request.NewPassword);
             if (!result) return NotFound(new { message = "User not found." });
             return Ok(new { message = "Setup complete." });

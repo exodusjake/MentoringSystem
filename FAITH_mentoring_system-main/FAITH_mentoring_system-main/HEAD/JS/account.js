@@ -280,7 +280,7 @@ function confirmSave() {
     let hasError = false;
     if (!pwChangeToken)          { showFieldError('currentPwError', 'Verify your current password with the emailed code first.'); hasError = true; }
     if (!newPw)                  { showFieldError('newPwError', 'Please enter a new password.'); hasError = true; }
-    else if (newPw.length < 8 || !/[A-Za-z]/.test(newPw) || !/\d/.test(newPw)) { showFieldError('newPwError', 'Use at least 8 characters with a letter and a number.'); hasError = true; }
+    else if (PasswordPolicy.validate(newPw)) { showFieldError('newPwError', PasswordPolicy.validate(newPw)); hasError = true; }
     if (newPw && !confirmPw)     { showFieldError('confirmPwError', 'Please confirm your new password.'); hasError = true; }
     else if (newPw && confirmPw && newPw !== confirmPw) { showFieldError('confirmPwError', 'Passwords do not match.'); hasError = true; }
     if (hasError) return;

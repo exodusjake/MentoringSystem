@@ -202,7 +202,7 @@
           <div class="pe-group">
             <label for="editPassword">New Password <span class="pe-req">*</span></label>
             <div class="pe-pw">
-              <input type="password" id="editPassword" placeholder="At least 8 characters" autocomplete="new-password" disabled/>
+              <input type="password" id="editPassword" data-pw-policy placeholder="Create a strong password" autocomplete="new-password" disabled/>
               <button type="button" class="btn-pw-eye" onclick="peTogglePw('editPassword',this)" tabindex="-1" aria-label="Show or hide password">
                 <svg class="eye-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <svg class="eye-off-icon" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -296,6 +296,7 @@
   <script src="../../apiClient.js"></script>
   <script src="/notify.js?v=2"></script>
   <script src="/MENTEE/JS/walkthrough.js"></script>
+  <script src="/password-strength.js"></script>
   <script src="/MENTEE/JS/profile.js"></script>
   <script src="/profile-edit.js"></script>
 </body>

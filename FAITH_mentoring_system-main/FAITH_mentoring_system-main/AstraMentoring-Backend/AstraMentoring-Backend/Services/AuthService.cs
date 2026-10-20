@@ -51,8 +51,8 @@ namespace AstraMentoring_Backend.Services
                 return "First name and last name are required.";
             if (string.IsNullOrWhiteSpace(request.Email) || !request.Email.Contains('@'))
                 return "A valid email address is required.";
-            if (string.IsNullOrWhiteSpace(request.Password))
-                return "Password is required.";
+            var passwordError = PasswordPolicy.Validate(request.Password);
+            if (passwordError != null) return passwordError;
             return null;
         }
 

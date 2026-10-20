@@ -210,10 +210,16 @@ namespace AstraMentoringAPI.Controllers
             public string Email { get; set; } = string.Empty;
         }
 
-        public class ResetPasswordRequest
+        public class VerifyResetCodeRequest
         {
             public string Email { get; set; } = string.Empty;
             public string Code { get; set; } = string.Empty;
+        }
+
+        public class ResetPasswordRequest
+        {
+            public string Email { get; set; } = string.Empty;
+            public string Token { get; set; } = string.Empty;
             public string NewPassword { get; set; } = string.Empty;
         }
 
@@ -240,30 +246,41 @@ namespace AstraMentoringAPI.Controllers
             return Ok(new { message = generic });
         }
 
-        // Forgot password, step 2: exchanges the emailed code for a new password.
-        [HttpPost("reset-password")]
+        // Forgot password, step 2: checks the emailed code and hands back a short-lived token.
+        [HttpPost("verify-reset-code")]
         [AllowAnonymous]
         [EnableRateLimiting("login")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        public IActionResult VerifyResetCode([FromBody] VerifyResetCodeRequest request)
         {
             const string invalid = "That code is incorrect or has expired. Please request a new one.";
-            var pw = request.NewPassword ?? string.Empty;
-            if (pw.Length < 8 || pw.Length > 100 || !pw.Any(char.IsLetter) || !pw.Any(char.IsDigit))
-                return BadRequest(new { message = "Password must be at least 8 characters and include a letter and a number." });
-
             var user = _service.GetUserByEmail((request.Email ?? string.Empty).Trim());
             if (user == null || !user.IsActive)
                 return BadRequest(new { message = invalid });
 
-            switch (_resets.Verify(user.UserID, request.Code))
+            switch (_resets.VerifyForToken(user.UserID, request.Code, out var token))
             {
                 case PasswordResetStore.VerifyStatus.Ok:
-                    break;
+                    return Ok(new { token });
                 case PasswordResetStore.VerifyStatus.Invalid:
                     return BadRequest(new { message = "Incorrect code. Please check your email and try again." });
                 default:
                     return BadRequest(new { message = invalid, restart = true });
             }
+        }
+
+        // Forgot password, step 3: the new password is only accepted with the token from step 2.
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        [EnableRateLimiting("login")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var pw = request.NewPassword ?? string.Empty;
+            var pwError = PasswordPolicy.Validate(pw);
+            if (pwError != null) return BadRequest(new { message = pwError });
+
+            var user = _service.GetUserByEmail((request.Email ?? string.Empty).Trim());
+            if (user == null || !user.IsActive || !_resets.ConsumeToken(user.UserID, request.Token))
+                return BadRequest(new { message = "Verification expired. Please request a new code.", restart = true });
 
             await _service.SetPasswordAsync(user.UserID, pw);
             _attempts.RecordSuccess(user.Email);
@@ -329,8 +346,8 @@ namespace AstraMentoringAPI.Controllers
             if (user == null || !user.IsActive) return Unauthorized();
 
             var pw = request.NewPassword ?? string.Empty;
-            if (pw.Length < 8 || pw.Length > 100 || !pw.Any(char.IsLetter) || !pw.Any(char.IsDigit))
-                return BadRequest(new { message = "Password must be at least 8 characters and include a letter and a number." });
+            var pwError = PasswordPolicy.Validate(pw);
+            if (pwError != null) return BadRequest(new { message = pwError });
             if (!_service.VerifyPassword(request.CurrentPassword ?? string.Empty, user.PasswordHash))
                 return BadRequest(new { message = "Current password is incorrect." });
             if (!_changes.ConsumeToken(user.UserID, request.Token))

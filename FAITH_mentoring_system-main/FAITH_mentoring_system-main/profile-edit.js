@@ -143,7 +143,7 @@ function peConfirmSave() {
     let bad = false;
     if (!pwChangeToken) { peFieldError('currentPwError', 'Verify your current password with the emailed code first.'); bad = true; }
     if (!newPw) { peFieldError('newPwError', 'Please enter a new password.'); bad = true; }
-    else if (newPw.length < 8 || !/[A-Za-z]/.test(newPw) || !/\d/.test(newPw)) { peFieldError('newPwError', 'Use at least 8 characters with a letter and a number.'); bad = true; }
+    else if (PasswordPolicy.validate(newPw)) { peFieldError('newPwError', PasswordPolicy.validate(newPw)); bad = true; }
     if (newPw && !confirmPw) { peFieldError('confirmPwError', 'Please confirm your new password.'); bad = true; }
     else if (newPw && confirmPw && newPw !== confirmPw) { peFieldError('confirmPwError', 'Passwords do not match.'); bad = true; }
     if (bad) return;
