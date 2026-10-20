@@ -1001,3 +1001,15 @@ html:not([data-theme="dark"]) .contact-card .form-group textarea {
 html[data-theme="dark"] .login-card:not(.contact-card) { border-color: rgba(255, 255, 255, .16) !important; }
 @media (max-height: 760px) { .login-card:not(.contact-card) { padding: 22px 26px !important; } }
 @media (max-width: 480px)  { .login-card:not(.contact-card) { padding: 22px 18px !important; } }
+
+/* ===== Forgot password step (inside the login card) ===== */
+#forgotStep .form-group { text-align: left; margin-bottom: 12px; }
+#forgotStep .form-group label { font-size: 13px; margin-bottom: 6px; }
+#forgotStep .otp-sub { margin-bottom: 14px; }
+#forgotStep .otp-boxes { margin-bottom: 14px; }
+#forgotStep .btn-signin { margin-top: 4px; }
+#forgotStep .otp-once { margin-top: 12px; }
+#forgotStep .otp-once .forgot-link { font-size: 12.5px; }
+#forgotStep .otp-notes { margin: 6px 0 12px; text-align: left; }
+#forgotStep .forgot-link:disabled { color: #94a3b8; cursor: default; text-decoration: none; }
+#forgotStep #fpResetPane, #forgotStep #fpEmailPane { animation: cardIn .35s cubic-bezier(.2, .7, .2, 1) both; }
