@@ -194,3 +194,34 @@
 .btn-logout:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(220, 38, 38, .28); transform: translateY(-1px); }
 .btn-logout:active:not(:disabled) { transform: scale(.96); }
 .btn-logout:disabled { opacity: .75; cursor: progress; }
+
+/* ===== Scrollbars (all portals): slim, rounded, brand-blue on hover ===== */
+@media screen {
+  /* Chrome / Edge / Safari */
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: #c6d2e4;
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+    transition: background-color .2s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #8fa7d1; background-clip: content-box; }
+  ::-webkit-scrollbar-thumb:active { background: #2563eb; background-clip: content-box; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
+  /* The page's own scrollbar gets a faint track so it reads as a rail */
+  html::-webkit-scrollbar { width: 13px; }
+  html::-webkit-scrollbar-track { background: rgba(148, 163, 184, .10); border-left: 1px solid rgba(148, 163, 184, .16); }
+  html::-webkit-scrollbar-thumb { border-width: 3px; }
+
+  /* Tables, lists and modals scroll with a slimmer bar */
+  .table-wrapper::-webkit-scrollbar, .modal-body::-webkit-scrollbar,
+  .edit-modal-card::-webkit-scrollbar, .forms-list::-webkit-scrollbar { width: 9px; height: 9px; }
+
+  /* Firefox */
+  @supports (-moz-appearance: none) {
+    * { scrollbar-width: thin; scrollbar-color: #b9c8de transparent; }
+  }
+}
