@@ -59,19 +59,19 @@
   //   page #0a1120 · alt #0e1628 · card #141f38 · line #24324e
   //   text #f1f5fb / #c5cfe3 · muted #8d9bb8 · accent #60a5fa · gold #f0b429
   if (isLanding) css.push(
-    D + '{color-scheme:dark;--ink:#f1f5fb;--body:#c5cfe3;--muted:#8d9bb8;--line:#24324e;--bg:#0e1628;--card:#141f38;--shadow:0 8px 28px rgba(0,0,0,.5)}',
-    D + 'body{background:#0a1120}',
-    D + '.nav{background:#0a1348}',
-    D + '.nav.scrolled{background:rgba(10,19,72,.95)}',
-    D + '.hero{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(135deg,#0a1348 0%,#0e1c66 55%,#14297f 100%)}',
-    D + '.strip,' + D + 'footer{background:#060b1c}',
+    D + '{color-scheme:dark;--ink:#f1f5fb;--body:#c5cfe3;--muted:#8d9bb8;--line:#22394d;--bg:#0d1a26;--card:#122433;--shadow:0 8px 28px rgba(0,0,0,.5)}',
+    D + 'body{background:#08131c}',
+    D + '.nav{background:#0c3452}',
+    D + '.nav.scrolled{background:rgba(12,52,82,.95)}',
+    D + '.hero{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(135deg,#0c3452 0%,#10496f 55%,#17608f 100%)}',
+    D + '.strip,' + D + 'footer{background:#061a28}',
     D + '.alt{background:var(--bg)}',
     D + '.btn-outline,' + D + '.chip{background:var(--card);color:#e8eefb}',
-    D + '.btn-outline{border-color:#33456b}',
+    D + '.btn-outline{border-color:#2f4c63}',
     D + '.btn-outline:hover{border-color:#60a5fa;color:#fff}',
     D + '.card,' + D + '.role,' + D + '.step,' + D + '.faq-item{background:var(--card);border-color:var(--line)}',
-    D + '.card:hover,' + D + '.role:hover,' + D + '.step:hover{border-color:#33456b}',
-    D + '.role{border-top-color:#3b82f6}',
+    D + '.card:hover,' + D + '.role:hover,' + D + '.step:hover{border-color:#2f4c63}',
+    D + '.role{border-top-color:#3da0d6}',
     D + '.ib-blue{background:rgba(96,165,250,.16);color:#93c5fd}',
     D + '.ib-gold{background:rgba(240,180,41,.15);color:#fcd34d}',
     D + '.ib-green{background:rgba(52,211,153,.15);color:#6ee7b7}',
@@ -87,10 +87,11 @@
     D + '.toc{background:var(--bg)}',
     D + '.toc a:hover{background:rgba(96,165,250,.16);color:#fff}',
     D + '.legal .note{background:rgba(240,180,41,.09);color:#fcd34d}',
-    D + '.legal th{background:#0e1c66}',
+    D + '.legal th{background:#10496f}',
     D + '.legal tr:nth-child(even) td{background:rgba(255,255,255,.03)}',
     D + '.card:hover{box-shadow:0 10px 30px rgba(0,0,0,.55)}',
-    D + '.chip svg{color:#60a5fa}'
+    D + '.chip svg{color:#60b5e8}',
+    D + '.checks svg{color:#86d05b}'
   );
 
   if (isLogin) css.push(
