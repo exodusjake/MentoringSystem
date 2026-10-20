@@ -71,22 +71,19 @@ namespace AstraMentoring_Backend.Services
         {
             try
             {
-                using var message = new System.Net.Mail.MailMessage
-                {
-                    From = new System.Net.Mail.MailAddress(_smtpFrom, senderName),
-                    Subject = subject,
-                    Body = htmlBody,
-                    IsBodyHtml = true
-                };
-                message.To.Add(recipientEmail);
+                var message = new MimeKit.MimeMessage();
+                message.From.Add(new MimeKit.MailboxAddress(senderName, _smtpFrom));
+                message.To.Add(MimeKit.MailboxAddress.Parse(recipientEmail));
+                message.Subject = subject;
+                message.Body = new MimeKit.BodyBuilder { HtmlBody = htmlBody }.ToMessageBody();
 
-                using var client = new System.Net.Mail.SmtpClient(_smtpHost, _smtpPort)
-                {
-                    EnableSsl = true,
-                    Credentials = new NetworkCredential(_smtpUser, _smtpPassword),
-                    Timeout = 20000
-                };
-                await client.SendMailAsync(message);
+                using var client = new MailKit.Net.Smtp.SmtpClient { Timeout = 20000 };
+                await client.ConnectAsync(_smtpHost, _smtpPort,
+                    _smtpPort == 465 ? MailKit.Security.SecureSocketOptions.SslOnConnect
+                                     : MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(_smtpUser, _smtpPassword);
+                await client.SendAsync(message);
+                await client.DisconnectAsync(true);
                 return true;
             }
             catch (Exception ex)
