@@ -29,37 +29,6 @@ function goWithLoading(url) {
 }
 
 // ── Log in ────────────────────────────────────────────────
-// Two steps: the password is checked first, then a code emailed to the
-// account's address must be entered before a session is issued.
-let loginChallengeId = null;
-let loginRemember = false;
-
-function finishLogin(data, remember) {
-  saveSession(data.token, data.role, data.user || {}, remember);
-
-  const role = (data.role || '').toLowerCase();
-
-  const setupRoutes = {
-    mentor: '/MENTOR/HTML/setup.html',
-    mentee: '/MENTEE/HTML/setup.html',
-    admin:  '/ADMIN_/HTML/setup.html',
-    head:   '/HEAD/HTML/setup.html'
-  };
-  if (data.user?.setupRequired === true && setupRoutes[role]) {
-    goWithLoading(setupRoutes[role]);
-    return;
-  }
-
-  const routes = {
-    head:   '/HEAD/HTML/head-dashboard.html',
-    admin:  '/ADMIN_/HTML/dashboard.html',
-    mentor: '/MENTOR/HTML/mentor-dashboard.html',
-    mentee: '/MENTEE/HTML/mentee-dashboard.html'
-  };
-
-  goWithLoading(routes[role] || '/LOGIN/HTML/login.html');
-}
-
 async function handleSignIn() {
   const email    = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
@@ -77,173 +46,42 @@ async function handleSignIn() {
   btn.disabled    = true;
 
   try {
-    // `remember` controls the issued token's expiry.
+    // `remember` was already being read from the checkbox and passed to
+    // saveSession() below, but never actually sent to the backend — the
+    // checkbox visually toggled but had zero effect on how long the
+    // session actually lasted. Now it controls the issued token's expiry.
     const data = await apiRequest('Auth/login', 'POST', { Email: email, Password: password, RememberMe: remember });
 
-    if (data.requiresCode) {
-      loginChallengeId = data.challengeId;
-      loginRemember    = remember;
-      showCodeStep(data.email);
-      btn.textContent = 'Log in';
-      btn.disabled    = false;
+    saveSession(data.token, data.role, data.user || {}, remember);
+
+    const role = (data.role || '').toLowerCase();
+
+    const setupRoutes = {
+      mentor: '/MENTOR/HTML/setup.html',
+      mentee: '/MENTEE/HTML/setup.html',
+      admin:  '/ADMIN_/HTML/setup.html',
+      head:   '/HEAD/HTML/setup.html'
+    };
+    if (data.user?.setupRequired === true && setupRoutes[role]) {
+      goWithLoading(setupRoutes[role]);
       return;
     }
 
-    finishLogin(data, remember);
+    const routes = {
+      head:   '/HEAD/HTML/head-dashboard.html',
+      admin:  '/ADMIN_/HTML/dashboard.html',
+      mentor: '/MENTOR/HTML/mentor-dashboard.html',
+      mentee: '/MENTEE/HTML/mentee-dashboard.html'
+    };
+
+    goWithLoading(routes[role] || '/LOGIN/HTML/login.html');
+
   } catch (err) {
     showError(err.message || 'Invalid email or password.');
     btn.textContent = 'Log in';
     btn.disabled    = false;
   }
 }
-
-// ── Verification code step ────────────────────────────────
-const OTP_LIFETIME_SECONDS = 600;   // matches the server's 10-minute code lifetime
-let otpTimer = null;
-
-function otpInputs() { return Array.from(document.querySelectorAll('#otpBoxes input')); }
-function otpValue()  { return otpInputs().map(i => i.value).join(''); }
-
-function clearOtp() {
-  otpInputs().forEach(i => { i.value = ''; i.classList.remove('filled'); });
-  const first = otpInputs()[0];
-  if (first) first.focus();
-}
-
-function startOtpTimer() {
-  clearInterval(otpTimer);
-  let left = OTP_LIFETIME_SECONDS;
-  const el = document.getElementById('otpTimer');
-  const tick = () => {
-    if (left <= 0) {
-      clearInterval(otpTimer);
-      el.textContent = 'expired';
-      return;
-    }
-    el.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
-    left--;
-  };
-  tick();
-  otpTimer = setInterval(tick, 1000);
-}
-
-function showCodeStep(maskedEmail) {
-  clearError();
-  document.getElementById('loginStep').style.display = 'none';
-  document.getElementById('contactText').style.display = 'none';
-  document.querySelector('.login-card > .card-title').style.display = 'none';
-  document.querySelector('.login-card > .card-subtitle').style.display = 'none';
-  document.getElementById('codeStep').style.display = '';
-  document.getElementById('otpEmail').textContent = maskedEmail || 'your email';
-  clearOtp();
-  startOtpTimer();
-  startResendCooldown(30);
-}
-
-function backToLogin() {
-  loginChallengeId = null;
-  clearInterval(otpTimer);
-  clearError();
-  document.getElementById('codeStep').style.display = 'none';
-  document.getElementById('loginStep').style.display = '';
-  document.getElementById('contactText').style.display = '';
-  document.querySelector('.login-card > .card-title').style.display = '';
-  document.querySelector('.login-card > .card-subtitle').style.display = '';
-  const btn = document.getElementById('verifyBtn');
-  btn.textContent = 'Verify';
-  btn.disabled = false;
-  document.getElementById('password').value = '';
-  document.getElementById('password').focus();
-}
-
-async function handleVerifyCode() {
-  const code = otpValue();
-  const btn  = document.getElementById('verifyBtn');
-  clearError();
-
-  if (!/^\d{6}$/.test(code)) {
-    showError('Please enter the 6-digit code from your email.');
-    return;
-  }
-
-  btn.textContent = 'Verifying…';
-  btn.disabled    = true;
-
-  try {
-    const data = await apiRequest('Auth/verify-login-code', 'POST', { ChallengeId: loginChallengeId, Code: code });
-    finishLogin(data, loginRemember);
-  } catch (err) {
-    showError(err.message || 'Could not verify the code.');
-    btn.textContent = 'Verify';
-    btn.disabled    = false;
-    const boxes = document.getElementById('otpBoxes');
-    boxes.classList.remove('shake');
-    void boxes.offsetWidth;
-    boxes.classList.add('shake');
-    // Code expired or attempts used up: the challenge is gone, start over.
-    if (err.restart) setTimeout(backToLogin, 2500);
-    else clearOtp();
-  }
-}
-
-let resendTimer = null;
-function startResendCooldown(seconds) {
-  const btn = document.getElementById('resendBtn');
-  clearInterval(resendTimer);
-  let left = seconds;
-  btn.disabled = true;
-  const tick = () => {
-    if (left <= 0) {
-      clearInterval(resendTimer);
-      btn.disabled = false;
-      btn.textContent = 'Resend';
-      return;
-    }
-    btn.textContent = 'Resend (' + left + 's)';
-    left--;
-  };
-  tick();
-  resendTimer = setInterval(tick, 1000);
-}
-
-async function handleResendCode() {
-  clearError();
-  try {
-    await apiRequest('Auth/resend-login-code', 'POST', { ChallengeId: loginChallengeId, Code: '' });
-    startResendCooldown(30);
-    startOtpTimer();
-    clearOtp();
-  } catch (err) {
-    showError(err.message || 'Could not resend the code.');
-    if (err.restart) setTimeout(backToLogin, 2500);
-  }
-}
-
-// One-digit boxes: type to advance, Backspace to go back, paste a full code.
-(function () {
-  const boxes = otpInputs();
-  boxes.forEach((box, i) => {
-    box.addEventListener('input', () => {
-      box.value = box.value.replace(/\D/g, '').slice(-1);
-      box.classList.toggle('filled', !!box.value);
-      if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
-      if (otpValue().length === boxes.length) handleVerifyCode();
-    });
-    box.addEventListener('keydown', e => {
-      if (e.key === 'Backspace' && !box.value && i > 0) { boxes[i - 1].focus(); boxes[i - 1].value = ''; boxes[i - 1].classList.remove('filled'); }
-      if (e.key === 'ArrowLeft' && i > 0) boxes[i - 1].focus();
-      if (e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
-    });
-    box.addEventListener('paste', e => {
-      const digits = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, boxes.length);
-      if (!digits) return;
-      e.preventDefault();
-      digits.split('').forEach((d, k) => { boxes[k].value = d; boxes[k].classList.add('filled'); });
-      boxes[Math.min(digits.length, boxes.length - 1)].focus();
-      if (digits.length === boxes.length) handleVerifyCode();
-    });
-  });
-})();
 
 // ── Password toggle ────────────────────────────────────────
 function togglePassword() {
@@ -259,17 +97,15 @@ function togglePassword() {
 
 // ── Error banner ───────────────────────────────────────────
 function showError(msg) {
-  const el = document.getElementById(loginChallengeId ? 'codeErrorBanner' : 'errorBanner');
+  const el = document.getElementById('errorBanner');
   el.textContent    = msg;
   el.style.display  = 'block';
 }
 
 function clearError() {
-  for (const id of ['errorBanner', 'codeErrorBanner']) {
-    const el = document.getElementById(id);
-    el.style.display = 'none';
-    el.textContent   = '';
-  }
+  const el = document.getElementById('errorBanner');
+  el.style.display = 'none';
+  el.textContent   = '';
 }
 
 // ── Forgot password modal ──────────────────────────────────
@@ -285,7 +121,7 @@ function closeForgotModal(e) {
 
 // ── Keyboard shortcut ──────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') { if (loginChallengeId) handleVerifyCode(); else handleSignIn(); }
+  if (e.key === 'Enter') handleSignIn();
   if (e.key === 'Escape') closeForgotModal();
 });
 

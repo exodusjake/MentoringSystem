@@ -18,7 +18,6 @@ builder.Services.AddSwaggerGen();
 // (LoginAttemptTracker), plus a looser 30-requests-per-minute cap per client
 // IP so a whole class on one Wi-Fi can still sign in. Applies to Auth/login only.
 builder.Services.AddSingleton<AstraMentoringAPI.LoginAttemptTracker>();
-builder.Services.AddSingleton<AstraMentoringAPI.LoginCodeStore>();   // emailed 2nd-step login codes
 builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("login", new AstraMentoringAPI.LoginRateLimitPolicy());

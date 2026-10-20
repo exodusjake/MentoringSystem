@@ -19,6 +19,6 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
         // Blank the Brevo key (local user secrets have a real one) so tests never send emails.
         builder.ConfigureAppConfiguration((_, config) =>
-            config.AddInMemoryCollection(new Dictionary<string, string?> { ["Brevo:ApiKey"] = "", ["Smtp:Password"] = "", ["Auth:RequireEmailCode"] = "false" }));
+            config.AddInMemoryCollection(new Dictionary<string, string?> { ["Brevo:ApiKey"] = "" }));
     }
 }

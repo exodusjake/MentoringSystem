@@ -42,7 +42,7 @@ public class SignatureLifecycleTests : IAsyncLifetime
                 Email nvarchar(200), PasswordHash nvarchar(200), ProfilePicture nvarchar(500),
                 ContactNumber nvarchar(50), StudentNumber nvarchar(50), Role nvarchar(20),
                 IsActive bit, CreatedAt datetime2, UpdatedAt datetime2, SchoolYear nvarchar(30),
-                Semester nvarchar(30), Gender nvarchar(30), HasLoggedIn bit, EmailVerifiedAt datetime2 NULL, SignatureFilePath nvarchar(500));
+                Semester nvarchar(30), Gender nvarchar(30), HasLoggedIn bit, SignatureFilePath nvarchar(500));
             CREATE TABLE MentorProfiles (UserID int PRIMARY KEY, SignatureFilePath nvarchar(500));
             CREATE TABLE MenteeProfiles (UserID int PRIMARY KEY, SignatureFilePath nvarchar(500));
             """);
