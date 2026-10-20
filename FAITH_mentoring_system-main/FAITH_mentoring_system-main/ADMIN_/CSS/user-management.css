@@ -1360,3 +1360,11 @@ body:has(#modalOverlay.active), body:has(#importStartModal[style*="flex"]) { ove
 .rpp-group button.active { background: #fff; color: var(--blue); box-shadow: 0 1px 4px rgba(15, 23, 42, .14); }
 .rpp-group button:active { transform: scale(.95); }
 @media (max-width: 700px) { .rpp-label { display: none; } .table-footer { justify-content: center; } }
+
+/* Smooth page / size changes */
+@keyframes umRowIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
+.pagination { transition: opacity .2s; }
+.page-btn { transition: background .18s, border-color .18s, color .18s, transform .12s, box-shadow .18s; }
+.page-btn.active { box-shadow: 0 4px 10px rgba(37, 99, 235, .28); }
+@media (prefers-reduced-motion: reduce) { tbody tr.row-in { animation: none; } }

@@ -3188,3 +3188,40 @@ document.addEventListener('click', e => {
   syncRowsPickers();
 });
 document.addEventListener('DOMContentLoaded', syncRowsPickers);
+
+// ── Smooth table updates: rows ease in one by one and the table height animates ──
+function smoothRender(wrap, render) {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!wrap || reduce) { render(); return; }
+  const from = wrap.offsetHeight;
+  render();
+  wrap.querySelectorAll('tbody tr').forEach((tr, i) => {
+    tr.style.animationDelay = Math.min(i, 12) * 30 + 'ms';
+    tr.classList.remove('row-in');
+    void tr.offsetWidth;
+    tr.classList.add('row-in');
+  });
+  const to = wrap.offsetHeight;
+  if (from === to) return;
+  wrap.style.overflow = 'hidden';
+  wrap.style.height = from + 'px';
+  void wrap.offsetHeight;
+  wrap.style.transition = 'height .34s cubic-bezier(.22, 1, .36, 1)';
+  wrap.style.height = to + 'px';
+  clearTimeout(wrap._smoothT);
+  wrap._smoothT = setTimeout(() => {
+    wrap.style.height = ''; wrap.style.transition = ''; wrap.style.overflow = '';
+  }, 380);
+}
+(function patchTableRenders() {
+  const baseUsers = renderTable;
+  renderTable = function () {
+    const body = document.getElementById('userTableBody');
+    smoothRender(body && body.closest('.table-wrapper'), () => baseUsers.apply(this, arguments));
+  };
+  const baseAssign = renderAssignments;
+  renderAssignments = function () {
+    const body = document.getElementById('assignmentTableBody');
+    smoothRender(body && body.closest('.table-wrapper'), () => baseAssign.apply(this, arguments));
+  };
+})();
