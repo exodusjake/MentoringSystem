@@ -31,7 +31,12 @@
         <div class="ph-card">
 
           <!-- Banner -->
-          <div class="ph-banner"></div>
+          <div class="ph-banner">
+              <button type="button" class="edit-btn" onclick="openEditModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+            </div>
 
           <!-- Identity -->
           <div class="ph-identity">
@@ -91,62 +96,6 @@
 
           <!-- Inline Edit Section (was a modal) + Signature, side by side -->
           <div class="ph-edit-row">
-          <div class="ph-edit-inline" id="profileEditSection">
-            <div class="ph-edit-inline-header">
-              <h3>Edit Profile</h3>
-              <p>Update your contact number or change your password.</p>
-            </div>
-
-            <div id="editError" class="edit-error" style="display:none;"></div>
-
-            <div class="edit-form">
-              <div class="form-group">
-                <label>Contact Number</label>
-                <input type="text" id="editContact" autocomplete="tel" />
-              </div>
-              <div class="form-section-label">Change Password</div>
-              <div class="form-group">
-                <label>Current Password <span class="req">*</span></label>
-                <div class="pw-input-wrap">
-                  <input type="password" id="editCurrentPassword" placeholder="Enter your current password" autocomplete="current-password" />
-                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editCurrentPassword',this)" tabindex="-1" aria-label="Show/hide password">
-                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  </button>
-                </div>
-                <span class="field-error" id="currentPwError"></span>
-              </div>
-              <div class="form-group">
-                <label>New Password <span class="req">*</span></label>
-                <div class="pw-input-wrap">
-                  <input type="password" id="editPassword" placeholder="At least 8 characters" autocomplete="new-password" />
-                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editPassword',this)" tabindex="-1" aria-label="Show/hide password">
-                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  </button>
-                </div>
-                <span class="field-error" id="newPwError"></span>
-              </div>
-              <div class="form-group">
-                <label>Confirm New Password <span class="req">*</span></label>
-                <div class="pw-input-wrap">
-                  <input type="password" id="editPasswordConfirm" placeholder="Repeat new password" autocomplete="new-password" />
-                  <button type="button" class="btn-pw-eye" onclick="togglePwVisibility('editPasswordConfirm',this)" tabindex="-1" aria-label="Show/hide password">
-                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <svg class="eye-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                  </button>
-                </div>
-                <span class="field-error" id="confirmPwError"></span>
-              </div>
-              <p class="pw-hint">Leave all password fields blank to keep your current password.</p>
-            </div>
-
-            <div class="ph-edit-inline-footer">
-              <button class="btn-cancel" onclick="resetEditSection()">Cancel</button>
-              <button class="btn-save" id="saveBtn" onclick="confirmSave()">Save Changes</button>
-            </div>
-          </div>
-
           <!-- Signature Section -->
           <div class="sig-section" id="sigSection" style="display:none;">
             <div class="sig-section-header">
@@ -176,6 +125,96 @@
     <footer>
       <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
     </footer>
+  </div>
+
+  <!-- Edit Profile Modal (profile-edit.js) -->
+  <div id="peModal" class="pe-overlay" style="display:none;" onclick="if(event.target===this)closeEditModal()">
+    <div class="pe-card" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="peTitle">
+      <button type="button" class="pe-close" onclick="closeEditModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h2 class="pe-title" id="peTitle">Edit Profile</h2>
+      <p class="pe-sub">Update your contact number or change your password.</p>
+      <div id="editError" class="pe-error" style="display:none;"></div>
+      <div class="pe-form">
+        <div class="pe-group">
+          <label for="editContact">Contact Number <span class="pe-opt">(optional)</span></label>
+          <input type="text" id="editContact" placeholder="09XXXXXXXXX" autocomplete="tel"/>
+        </div>
+
+        <div class="pe-section">Change Password</div>
+        <div class="pe-group">
+          <label for="editCurrentPassword">Current Password <span class="pe-req">*</span></label>
+          <div class="pe-verify-row">
+            <div class="pe-pw">
+              <input type="password" id="editCurrentPassword" placeholder="Enter your current password" autocomplete="current-password"/>
+              <button type="button" class="btn-pw-eye" onclick="peTogglePw('editCurrentPassword',this)" tabindex="-1" aria-label="Show or hide password">
+                <svg class="eye-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-off-icon" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <button type="button" class="btn-verify-act" id="btnSendCode" onclick="sendPwCode()">Send Code</button>
+          </div>
+          <span class="pe-field-error" id="currentPwError"></span>
+        </div>
+
+        <div class="pe-group">
+          <label for="editPwCode">Verification Code</label>
+          <div class="pe-verify-row">
+            <input type="text" id="editPwCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code" disabled/>
+            <button type="button" class="btn-verify-act" id="btnVerifyCode" onclick="verifyPwCode()" disabled>Verify</button>
+          </div>
+          <div class="code-indicator" id="codeIndicator">
+            <i class="ti ti-mail"></i>
+            <span id="codeIndicatorText">Enter your current password and tap <b>Send Code</b> — we’ll email a 6-digit verification code to your account email.</span>
+          </div>
+          <span class="pe-field-error" id="codeError"></span>
+        </div>
+
+        <div class="pw-locked-wrap locked" id="newPwGroups">
+          <div class="pw-lock-hint"><i class="ti ti-lock"></i> <span id="pwLockText">Locked until your current password is verified.</span></div>
+          <div class="pe-group">
+            <label for="editPassword">New Password <span class="pe-req">*</span></label>
+            <div class="pe-pw">
+              <input type="password" id="editPassword" placeholder="At least 8 characters" autocomplete="new-password" disabled/>
+              <button type="button" class="btn-pw-eye" onclick="peTogglePw('editPassword',this)" tabindex="-1" aria-label="Show or hide password">
+                <svg class="eye-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-off-icon" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <span class="pe-field-error" id="newPwError"></span>
+          </div>
+          <div class="pe-group">
+            <label for="editPasswordConfirm">Repeat New Password <span class="pe-req">*</span></label>
+            <div class="pe-pw">
+              <input type="password" id="editPasswordConfirm" placeholder="Repeat new password" autocomplete="new-password" disabled/>
+              <button type="button" class="btn-pw-eye" onclick="peTogglePw('editPasswordConfirm',this)" tabindex="-1" aria-label="Show or hide password">
+                <svg class="eye-icon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-off-icon" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+            <span class="pe-field-error" id="confirmPwError"></span>
+          </div>
+        </div>
+        <p class="pe-hint">Leave the password fields untouched to keep your current password.</p>
+      </div>
+      <div class="pe-footer">
+        <button type="button" class="pe-btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button type="button" class="pe-btn-save" onclick="peConfirmSave()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm save (profile-edit.js) -->
+  <div id="peConfirm" class="pe-overlay" style="display:none;" onclick="if(event.target===this)closePeConfirm()">
+    <div class="pe-card confirm-card" onclick="event.stopPropagation()">
+      <h2 class="pe-title">Save Changes?</h2>
+      <p class="pe-sub modal-subtitle">Are you sure you want to save the changes to your profile?</p>
+      <div class="pe-footer edit-modal-footer">
+        <button type="button" class="pe-btn-cancel btn-cancel" onclick="closePeConfirm()">Go Back</button>
+        <button type="button" class="pe-btn-save btn-save" id="peConfirmBtn" onclick="peSave()">Save</button>
+      </div>
+    </div>
   </div>
 
   <!-- Confirmation Modal -->
@@ -229,5 +268,6 @@
   <script src="../../config.js"></script>
   <script src="../../apiClient.js"></script>
   <script src="/MENTOR/JS/profile.js"></script>
+  <script src="/profile-edit.js"></script>
 </body>
 </html>
