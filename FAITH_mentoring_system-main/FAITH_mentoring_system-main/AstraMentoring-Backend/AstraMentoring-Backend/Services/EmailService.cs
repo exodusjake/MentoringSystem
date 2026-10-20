@@ -278,13 +278,6 @@ namespace AstraMentoring_Backend.Services
     </tr>
     <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
     <tr>
-      <td style=""background:#fdf3d6;border-radius:8px;padding:18px 20px;text-align:center;"">
-        <div style=""font-size:16px;font-weight:700;color:#0b1a5c;{font}"">Need more help?</div>
-        <a href=""{baseUrl}"" style=""font-size:14px;color:#b7791f;text-decoration:underline;{font}"">We’re here, ready to talk</a>
-      </td>
-    </tr>
-    <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
-    <tr>
       <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
         <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
         <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
