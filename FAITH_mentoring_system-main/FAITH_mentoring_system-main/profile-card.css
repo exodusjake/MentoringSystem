@@ -1,0 +1,52 @@
+/* ============================================================
+   profile-card.css — shared profile card design (banner, avatar, icon fields)
+   Same look as the Head portal's Account page. Colours follow each portal
+   through --ph-accent / --ph-accent-soft (set in the page's own <style>).
+   ============================================================ */
+.ph-card { overflow: hidden; }
+.ph-banner { position: relative; height: 150px; border-radius: 0; }
+.ph-banner::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 88% 15%, rgba(255, 255, 255, .22), transparent 42%),
+    radial-gradient(circle at 8% 100%, rgba(0, 0, 0, .28), transparent 48%);
+}
+.ph-banner::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+.ph-banner > * { position: relative; z-index: 1; }
+
+.ph-identity { align-items: flex-start; gap: 24px; padding: 0 40px 26px; margin-top: -54px; position: relative; z-index: 1; }
+.ph-identity .profile-avatar { width: 108px; height: 108px; font-size: 34px; margin-top: 0; border: 5px solid #fff; }
+.ph-identity-info { padding-top: 66px; padding-bottom: 0; flex: 1; min-width: 0; }
+.ph-name { font-size: 26px; margin: 0 0 10px; line-height: 1.2; white-space: normal; overflow-wrap: anywhere; }
+.ph-chips { margin: 0; }
+
+.ph-fields-strip { display: flex; margin: 0; background: #fafbfd; border-top: 1px solid #eef1f6; }
+.ph-strip-divider { display: none; }
+.ph-strip-field { flex: 1 1 0; min-width: 0; flex-direction: row; align-items: center; gap: 14px; padding: 24px 28px; border-left: 1px solid #eef1f6; }
+.ph-strip-field:first-child { flex: 1.7 1 0; border-left: 0; padding-left: 40px; }
+.ph-field-icon {
+  width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+  background: var(--ph-accent-soft, #eaf1ff); color: var(--ph-accent, #2563eb);
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+}
+.ph-field-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.ph-field-value { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; word-break: normal; white-space: normal; text-overflow: clip; }
+
+@media (max-width: 1100px) {
+  .ph-fields-strip { display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+  .ph-strip-field, .ph-strip-field:first-child { border-left: 0; border-top: 1px solid #eef1f6; padding: 18px 24px; }
+  .ph-strip-field:nth-child(-n+2) { border-top: 0; }
+}
+@media (max-width: 640px) {
+  .ph-banner { height: 110px; }
+  .ph-identity { padding: 0 20px 22px; margin-top: -44px; gap: 16px; flex-wrap: wrap; }
+  .ph-identity .profile-avatar { width: 88px; height: 88px; font-size: 28px; }
+  .ph-identity-info { padding-top: 0; flex-basis: 100%; }
+  .ph-name { font-size: 21px; }
+  .ph-fields-strip { grid-template-columns: 1fr; }
+  .ph-strip-field:nth-child(2) { border-top: 1px solid #eef1f6; }
+}

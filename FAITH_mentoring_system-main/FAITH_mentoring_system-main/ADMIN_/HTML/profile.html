@@ -6,6 +6,8 @@
   <title>Account — Admin Portal</title>
   <link rel="stylesheet" href="/ADMIN_/CSS/sidebar.css"/>
   <link rel="stylesheet" href="/ADMIN_/CSS/profile.css"/>
+  <link rel="stylesheet" href="/profile-card.css"/>
+  <style>:root{--ph-accent:#2563eb;--ph-accent-soft:#eaf1ff;}</style>
   <style>
     .account-sections { display: flex; flex-direction: column; gap: 28px; }
 
@@ -56,24 +58,36 @@
 
               <div class="ph-fields-strip">
                 <div class="ph-strip-field">
+                  <span class="ph-field-icon"><i class="ti ti-mail"></i></span>
+                  <span class="ph-field-body">
                   <span class="ph-field-label">Email Address</span>
                   <span class="ph-field-value" id="profileEmail">—</span>
+                  </span>
                 </div>
                 <div class="ph-strip-divider"></div>
                 <div class="ph-strip-field">
+                  <span class="ph-field-icon"><i class="ti ti-phone"></i></span>
+                  <span class="ph-field-body">
                   <span class="ph-field-label">Contact Number</span>
                   <span class="ph-field-value" id="profileContact">—</span>
+                  </span>
                 </div>
                 <div class="ph-strip-divider"></div>
                 <div class="ph-strip-field">
+                  <span class="ph-field-icon"><i class="ti ti-user-shield"></i></span>
+                  <span class="ph-field-body">
                   <span class="ph-field-label">Role</span>
                   <span class="ph-field-value" id="profileRoleDetail">—</span>
+                  </span>
                 </div>
                 <div class="ph-strip-divider"></div>
                 <div class="ph-strip-field">
+                  <span class="ph-field-icon"><i class="ti ti-circle-check"></i></span>
+                  <span class="ph-field-body">
                   <span class="ph-field-label">Account Status</span>
                   <span class="ph-field-value">
                     <span class="status-badge active" id="profileStatus">Active</span>
+                  </span>
                   </span>
                 </div>
               </div>
