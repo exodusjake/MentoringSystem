@@ -9,7 +9,15 @@ namespace AstraMentoringAPI.Controllers
     public class SettingsController : ControllerBase
     {
         private readonly SettingsService _service;
-        public SettingsController(SettingsService service) { _service = service; }
+        private readonly AuthService _auth;
+        private readonly EmailService _email;
+        private readonly PasswordChangeStore _changes;
+        public SettingsController(SettingsService service, AuthService auth, EmailService email, PasswordChangeStore changes)
+        { _service = service; _auth = auth; _email = email; _changes = changes; }
+
+        private int CallerId => int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+        // Settings-password codes live under a separate key from the account-password flow.
+        private int FlowKey => -CallerId;
 
         // Open to any authenticated user — every portal's "Current Academic
         // Period" banner reads from here (HEAD, Mentor, Mentee all display
@@ -80,12 +88,51 @@ namespace AstraMentoringAPI.Controllers
             return ok ? Ok() : BadRequest(new { message = "Incorrect settings password." });
         }
 
+        // Change the Settings password, step 1: the current Settings password is checked and a code is emailed.
+        [HttpPost("password-code")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SendPasswordCode([FromBody] SettingsPasswordRequest request)
+        {
+            var user = _auth.GetUserById(CallerId);
+            if (user == null || !user.IsActive) return Unauthorized();
+            if (!await _service.VerifySettingsPasswordAsync(request.Password ?? string.Empty))
+                return BadRequest(new { message = "Incorrect current password." });
+
+            var code = _changes.TryCreateCode(FlowKey, out var retryAfter);
+            if (code == null)
+                return StatusCode(429, new { message = $"A code was just sent. You can request another in {Math.Ceiling(retryAfter.TotalSeconds)} seconds." });
+
+            if (!await _email.SendSettingsPasswordCodeAsync(user.Email, user.FirstName, code, (int)PasswordChangeStore.CodeLifetime.TotalMinutes))
+                return StatusCode(503, new { message = "We couldn't send the verification code. Please try again shortly." });
+
+            var at = user.Email.IndexOf('@');
+            var masked = at <= 1 ? user.Email : user.Email[0] + new string('*', Math.Min(at - 1, 6)) + user.Email[at..];
+            return Ok(new { message = "Verification code sent.", email = masked, resendAfterSeconds = (int)PasswordChangeStore.ResendCooldown.TotalSeconds });
+        }
+
+        // Step 2: the emailed code is exchanged for a short-lived token.
+        [HttpPost("password-code/verify")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult VerifyPasswordCode([FromBody] SettingsCodeRequest request)
+        {
+            var status = _changes.VerifyCode(FlowKey, request.Code, out var token);
+            return status switch
+            {
+                PasswordChangeStore.VerifyStatus.Ok => Ok(new { token }),
+                PasswordChangeStore.VerifyStatus.Invalid => BadRequest(new { message = "Incorrect code. Please check your email and try again." }),
+                PasswordChangeStore.VerifyStatus.TooManyAttempts => BadRequest(new { message = "Too many incorrect codes. Please request a new one.", restart = true }),
+                _ => BadRequest(new { message = "That code has expired. Please request a new one.", restart = true })
+            };
+        }
+
         [HttpPut("change-password")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangeSettingsPasswordRequest request)
         {
             var ok = await _service.VerifySettingsPasswordAsync(request.CurrentPassword);
             if (!ok) return BadRequest(new { message = "Incorrect current password." });
+            if (!_changes.ConsumeToken(FlowKey, request.Token))
+                return BadRequest(new { message = "Verification expired. Please verify the current password again.", restart = true });
             if (string.IsNullOrWhiteSpace(request.NewPassword) || request.NewPassword.Length < 6)
                 return BadRequest(new { message = "New password must be at least 6 characters." });
             await _service.UpdateSettingsPasswordAsync(request.NewPassword);
@@ -99,5 +146,7 @@ namespace AstraMentoringAPI.Controllers
     {
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword     { get; set; } = string.Empty;
+        public string Token           { get; set; } = string.Empty;
     }
+    public class SettingsCodeRequest         { public string Code            { get; set; } = string.Empty; }
 }

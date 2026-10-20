@@ -223,32 +223,47 @@
       <p class="settings-modal-sub">Choose a new password for unlocking System Settings.</p>
       <div class="settings-modal-field">
         <label class="settings-modal-label">Current Password <span class="req">*</span></label>
-        <div class="pwd-wrap">
-          <input type="password" id="cpCurrentInput" class="settings-modal-input" placeholder="Current settings password" autocomplete="off"/>
-          <button type="button" class="pwd-eye" onclick="togglePwd('cpCurrentInput',this)" tabindex="-1">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
+        <div class="cp-verify-row">
+          <div class="pwd-wrap">
+            <input type="password" id="cpCurrentInput" class="settings-modal-input" placeholder="Current settings password" autocomplete="off"/>
+            <button type="button" class="pwd-eye" onclick="togglePwd('cpCurrentInput',this)" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <button type="button" class="cp-act" id="cpSendBtn" onclick="sendSettingsCode()">Send Code</button>
         </div>
       </div>
       <div class="settings-modal-field">
-        <label class="settings-modal-label">New Password <span class="req">*</span></label>
-        <div class="pwd-wrap">
-          <input type="password" id="cpNewInput" class="settings-modal-input" placeholder="New password (min. 6 characters)" autocomplete="new-password"/>
-          <button type="button" class="pwd-eye" onclick="togglePwd('cpNewInput',this)" tabindex="-1">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
+        <label class="settings-modal-label">Verification Code</label>
+        <div class="cp-verify-row">
+          <input type="text" id="cpCodeInput" class="settings-modal-input" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter 6-digit code" disabled
+            onkeydown="if(event.key==='Enter'){event.preventDefault();verifySettingsCode()}"/>
+          <button type="button" class="cp-act" id="cpVerifyBtn" onclick="verifySettingsCode()" disabled>Verify</button>
         </div>
+        <div class="cp-indicator" id="cpIndicator"><span id="cpIndicatorText">Enter the current settings password and tap <b>Send Code</b> — we’ll email a 6-digit code to your account email.</span></div>
       </div>
-      <div class="settings-modal-field">
-        <label class="settings-modal-label">Confirm New Password <span class="req">*</span></label>
-        <div class="pwd-wrap">
-          <input type="password" id="cpConfirmInput" class="settings-modal-input" placeholder="Re-enter new password" autocomplete="new-password"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();submitChangePassword()}"/>
-          <button type="button" class="pwd-eye" onclick="togglePwd('cpConfirmInput',this)" tabindex="-1">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
+      <div class="cp-locked locked" id="cpLocked">
+        <div class="cp-lock-hint" id="cpLockHint">Locked until the current password is verified.</div>
+        <div class="settings-modal-field">
+          <label class="settings-modal-label">New Password <span class="req">*</span></label>
+          <div class="pwd-wrap">
+            <input type="password" id="cpNewInput" class="settings-modal-input" placeholder="New password (min. 6 characters)" autocomplete="new-password" disabled/>
+            <button type="button" class="pwd-eye" onclick="togglePwd('cpNewInput',this)" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="settings-modal-error" id="cpError"></div>
+        <div class="settings-modal-field">
+          <label class="settings-modal-label">Confirm New Password <span class="req">*</span></label>
+          <div class="pwd-wrap">
+            <input type="password" id="cpConfirmInput" class="settings-modal-input" placeholder="Re-enter new password" autocomplete="new-password" disabled
+              onkeydown="if(event.key==='Enter'){event.preventDefault();submitChangePassword()}"/>
+            <button type="button" class="pwd-eye" onclick="togglePwd('cpConfirmInput',this)" tabindex="-1">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="settings-modal-error" id="cpError"></div>
+        </div>
       </div>
       <div class="settings-modal-actions">
         <button type="button" class="smb-cancel" onclick="closeChangePassword()">Cancel</button>

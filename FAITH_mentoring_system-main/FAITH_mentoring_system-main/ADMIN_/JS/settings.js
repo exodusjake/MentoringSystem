@@ -250,9 +250,106 @@ async function submitUnlock() {
 }
 
 // ── CHANGE SETTINGS PASSWORD ──────────────────────────────────
+let cpToken = null;
+let cpTimer = null;
+function cpEsc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c])); }
+
+function cpEl(id) { return document.getElementById(id); }
+
+function cpIndicator(state, html) {
+  const box = cpEl('cpIndicator');
+  box.className = 'cp-indicator' + (state ? ' ' + state : '');
+  cpEl('cpIndicatorText').innerHTML = html;
+}
+
+function cpSetLocked(locked) {
+  ['cpNewInput', 'cpConfirmInput'].forEach(id => {
+    const el = cpEl(id);
+    el.disabled = locked;
+    if (locked) { el.value = ''; el.type = 'password'; }
+  });
+  cpEl('cpLocked').classList.toggle('locked', locked);
+  cpEl('cpLockHint').textContent = locked ? 'Locked until the current password is verified.' : 'Unlocked — choose the new settings password.';
+}
+
+function cpReset() {
+  cpToken = null;
+  clearInterval(cpTimer);
+  cpEl('cpCurrentInput').value = ''; cpEl('cpCurrentInput').disabled = false;
+  const send = cpEl('cpSendBtn'); send.disabled = false; send.textContent = 'Send Code';
+  const code = cpEl('cpCodeInput'); code.value = ''; code.disabled = true;
+  const verify = cpEl('cpVerifyBtn'); verify.disabled = true; verify.textContent = 'Verify';
+  cpEl('cpError').textContent = '';
+  cpIndicator('', 'Enter the current settings password and tap <b>Send Code</b> — we’ll email a 6-digit code to your account email.');
+  cpSetLocked(true);
+}
+
+function cpCooldown(seconds) {
+  const btn = cpEl('cpSendBtn');
+  let left = Math.max(1, seconds | 0);
+  btn.disabled = true;
+  clearInterval(cpTimer);
+  const tick = () => {
+    btn.textContent = left > 0 ? `Resend (${left}s)` : 'Resend Code';
+    if (left-- <= 0) { clearInterval(cpTimer); btn.disabled = false; }
+  };
+  tick();
+  cpTimer = setInterval(tick, 1000);
+}
+
+async function sendSettingsCode() {
+  const errEl = cpEl('cpError');
+  errEl.textContent = '';
+  const current = cpEl('cpCurrentInput').value;
+  if (!current) { errEl.textContent = 'Please enter the current settings password.'; return; }
+  const btn = cpEl('cpSendBtn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res = await apiRequest('Settings/password-code', 'POST', { password: current }, true);
+    const code = cpEl('cpCodeInput');
+    code.disabled = false; code.value = '';
+    cpEl('cpVerifyBtn').disabled = false;
+    code.focus();
+    cpIndicator('sent', `Verification code sent to <b>${cpEsc(res?.email || 'your email')}</b>. It expires in 10 minutes — check your spam folder if you don’t see it.`);
+    cpCooldown(res?.resendAfterSeconds || 45);
+  } catch (err) {
+    const wait = err.status === 429 ? parseInt((err.message.match(/\d+/) || [15])[0], 10) : 0;
+    errEl.textContent = err.message || 'Could not send the code. Please try again.';
+    if (wait) cpCooldown(wait); else { btn.disabled = false; btn.textContent = 'Send Code'; }
+  }
+}
+
+async function verifySettingsCode() {
+  const errEl = cpEl('cpError');
+  errEl.textContent = '';
+  const code = cpEl('cpCodeInput').value.trim();
+  if (!/^\d{6}$/.test(code)) { errEl.textContent = 'Enter the 6-digit code from your email.'; return; }
+  const btn = cpEl('cpVerifyBtn');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try {
+    const res = await apiRequest('Settings/password-code/verify', 'POST', { code }, true);
+    cpToken = res?.token || null;
+    clearInterval(cpTimer);
+    cpEl('cpCurrentInput').disabled = true;
+    const send = cpEl('cpSendBtn'); send.disabled = true; send.textContent = 'Verified';
+    cpEl('cpCodeInput').disabled = true;
+    btn.textContent = 'Verified';
+    cpIndicator('ok', '<b>Verified!</b> You can now choose the new settings password.');
+    cpSetLocked(false);
+    cpEl('cpNewInput').focus();
+  } catch (err) {
+    errEl.textContent = err.message || 'Could not verify the code.';
+    btn.disabled = false; btn.textContent = 'Verify';
+    if (err.restart) {
+      cpEl('cpCodeInput').value = '';
+      cpIndicator('err', 'That code can no longer be used. Tap <b>Send Code</b> to get a new one.');
+      const send = cpEl('cpSendBtn'); clearInterval(cpTimer); send.disabled = false; send.textContent = 'Send Code';
+    }
+  }
+}
+
 function openChangePassword() {
-  ['cpCurrentInput', 'cpNewInput', 'cpConfirmInput'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('cpError').textContent = '';
+  cpReset();
   document.getElementById('changePassOverlay').style.display = 'flex';
   setTimeout(() => document.getElementById('cpCurrentInput').focus(), 80);
 }
@@ -271,7 +368,8 @@ async function submitChangePassword() {
   if (btn.disabled) return;
 
   errEl.textContent = '';
-  if (!current || !newPass || !confirm) { errEl.textContent = 'Please fill in all fields.'; return; }
+  if (!cpToken)                         { errEl.textContent = 'Verify the current password with the emailed code first.'; return; }
+  if (!newPass || !confirm)             { errEl.textContent = 'Please fill in all fields.'; return; }
   if (newPass.length < 6)               { errEl.textContent = 'New password must be at least 6 characters.'; return; }
   if (newPass !== confirm)              { errEl.textContent = 'New passwords do not match.'; return; }
 
@@ -279,11 +377,13 @@ async function submitChangePassword() {
   btn.textContent = 'Saving…';
 
   try {
-    await apiRequest('Settings/change-password', 'PUT', { currentPassword: current, newPassword: newPass }, true);
+    await apiRequest('Settings/change-password', 'PUT', { currentPassword: current, newPassword: newPass, token: cpToken }, true);
+    cpToken = null;
     closeChangePassword();
     showToast('Settings password changed successfully.', 'success');
   } catch (error) {
     errEl.textContent = error.status === 400 ? error.message : 'Unable to change the settings password. Please try again.';
+    if (error.restart) cpReset();
   } finally {
     btn.disabled    = false;
     btn.textContent = 'Change Password';

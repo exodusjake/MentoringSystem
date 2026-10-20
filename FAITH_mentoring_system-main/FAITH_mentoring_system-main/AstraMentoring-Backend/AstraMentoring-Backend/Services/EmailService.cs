@@ -251,6 +251,23 @@ namespace AstraMentoring_Backend.Services
             return await SendEmailAsync(recipientEmail, _brandName, "Confirm your AstraMentoring password change", html);
         }
 
+        // Admin "change the System Settings password": code typed on the Settings page.
+        public async Task<bool> SendSettingsPasswordCodeAsync(string recipientEmail, string? firstName, string code, int validMinutes)
+        {
+            if (!SmtpConfigured && (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail)) && _isDevelopment)
+            {
+                _logger.LogWarning("EmailService (Development): settings password code for {Email} is {Code}", recipientEmail, code);
+                return true;
+            }
+
+            var html = BuildCodeEmailHtml(firstName, code, validMinutes, "Confirm settings password change",
+                "Enter the code below on the System Settings page to confirm that you want to change the Settings password.",
+                "Never share this code with anyone.",
+                "If you didn’t ask to change the Settings password, ignore this email and let the Guidance Office know.",
+                "a Settings password change was requested from your AstraMentoring admin account");
+            return await SendEmailAsync(recipientEmail, _brandName, "Confirm your AstraMentoring Settings password change", html);
+        }
+
         // Branded layout for the emailed codes: navy header with the logo, white
         // card with the code, a help box, and a footer with site links. Table
         // based with inline styles so it renders in Gmail/Outlook/mobile clients.

@@ -517,3 +517,44 @@ window.playLogoutEffect = playLogoutEffect;
     }
     if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+// Page scroll lock: while any full-screen overlay (modal, drawer backdrop) is open, the page behind it stays put.
+(function modalScrollLock() {
+    if (window.__astraModalScrollLock) return;
+    window.__astraModalScrollLock = true;
+
+    const root = document.documentElement;
+    let queued = false;
+
+    function covers(el) {
+        const cs = getComputedStyle(el);
+        if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) return false;
+        const r = el.getBoundingClientRect();
+        return r.width >= window.innerWidth * 0.9 && r.height >= window.innerHeight * 0.9;
+    }
+
+    function check() {
+        queued = false;
+        let open = false;
+        const nodes = document.querySelectorAll('[class*="overlay"],[class*="modal"],[role="dialog"]');
+        for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].classList.contains('astra-lbar')) continue;
+            if (covers(nodes[i])) { open = true; break; }
+        }
+        root.classList.toggle('astra-modal-open', open);
+    }
+    function schedule() { if (!queued) { queued = true; requestAnimationFrame(check); } }
+
+    function start() {
+        if (!document.getElementById('astra-modal-lock-css')) {
+            const st = document.createElement('style');
+            st.id = 'astra-modal-lock-css';
+            st.textContent = 'html.astra-modal-open,html.astra-modal-open body{overflow:hidden!important;overscroll-behavior:none}';
+            document.head.appendChild(st);
+        }
+        new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'open', 'hidden'] });
+        window.addEventListener('resize', schedule);
+        schedule();
+    }
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();

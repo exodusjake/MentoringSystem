@@ -334,3 +334,21 @@ footer {
 }
 .pwd-eye:hover { background: #F3F4F6; color: #111827; }
 .pwd-eye svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+
+/* Change settings password: verify first, then the new password unlocks */
+.cp-verify-row { display: flex; gap: 8px; align-items: stretch; }
+.cp-verify-row .pwd-wrap { flex: 1; min-width: 0; }
+.cp-verify-row > input { flex: 1; min-width: 0; letter-spacing: .12em; }
+.cp-act { flex-shrink: 0; font-family: inherit; font-size: 13px; font-weight: 600; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 0 16px; cursor: pointer; white-space: nowrap; transition: background .15s, transform .12s, color .15s, border-color .15s; }
+.cp-act:hover:not(:disabled) { background: #2563eb; color: #fff; border-color: #2563eb; }
+.cp-act:active:not(:disabled) { transform: scale(.96); }
+.cp-act:disabled { color: #9ca3af; background: #f3f4f6; border-color: #e5e7eb; cursor: not-allowed; }
+.cp-indicator { margin-top: 8px; font-size: 12px; line-height: 1.5; color: #6b7280; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; padding: 9px 12px; transition: background .2s, border-color .2s, color .2s; }
+.cp-indicator.sent { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+.cp-indicator.ok   { background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; }
+.cp-indicator.err  { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+.cp-locked { transition: opacity .25s ease; }
+.cp-locked.locked { opacity: .6; }
+.cp-lock-hint { font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 8px; text-align: left; }
+.cp-locked:not(.locked) .cp-lock-hint { color: #047857; }
+.settings-modal-input:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
