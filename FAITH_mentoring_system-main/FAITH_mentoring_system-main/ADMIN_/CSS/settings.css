@@ -352,3 +352,52 @@ footer {
 .cp-lock-hint { font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 8px; text-align: left; }
 .cp-locked:not(.locked) .cp-lock-hint { color: #047857; }
 .settings-modal-input:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
+
+/* ===== Settings layout: aligned columns, equal heights, full-width lock bar ===== */
+.settings-lock-banner { max-width: none; width: 100%; box-sizing: border-box; }
+.settings-grid { align-items: stretch; }
+.settings-col > .settings-card:last-child { flex: 1; }
+.settings-card { display: flex; flex-direction: column; }
+.settings-card .settings-fields { flex: 1; }
+.settings-card .settings-card-actions { margin-top: auto; padding-top: 8px; }
+.settings-card-wide { grid-column: 1 / -1; }
+.settings-card-header > div:last-child { min-width: 0; }
+.settings-card-icon { margin-top: 1px; }
+.settings-opt { font-weight: 400; color: #9ca3af; font-size: 12px; }
+.settings-textarea { height: auto; min-height: 84px; padding: 10px 12px; line-height: 1.5; resize: vertical; flex: none; }
+.settings-field > .settings-textarea { flex: none; }
+.settings-card-icon.amber svg { stroke: #d97706; }
+@media (max-width: 900px) { .settings-grid { grid-template-columns: 1fr; } }
+
+/* ===== Maintenance card ===== */
+.maint-status { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 13px; font-weight: 600; }
+.maint-status .maint-dot { width: 9px; height: 9px; border-radius: 50%; background: #22c55e; flex-shrink: 0; box-shadow: 0 0 0 4px rgba(34, 197, 94, .18); }
+.maint-status.on { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+.maint-status.on .maint-dot { background: #f59e0b; box-shadow: 0 0 0 4px rgba(245, 158, 11, .2); animation: maintPulse 1.6s ease-in-out infinite; }
+@keyframes maintPulse { 50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); } }
+.maint-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px; align-items: start; }
+.maint-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.maint-toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 14px; border: 1px solid #e5e9f0; border-radius: 12px; background: #fafbfd; cursor: pointer; transition: border-color .2s, background .2s; }
+.maint-toggle.on { border-color: #fcd34d; background: #fffbeb; }
+.maint-toggle-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.maint-toggle-title { font-size: 14px; font-weight: 700; color: #111827; }
+.maint-toggle-sub { font-size: 12px; color: #6b7280; }
+.switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; z-index: 1; }
+.switch .slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: background .2s; }
+.switch .slider::before { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); transition: transform .22s cubic-bezier(.22, 1, .36, 1); }
+.switch input:checked + .slider { background: #f59e0b; }
+.switch input:checked + .slider::before { transform: translateX(20px); }
+.switch input:focus-visible + .slider { outline: 2px solid #2563eb; outline-offset: 2px; }
+.switch input:disabled { cursor: not-allowed; }
+.switch input:disabled + .slider { opacity: .55; }
+.maint-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.maint-chip { font-family: var(--font-main); font-size: 12px; font-weight: 600; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 999px; padding: 5px 12px; cursor: pointer; transition: background .15s, color .15s, transform .12s; }
+.maint-chip:hover { background: #2563eb; color: #fff; }
+.maint-chip:active { transform: scale(.95); }
+.maint-chip.ghost { color: #6b7280; background: #f3f4f6; border-color: #e5e7eb; }
+.maint-chip.ghost:hover { background: #e5e7eb; color: #111827; }
+.settings-locked .switch, .settings-locked .maint-chips, .settings-locked .maint-toggle { pointer-events: none; }
+.settings-locked .maint-toggle { opacity: .7; }
+.settings-locked .maint-chips { opacity: .5; }
+@media (max-width: 800px) { .maint-body { grid-template-columns: 1fr; } }

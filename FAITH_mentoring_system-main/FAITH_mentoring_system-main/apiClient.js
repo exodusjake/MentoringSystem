@@ -73,6 +73,7 @@ async function apiRequest(endpoint, method = "GET", body = null, requiresAuth = 
                 }
             }
             const errorData = await response.json().catch(() => ({}));
+            if (response.status === 503 && errorData.maintenance && typeof showMaintenanceScreen === 'function') showMaintenanceScreen(errorData);
             const error = new Error(errorData.message || `Error ${response.status}`);
             error.status = response.status;
             error.restart = errorData.restart === true;
@@ -558,3 +559,112 @@ window.playLogoutEffect = playLogoutEffect;
     }
     if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
 })();
+
+// Maintenance screen: shown when the server answers 503 { maintenance: true } for a Mentor / Mentee.
+// Full-screen, with the admin's message and estimated time; it re-checks by itself and reopens the app when
+// the portal is back.
+function showMaintenanceScreen(info) {
+    if (document.getElementById('astra-maint')) return;
+    info = info || {};
+    const role = info.role || (typeof getSession === 'function' ? (getSession().role || '') : '');
+
+    if (!document.getElementById('astra-maint-css')) {
+        const st = document.createElement('style');
+        st.id = 'astra-maint-css';
+        st.textContent =
+            '.mt-overlay{position:fixed;inset:0;z-index:2147483200;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;' +
+            'background:radial-gradient(circle at 15% 10%,rgba(59,130,246,.18),transparent 45%),radial-gradient(circle at 90% 95%,rgba(240,180,41,.16),transparent 45%),#f4f7fb;' +
+            'font-family:"DM Sans","Poppins",system-ui,sans-serif;opacity:0;transition:opacity .35s ease}' +
+            '.mt-overlay.show{opacity:1}' +
+            '.mt-card{width:100%;max-width:520px;background:#fff;border:1px solid #dce3ec;border-radius:22px;padding:38px 34px 30px;text-align:center;' +
+            'box-shadow:0 24px 70px rgba(11,26,92,.16);transform:translateY(14px) scale(.98);transition:transform .45s cubic-bezier(.22,1,.36,1)}' +
+            '.mt-overlay.show .mt-card{transform:none}' +
+            '.mt-icon{width:84px;height:84px;margin:0 auto 20px;border-radius:50%;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;position:relative}' +
+            '.mt-icon svg{width:40px;height:40px}' +
+            '.mt-icon .mt-gear{animation:mt-spin 9s linear infinite;transform-origin:50% 50%}' +
+            '.mt-icon::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px dashed #bfdbfe;animation:mt-spin 24s linear infinite reverse}' +
+            '@keyframes mt-spin{to{transform:rotate(360deg)}}' +
+            '.mt-title{font-size:26px;font-weight:700;color:#0b1a5c;margin:0 0 8px}' +
+            '.mt-sub{font-size:15px;color:#4b5563;line-height:1.6;margin:0}' +
+            '.mt-detail{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#f8fafc;border-left:4px solid #f0b429;text-align:left;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}' +
+            '.mt-eta{margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a}' +
+            '.mt-eta small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3b82f6;margin-bottom:3px}' +
+            '.mt-eta b{display:block;font-size:17px}' +
+            '.mt-eta span{display:block;font-size:13px;color:#475569;margin-top:2px}' +
+            '.mt-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}' +
+            '.mt-btn{font:600 14px "DM Sans","Poppins",system-ui,sans-serif;border-radius:10px;padding:11px 22px;cursor:pointer;border:1px solid #dce3ec;background:#fff;color:#374151;transition:background .15s,transform .12s,box-shadow .15s}' +
+            '.mt-btn:hover{background:#f4f7fb}.mt-btn:active{transform:scale(.97)}' +
+            '.mt-btn.primary{background:#2563eb;border-color:#2563eb;color:#fff}.mt-btn.primary:hover{background:#1d4ed8;box-shadow:0 6px 16px rgba(37,99,235,.3)}' +
+            '.mt-foot{margin-top:18px;font-size:12px;color:#9ca3af}' +
+            '@media (prefers-reduced-motion:reduce){.mt-icon .mt-gear,.mt-icon::after{animation:none}.mt-overlay,.mt-card{transition:none}}';
+        document.head.appendChild(st);
+    }
+
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const eta = info.eta ? new Date(info.eta) : null;
+    const hasEta = eta && !isNaN(eta.getTime());
+    const loggedIn = typeof isLoggedIn === 'function' && isLoggedIn();
+
+    const ov = document.createElement('div');
+    ov.id = 'astra-maint';
+    ov.className = 'mt-overlay';
+    ov.setAttribute('role', 'alertdialog');
+    ov.setAttribute('aria-modal', 'true');
+    ov.setAttribute('aria-labelledby', 'mtTitle');
+    ov.innerHTML =
+        '<div class="mt-card">' +
+          '<div class="mt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<g class="mt-gear"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></g>' +
+          '</svg></div>' +
+          '<h1 class="mt-title" id="mtTitle">We’ll be right back</h1>' +
+          '<p class="mt-sub">' + (role ? 'The <b>' + esc(role) + '</b> portal' : 'This portal') + ' is temporarily under maintenance. Thank you for your patience.</p>' +
+          (info.detail ? '<div class="mt-detail">' + esc(info.detail) + '</div>' : '') +
+          (hasEta ? '<div class="mt-eta"><small>Estimated back</small><b id="mtEtaDate"></b><span id="mtEtaLeft"></span></div>' : '') +
+          '<div class="mt-actions">' +
+            '<button type="button" class="mt-btn primary" id="mtCheck">Check again</button>' +
+            (loggedIn ? '<button type="button" class="mt-btn" id="mtLogout">Log out</button>' : '<button type="button" class="mt-btn" id="mtHome">Back to home</button>') +
+          '</div>' +
+          '<div class="mt-foot" id="mtFoot">We’ll reopen this page automatically when maintenance is done.</div>' +
+        '</div>';
+    document.body.appendChild(ov);
+    document.documentElement.style.overflow = 'hidden';
+    requestAnimationFrame(() => requestAnimationFrame(() => ov.classList.add('show')));
+
+    if (hasEta) {
+        const dateEl = ov.querySelector('#mtEtaDate'), leftEl = ov.querySelector('#mtEtaLeft');
+        dateEl.textContent = eta.toLocaleString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        const tick = () => {
+            const ms = eta.getTime() - Date.now();
+            if (ms <= 0) { leftEl.textContent = 'Taking a little longer than expected — we’re still working on it.'; return; }
+            const mins = Math.ceil(ms / 60000), d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60), m = mins % 60;
+            leftEl.textContent = 'About ' + (d ? d + ' day' + (d > 1 ? 's ' : ' ') : '') + (h ? h + ' hr ' : '') + (!d ? m + ' min' : '') + ' from now';
+        };
+        tick();
+        setInterval(tick, 30000);
+    }
+
+    async function stillDown() {
+        try {
+            const res = await fetch(CONFIG.getUrl('Maintenance'), { cache: 'no-store' });
+            if (!res.ok) return true;
+            const s = await res.json();
+            return role === 'Mentee' ? !!s.mentee : role === 'Mentor' ? !!s.mentor : !!(s.mentor || s.mentee);
+        } catch (e) { return true; }
+    }
+    const check = async manual => {
+        const btn = ov.querySelector('#mtCheck');
+        if (manual && btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
+        if (!(await stillDown())) { window.location.reload(); return; }
+        if (manual && btn) {
+            btn.disabled = false; btn.textContent = 'Check again';
+            ov.querySelector('#mtFoot').textContent = 'Still under maintenance — we’ll keep checking for you.';
+        }
+    };
+    ov.querySelector('#mtCheck').addEventListener('click', () => check(true));
+    const lo = ov.querySelector('#mtLogout');
+    if (lo) lo.addEventListener('click', () => { clearSession(); window.location.href = '/LOGIN/HTML/login.html'; });
+    const home = ov.querySelector('#mtHome');
+    if (home) home.addEventListener('click', () => { window.location.href = '/LANDING/HTML/landing.html'; });
+    setInterval(() => check(false), 30000);
+}
+window.showMaintenanceScreen = showMaintenanceScreen;

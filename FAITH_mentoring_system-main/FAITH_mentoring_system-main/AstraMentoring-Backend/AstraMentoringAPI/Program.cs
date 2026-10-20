@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 // IP so a whole class on one Wi-Fi can still sign in. Applies to Auth/login only.
 builder.Services.AddSingleton<AstraMentoringAPI.LoginAttemptTracker>();
 builder.Services.AddSingleton<AstraMentoringAPI.LoginCodeStore>();   // emailed 2nd-step login codes
+builder.Services.AddSingleton<AstraMentoringAPI.MaintenanceService>();   // Mentor / Mentee portal maintenance switches
 builder.Services.AddSingleton<AstraMentoringAPI.PasswordChangeStore>();   // signed-in change-password codes
 builder.Services.AddSingleton<AstraMentoringAPI.PasswordResetStore>();   // emailed forgot-password codes
 builder.Services.AddRateLimiter(options =>
@@ -174,6 +175,31 @@ app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// While a portal is under maintenance, signed-in Mentors / Mentees get a 503 on every API call.
+// Admin and Head are never affected, and /api/Maintenance stays open so the screen can poll it.
+app.Use(async (context, next) =>
+{
+    var path = context.Request.Path.Value ?? string.Empty;
+    if (path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase)
+        && !path.StartsWith("/api/Maintenance", StringComparison.OrdinalIgnoreCase)
+        && context.User.Identity?.IsAuthenticated == true)
+    {
+        var role = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (role == "Mentor" || role == "Mentee")
+        {
+            var info = await context.RequestServices.GetRequiredService<AstraMentoringAPI.MaintenanceService>().GetAsync();
+            if (info.Blocks(role))
+            {
+                context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+                context.Response.Headers["Retry-After"] = "300";
+                await context.Response.WriteAsJsonAsync(info.Payload(role));
+                return;
+            }
+        }
+    }
+    await next();
+});
 app.UseRateLimiter();
 app.MapControllers();
 app.Run();

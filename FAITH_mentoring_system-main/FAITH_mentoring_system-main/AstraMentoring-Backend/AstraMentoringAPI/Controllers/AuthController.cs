@@ -19,8 +19,9 @@ namespace AstraMentoringAPI.Controllers
         private readonly EmailService _email;
         private readonly PasswordResetStore _resets;
         private readonly PasswordChangeStore _changes;
+        private readonly MaintenanceService _maintenance;
 
-        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email, PasswordResetStore resets, PasswordChangeStore changes)
+        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email, PasswordResetStore resets, PasswordChangeStore changes, MaintenanceService maintenance)
         {
             _service = service;
             _config = config;
@@ -29,6 +30,7 @@ namespace AstraMentoringAPI.Controllers
             _email = email;
             _resets = resets;
             _changes = changes;
+            _maintenance = maintenance;
         }
 
         // Creates a user with an ARBITRARY role (including Admin/Head) from the
@@ -134,6 +136,10 @@ namespace AstraMentoringAPI.Controllers
             if (isDeactivated)
                 return StatusCode(403, new { message = "This account has been deactivated. Please contact the Guidance Office." });
 
+            var maint = await _maintenance.GetAsync();
+            if (maint.Blocks(user.Role))
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, maint.Payload(user.Role));
+
             // The code is only needed once, to confirm the email an Admin registered;
             // after that first verification the password alone is enough.
             if (!_config.GetValue("Auth:RequireEmailCode", true) || user.EmailVerifiedAt != null)
@@ -172,6 +178,10 @@ namespace AstraMentoringAPI.Controllers
             var user = _service.GetUserById(verified!.UserId);
             if (user == null || !user.IsActive)
                 return StatusCode(403, new { message = "This account has been deactivated. Please contact the Guidance Office." });
+
+            var maintNow = await _maintenance.GetAsync();
+            if (maintNow.Blocks(user.Role))
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, maintNow.Payload(user.Role));
 
             await _service.MarkEmailVerifiedAsync(user.UserID);
             return Ok(ToLoginPayload(await _service.BuildLoginResponseAsync(user, verified.RememberMe)));

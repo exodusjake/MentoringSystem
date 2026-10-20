@@ -105,11 +105,12 @@
 
               <div class="settings-field">
                 <label class="settings-label">Guidance Officer</label>
-                <div class="settings-input-row">
-                  <input type="text" class="settings-input" id="fieldGuidanceOfficer" placeholder="e.g. Ms. Ghenill R. Manto" disabled/>
-                  <button class="btn-save" onclick="saveSetting('GuidanceOfficer','fieldGuidanceOfficer')">Save</button>
-                </div>
+                <input type="text" class="settings-input" id="fieldGuidanceOfficer" placeholder="e.g. Ms. Ghenill R. Manto" disabled/>
                 <div class="settings-hint">Full name with title (e.g. Ms. Juan Dela Cruz)</div>
+              </div>
+
+              <div class="settings-card-actions">
+                <button class="btn-save" onclick="saveSetting('GuidanceOfficer','fieldGuidanceOfficer')">Save</button>
               </div>
 
             </div>
@@ -173,6 +174,60 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- ── Maintenance Mode (full width) ── -->
+        <div class="settings-card settings-card-wide" id="maintenanceCard">
+          <div class="settings-card-header">
+            <div class="settings-card-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div>
+              <div class="settings-card-title">Maintenance Mode</div>
+              <div class="settings-card-sub">Temporarily close the Mentor and/or Mentee portal. Admin and Head stay available. Closed users see a maintenance screen with your message and estimated time.</div>
+            </div>
+          </div>
+          <div class="settings-fields">
+            <div class="maint-status" id="maintStatus"><span class="maint-dot"></span><span id="maintStatusText">Both portals are open.</span></div>
+
+            <div class="maint-body">
+              <div class="maint-col">
+                <div class="settings-label">Portals under maintenance</div>
+                <label class="maint-toggle" id="maintMentorRow">
+                  <span class="maint-toggle-text"><span class="maint-toggle-title">Mentor portal</span><span class="maint-toggle-sub">Mentors can’t log in or use their dashboard</span></span>
+                  <span class="switch"><input type="checkbox" id="fieldMaintMentor" disabled/><span class="slider"></span></span>
+                </label>
+                <label class="maint-toggle" id="maintMenteeRow">
+                  <span class="maint-toggle-text"><span class="maint-toggle-title">Mentee portal</span><span class="maint-toggle-sub">Mentees can’t log in or use their dashboard</span></span>
+                  <span class="switch"><input type="checkbox" id="fieldMaintMentee" disabled/><span class="slider"></span></span>
+                </label>
+                <div class="settings-hint">Turn on one or both. People already signed in are stopped on their next action.</div>
+              </div>
+
+              <div class="maint-col">
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldMaintEta">Estimated time to fix</label>
+                  <input type="datetime-local" class="settings-input" id="fieldMaintEta" disabled/>
+                  <div class="maint-chips" id="maintChips">
+                    <button type="button" class="maint-chip" onclick="setMaintEta(30)">+30 min</button>
+                    <button type="button" class="maint-chip" onclick="setMaintEta(60)">+1 hr</button>
+                    <button type="button" class="maint-chip" onclick="setMaintEta(180)">+3 hrs</button>
+                    <button type="button" class="maint-chip" onclick="setMaintEta('tomorrow')">Tomorrow 8 AM</button>
+                    <button type="button" class="maint-chip ghost" onclick="setMaintEta(null)">Clear</button>
+                  </div>
+                </div>
+                <div class="settings-field">
+                  <label class="settings-label" for="fieldMaintMessage">Message to users <span class="settings-opt">(optional)</span></label>
+                  <textarea class="settings-input settings-textarea" id="fieldMaintMessage" maxlength="250" rows="3" placeholder="What’s being worked on? e.g. We’re upgrading the database to make things faster." disabled></textarea>
+                  <div class="settings-hint"><span id="maintMsgCount">0</span> / 250</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card-actions">
+              <button class="btn-save" id="saveMaintenanceBtn" onclick="saveMaintenance()">Apply</button>
+            </div>
+          </div>
         </div>
 
       </div>

@@ -32,6 +32,7 @@ async function loadSettings() {
     const data = await apiRequest('Settings', 'GET', null, true);
     latestValues = data || {};
     SETTING_FIELDS.forEach(key => setFieldValue(key, latestValues[key]));
+    loadMaintenanceFields();
   } catch (e) {
     showToast('Failed to load settings.', 'error');
   }
@@ -81,8 +82,7 @@ async function saveSetting(key, fieldId) {
     }
   }
 
-  const row     = el.closest('.settings-input-row');
-  const saveBtn = row?.querySelector('.btn-save');
+  const saveBtn = (el.closest('.settings-input-row') || el.closest('.settings-card'))?.querySelector('.btn-save');
   if (saveBtn) { saveBtn.disabled = true; saveBtn.classList.remove('btn-save-saved'); saveBtn.textContent = 'Saving…'; }
 
   try {
@@ -192,6 +192,7 @@ function applyLockState(unlocked) {
     const el = document.getElementById(`field${key}`);
     if (el) el.disabled = !unlocked;
   });
+  MAINT_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) el.disabled = !unlocked; });
 
   document.getElementById('lockIcon').classList.toggle('locked',   !unlocked);
   document.getElementById('lockIcon').classList.toggle('unlocked', unlocked);
@@ -208,6 +209,7 @@ function lockSettings() {
   // Discard any typed-but-unsaved edits by reloading the last known
   // saved values before re-disabling the fields.
   SETTING_FIELDS.forEach(key => setFieldValue(key, latestValues[key]));
+  loadMaintenanceFields();
   applyLockState(false);
 }
 
@@ -389,6 +391,117 @@ async function submitChangePassword() {
     btn.textContent = 'Change Password';
   }
 }
+
+// ── MAINTENANCE MODE ─────────────────────────────────────────────
+const MAINT_FIELDS = ['fieldMaintMentor', 'fieldMaintMentee', 'fieldMaintEta', 'fieldMaintMessage'];
+
+function maintToLocalInput(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function loadMaintenanceFields() {
+  document.getElementById('fieldMaintMentor').checked = latestValues.MaintenanceMentor === '1';
+  document.getElementById('fieldMaintMentee').checked = latestValues.MaintenanceMentee === '1';
+  document.getElementById('fieldMaintEta').value = maintToLocalInput(latestValues.MaintenanceEta);
+  const msg = document.getElementById('fieldMaintMessage');
+  msg.value = latestValues.MaintenanceMessage || '';
+  document.getElementById('maintMsgCount').textContent = msg.value.length;
+  renderMaintStatus();
+}
+
+function renderMaintStatus() {
+  const mentor = latestValues.MaintenanceMentor === '1', mentee = latestValues.MaintenanceMentee === '1';
+  const box = document.getElementById('maintStatus');
+  const text = document.getElementById('maintStatusText');
+  document.getElementById('maintMentorRow').classList.toggle('on', document.getElementById('fieldMaintMentor').checked);
+  document.getElementById('maintMenteeRow').classList.toggle('on', document.getElementById('fieldMaintMentee').checked);
+  if (!mentor && !mentee) {
+    box.classList.remove('on');
+    text.textContent = 'Both portals are open.';
+    return;
+  }
+  const who = [mentor && 'Mentor', mentee && 'Mentee'].filter(Boolean).join(' and ');
+  let line = `${who} ${mentor && mentee ? 'portals are' : 'portal is'} under maintenance now.`;
+  if (latestValues.MaintenanceEta) {
+    const d = new Date(latestValues.MaintenanceEta);
+    if (!isNaN(d.getTime())) line += ` Estimated back ${d.toLocaleString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.`;
+  }
+  box.classList.add('on');
+  text.textContent = line;
+}
+
+function setMaintEta(minutesOrKey) {
+  if (!isUnlocked) return;
+  const input = document.getElementById('fieldMaintEta');
+  if (minutesOrKey == null) { input.value = ''; return; }
+  const d = new Date();
+  if (minutesOrKey === 'tomorrow') { d.setDate(d.getDate() + 1); d.setHours(8, 0, 0, 0); }
+  else d.setMinutes(d.getMinutes() + minutesOrKey);
+  input.value = maintToLocalInput(d.toISOString());
+}
+
+async function saveMaintenance() {
+  if (!isUnlocked) return;
+  const mentor = document.getElementById('fieldMaintMentor').checked;
+  const mentee = document.getElementById('fieldMaintMentee').checked;
+  const etaLocal = document.getElementById('fieldMaintEta').value;
+  const message = document.getElementById('fieldMaintMessage').value.trim();
+
+  let etaIso = '';
+  if (etaLocal) {
+    const d = new Date(etaLocal);
+    if (isNaN(d.getTime())) { showToast('Please enter a valid estimated time.', 'error'); return; }
+    if ((mentor || mentee) && d.getTime() < Date.now()) { showToast('The estimated time must be in the future.', 'error'); return; }
+    etaIso = d.toISOString();
+  }
+
+  const wasOn = latestValues.MaintenanceMentor === '1' || latestValues.MaintenanceMentee === '1';
+  const unchanged = (latestValues.MaintenanceMentor === '1') === mentor && (latestValues.MaintenanceMentee === '1') === mentee &&
+    (latestValues.MaintenanceEta || '') === (etaIso ? new Date(etaIso).toISOString() : '') && (latestValues.MaintenanceMessage || '') === message;
+  if (unchanged) { showToast('No changes to save.', 'success'); return; }
+
+  const who = [mentor && 'Mentor', mentee && 'Mentee'].filter(Boolean).join(' and ');
+  const prompt = (mentor || mentee)
+    ? `Put the ${who} portal${mentor && mentee ? 's' : ''} under maintenance?\n\nEveryone in ${mentor && mentee ? 'those portals' : 'that portal'} will be stopped right away and shown the maintenance screen${etaIso ? ' with your estimated time' : ''}. Admin and Head are not affected.`
+    : (wasOn ? 'Reopen the Mentor and Mentee portals?\n\nEveryone can log in and use the system again.' : 'Save these maintenance details?');
+  const ok = await showConfirm(prompt, { confirmText: (mentor || mentee) ? 'Start Maintenance' : (wasOn ? 'Reopen Portals' : 'Save'), cancelText: 'Cancel', variant: (mentor || mentee) ? 'danger' : 'primary' });
+  if (!ok) return;
+
+  const btn = document.getElementById('saveMaintenanceBtn');
+  btn.disabled = true; btn.classList.remove('btn-save-saved'); btn.textContent = 'Applying…';
+  try {
+    const res = await apiRequest('Settings/maintenance', 'PUT', { mentor, mentee, eta: etaIso || null, message }, true);
+    latestValues.MaintenanceMentor = mentor ? '1' : '0';
+    latestValues.MaintenanceMentee = mentee ? '1' : '0';
+    latestValues.MaintenanceEta = res?.eta || '';
+    latestValues.MaintenanceMessage = message;
+    renderMaintStatus();
+    showToast((mentor || mentee) ? 'Maintenance mode is on.' : 'Portals reopened.', 'success');
+    btn.textContent = 'Applied ✓'; btn.classList.add('btn-save-saved');
+    setTimeout(() => { btn.classList.remove('btn-save-saved'); btn.textContent = 'Apply'; }, 1800);
+  } catch (e) {
+    showToast(e.message || 'Failed to update maintenance mode.', 'error');
+    btn.textContent = 'Apply';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const msg = document.getElementById('fieldMaintMessage');
+  if (msg) msg.addEventListener('input', () => { document.getElementById('maintMsgCount').textContent = msg.value.length; });
+  ['fieldMaintMentor', 'fieldMaintMentee'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', () => {
+      document.getElementById('maintMentorRow').classList.toggle('on', document.getElementById('fieldMaintMentor').checked);
+      document.getElementById('maintMenteeRow').classList.toggle('on', document.getElementById('fieldMaintMentee').checked);
+    });
+  });
+});
 
 // ── HELPERS ───────────────────────────────────────────────────
 function labelFor(key) {

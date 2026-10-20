@@ -12,8 +12,9 @@ namespace AstraMentoringAPI.Controllers
         private readonly AuthService _auth;
         private readonly EmailService _email;
         private readonly PasswordChangeStore _changes;
-        public SettingsController(SettingsService service, AuthService auth, EmailService email, PasswordChangeStore changes)
-        { _service = service; _auth = auth; _email = email; _changes = changes; }
+        private readonly MaintenanceService _maintenance;
+        public SettingsController(SettingsService service, AuthService auth, EmailService email, PasswordChangeStore changes, MaintenanceService maintenance)
+        { _service = service; _auth = auth; _email = email; _changes = changes; _maintenance = maintenance; }
 
         private int CallerId => int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
         // Settings-password codes live under a separate key from the account-password flow.
@@ -44,6 +45,34 @@ namespace AstraMentoringAPI.Controllers
         // Admin-only: the frontend itself shows these fields as read-only
         // ("Managed by Admin") on every other portal's profile page, so the
         // API needs to actually enforce that, not just hide the edit UI.
+        // Admin-only: switch the Mentor and/or Mentee portal into maintenance, with an estimated time and a message.
+        [HttpPut("maintenance")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateMaintenance([FromBody] MaintenanceUpdateRequest request)
+        {
+            var message = (request.Message ?? string.Empty).Trim();
+            if (message.Length > 250)
+                return BadRequest(new { message = "The message can be at most 250 characters." });
+
+            string eta = string.Empty;
+            if (!string.IsNullOrWhiteSpace(request.Eta))
+            {
+                if (!DateTimeOffset.TryParse(request.Eta, System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.AssumeUniversal, out var parsed))
+                    return BadRequest(new { message = "The estimated time isn't a valid date and time." });
+                if ((request.Mentor || request.Mentee) && parsed < DateTimeOffset.UtcNow.AddMinutes(-1))
+                    return BadRequest(new { message = "The estimated time must be in the future." });
+                eta = parsed.UtcDateTime.ToString("o");
+            }
+
+            await _service.UpdateAsync(MaintenanceService.KeyMentor, request.Mentor ? "1" : "0");
+            await _service.UpdateAsync(MaintenanceService.KeyMentee, request.Mentee ? "1" : "0");
+            await _service.UpdateAsync(MaintenanceService.KeyEta, eta);
+            await _service.UpdateAsync(MaintenanceService.KeyMessage, message);
+            _maintenance.Invalidate();
+            return Ok(new { mentor = request.Mentor, mentee = request.Mentee, eta, message });
+        }
+
         [HttpPut("{key}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(string key, [FromBody] UpdateSettingRequest request)
@@ -147,6 +176,13 @@ namespace AstraMentoringAPI.Controllers
         public string CurrentPassword { get; set; } = string.Empty;
         public string NewPassword     { get; set; } = string.Empty;
         public string Token           { get; set; } = string.Empty;
+    }
+    public class MaintenanceUpdateRequest
+    {
+        public bool Mentor { get; set; }
+        public bool Mentee { get; set; }
+        public string? Eta { get; set; }
+        public string? Message { get; set; }
     }
     public class SettingsCodeRequest         { public string Code            { get; set; } = string.Empty; }
 }
