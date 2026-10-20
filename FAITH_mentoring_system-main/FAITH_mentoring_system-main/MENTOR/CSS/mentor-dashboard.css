@@ -366,3 +366,21 @@
 .calendar-overview-type.deadline { color:#9a3412; background:#ffedd5; }
 .calendar-overview-date { font-size:12px; color:#64748b; }
 @media(max-width:1100px) { .dashboard-updates-row { grid-template-columns:minmax(0,1fr); gap:16px; } }
+
+/* ===== Fill the space: paired cards share one height, footers sit at the bottom, empty states centre ===== */
+.dashboard-updates-row { align-items: stretch; }
+.dashboard-updates-row .announcements-card { align-self: stretch; }
+.announcements-card, .calendar-overview-card, .sessions-row > .card { display: flex; flex-direction: column; }
+.announcements-card .announcements-list,
+.calendar-overview-list,
+.sessions-row > .card .sessions-list { flex: 1 1 auto; min-height: 0; }
+.announcements-card .announcements-list { display: flex; flex-direction: column; }
+.announcements-card .announcements-list > .empty-state,
+.calendar-overview-list > .empty-state,
+.sessions-row > .card .sessions-list > .empty-state { margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.announcements-card .card-view-footer,
+.calendar-overview-card .card-view-footer,
+.sessions-row > .card .card-view-footer { margin-top: auto; }
+/* the calendar list grows with its card instead of stopping early */
+.calendar-overview-list { max-height: min(420px, 55vh); }
+.announcements-card .announcements-list { max-height: min(420px, 55vh); }
