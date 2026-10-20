@@ -22,6 +22,7 @@
     });
   }
 
+  window.refitLogin = function () { requestAnimationFrame(fit); setTimeout(fit, 80); };
   window.addEventListener('resize', fit);
   window.addEventListener('load', fit);
   if ('ResizeObserver' in window) sides.forEach(({ side }) => new ResizeObserver(fit).observe(side));

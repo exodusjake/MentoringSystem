@@ -291,6 +291,7 @@ function fpMsg(n, text, ok) {
   el.textContent = text;
   el.classList.toggle('success', !!ok);
   el.style.display = 'block';
+  fpRefit();
 }
 
 function fpTogglePw(id, btn) {
@@ -300,12 +301,15 @@ function fpTogglePw(id, btn) {
   btn.style.opacity = hide ? '1' : '';
 }
 
+function fpRefit() { if (typeof window.refitLogin === 'function') window.refitLogin(); }
+
 function fpShowCard(on) {
   document.getElementById('loginStep').style.display = on ? 'none' : '';
   document.getElementById('contactText').style.display = on ? 'none' : '';
   document.querySelector('.login-card > .card-title').style.display = on ? 'none' : '';
   document.querySelector('.login-card > .card-subtitle').style.display = on ? 'none' : '';
   document.getElementById('forgotStep').style.display = on ? '' : 'none';
+  fpRefit();
 }
 
 function showForgotStep() {
@@ -323,6 +327,7 @@ function forgotShowEmail() {
   document.getElementById('fpEmailPane').style.display = '';
   document.getElementById('fpResetPane').style.display = 'none';
   fpMsg(1, ''); fpMsg(2, '');
+  fpRefit();
   setTimeout(() => document.getElementById('fpEmail').focus(), 40);
 }
 
@@ -380,6 +385,7 @@ async function handleForgotSend(isResend) {
     document.getElementById('fpEmailShown').textContent = email;
     document.getElementById('fpEmailPane').style.display = 'none';
     document.getElementById('fpResetPane').style.display = '';
+    fpRefit();
     fpStartTimers();
     fpClearBoxes();
     if (isResend) fpMsg(2, 'A new code has been requested.', true);

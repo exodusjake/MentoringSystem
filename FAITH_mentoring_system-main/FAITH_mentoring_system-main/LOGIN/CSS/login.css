@@ -1013,3 +1013,21 @@ html[data-theme="dark"] .login-card:not(.contact-card) { border-color: rgba(255,
 #forgotStep .otp-notes { margin: 6px 0 12px; text-align: left; }
 #forgotStep .forgot-link:disabled { color: #94a3b8; cursor: default; text-decoration: none; }
 #forgotStep #fpResetPane, #forgotStep #fpEmailPane { animation: cardIn .35s cubic-bezier(.2, .7, .2, 1) both; }
+
+/* Forgot-password steps: compact so the whole card fits the window */
+#forgotStep .otp-icon { width: 46px; height: 46px; margin: 0 auto 6px; box-shadow: 0 0 0 3px #f3f6fd; }
+#forgotStep .otp-icon svg { width: 28px; height: 28px; }
+#forgotStep .card-title { font-size: 20px; margin-bottom: 4px; }
+#forgotStep .otp-sub { font-size: 12.5px; line-height: 1.45; margin-bottom: 10px; }
+#forgotStep .otp-boxes { gap: 6px; margin-bottom: 10px; }
+#forgotStep .otp-boxes input { width: 40px; height: 44px; font-size: 19px; }
+#forgotStep .form-group { margin-bottom: 8px; }
+#forgotStep .form-group label { font-size: 12.5px; margin-bottom: 4px; }
+#forgotStep .form-group input { padding: 9px 12px 9px 40px; font-size: 13.5px; }
+#forgotStep .input-icon { left: 12px; width: 16px; height: 16px; }
+#forgotStep .otp-notes { margin: 4px 0 8px; font-size: 12px; }
+#forgotStep .otp-notes li { margin-bottom: 3px; }
+#forgotStep .btn-signin { padding: 10px; font-size: 14px; margin-top: 2px; }
+#forgotStep .otp-once { margin-top: 8px; margin-bottom: 0; }
+#forgotStep .error-banner { margin: 2px 0 6px; padding: 8px 12px; font-size: 12.5px; }
+.login-card:has(#forgotStep:not([style*="none"])) { padding: 18px 26px !important; }
