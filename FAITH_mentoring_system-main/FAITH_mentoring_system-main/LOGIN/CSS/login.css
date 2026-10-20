@@ -994,3 +994,20 @@ html:not([data-theme="dark"]) .contact-card .form-group textarea {
 .login-card:not(.contact-card) .btn-signin { padding: 11px; font-size: 14.5px; }
 .login-card:not(.contact-card) .remember-me,
 .login-card:not(.contact-card) .forgot-link { font-size: 12.5px; }
+
+/* ===== Thin outline around the login form; home button turns blue on hover ===== */
+.login-card:not(.contact-card) {
+  border: 1px solid #dbe3ee !important;
+  border-radius: 16px !important;
+  padding: 30px 30px !important;
+}
+html[data-theme="dark"] .login-card:not(.contact-card) { border-color: rgba(255, 255, 255, .16) !important; }
+@media (max-height: 760px) { .login-card:not(.contact-card) { padding: 22px 26px !important; } }
+@media (max-width: 480px)  { .login-card:not(.contact-card) { padding: 22px 18px !important; } }
+
+.back-home:hover,
+html[data-theme="dark"] .back-home:hover {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
