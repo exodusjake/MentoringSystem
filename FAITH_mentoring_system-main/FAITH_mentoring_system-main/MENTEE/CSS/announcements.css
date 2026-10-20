@@ -41,7 +41,6 @@
 
 /* Deep link from Dashboard's Announcements widget — briefly highlights the card. */
 .announce-card.deep-link-highlight { background: var(--indigo-lt); box-shadow: 0 0 0 2px var(--indigo); }
-.announce-card--pinned { border-top: 3px solid #f59e0b !important; }
 .ann-pin-banner { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #d97706; padding: 0 0 6px; }
 .ann-pin-banner .ti { font-size: 13px; }
 
@@ -325,3 +324,15 @@
   .ann-tab-indicator, .ann-tab, .ann-tab i, .announcements-list { transition: none; }
   .announcements-list.ann-in > * { animation: none; }
 }
+
+/* Pinned: no coloured top line — just a small red pin on the card's corner. */
+.announce-card--pinned { position: relative; }
+.ann-pin-banner {
+  position: absolute; top: -10px; left: -10px; z-index: 2;
+  width: 28px; height: 28px; padding: 0; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0; line-height: 0; color: #dc2626;
+  background: #fff; border: 1px solid #fecaca; border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, .22);
+}
+.ann-pin-banner .ti { font-size: 15px; color: #dc2626; transform: rotate(-35deg); }
