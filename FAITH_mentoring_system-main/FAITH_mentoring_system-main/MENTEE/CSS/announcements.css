@@ -190,7 +190,6 @@
 [data-tooltip]:hover::after, [data-tooltip]:hover::before { opacity: 1; }
 
 /* ── EVALUATION CARD ── */
-.announce-card-evaluation { border-left: 4px solid #d97706; }
 .ann-avatar-amber { background: #d97706; }
 .ann-badge-evaluation { background: #fef3c7; color: #92400e; display: inline-flex; align-items: center; gap: 4px; }
 .ann-badge-evaluation i { font-size: 12px; }

@@ -50,7 +50,6 @@ html:has(#formsList) footer { flex-shrink: 0; }
   padding: 18px 22px; transition: box-shadow 0.15s;
 }
 .announce-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
-.announce-card--eval  { border-left: 4px solid #f59e0b; }
 .ann-pin-banner { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #d97706; padding: 0 0 8px; }
 
 /* card top row */
