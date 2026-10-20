@@ -55,7 +55,7 @@ async function apiRequest(endpoint, method = "GET", body = null, requiresAuth = 
 
         if (!response.ok) {
             if (response.status === 413) throw new Error('File is too large. Please choose a smaller file within the upload limit.');
-            if (response.status === 429 && endpoint.toLowerCase() === 'auth/login') {
+            if (response.status === 429 && ['auth/login', 'auth/verify-login-code'].includes(endpoint.toLowerCase())) {
                 throw new Error('Too many login attempts. Please wait 1 minute before trying again.');
             }
             // An expired/invalid token on an authenticated request has no
@@ -75,6 +75,7 @@ async function apiRequest(endpoint, method = "GET", body = null, requiresAuth = 
             const errorData = await response.json().catch(() => ({}));
             const error = new Error(errorData.message || `Error ${response.status}`);
             error.status = response.status;
+            error.restart = errorData.restart === true;
             throw error;
         }
 
