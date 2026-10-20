@@ -32,6 +32,11 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>E-signed logsheets and reports</li>
       </ul>
 
+      <button type="button" class="slide-btn" id="slideBtn" aria-controls="contactPanel" aria-expanded="false">
+        <span class="slide-btn-label" id="slideBtnLabel">Contact us</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </button>
+
       <!-- decorative shapes -->
       <span class="shape s1" aria-hidden="true"></span>
       <span class="shape s2" aria-hidden="true"></span>
@@ -150,8 +155,65 @@
         <a href="/LANDING/HTML/terms.html">Terms of Service</a>
         <a href="/LANDING/HTML/privacy.html">Privacy Policy</a>
         <a href="/LANDING/HTML/landing.html#faq">Help</a>
+        <a href="#" class="mobile-contact-link" data-contact-toggle>Contact us</a>
       </div>
 
+    </div>
+
+    <!-- Contact panel (revealed when the blue panel slides right) -->
+    <div class="right-side contact-side" id="contactPanel" aria-hidden="true" inert>
+
+      <div class="right-logo">
+        <img src="/IMAGES/LOGO.png" alt="Astra Mentoring" class="right-logo-img"/>
+      </div>
+
+      <div class="login-card contact-card">
+        <h1 class="card-title">Contact Us</h1>
+        <p class="card-subtitle">Questions, concerns or feedback? Send the Guidance Office a message.</p>
+
+        <form id="contactForm" novalidate>
+          <div class="contact-row">
+            <div class="form-group">
+              <label for="cName">Full Name</label>
+              <input type="text" id="cName" maxlength="100" autocomplete="name" placeholder="Juan Dela Cruz"/>
+            </div>
+            <div class="form-group">
+              <label for="cEmail">Email Address</label>
+              <input type="email" id="cEmail" maxlength="150" autocomplete="email" placeholder="you@email.com"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cTopic">Topic</label>
+            <select id="cTopic">
+              <option>General inquiry</option>
+              <option>Account or login help</option>
+              <option>Report a problem</option>
+              <option>Feedback or suggestion</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cMessage">Message <span class="char-count" id="cCount">0 / 2000</span></label>
+            <textarea id="cMessage" rows="4" maxlength="2000" placeholder="How can we help you?"></textarea>
+          </div>
+
+          <!-- honeypot: real users never see or fill this -->
+          <div class="hp-field" aria-hidden="true"><input type="text" id="cWebsite" tabindex="-1" autocomplete="off"/></div>
+
+          <div class="error-banner" id="contactBanner" style="display:none;"></div>
+
+          <button type="submit" class="btn-signin" id="contactBtn">Send Message</button>
+        </form>
+      </div>
+
+      <div class="bottom-links">
+        <a href="/LANDING/HTML/terms.html">Terms of Service</a>
+        <a href="/LANDING/HTML/privacy.html">Privacy Policy</a>
+        <a href="/LANDING/HTML/landing.html#faq">Help</a>
+        <a href="#" class="mobile-contact-link" data-contact-toggle>Back to log in</a>
+      </div>
     </div>
 
   </div>
@@ -177,6 +239,7 @@
 <script src="../../config.js"></script>
 <script src="../../apiClient.js"></script>
 <script src="/LOGIN/JS/login.js"></script>
+<script src="/LOGIN/JS/contact.js"></script>
 <script src="/LOGIN/JS/fit-screen.js"></script>
 <script src="/LANDING/JS/effects.js"></script>
 

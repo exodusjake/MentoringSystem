@@ -40,6 +40,7 @@ namespace AstraMentoring_Backend.Services
         private readonly string _smtpUser;
         private readonly string _smtpPassword;
         private readonly string _smtpFrom;
+        private readonly string _contactTo;
 
         public EmailService(IHttpClientFactory httpClientFactory, IConfiguration config, ILogger<EmailService> logger)
         {
@@ -57,6 +58,7 @@ namespace AstraMentoring_Backend.Services
             _smtpUser        = config["Smtp:User"] ?? string.Empty;
             _smtpPassword    = (config["Smtp:Password"] ?? string.Empty).Replace(" ", "");
             _smtpFrom        = config["Smtp:From"] ?? _smtpUser;
+            _contactTo       = config["Contact:To"] ?? string.Empty;
         }
 
 
@@ -215,6 +217,29 @@ namespace AstraMentoring_Backend.Services
             var html = BuildEmailHtml("Your sign-in code", body);
             return await SendEmailAsync(recipientEmail, _brandName, "Your AstraMentoring sign-in code", html);
         }
+
+        // Contact-us form on the login page: forwards the visitor's message to
+        // the Guidance Office inbox (Contact:To, else the sending address).
+        public async Task<bool> SendContactInquiryAsync(string name, string senderEmail, string topic, string message)
+        {
+            var to = FirstNonEmpty(_contactTo, _smtpUser, _senderEmail);
+            if (string.IsNullOrWhiteSpace(to))
+            {
+                _logger.LogWarning("EmailService: no Contact:To / sender address configured — contact inquiry dropped.");
+                return false;
+            }
+
+            var body = $@"
+                <p><strong>From:</strong> {Enc(name)} (<a href=""mailto:{Enc(senderEmail)}"">{Enc(senderEmail)}</a>)</p>
+                <p><strong>Topic:</strong> {Enc(topic)}</p>
+                <p style=""white-space:pre-wrap;border-left:3px solid #e5e7eb;padding-left:12px;"">{Enc(message)}</p>
+                <p style=""color:#6b7280;font-size:12px;"">Sent from the AstraMentoring login page. Reply directly to the sender's email address above.</p>";
+            var html = BuildEmailHtml("New inquiry", body);
+            return await SendEmailAsync(to, _brandName, $"[Inquiry] {topic} — {name}", html);
+        }
+
+        private static string FirstNonEmpty(params string[] values)
+            => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v)) ?? string.Empty;
 
         // ── Announcement ─────────────────────────────────────────────────
         public async Task NotifyNewAnnouncementAsync(Announcement data)

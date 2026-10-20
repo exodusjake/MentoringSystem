@@ -749,3 +749,87 @@ html:not([data-theme="dark"]) .back-home {
   backdrop-filter: blur(10px);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
 }
+
+/* ===== Sliding Contact panel =====
+   The blue panel is an overlay that slides from the left to the right edge;
+   the login form (right) and the contact form (left) swap underneath it. */
+.wrapper { position: relative; }
+.left-side {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 38%; z-index: 3;
+  transition: transform .7s cubic-bezier(.65, 0, .25, 1);
+  will-change: transform;
+}
+.wrapper.show-contact .left-side { transform: translateX(calc(100% * 62 / 38)); }
+
+.right-side:not(.contact-side), .contact-side {
+  position: absolute; top: 0; bottom: 0; width: 62%;
+  transition: opacity .45s ease, transform .7s cubic-bezier(.65, 0, .25, 1);
+}
+.right-side:not(.contact-side) { right: 0; }
+.contact-side { left: 0; opacity: 0; transform: translateX(-12%); pointer-events: none; }
+.wrapper.show-contact .contact-side { opacity: 1; transform: none; pointer-events: auto; }
+.wrapper.show-contact .right-side:not(.contact-side) { opacity: 0; transform: translateX(12%); pointer-events: none; }
+
+/* button inside the blue panel */
+.slide-btn {
+  margin-top: 26px; display: inline-flex; align-items: center; gap: 10px;
+  padding: 11px 22px; border-radius: 999px; cursor: pointer;
+  font-family: 'Poppins', sans-serif; font-size: 13.5px; font-weight: 600; color: #fff;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.45);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background .2s, transform .15s, border-color .2s;
+}
+.slide-btn svg { width: 16px; height: 16px; transition: transform .25s; }
+.slide-btn:hover { background: rgba(255,255,255,.22); border-color: #f0b429; }
+.slide-btn:hover svg { transform: translateX(3px); }
+.slide-btn:active { transform: scale(.96); }
+.slide-btn:focus-visible { outline: 2px solid #f0b429; outline-offset: 3px; }
+.wrapper.show-contact .slide-btn svg { transform: scaleX(-1); }
+.wrapper.show-contact .slide-btn:hover svg { transform: scaleX(-1) translateX(3px); }
+
+/* contact form */
+.contact-card { max-width: 460px; padding: 26px 28px; }
+.contact-card .card-subtitle { margin-bottom: 14px; }
+.contact-card .form-group { margin-bottom: 11px; }
+.contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.contact-card .form-group select,
+.contact-card .form-group textarea {
+  width: 100%; padding: 10px 14px; font-family: 'Poppins', sans-serif; font-size: 14px;
+  color: #1e293b; background-color: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px;
+  outline: none; transition: border-color .2s;
+}
+.contact-card .form-group textarea { resize: none; line-height: 1.45; }
+.contact-card .form-group select:focus,
+.contact-card .form-group textarea:focus { border-color: #3b82f6; background-color: #fff; }
+.contact-card .form-group input { padding: 10px 14px; }
+.char-count { float: right; font-weight: 400; font-size: 11.5px; color: #94a3b8; }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.error-banner.success { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.mobile-contact-link { display: none; }
+.contact-side .error-banner { margin-bottom: 10px; }
+
+html:not([data-theme="dark"]) .contact-card .form-group select,
+html:not([data-theme="dark"]) .contact-card .form-group textarea {
+  background-color: rgba(255,255,255,.28); border: 1.5px solid rgba(255,255,255,.75);
+  box-shadow: inset 0 1px 3px rgba(11,26,92,.10);
+}
+html[data-theme="dark"] .contact-card .form-group select,
+html[data-theme="dark"] .contact-card .form-group textarea { background-color: #1a2338; color: #f1f5f9; border-color: #3a486a; }
+html[data-theme="dark"] .contact-card .form-group textarea::placeholder { color: #64748b; }
+html[data-theme="dark"] .error-banner.success { background: #0f2a1c; border-color: #14532d; color: #86efac; }
+
+@media (max-height: 760px) { .contact-card { padding: 18px 22px; } }
+
+/* Small screens: the blue panel is hidden, so the two forms simply swap. */
+@media (max-width: 900px) {
+  .right-side:not(.contact-side), .contact-side { position: relative; width: 100%; transform: none; transition: opacity .3s; }
+  .contact-side { display: none; opacity: 1; pointer-events: auto; }
+  .wrapper.show-contact .contact-side { display: flex; }
+  .wrapper.show-contact .right-side:not(.contact-side) { display: none; }
+  .mobile-contact-link { display: inline; }
+  .contact-row { grid-template-columns: 1fr; gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .left-side, .right-side:not(.contact-side), .contact-side { transition: none !important; }
+}

@@ -285,7 +285,7 @@ function closeForgotModal(e) {
 
 // ── Keyboard shortcut ──────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') { if (loginChallengeId) handleVerifyCode(); else handleSignIn(); }
+  if (e.key === 'Enter') { if (e.target.closest && e.target.closest('.contact-side')) return; if (loginChallengeId) handleVerifyCode(); else handleSignIn(); }
   if (e.key === 'Escape') closeForgotModal();
 });
 
