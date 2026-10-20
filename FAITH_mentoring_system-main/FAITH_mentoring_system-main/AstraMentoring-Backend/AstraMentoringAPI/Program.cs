@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 // IP so a whole class on one Wi-Fi can still sign in. Applies to Auth/login only.
 builder.Services.AddSingleton<AstraMentoringAPI.LoginAttemptTracker>();
 builder.Services.AddSingleton<AstraMentoringAPI.LoginCodeStore>();   // emailed 2nd-step login codes
+builder.Services.AddSingleton<AstraMentoringAPI.PasswordChangeStore>();   // signed-in change-password codes
 builder.Services.AddSingleton<AstraMentoringAPI.PasswordResetStore>();   // emailed forgot-password codes
 builder.Services.AddRateLimiter(options =>
 {

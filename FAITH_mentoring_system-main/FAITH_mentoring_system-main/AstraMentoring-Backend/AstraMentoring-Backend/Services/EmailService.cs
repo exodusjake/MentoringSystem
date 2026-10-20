@@ -234,6 +234,23 @@ namespace AstraMentoring_Backend.Services
             return await SendEmailAsync(recipientEmail, _brandName, "Reset your AstraMentoring password", html);
         }
 
+        // Signed-in "change my password": code the user types on the Account page.
+        public async Task<bool> SendPasswordChangeCodeAsync(string recipientEmail, string? firstName, string code, int validMinutes)
+        {
+            if (!SmtpConfigured && (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail)) && _isDevelopment)
+            {
+                _logger.LogWarning("EmailService (Development): password change code for {Email} is {Code}", recipientEmail, code);
+                return true;
+            }
+
+            var html = BuildCodeEmailHtml(firstName, code, validMinutes, "Confirm your password change",
+                "Enter the code below on the Account page to confirm that you want to change your AstraMentoring password.",
+                "Never share this code with anyone.",
+                "If you didn’t ask to change your password, ignore this email and consider telling the Guidance Office — someone may know your current password.",
+                "a password change was requested from your AstraMentoring account");
+            return await SendEmailAsync(recipientEmail, _brandName, "Confirm your AstraMentoring password change", html);
+        }
+
         // Branded layout for the emailed codes: navy header with the logo, white
         // card with the code, a help box, and a footer with site links. Table
         // based with inline styles so it renders in Gmail/Outlook/mobile clients.

@@ -126,6 +126,7 @@ function openEditModal() {
   });
   document.getElementById('editError').style.display = 'none';
   clearFieldErrors();
+  resetPwFlow();
   document.getElementById('editModal').style.display = 'flex';
 }
 
@@ -155,6 +156,118 @@ function showEditError(msg) {
   el.style.display = 'block';
 }
 
+// ── CHANGE PASSWORD: verify current password -> emailed code -> unlock new password ──
+let pwChangeToken = null;
+let pwCodeTimer = null;
+
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function setPwIndicator(state, html) {
+  const box = document.getElementById('codeIndicator');
+  box.className = 'code-indicator' + (state ? ' ' + state : '');
+  document.getElementById('codeIndicatorText').innerHTML = html;
+  box.querySelector('i').className = 'ti ' + ({ sent: 'ti-mail-check', ok: 'ti-circle-check', err: 'ti-alert-circle' }[state] || 'ti-mail');
+}
+
+function setNewPwLocked(locked) {
+  ['editPassword', 'editPasswordConfirm'].forEach(id => {
+    const el = document.getElementById(id);
+    el.disabled = locked;
+    if (locked) { el.value = ''; el.type = 'password'; }
+  });
+  document.getElementById('newPwGroups').classList.toggle('locked', locked);
+  document.getElementById('pwLockText').textContent = locked
+    ? 'Locked until your current password is verified.'
+    : 'Unlocked — choose your new password.';
+}
+
+function resetPwFlow() {
+  pwChangeToken = null;
+  clearInterval(pwCodeTimer);
+  const cur = document.getElementById('editCurrentPassword');
+  cur.disabled = false;
+  const send = document.getElementById('btnSendCode');
+  send.disabled = false; send.textContent = 'Send Code';
+  const code = document.getElementById('editPwCode');
+  code.value = ''; code.disabled = true;
+  document.getElementById('btnVerifyCode').disabled = true;
+  document.getElementById('btnVerifyCode').textContent = 'Verify';
+  document.getElementById('codeError').textContent = '';
+  setPwIndicator('', 'Enter your current password and tap <b>Send Code</b> — we’ll email a 6-digit verification code to your account email.');
+  setNewPwLocked(true);
+}
+
+function startCodeCooldown(seconds) {
+  const btn = document.getElementById('btnSendCode');
+  let left = Math.max(1, seconds | 0);
+  btn.disabled = true;
+  clearInterval(pwCodeTimer);
+  const tick = () => {
+    btn.textContent = left > 0 ? `Resend (${left}s)` : 'Resend Code';
+    if (left-- <= 0) { clearInterval(pwCodeTimer); btn.disabled = false; }
+  };
+  tick();
+  pwCodeTimer = setInterval(tick, 1000);
+}
+
+async function sendPwCode() {
+  clearFieldErrors();
+  document.getElementById('codeError').textContent = '';
+  const current = document.getElementById('editCurrentPassword').value;
+  if (!current) { showFieldError('currentPwError', 'Please enter your current password.'); return; }
+
+  const btn = document.getElementById('btnSendCode');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res = await apiRequest('Auth/password-code', 'POST', { currentPassword: current }, true);
+    const code = document.getElementById('editPwCode');
+    code.disabled = false; code.value = '';
+    document.getElementById('btnVerifyCode').disabled = false;
+    code.focus();
+    setPwIndicator('sent', `Verification code sent to <b>${escHtml(res?.email || 'your email')}</b>. It expires in 10 minutes — check your spam folder if you don’t see it.`);
+    startCodeCooldown(res?.resendAfterSeconds || 45);
+  } catch (err) {
+    const wait = err.status === 429 ? parseInt((err.message.match(/\d+/) || [15])[0], 10) : 0;
+    showFieldError('currentPwError', err.message || 'Could not send the code. Please try again.');
+    if (wait) startCodeCooldown(wait);
+    else { btn.disabled = false; btn.textContent = 'Send Code'; }
+  }
+}
+
+async function verifyPwCode() {
+  const errEl = document.getElementById('codeError');
+  errEl.textContent = '';
+  const code = document.getElementById('editPwCode').value.trim();
+  if (!/^\d{6}$/.test(code)) { errEl.textContent = 'Enter the 6-digit code from your email.'; return; }
+
+  const btn = document.getElementById('btnVerifyCode');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  try {
+    const res = await apiRequest('Auth/password-code/verify', 'POST', { code }, true);
+    pwChangeToken = res?.token || null;
+    clearInterval(pwCodeTimer);
+    document.getElementById('editCurrentPassword').disabled = true;
+    document.getElementById('btnSendCode').disabled = true;
+    document.getElementById('btnSendCode').textContent = 'Verified';
+    document.getElementById('editPwCode').disabled = true;
+    btn.textContent = 'Verified';
+    setPwIndicator('ok', '<b>Verified!</b> Your identity is confirmed — you can now choose a new password.');
+    setNewPwLocked(false);
+    document.getElementById('editPassword').focus();
+  } catch (err) {
+    errEl.textContent = err.message || 'Could not verify the code.';
+    btn.disabled = false; btn.textContent = 'Verify';
+    if (err.restart) {
+      document.getElementById('editPwCode').value = '';
+      setPwIndicator('err', 'That code can no longer be used. Tap <b>Send Code</b> to get a new one.');
+      const send = document.getElementById('btnSendCode');
+      clearInterval(pwCodeTimer); send.disabled = false; send.textContent = 'Send Code';
+    }
+  }
+}
+
 function confirmSave() {
   document.getElementById('editError').style.display = 'none';
   clearFieldErrors();
@@ -163,11 +276,11 @@ function confirmSave() {
   const newPw     = document.getElementById('editPassword').value;
   const confirmPw = document.getElementById('editPasswordConfirm').value;
 
-  if (currentPw || newPw || confirmPw) {
+  if (newPw || confirmPw) {
     let hasError = false;
-    if (!currentPw)              { showFieldError('currentPwError', 'Please enter your current password.'); hasError = true; }
+    if (!pwChangeToken)          { showFieldError('currentPwError', 'Verify your current password with the emailed code first.'); hasError = true; }
     if (!newPw)                  { showFieldError('newPwError', 'Please enter a new password.'); hasError = true; }
-    else if (newPw.length < 8)   { showFieldError('newPwError', 'Must be at least 8 characters.'); hasError = true; }
+    else if (newPw.length < 8 || !/[A-Za-z]/.test(newPw) || !/\d/.test(newPw)) { showFieldError('newPwError', 'Use at least 8 characters with a letter and a number.'); hasError = true; }
     if (newPw && !confirmPw)     { showFieldError('confirmPwError', 'Please confirm your new password.'); hasError = true; }
     else if (newPw && confirmPw && newPw !== confirmPw) { showFieldError('confirmPwError', 'Passwords do not match.'); hasError = true; }
     if (hasError) return;
@@ -195,9 +308,12 @@ async function saveProfile() {
       contactNumber:   contact || null,
       studentNumber:   currentUser.studentNumber || currentUser.StudentNumber || null,
       role:            currentUser.role      || currentUser.Role,
-      CurrentPassword: currentPw || null,
-      NewPassword:     newPw     || null,
     }, true);
+
+    if (pwChangeToken && newPw) {
+      await apiRequest('Auth/change-password', 'POST', { currentPassword: currentPw, newPassword: newPw, token: pwChangeToken }, true);
+      pwChangeToken = null;
+    }
 
     currentUser.contactNumber = contact;
     currentUser.ContactNumber = contact;

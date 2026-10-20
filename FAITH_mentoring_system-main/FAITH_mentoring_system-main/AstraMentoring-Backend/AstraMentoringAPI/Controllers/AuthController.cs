@@ -18,8 +18,9 @@ namespace AstraMentoringAPI.Controllers
         private readonly LoginCodeStore _codes;
         private readonly EmailService _email;
         private readonly PasswordResetStore _resets;
+        private readonly PasswordChangeStore _changes;
 
-        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email, PasswordResetStore resets)
+        public AuthController(AuthService service, IConfiguration config, LoginAttemptTracker attempts, LoginCodeStore codes, EmailService email, PasswordResetStore resets, PasswordChangeStore changes)
         {
             _service = service;
             _config = config;
@@ -27,6 +28,7 @@ namespace AstraMentoringAPI.Controllers
             _codes = codes;
             _email = email;
             _resets = resets;
+            _changes = changes;
         }
 
         // Creates a user with an ARBITRARY role (including Admin/Head) from the
@@ -256,6 +258,76 @@ namespace AstraMentoringAPI.Controllers
             await _service.SetPasswordAsync(user.UserID, pw);
             _attempts.RecordSuccess(user.Email);
             return Ok(new { message = "Your password has been reset. You can now log in." });
+        }
+
+        private int CallerId => int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+
+        public class PasswordCodeRequest { public string CurrentPassword { get; set; } = string.Empty; }
+        public class PasswordCodeVerifyRequest { public string Code { get; set; } = string.Empty; }
+        public class ChangePasswordRequest
+        {
+            public string CurrentPassword { get; set; } = string.Empty;
+            public string NewPassword { get; set; } = string.Empty;
+            public string Token { get; set; } = string.Empty;
+        }
+
+        // Signed-in change password, step 1: the current password is checked and
+        // a code is emailed to the account's address.
+        [HttpPost("password-code")]
+        [Authorize]
+        [EnableRateLimiting("login")]
+        public async Task<IActionResult> SendPasswordChangeCode([FromBody] PasswordCodeRequest request)
+        {
+            var user = _service.GetUserById(CallerId);
+            if (user == null || !user.IsActive) return Unauthorized();
+            if (string.IsNullOrEmpty(request.CurrentPassword) || !_service.VerifyPassword(request.CurrentPassword, user.PasswordHash))
+                return BadRequest(new { message = "Current password is incorrect." });
+
+            var code = _changes.TryCreateCode(user.UserID, out var retryAfter);
+            if (code == null)
+                return StatusCode(429, new { message = $"A code was just sent. You can request another in {Math.Ceiling(retryAfter.TotalSeconds)} seconds.", retryAfterSeconds = (int)Math.Ceiling(retryAfter.TotalSeconds) });
+
+            if (!await _email.SendPasswordChangeCodeAsync(user.Email, user.FirstName, code, (int)PasswordChangeStore.CodeLifetime.TotalMinutes))
+                return StatusCode(503, new { message = "We couldn't send the verification code. Please try again shortly." });
+
+            return Ok(new { message = "Verification code sent.", email = MaskEmail(user.Email), resendAfterSeconds = (int)PasswordChangeStore.ResendCooldown.TotalSeconds });
+        }
+
+        // Step 2: the emailed code is exchanged for a short-lived token.
+        [HttpPost("password-code/verify")]
+        [Authorize]
+        [EnableRateLimiting("login")]
+        public IActionResult VerifyPasswordChangeCode([FromBody] PasswordCodeVerifyRequest request)
+        {
+            var status = _changes.VerifyCode(CallerId, request.Code, out var token);
+            return status switch
+            {
+                PasswordChangeStore.VerifyStatus.Ok => Ok(new { token }),
+                PasswordChangeStore.VerifyStatus.Invalid => BadRequest(new { message = "Incorrect code. Please check your email and try again." }),
+                PasswordChangeStore.VerifyStatus.TooManyAttempts => BadRequest(new { message = "Too many incorrect codes. Please request a new one.", restart = true }),
+                _ => BadRequest(new { message = "That code has expired. Please request a new one.", restart = true })
+            };
+        }
+
+        // Step 3: the new password is only accepted with the token from step 2.
+        [HttpPost("change-password")]
+        [Authorize]
+        [EnableRateLimiting("login")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var user = _service.GetUserById(CallerId);
+            if (user == null || !user.IsActive) return Unauthorized();
+
+            var pw = request.NewPassword ?? string.Empty;
+            if (pw.Length < 8 || pw.Length > 100 || !pw.Any(char.IsLetter) || !pw.Any(char.IsDigit))
+                return BadRequest(new { message = "Password must be at least 8 characters and include a letter and a number." });
+            if (!_service.VerifyPassword(request.CurrentPassword ?? string.Empty, user.PasswordHash))
+                return BadRequest(new { message = "Current password is incorrect." });
+            if (!_changes.ConsumeToken(user.UserID, request.Token))
+                return BadRequest(new { message = "Verification expired. Please verify your current password again.", restart = true });
+
+            await _service.SetPasswordAsync(user.UserID, pw);
+            return Ok(new { message = "Password changed." });
         }
 
         private static object ToLoginPayload(LoginResponse r) => new { token = r.Token, role = r.Role, user = r.User };
