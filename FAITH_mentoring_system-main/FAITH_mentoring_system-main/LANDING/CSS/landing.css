@@ -290,9 +290,3 @@ footer { background: var(--navy-deep); color: #b8c4f0; padding: 56px 0 0; font-s
   .toc { position: static; }
 }
 @media (max-width: 520px) { .legal table { display: block; overflow-x: auto; } }
-
-/* Transparent logo: no card or circle behind it. */
-.logo-card { background: none; box-shadow: none; padding: 0; }
-.logo-card img { width: 300px; filter: drop-shadow(0 0 22px rgba(255, 255, 255, .30)) drop-shadow(0 16px 30px rgba(0, 0, 0, .28)); }
-.brand img, .foot-brand img { background: none; border-radius: 0; padding: 0; filter: drop-shadow(0 0 6px rgba(255, 255, 255, .35)); }
-@media (max-width: 900px) { .logo-card img { width: 230px; } }
