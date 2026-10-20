@@ -5,7 +5,6 @@
   const loginPanel = document.querySelector('.right-side:not(.contact-side)');
   const contactPanel = document.getElementById('contactPanel');
   const slideBtn = document.getElementById('slideBtn');
-  const slideLabel = document.getElementById('slideBtnLabel');
   if (!wrapper || !contactPanel || !slideBtn) return;
 
   function setOpen(open) {
@@ -14,7 +13,6 @@
     loginPanel.toggleAttribute('inert', open);
     contactPanel.setAttribute('aria-hidden', String(!open));
     slideBtn.setAttribute('aria-expanded', String(open));
-    slideLabel.textContent = open ? 'Back to log in' : 'Contact us';
     if (open) setTimeout(() => document.getElementById('cName').focus({ preventScroll: true }), 450);
   }
   const isOpen = () => wrapper.classList.contains('show-contact');

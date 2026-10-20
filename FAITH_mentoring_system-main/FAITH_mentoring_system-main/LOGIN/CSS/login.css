@@ -862,3 +862,38 @@ html[data-theme="dark"] .error-banner.success { background: #0f2a1c; border-colo
 html[data-theme="dark"] .forgot-hint { color: #64748b; }
 html[data-theme="dark"] .forgot-body strong { color: #f1f5f9; }
 .forgot-body strong { color: #1e293b; word-break: break-all; }
+
+/* ===== Layout update: no logo on the form side, bigger login card ===== */
+/* "Login now" only appears once the blue panel has slid to the right. */
+.slide-btn { display: none; }
+.wrapper.show-contact .slide-btn { display: inline-flex; }
+
+/* With the logo gone, centre the card (and footer links) vertically. */
+.right-side > .login-card { margin-top: auto; }
+
+.login-card:not(.contact-card) {
+  max-width: 470px;
+  padding: 44px 42px;
+  border-radius: 20px;
+}
+.login-card:not(.contact-card) .card-title { font-size: 28px; }
+.login-card:not(.contact-card) .card-subtitle { font-size: 14px; margin-bottom: 26px; }
+.login-card:not(.contact-card) .form-group { margin-bottom: 18px; }
+.login-card:not(.contact-card) .form-group label { font-size: 14px; margin-bottom: 8px; }
+.login-card:not(.contact-card) .form-group input { padding: 14px 16px; font-size: 15px; border-radius: 10px; }
+.login-card:not(.contact-card) .input-wrap input { padding-left: 46px; }
+.login-card:not(.contact-card) .input-icon { left: 15px; width: 18px; height: 18px; }
+.login-card:not(.contact-card) .btn-signin { padding: 15px; font-size: 16px; border-radius: 10px; }
+.login-card:not(.contact-card) .remember-me,
+.login-card:not(.contact-card) .forgot-link { font-size: 14px; }
+
+/* "Cannot log in? Contact us" — the link looks like "Forgot Password?" */
+.contact-text .forgot-link { font-size: 13px; vertical-align: baseline; }
+
+@media (max-height: 760px) {
+  .login-card:not(.contact-card) { padding: 30px 34px; }
+  .login-card:not(.contact-card) .form-group { margin-bottom: 14px; }
+}
+@media (max-width: 480px) {
+  .login-card:not(.contact-card) { padding: 28px 22px; }
+}
