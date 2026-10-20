@@ -231,10 +231,14 @@ namespace AstraMentoring_Backend.Services
 <div style=""background:#f1f5f9;padding:24px 12px;{font}"">
   <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""max-width:560px;margin:0 auto;"">
     <tr>
-      <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:28px 24px 22px;text-align:center;"">
-        <img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""96"" style=""display:inline-block;border:0;height:auto;max-width:96px;"" />
-        <div style=""color:#ffffff;font-size:15px;font-weight:700;letter-spacing:.04em;margin-top:10px;{font}"">ASTRA MENTORING</div>
-        <div style=""color:#b6c4f2;font-size:12px;margin-top:2px;{font}"">FAITH Colleges</div>
+      <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:14px 22px;"">
+        <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto;""><tr>
+          <td style=""padding-right:12px;vertical-align:middle;""><img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""44"" style=""display:block;border:0;height:auto;max-width:44px;"" /></td>
+          <td style=""vertical-align:middle;text-align:left;"">
+            <div style=""color:#ffffff;font-size:14px;font-weight:700;letter-spacing:.05em;{font}"">ASTRA MENTORING</div>
+            <div style=""color:#b6c4f2;font-size:11px;margin-top:1px;{font}"">FAITH Colleges</div>
+          </td>
+        </tr></table>
       </td>
     </tr>
     <tr><td style=""background:#f0b429;height:4px;line-height:4px;font-size:0;"">&nbsp;</td></tr>
@@ -258,15 +262,17 @@ namespace AstraMentoring_Backend.Services
         <a href=""{baseUrl}"" style=""font-size:14px;color:#b7791f;text-decoration:underline;{font}"">We’re here, ready to talk</a>
       </td>
     </tr>
+    <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
     <tr>
-      <td style=""padding:22px 12px 4px;text-align:center;font-size:12px;line-height:1.7;color:#64748b;{font}"">
-        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Home</a> &nbsp;-&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Terms</a> &nbsp;-&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Privacy</a> &nbsp;-&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Help</a>
-        <p style=""margin:14px 0 0;"">You received this email because a sign-in was started with this address on AstraMentoring.</p>
-        <p style=""margin:8px 0 0;"">This is an automated message — please don’t reply.</p>
-        <p style=""margin:8px 0 0;color:#94a3b8;"">AstraMentoring · FAITH Colleges</p>
+      <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
+        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
+        <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
+        <p style=""margin:0;"">You received this email because a sign-in was started with this address on AstraMentoring.</p>
+        <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
+        <p style=""margin:12px 0 0;color:#ffffff;font-weight:700;"">AstraMentoring · FAITH Colleges</p>
       </td>
     </tr>
   </table>
