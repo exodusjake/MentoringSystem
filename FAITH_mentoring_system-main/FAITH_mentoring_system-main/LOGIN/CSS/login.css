@@ -961,3 +961,6 @@ html[data-theme="dark"] .back-home:hover {
   border-color: #2563eb !important;
   color: #ffffff !important;
 }
+
+/* Left panel logo: same logo and size, just no white plate behind it. */
+.left-logo-img { background: none; border-radius: 0; padding: 0; }
