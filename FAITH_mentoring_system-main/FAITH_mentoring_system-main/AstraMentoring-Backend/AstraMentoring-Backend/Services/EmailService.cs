@@ -209,13 +209,68 @@ namespace AstraMentoring_Backend.Services
                 return true;
             }
 
-            var body = $@"
-                <p>Hi {Enc(firstName)},</p>
-                <p>Use this code to finish signing in to AstraMentoring:</p>
-                <p style=""font-size:30px;font-weight:700;letter-spacing:8px;color:#111827;margin:18px 0;"">{code}</p>
-                <p>This code expires in {validMinutes} minutes. If you did not try to sign in, you can ignore this email — your password may need changing.</p>";
-            var html = BuildEmailHtml("Your sign-in code", body);
+            var html = BuildLoginCodeEmailHtml(firstName, code, validMinutes);
             return await SendEmailAsync(recipientEmail, _brandName, "Your AstraMentoring sign-in code", html);
+        }
+
+        // Branded layout for the sign-in code: navy header with the logo, white
+        // card with the code, a help box, and a footer with site links. Table
+        // based with inline styles so it renders in Gmail/Outlook/mobile clients.
+        // Colours follow the app: navy #0b1a5c, blue #2563eb, gold #f0b429.
+        private string BuildLoginCodeEmailHtml(string? firstName, string code, int validMinutes)
+        {
+            var baseUrl = _frontendBaseUrl;
+            var logoUrl = baseUrl + "/IMAGES/LOGO.png";
+            const string font = "font-family:Arial,Helvetica,sans-serif;";
+
+            var digits = new StringBuilder();
+            foreach (var ch in code)
+                digits.Append($@"<td style=""width:44px;height:54px;background:#eef3ff;border:1px solid #c7d6fb;border-radius:8px;text-align:center;font-size:26px;font-weight:700;color:#0b1a5c;{font}"">{Enc(ch.ToString())}</td><td style=""width:8px;""></td>");
+
+            return $@"
+<div style=""background:#f1f5f9;padding:24px 12px;{font}"">
+  <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""max-width:560px;margin:0 auto;"">
+    <tr>
+      <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:28px 24px 22px;text-align:center;"">
+        <img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""96"" style=""display:inline-block;border:0;height:auto;max-width:96px;"" />
+        <div style=""color:#ffffff;font-size:15px;font-weight:700;letter-spacing:.04em;margin-top:10px;{font}"">ASTRA MENTORING</div>
+        <div style=""color:#b6c4f2;font-size:12px;margin-top:2px;{font}"">FAITH Colleges</div>
+      </td>
+    </tr>
+    <tr><td style=""background:#f0b429;height:4px;line-height:4px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#ffffff;padding:34px 32px 30px;"">
+        <h1 style=""margin:0 0 14px;text-align:center;font-size:26px;color:#0b1a5c;{font}"">Verify your email</h1>
+        <p style=""margin:0 0 6px;font-size:15px;line-height:1.6;color:#475569;{font}"">Hi {Enc(firstName)},</p>
+        <p style=""margin:0 0 22px;font-size:15px;line-height:1.6;color:#475569;{font}"">Use the code below to finish signing in to AstraMentoring.</p>
+
+        <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto 14px;""><tr>{digits}</tr></table>
+
+        <p style=""margin:0 0 22px;text-align:center;font-size:13px;color:#64748b;{font}"">This code expires in <strong style=""color:#0b1a5c;"">{validMinutes} minutes</strong>. You only need to do this once.</p>
+
+        <p style=""margin:0;font-size:14px;line-height:1.6;color:#475569;{font}"">If you didn’t try to sign in, you can safely ignore this email. If you keep getting these, please tell the Guidance Office so your password can be changed.</p>
+      </td>
+    </tr>
+    <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#fdf3d6;border-radius:8px;padding:18px 20px;text-align:center;"">
+        <div style=""font-size:16px;font-weight:700;color:#0b1a5c;{font}"">Need more help?</div>
+        <a href=""{baseUrl}"" style=""font-size:14px;color:#b7791f;text-decoration:underline;{font}"">We’re here, ready to talk</a>
+      </td>
+    </tr>
+    <tr>
+      <td style=""padding:22px 12px 4px;text-align:center;font-size:12px;line-height:1.7;color:#64748b;{font}"">
+        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Home</a> &nbsp;-&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Terms</a> &nbsp;-&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Privacy</a> &nbsp;-&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#0b1a5c;font-weight:700;text-decoration:underline;"">Help</a>
+        <p style=""margin:14px 0 0;"">You received this email because a sign-in was started with this address on AstraMentoring.</p>
+        <p style=""margin:8px 0 0;"">This is an automated message — please don’t reply.</p>
+        <p style=""margin:8px 0 0;color:#94a3b8;"">AstraMentoring · FAITH Colleges</p>
+      </td>
+    </tr>
+  </table>
+</div>";
         }
 
         // Contact-us form on the login page: forwards the visitor's message to
