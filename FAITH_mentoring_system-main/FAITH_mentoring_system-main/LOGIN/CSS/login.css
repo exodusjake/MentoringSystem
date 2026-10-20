@@ -944,3 +944,53 @@ html[data-theme="dark"] .forgot-body strong { color: #f1f5f9; }
 .slide-btn svg { width: 14px; height: 14px; }
 .slide-btn:hover { background: none; text-decoration: underline; }
 .slide-btn:active { transform: none; }
+
+/* ===== Light theme: plain white form side, slightly smaller form ===== */
+html:not([data-theme="dark"]) .right-side { background: #ffffff; }
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+}
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .btn-signin {
+  background: #3b82f6;
+  border: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, .25);
+}
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .btn-signin:hover { background: #2563eb; }
+html:not([data-theme="dark"]) .back-home { background: #f4f7fb; border-color: #dce3ec; box-shadow: none; }
+
+/* Contact form: a plain white card on the white panel */
+html:not([data-theme="dark"]) .contact-card {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 6px 24px rgba(11, 26, 92, .08);
+}
+html:not([data-theme="dark"]) .contact-card::before { display: none; }
+html:not([data-theme="dark"]) .contact-card .form-group input,
+html:not([data-theme="dark"]) .contact-card .form-group select,
+html:not([data-theme="dark"]) .contact-card .form-group textarea {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+}
+
+.login-card:not(.contact-card) { max-width: 360px !important; }
+.login-card:not(.contact-card) .card-title { font-size: 24px; }
+.login-card:not(.contact-card) .card-subtitle { font-size: 13px; margin-bottom: 18px; }
+.login-card:not(.contact-card) .form-group { margin-bottom: 14px; }
+.login-card:not(.contact-card) .form-group label { font-size: 13px; margin-bottom: 6px; }
+.login-card:not(.contact-card) .form-group input { padding: 10px 14px; font-size: 14px; }
+.login-card:not(.contact-card) .input-wrap input { padding-left: 42px; }
+.login-card:not(.contact-card) .input-icon { left: 13px; width: 17px; height: 17px; }
+.login-card:not(.contact-card) .btn-signin { padding: 11px; font-size: 14.5px; }
+.login-card:not(.contact-card) .remember-me,
+.login-card:not(.contact-card) .forgot-link { font-size: 12.5px; }
