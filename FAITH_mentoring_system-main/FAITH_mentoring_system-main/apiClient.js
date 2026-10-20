@@ -450,21 +450,36 @@ window.playLogoutEffect = playLogoutEffect;
     if (window.__astraConfirmDialogs) return;
     window.__astraConfirmDialogs = true;
 
-    const CARD    = '.confirm-card,.logout-modal,.nf-confirm-card,.info-modal,.modal-card,.modal-card-sm,.edit-modal-card,.modal';
+    const CARD    = '.confirm-card,.logout-modal,.nf-confirm-card,.info-modal,.cal-info-modal,.modal-card,.modal-card-sm,.edit-modal-card,.modal';
     const ACTIONS = '.confirm-actions,.info-modal-actions,.logout-modal-btns,.edit-modal-footer,.nf-confirm-actions,.modal-footer,.modal-actions';
-    const TITLE   = '.confirm-title,.info-modal-title,.nf-confirm-title,.logout-modal h3,.modal-title,h3,h2';
-    const BODY    = '.confirm-body,.info-modal-message,.nf-confirm-message,.modal-subtitle,.logout-modal p';
-    const ICON    = '.confirm-icon,.info-modal-icon,.logout-modal-icon';
+    const TITLE   = '.confirm-title,.info-modal-title,.cal-info-modal-title,.nf-confirm-title,.logout-modal h3,.modal-title,h3,h2';
+    const BODY    = '.confirm-body,.info-modal-message,.cal-info-modal-message,.nf-confirm-message,.modal-subtitle,.logout-modal p';
+    const ICON    = '.confirm-icon,.info-modal-icon,.cal-info-modal-icon,.logout-modal-icon';
+    const ERR_RE  = /went wrong|error|failed|unable|couldn.t|cannot|can.t|invalid|not allowed|denied/i;
     const X_SVG   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
     function enhance(card) {
         if (card.dataset.astraConfirm) return;
         if (card.querySelector('input:not([type="hidden"]),select,textarea,table,canvas,img,iframe')) return;   // forms / rich content stay as they are
         if ((card.textContent || '').length > 700) return;
-        const actions = card.querySelector(ACTIONS);
-        if (!actions) return;
-        const btns = Array.prototype.filter.call(actions.children, n => n.tagName === 'BUTTON');
-        if (btns.length < 2 || btns.length > 3) return;
+        let actions = card.querySelector(ACTIONS);
+        let btns = actions ? Array.prototype.filter.call(actions.children, n => n.tagName === 'BUTTON') : [];
+        let single = false;
+        if (btns.length < 2) {
+            // "Something went wrong"-style alert: one OK button, error/danger icon or wording.
+            const icon0 = card.querySelector(ICON), title0 = card.querySelector(TITLE);
+            const isError = (icon0 && /danger|error/i.test(String(icon0.className))) || (title0 && ERR_RE.test(title0.textContent || ''));
+            if (!isError) return;
+            if (!actions) {
+                const direct = Array.prototype.filter.call(card.children, n => n.tagName === 'BUTTON');
+                if (direct.length !== 1) return;
+                actions = document.createElement('div');
+                card.insertBefore(actions, direct[0]);
+                actions.appendChild(direct[0]);
+                btns = direct;
+            } else if (btns.length !== 1) return;
+            single = true;
+        } else if (btns.length > 3) return;
         const title = card.querySelector(TITLE);
         if (!title || actions.contains(title)) return;
         if (title.compareDocumentPosition(actions) & Node.DOCUMENT_POSITION_PRECEDING) return;   // title must come first
@@ -472,6 +487,7 @@ window.playLogoutEffect = playLogoutEffect;
         card.dataset.astraConfirm = '1';
         title.dataset.ac = 'title';
         actions.dataset.ac = 'actions';
+        if (single) actions.classList.add('astra-single');
         card.querySelectorAll(BODY).forEach(el => { if (!actions.contains(el) && el !== title) el.dataset.ac = 'body'; });
         card.querySelectorAll(ICON).forEach(el => { el.dataset.ac = 'icon'; });
         if (!card.querySelector('[data-ac="body"]')) card.classList.add('astra-confirm-nobody');
