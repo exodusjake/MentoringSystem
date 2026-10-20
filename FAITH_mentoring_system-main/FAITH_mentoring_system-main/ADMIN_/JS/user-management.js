@@ -1,4 +1,8 @@
-const ROWS_PER_PAGE = 5;
+const ROW_CHOICES = [5, 10, 25];
+function loadRowsSetting(key) {
+  try { const n = parseInt(localStorage.getItem(key), 10); return ROW_CHOICES.includes(n) ? n : 5; } catch (e) { return 5; }
+}
+let ROWS_PER_PAGE = loadRowsSetting('um_rows_users');
 
 const SCHOOL_COURSES = {
   'School of Technology': [
@@ -61,7 +65,7 @@ let activeSectionFilter = {};
 let sectionsTabLoaded  = false;
 let _importRows        = [];
 
-const ASSIGNMENTS_PER_PAGE = 5;
+let ASSIGNMENTS_PER_PAGE = loadRowsSetting('um_rows_assign');
 let assignmentPage      = 1;
 let allAssignments      = [];
 let filteredAssignments = [];
@@ -1232,11 +1236,13 @@ function smartPages(current, total) {
 function renderAssignmentPagination(totalPages) {
   const container = document.getElementById('assignmentPagination');
   const pages = smartPages(assignmentPage, totalPages);
-  let html = `<button class="page-btn" onclick="goAssignmentPage(${assignmentPage - 1})" ${assignmentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+  let html = `<button class="page-btn page-icon" title="First page" aria-label="First page" onclick="goAssignmentPage(1)" ${assignmentPage === 1 ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg></button>`;
+  html += `<button class="page-btn page-icon" title="Previous page" aria-label="Previous page" onclick="goAssignmentPage(${assignmentPage - 1})" ${assignmentPage === 1 ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`;
   pages.forEach(p => {
     html += `<button class="page-btn ${p === assignmentPage ? 'active' : ''}" onclick="goAssignmentPage(${p})">${p}</button>`;
   });
-  html += `<button class="page-btn" onclick="goAssignmentPage(${assignmentPage + 1})" ${assignmentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+  html += `<button class="page-btn page-icon" title="Next page" aria-label="Next page" onclick="goAssignmentPage(${assignmentPage + 1})" ${assignmentPage === totalPages ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+  html += `<button class="page-btn page-icon" title="Last page" aria-label="Last page" onclick="goAssignmentPage(${totalPages})" ${assignmentPage === totalPages ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg></button>`;
   container.innerHTML = html;
 }
 
@@ -3032,11 +3038,13 @@ async function confirmBulkPermanentDelete() {
 function renderPagination(totalPages) {
   const container = document.getElementById('pagination');
   const pages = smartPages(currentPage, totalPages);
-  let html = `<button class="page-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+  let html = `<button class="page-btn page-icon" title="First page" aria-label="First page" onclick="goPage(1)" ${currentPage === 1 ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg></button>`;
+  html += `<button class="page-btn page-icon" title="Previous page" aria-label="Previous page" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`;
   pages.forEach(p => {
     html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
   });
-  html += `<button class="page-btn" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+  html += `<button class="page-btn page-icon" title="Next page" aria-label="Next page" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+  html += `<button class="page-btn page-icon" title="Last page" aria-label="Last page" onclick="goPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg></button>`;
   container.innerHTML = html;
 }
 
@@ -3157,3 +3165,26 @@ window.addEventListener('load', () => updateTabPill(false));
 window.addEventListener('resize', () => updateTabPill(false));
 if (document.readyState !== 'loading') updateTabPill(false);
 else document.addEventListener('DOMContentLoaded', () => updateTabPill(false));
+
+// ── Rows per page (5 / 10 / 25), remembered per tab ──────────────────
+function syncRowsPickers() {
+  const set = (id, n) => document.querySelectorAll('#' + id + ' button').forEach(b => {
+    const on = parseInt(b.dataset.n, 10) === n;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', String(on));
+  });
+  set('rppUsers', ROWS_PER_PAGE);
+  set('rppAssign', ASSIGNMENTS_PER_PAGE);
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest && e.target.closest('.rpp-group button');
+  if (!btn) return;
+  const n = parseInt(btn.dataset.n, 10);
+  if (!ROW_CHOICES.includes(n)) return;
+  const target = btn.closest('.rpp-group').dataset.target;
+  try { localStorage.setItem(target === 'users' ? 'um_rows_users' : 'um_rows_assign', String(n)); } catch (err) {}
+  if (target === 'users') { ROWS_PER_PAGE = n; currentPage = 1; renderTable(); }
+  else { ASSIGNMENTS_PER_PAGE = n; assignmentPage = 1; renderAssignments(); }
+  syncRowsPickers();
+});
+document.addEventListener('DOMContentLoaded', syncRowsPickers);
