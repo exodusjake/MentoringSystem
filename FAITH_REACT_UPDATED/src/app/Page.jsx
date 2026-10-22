@@ -49,19 +49,24 @@ export default function Page({ id, onReady, children }) {
     // Public pages start at the top and fade in once styled (no blank flash / leftover scroll from the last page).
     const isPublic = !chrome;
     if (isPublic && !window.location.hash) window.scrollTo(0, 0);
+    // While the page's stylesheets arrive its elements jump from unstyled to styled; with transitions on they
+    // would visibly slide into place (the login card swept in from the side). Frozen until the page is ready.
+    const root = document.documentElement;
+    root.classList.add('page-loading');
     let alive = true;
     const hrefs = meta.styles;
     setPageStyles(chrome ? [...hrefs, ...PORTAL_PARTIAL_STYLES.filter(h => !hrefs.includes(h))] : hrefs)
       .then(() => {
         if (!alive) return;
         setReady(true);
+        requestAnimationFrame(() => requestAnimationFrame(() => { if (alive) root.classList.remove('page-loading'); }));
         chrome?.pageReady();
         if (isPublic) {
           document.body.classList.add('page-enter');
           setTimeout(() => document.body.classList.remove('page-enter'), 400);
         }
       });
-    return () => { alive = false; injected.forEach(st => st.remove()); };
+    return () => { alive = false; root.classList.remove('page-loading'); injected.forEach(st => st.remove()); };
   }, [id]);
 
   // After the content is visible (so focus() etc. work on it).
