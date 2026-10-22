@@ -252,3 +252,9 @@ html:has(#formsList) footer { flex-shrink: 0; }
 }
 .ann-pin-banner .ti { display: inline-block; font-size: 12px; color: inherit; transform: none; }
 
+
+/* Small screens: the cards clip their overflow, which cut off the "Pinned" tab sitting on the top border.
+   Show it in the card's flow instead, as a badge above the header. */
+@media (max-width: 640px) {
+  .announce-card--pinned .ann-pin-banner { position: static; align-self: flex-start; display: inline-flex; margin: 0 0 10px; }
+}

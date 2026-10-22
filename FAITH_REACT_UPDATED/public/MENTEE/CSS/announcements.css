@@ -393,3 +393,9 @@
 .announce-card .add-comment-trigger { padding: 7px 12px; margin-left: -12px; border-radius: 999px; transition: color .15s ease, background .15s ease; }
 .announce-card .add-comment-trigger:hover { background: #eaf2ff; color: #2563eb; }
 @media (prefers-reduced-motion: reduce) { .announce-card, .announce-card:hover { transform: none; transition: none; } .ann-kebab-menu.open { animation: none; } }
+
+/* Small screens: the cards clip their overflow, which cut off the "Pinned" tab sitting on the top border.
+   Show it in the card's flow instead, as a badge above the header. */
+@media (max-width: 640px) {
+  .announce-card--pinned .ann-pin-banner { position: static; align-self: flex-start; display: inline-flex; margin: 0 0 10px; }
+}
