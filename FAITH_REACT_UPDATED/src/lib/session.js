@@ -6,11 +6,26 @@ export function saveSession(token, role, user, rememberMe = true) {
     localStorage.setItem("_sessionType", "local");
 }
 
+// Claims inside the login token. The browser can't verify the signature, so these are only as trustworthy as the
+// server's check (verifySession in app/guards.jsx), but unlike the localStorage copies they can't be changed
+// without invalidating the token. JwtSecurityTokenHandler writes the short names (role / nameid).
+export function tokenClaims(token = localStorage.getItem('token')) {
+    try {
+        const b64 = String(token).split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const p = JSON.parse(decodeURIComponent(escape(atob(b64))));
+        const pick = (short, long) => p[short] ?? p['http://schemas.microsoft.com/ws/2008/06/identity/claims/' + long] ?? null;
+        return { role: pick('role', 'role'), userId: pick('nameid', 'nameidentifier'), exp: p.exp ?? null };
+    } catch (e) { return null; }
+}
+
 export function getSession() {
+    const token = localStorage.getItem('token');
+    const claims = token ? tokenClaims(token) : null;
     return {
-        token: localStorage.getItem("token"),
-        role:  localStorage.getItem("role"),
-        user:  JSON.parse(localStorage.getItem("user") || "null")
+        token,
+        // The role comes from the token, not the editable localStorage 'role' (kept only as a fallback).
+        role:  claims?.role || localStorage.getItem('role'),
+        user:  JSON.parse(localStorage.getItem('user') || 'null')
     };
 }
 

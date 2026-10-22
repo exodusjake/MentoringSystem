@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate, useLocation, useParams } from 'react-router-dom';
 import { toRoute } from '../lib/routes.js';
-import { PORTALS, roleKey } from '../lib/session.js';
+import { PORTALS, getSession, roleKey } from '../lib/session.js';
 import PortalLayout from './PortalLayout.jsx';
 import { PORTAL_CONFIG } from './portals.js';
 import { PAGES } from '../pages/index.js';
@@ -9,7 +9,7 @@ import { TourProvider } from './Tour.jsx';
 
 // `/` (the vanilla index.html): straight to the signed-in role's dashboard, else the landing page.
 function RootRedirect() {
-  const role = localStorage.getItem('role');
+  const role = getSession().role;
   if (!role) return <Navigate to="/landing" replace />;
   const portal = PORTALS[roleKey(role)];
   return <Navigate to={portal ? portal.home : '/login'} replace />;
