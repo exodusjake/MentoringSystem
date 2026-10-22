@@ -21,7 +21,7 @@ export const PAGE_META = {
   }
  },
  "LANDING/landing": {
-  "title": "Astra Mentoring – Mentoring Session Management",
+  "title": "AstraMentoring – A Mentoring Management and Monitoring System",
   "description": "Schedule sessions, record QR attendance and submit e-signed logsheets in one mentoring platform.",
   "bodyClass": "",
   "styles": [

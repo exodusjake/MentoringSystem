@@ -53,11 +53,11 @@ export default function Landing() {
         <header className={'nav' + (scrolled ? ' scrolled' : '')}>
           <div className="container nav-inner">
             <a href="#home" className="brand">
-              <img src="/IMAGES/LOGO-mark.png" alt="Astra Mentoring logo" />
+              <img src="/IMAGES/LOGO-mark.png" alt="AstraMentoring logo" />
               {' '}
               <span>
-                Astra Mentoring
-                <small>MENTORING SESSION MANAGEMENT</small>
+                AstraMentoring
+                <small>A MENTORING MANAGEMENT AND MONITORING SYSTEM</small>
               </span>
             </a>
             {' '}
@@ -106,13 +106,13 @@ export default function Landing() {
               <p className="hero-note">
                 For
                 {' '}
-                <strong>Admins, Heads, Mentors and Mentees</strong>
+                <strong>Head Admins, Admins, Mentors and Mentees</strong>
                 . Use your institutional email.
               </p>
             </div>
             <div className="hero-visual">
               <div className="logo-card">
-                <img src="/IMAGES/LOGO.png" alt="Astra Mentoring" />
+                <img src="/IMAGES/LOGO.png" alt="AstraMentoring" />
               </div>
               <div className="chip c1">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -149,7 +149,7 @@ export default function Landing() {
               </svg>
               <div>
                 <b>4 Portals</b>
-                <span>Admin, Head, Mentor, Mentee</span>
+                <span>Head Admin, Admin, Mentor, Mentee</span>
               </div>
             </div>
             <div className="strip-item">
@@ -193,7 +193,7 @@ export default function Landing() {
                 <h2>Everything a mentoring program needs</h2>
               </div>
               <p>
-                From booking to reporting, each step is tracked so nothing gets lost between mentors, mentees and administrators.
+                From scheduling to reporting, each step is recorded so that Head Administrator, Administrator, Mentors, and Mentees work from the same records.
               </p>
             </div>
             <div className="cards">
@@ -204,9 +204,9 @@ export default function Landing() {
                     <path d="M16 2v4M8 2v4M3 10h18" />
                   </svg>
                 </div>
-                <h3>Session Booking</h3>
+                <h3>Make-up Session Booking</h3>
                 <p>
-                  Mentees book open mentor slots. Approved instantly, with group bookings supported.
+                  Mentees who missed a regular session book open slots posted by their Mentor. Bookings are approved instantly, and several Mentees can share one slot.
                 </p>
               </div>
               <div className="card">
@@ -220,7 +220,7 @@ export default function Landing() {
                 </div>
                 <h3>QR Attendance</h3>
                 <p>
-                  Mentees show a short-lived QR code and mentors scan it. Presence can't be faked.
+                  Mentees show a QR code that works once, expires in 90 seconds, and is tied to one mentee and one session. Mentors scan it to record attendance.
                 </p>
               </div>
               <div className="card">
@@ -252,7 +252,7 @@ export default function Landing() {
                 </div>
                 <h3>Announcements</h3>
                 <p>
-                  Post updates, attach files and discuss with comments, targeted to the right audience.
+                  Post updates, attach files and discuss with comments, targeted to the right audience. Announcements are also sent by email.
                 </p>
               </div>
             </div>
@@ -289,7 +289,7 @@ export default function Landing() {
               <span className="eyebrow">Why use it</span>
               <h2>We don't just track sessions. We make them count.</h2>
               <p>
-                Astra Mentoring replaces paper forms and chat threads with one reliable record that mentors, mentees and administrators can all trust.
+                AstraMentoring replaces paper forms and chat threads with one reliable record that mentors, mentees and administrators can all trust.
               </p>
               <ul className="checks">
                 <li>
@@ -337,22 +337,26 @@ export default function Landing() {
             </div>
             <div className="role-grid">
               <div className="role">
-                <h3>Admin</h3>
+                <h3>Head Administrator</h3>
                 <p>
-                  Manage users, settings, calendar windows and deadlines. Monitor every session and proof.
+                  Monitor Mentors, review progress and attendance, print reports, and post announcements. View-only access keeps management with the Administrator.
                 </p>
               </div>
               <div className="role">
-                <h3>Head</h3>
-                <p>Oversee mentors in your department, review progress and print reports.</p>
+                <h3>Administrator</h3>
+                <p>
+                  Manage users, Mentor-Mentee assignments, and settings. Set session windows and deadlines, manage evaluation links, and enter Mentor evaluation ratings. Monitor every session and proof.
+                </p>
               </div>
               <div className="role">
                 <h3>Mentor</h3>
-                <p>Open availability slots, scan attendance, write notes and submit logsheets.</p>
+                <p>
+                  Schedule a session, post availability slot for make-up session, scan Mentee QR codes, and complete the logsheet for each session.
+                </p>
               </div>
               <div className="role">
                 <h3>Mentee</h3>
-                <p>Book sessions, show your QR code, view history and submit evaluations.</p>
+                <p>Book make-up sessions, show your QR code, view history and submit evaluations.</p>
               </div>
             </div>
           </div>
@@ -363,25 +367,25 @@ export default function Landing() {
             <div className="sec-head">
               <div>
                 <span className="eyebrow">How it works</span>
-                <h2>From booking to signed logsheet</h2>
+                <h2>From scheduling to signed logsheet</h2>
               </div>
             </div>
             <div className="steps">
               <div className="step">
-                <h3>Log in</h3>
-                <p>Use your institutional email and finish the one-time e-signature setup.</p>
+                <h3>Log in and verify</h3>
+                <p>Verify your account through the email sent on your first login, then complete the one-time setup: upload your e-signature and accept the Data Privacy Act consent.</p>
               </div>
               <div className="step">
-                <h3>Book a slot</h3>
-                <p>Mentees pick an open mentor slot, and it's confirmed instantly.</p>
+                <h3>Schedule sessions</h3>
+                <p>Administrators set the session windows. Mentors schedule regular sessions within them, and Mentees who miss one can attend a Make-up session based on the Mentor's availability log.</p>
               </div>
               <div className="step">
                 <h3>Scan to attend</h3>
-                <p>The mentee shows a QR code and the mentor scans it during the session.</p>
+                <p>The Mentee shows a QR code that is valid for 90 seconds, and the Mentor scans it during the session.</p>
               </div>
               <div className="step">
-                <h3>Submit &amp; sign</h3>
-                <p>The mentor submits the logsheet with proof, and administrators review it.</p>
+                <h3>Record and Review</h3>
+                <p>The Mentor completes the logsheet with proof of the session and submits it. Head Administrators and Administrators monitor submissions.</p>
               </div>
             </div>
           </div>
@@ -398,10 +402,10 @@ export default function Landing() {
             </div>
             <div className="faq-wrap">
               <details className="faq-item">
-                <summary>Can I use Astra Mentoring on a phone?</summary>
+                <summary>Can I use AstraMentoring on a phone?</summary>
                 <div className="faq-body">
                   <p>
-                    Yes. The system runs in any modern mobile browser and supports installation as a Progressive Web App (PWA) on supported devices. How it looks and behaves depends on your device and browser.
+                    Yes. The system runs in any modern mobile browser and supports installation as a Progressive Web App (PWA) on supported devices. You can add it to your home screen. How it looks and behaves depends on your device and browser.
                   </p>
                 </div>
               </details>
@@ -425,7 +429,7 @@ export default function Landing() {
                 <summary>Why do I see different menus from another user?</summary>
                 <div className="faq-body">
                   <p>
-                    There is a separate portal for each role (Admin, Head, Mentor, Mentee), and the options you see depend on your account permissions.
+                    There is a separate portal for each role (Head Admin, Admin, Mentor, Mentee), and the options you see depend on your account permissions.
                   </p>
                 </div>
               </details>
@@ -433,11 +437,11 @@ export default function Landing() {
                 <summary>How do I book a mentoring session?</summary>
                 <div className="faq-body">
                   <p>
-                    Open
+                    Your Mentor schedules your regular sessions within the checkpoint windows set by the Administrator. If you missed a regular session, open the
                     {' '}
-                    <strong>Schedule a Session</strong>
+                    <strong>Sessions</strong>
                     {' '}
-                    in the Mentee portal, pick one of your mentor's open slots and submit. A booked slot is confirmed straight away and appears in your Sessions page. If your mentor has no open slots, check back later or contact your mentor directly.
+                    page in the Mentee portal, pick one of your Mentor's open make-up slots, and book it. A booked slot is confirmed right away. If your Mentor has no open slots, check back later or contact your Mentor.
                   </p>
                 </div>
               </details>
@@ -461,7 +465,7 @@ export default function Landing() {
                 <summary>Will I get an SMS or email for every announcement?</summary>
                 <div className="faq-body">
                   <p>
-                    No. Announcements and notifications appear inside the system. SMS is not part of the project, and any emails sent (for example session notices) depend on how your school configured email delivery. Check
+                    Announcements appear in the system's announcement feed, and an email is also sent when a new announcement is posted. Emails are also sent for events such as newly scheduled sessions and new evaluation forms. SMS and push notifications are not part of the system. Check
                     {' '}
                     <strong>Announcements</strong>
                     {' '}
@@ -469,7 +473,7 @@ export default function Landing() {
                     {' '}
                     <strong>Sessions</strong>
                     {' '}
-                    at least once a week.
+                    regularly.
                   </p>
                 </div>
               </details>
@@ -493,11 +497,11 @@ export default function Landing() {
                 <summary>How is my personal information handled?</summary>
                 <div className="faq-body">
                   <p>
-                    Records are visible only to the roles that need them. Read how we collect, use and protect your data in our
+                    Your information is used only for the mentoring program and is accessible to the roles assigned to manage it. During your first login, you are asked to give your consent under the Data Privacy Act of 2012 (RA 10173). Read more in our
                     {' '}
                     <Link to="/privacy" style={{ color: "var(--blue)", fontWeight: "600" }}>Privacy Policy</Link>
                     {' '}
-                    and the rules for using the system in our
+                    and
                     {' '}
                     <Link to="/terms" style={{ color: "var(--blue)", fontWeight: "600" }}>Terms of Service</Link>
                     .
@@ -527,8 +531,8 @@ export default function Landing() {
         <footer id="contact">
           <div className="container foot-grid">
             <div className="foot-brand">
-              <img src="/IMAGES/LOGO-mark.png" alt="Astra Mentoring logo" />
-              <p>Mentoring session management for FAITH Colleges.</p>
+              <img src="/IMAGES/LOGO-mark.png" alt="AstraMentoring logo" />
+              <p>A Mentoring Management and Monitoring System for FAITH Colleges.</p>
             </div>
             <div>
               <h4>Quick links</h4>
@@ -578,7 +582,7 @@ export default function Landing() {
               {' '}
               <span id="yr">{new Date().getFullYear()}</span>
               {' '}
-              Astra Mentoring. All rights reserved.
+              AstraMentoring. All rights reserved.
             </span>
             {' '}
             <span className="legal-links">
