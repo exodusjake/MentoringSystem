@@ -1,0 +1,92 @@
+/* =====================================================
+   MOTION & CLICK FEEDBACK
+   Same feel as the login button on every clickable element.
+   Loaded after landing.css on the landing, privacy and terms pages.
+   ===================================================== */
+
+/* ── Buttons: lift, shine sweep, press, ripple ─────────── */
+.btn, .faq-item summary { position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+.btn { transition: transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .25s, background .25s, border-color .25s, color .25s; }
+.btn::after {
+  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-20deg); transition: left .6s ease; pointer-events: none;
+}
+.btn:hover::after { left: 130%; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.97); }
+.btn-primary { background: linear-gradient(135deg, #2563eb, #3b82f6); box-shadow: 0 6px 16px rgba(37,99,235,.28); }
+.btn-primary:hover { background: linear-gradient(135deg, #1d4ed8, #2563eb); box-shadow: 0 10px 24px rgba(37,99,235,.4); }
+.btn-gold { box-shadow: 0 6px 16px rgba(240,180,41,.3); }
+.btn-gold:hover { box-shadow: 0 10px 24px rgba(240,180,41,.45); }
+.btn-ghost:hover { background: rgba(255,255,255,.12); }
+.btn-outline:hover { box-shadow: var(--shadow); }
+.btn:focus-visible, .nav-links a:focus-visible, .foot-grid a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+.ripple {
+  position: absolute; border-radius: 50%; transform: scale(0); pointer-events: none;
+  background: rgba(255,255,255,.5); animation: ripple .65s ease-out forwards;
+}
+.faq-item summary .ripple, .btn-outline .ripple { background: rgba(37,99,235,.18); }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+/* ── Other clickable things ───────────────────────────── */
+.brand img { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.brand:hover img { transform: rotate(-8deg) scale(1.08); }
+.nav-links a:not(.btn):active { transform: scale(.95); }
+.faq-item summary { transition: background .2s, color .2s; }
+.faq-item summary:hover { background: #f4f7fb; color: var(--blue); }
+.faq-more a, .legal a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size .3s; }
+.faq-more a:hover, .legal a:hover { background-size: 100% 2px; }
+.foot-grid a, .foot-bottom .legal-links a {
+  background: linear-gradient(var(--gold), var(--gold)) 0 100% / 0 1px no-repeat; transition: background-size .3s, color .2s;
+}
+.foot-grid a:hover, .foot-bottom .legal-links a:hover { background-size: 100% 1px; }
+.toc a { transition: background .2s, color .2s, padding-left .2s; }
+.toc a:hover { padding-left: 14px; }
+.nav-toggle { transition: transform .2s; }
+.nav-toggle:active { transform: scale(.88); }
+
+/* Cards, roles, steps: gentle lift; icons come alive */
+.card, .role, .step, .strip-item { transition: transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, border-color .3s; }
+.role:hover, .step:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.card:hover { border-color: #bfdbfe; }
+.card .icon-bubble { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.card:hover .icon-bubble { transform: scale(1.12) rotate(-6deg); }
+.strip-item svg { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+.strip-item:hover svg { transform: scale(1.15) translateY(-2px); }
+.logo-card { transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.logo-card:hover { transform: translateY(-6px) rotate(-1.5deg); }
+.session { transition: transform .25s, background .25s; }
+.session:hover { transform: translateX(4px); background: rgba(255,255,255,.16); }
+
+/* ── Entrance & ambient motion ────────────────────────── */
+.hero .eyebrow, .hero h1, .hero .lead, .hero-actions, .hero-note { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.hero .eyebrow { animation-delay: .05s; }
+.hero h1 { animation-delay: .15s; }
+.hero .lead { animation-delay: .27s; }
+.hero-actions { animation-delay: .39s; }
+.hero-note { animation-delay: .5s; }
+.hero-visual .logo-card { animation: popIn .9s .2s cubic-bezier(.2,.8,.2,1.1) both; }
+.chip { animation: floatY 5s ease-in-out infinite; }
+.chip.c1 { animation-delay: .6s; }
+.chip.c2 { animation-delay: -2s; }
+.hero-visual::before { animation: pulseGlow 6s ease-in-out infinite; }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+@keyframes popIn { from { opacity: 0; transform: scale(.85) translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes pulseGlow { 0%,100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+
+/* ── Scroll progress bar (top of page) ────────────────── */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 100%; z-index: 100;
+  transform-origin: 0 50%; transform: scaleX(0);
+  background: linear-gradient(90deg, #3b82f6, #f0b429); pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .eyebrow, .hero h1, .hero .lead, .hero-actions, .hero-note, .hero-visual .logo-card,
+  .chip, .hero-visual::before { animation: none !important; }
+  .btn::after, .ripple { display: none; }
+  .btn:hover, .role:hover, .step:hover, .logo-card:hover { transform: none; }
+}

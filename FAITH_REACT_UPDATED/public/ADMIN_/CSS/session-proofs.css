@@ -1,0 +1,279 @@
+/* ===== SESSION PROOFS CSS ===== */
+
+:root {
+  --blue:         #2563eb;
+  --blue-light:   #eff6ff;
+  --green:        #16a34a;
+  --green-light:  #f0fdf4;
+  --red:          #dc2626;
+  --red-light:    #fef2f2;
+  --amber:        #d97706;
+  --amber-light:  #fffbeb;
+  --font-main:    'DM Sans', sans-serif;
+  --transition:   0.15s ease;
+  --radius:       16px;
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.09);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* ===== PAGE ===== */
+.page-content { padding: 32px 36px; flex: 1; min-width: 0; }
+.page-header  { margin-bottom: 28px; }
+.page-header h1 { font-size: 32px; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+.page-header p  { font-size: 15px; color: var(--gray-500); margin-top: 4px; }
+
+/* ===== STAT CARDS ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+
+.stat-card { background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow-sm); transition: box-shadow 0.15s; }
+.stat-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.stat-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.stat-label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.stat-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon svg { width: 15px; height: 15px; }
+.stat-icon.blue  { background: var(--blue-light);  } .stat-icon.blue svg  { stroke: var(--blue);  }
+.stat-icon.green { background: var(--green-light); } .stat-icon.green svg { stroke: var(--green); }
+.stat-icon.red   { background: var(--red-light);   } .stat-icon.red svg   { stroke: var(--red);   }
+.stat-icon.amber { background: var(--amber-light); } .stat-icon.amber svg { stroke: var(--amber); }
+
+.stat-value { font-size: 24px; font-weight: 700; color: var(--gray-900); line-height: 1; margin-bottom: 4px; }
+.stat-note  { font-size: 12px; color: var(--gray-400); }
+
+/* ===== SCHOOL OVERVIEW ===== */
+/* Same pattern as User Management's Sections tab — click a card to scope
+   the table below to one school; click again to go back to all schools. */
+.school-overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.school-card {
+  background: #fff; border: 1px solid #dce3ec; border-radius: 12px;
+  padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: border-color var(--transition), box-shadow var(--transition);
+  /* A grid item's default min-width is "auto" (its own content's natural
+     width) — without this it refuses to shrink below that no matter how
+     narrow its 1fr track is, so it overflows/gets clipped instead of
+     properly sharing space. */
+  min-width: 0;
+}
+.school-card:hover  { border-color: #93c5fd; box-shadow: var(--shadow-sm); }
+.school-card.active { box-shadow: var(--shadow-md); }
+.school-card-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.school-card-icon svg { width: 16px; height: 16px; }
+.school-card--sot .school-card-icon { background: var(--blue-light);  color: var(--blue);  }
+.school-card--soh .school-card-icon { background: var(--green-light); color: var(--green); }
+.school-card--som .school-card-icon { background: var(--amber-light); color: var(--amber); }
+.school-card--sot.active { border-color: var(--blue);  }
+.school-card--soh.active { border-color: var(--green); }
+.school-card--som.active { border-color: var(--amber); }
+.school-card-body { flex: 1; min-width: 0; }
+.school-card-name { font-size: 13.5px; font-weight: 700; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.school-card-sub  { font-size: 11px; color: var(--gray-500); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.school-card-stats { display: flex; gap: 12px; flex-shrink: 0; }
+.school-stat { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.school-stat span { font-size: 17px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+.school-stat small { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.03em; }
+
+/* ===== SECTION HEAD ===== */
+/* Plain heading, not boxed — the mentor cards below no longer live inside
+   one big bordered "table card", since with only 1-2 mentors that box
+   read as an oversized empty placeholder around a single small card. */
+.pt-section-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 14px; }
+.table-card-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+.table-card-count { font-size: 14px; color: var(--gray-500); }
+
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); padding: 14px 18px; margin-bottom: 20px;
+}
+
+.search-box { display: flex; align-items: center; gap: 8px; border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 180px; background: #fff; }
+.search-box svg { width: 16px; height: 16px; stroke: var(--gray-400); flex-shrink: 0; }
+.search-box input { border: none; outline: none; font-size: 14px; color: var(--gray-700); width: 100%; font-family: var(--font-main); background: transparent; }
+
+/* Fixed width, not just a min-width floor — Department/Mentor get
+   repopulated with a different (shorter or longer) option list depending
+   on which School card is active, and a <select>'s rendered box can size
+   itself off the currently-loaded options in some browsers. That was
+   making these boxes subtly change width depending on which School was
+   selected, shifting .search-box's own width (flex:1, absorbs whatever's
+   left in the row) and everything after it along with it. A hard width
+   means these boxes never move regardless of what's loaded into them. */
+.filter-select { border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 13px; font-size: 14px; color: var(--gray-700); font-family: var(--font-main); background: #fff; cursor: pointer; outline: none; width: 150px; flex-shrink: 0; }
+.filter-select:focus { border-color: var(--blue); }
+/* ui-dropdown.js swaps each <select> for a .dd-trigger button with an inline
+   width:100% — keep the filters at their fixed width on desktop. */
+@media (min-width: 769px) { .dd-trigger.filter-select { width: 150px !important; flex-shrink: 0; } }
+/* Same for the themed date picker (ui-datepicker.js). */
+@media (min-width: 769px) { .dp-trigger.filter-date { width: 150px !important; flex-shrink: 0; } }
+
+.filter-date { border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 13px; font-size: 14px; color: var(--gray-700); font-family: var(--font-main); background: #fff; outline: none; cursor: pointer; width: 150px; flex-shrink: 0; }
+.filter-date:focus { border-color: var(--blue); }
+
+.btn-clear { padding: 9px 16px; background: #fff; border: 1px solid #dce3ec; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--gray-500); cursor: pointer; font-family: var(--font-main); transition: all var(--transition); white-space: nowrap; }
+.btn-clear:hover { background: #f4f7fb; color: var(--gray-700); border-color: #c0cfe0; }
+
+/* ===== MENTOR PROOF CARDS ===== */
+/* One card per mentor instead of one table row per session, so a mentor
+   with several sessions doesn't repeat their name over and over. Each
+   card's session list expands independently (clicking one never affects
+   another) and scrolls internally instead of growing the page. */
+/* Use available content width to fit cards, including on tablets. */
+.pt-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 14px; align-items: start; width: 100%; min-width: 0; }
+
+.pt-card { background: #fff; border: 1px solid #dce3ec; border-radius: 12px; overflow: hidden; transition: box-shadow var(--transition), border-color var(--transition); }
+.pt-card:hover { box-shadow: var(--shadow-md); }
+
+.pt-card-top { display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; }
+
+.pt-card-id { display: flex; align-items: center; gap: 10px; }
+.pt-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; flex-shrink: 0; }
+.pt-id-text { min-width: 0; }
+.pt-name { font-size: 14px; font-weight: 700; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-dept { font-size: 12px; color: var(--gray-500); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.pt-card-stat { text-align: center; padding: 3px 0; border-top: 1px solid #f4f7fb; border-bottom: 1px solid #f4f7fb; }
+.pt-stat-val { font-size: 22px; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+.pt-stat-lbl { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.pt-legend { display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 12px; color: var(--gray-600); }
+.pt-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.pt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.pt-dot.good { background: var(--green); }
+.pt-dot.bad  { background: var(--red); }
+
+.pt-coverage { display: flex; flex-direction: column; gap: 6px; }
+.pt-coverage-head { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.pt-coverage-pct { font-size: 13px; font-weight: 700; text-transform: none; letter-spacing: 0; }
+.pt-coverage-pct.good { color: var(--green); }
+.pt-coverage-pct.warn { color: var(--amber); }
+.pt-coverage-pct.bad  { color: var(--red); }
+.pt-bar { height: 7px; background: #eef1f6; border-radius: 99px; overflow: hidden; }
+.pt-bar-fill { height: 100%; border-radius: 99px; transition: width 0.3s ease; }
+.pt-bar-fill.good { background: var(--green); }
+.pt-bar-fill.warn { background: var(--amber); }
+.pt-bar-fill.bad  { background: var(--red); }
+
+.pt-toggle-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px; background: #f8fafc; border: none; border-top: 1px solid #eef1f6;
+  color: var(--blue); font-size: 13px; font-weight: 600; font-family: var(--font-main);
+  cursor: pointer; transition: background var(--transition);
+}
+.pt-toggle-btn:hover { background: #f1f5f9; }
+/* Same footprint as the toggle, for mentors with nothing to expand. */
+.pt-empty-note {
+  padding: 10px; background: #f8fafc; border-top: 1px solid #eef1f6;
+  color: #94a3b8; font-size: 13px; font-weight: 500; text-align: center;
+}
+.pt-chevron { width: 15px; height: 15px; stroke: currentColor; }
+
+/* Mentor sessions modal; sits under the proof lightbox (z-index 9999). */
+.pt-sessions-overlay { z-index: 9000; }
+.pt-sessions-inner { max-width: 560px; }
+.pt-sessions-sub { font-size: 12.5px; color: var(--gray-500); margin-top: 2px; }
+.pt-sessions-body { overflow-y: auto; padding: 14px 20px 20px; display: flex; flex-direction: column; gap: 8px; }
+
+/* A colored left stripe reads the row's proof status at a glance without
+   repeating the "Uploaded"/"No Proof" pill's own color as a full-row tint
+   (which would compete with the checkpoint/section badges next to it). */
+.pt-session-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 8px 10px; border-radius: 8px; border-left: 3px solid transparent;
+  background: #fafbfc;
+}
+.pt-session-row.status-ok { border-left-color: var(--green); }
+.pt-session-row.status-no { border-left-color: var(--red); }
+
+.pt-session-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pt-session-top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.pt-session-date { font-size: 12.5px; font-weight: 600; color: var(--gray-700); }
+.pt-session-sub { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; min-height: 18px; }
+.pt-session-uploaded { font-size: 11px; color: var(--gray-400); }
+
+/* Avatar rotation — muted pastel palette (same one used for mentee cards
+   elsewhere in this portal) instead of solid bright colors, to keep the
+   grid feeling calm and professional rather than busy. */
+.av-0 { background: #bbf7d0; color: #14532d; }
+.av-1 { background: #bfdbfe; color: #1e3a8a; }
+.av-2 { background: #fde68a; color: #78350f; }
+.av-3 { background: #fbcfe8; color: #831843; }
+.av-4 { background: #e9d5ff; color: #4c1d95; }
+.av-5 { background: #fed7aa; color: #7c2d12; }
+
+/* Checkpoint tag — teal like every other checkpoint/slot badge across the
+   app (Mentor's logsheet/session cards), not the plain numeral-style pill
+   this used to be back when the column showed a session number instead. */
+.checkpoint-badge { display: inline-flex; align-items: center; padding: 3px 9px; background: #f0fdfa; color: #0f766e; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+/* Matches Head's Mentor Monitoring detail page's proof-chip exactly —
+   same classes, same colors, same "Uploaded"/"No Proof" wording. An
+   Uploaded chip with a proof file behind it doubles as the "view proof"
+   trigger (hover/focus is what signals that, since there's no separate
+   button); No Proof is a plain, non-interactive <span>. */
+.proof-chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; border: none; font-family: var(--font-main); white-space: nowrap; }
+.proof-chip.yes { background: #bbf7d0; color: #14532d; }
+button.proof-chip.yes { cursor: pointer; transition: background var(--transition); }
+button.proof-chip.yes:hover, button.proof-chip.yes:focus-visible { background: #86efac; }
+/* The clickable View chip is a little wider so it reads as a button. */
+button.proof-chip.yes { min-width: 72px; padding: 5px 16px; justify-content: center; }
+.proof-chip.no { background: #eef1f6; color: var(--gray-500); }
+
+.badge-section { display: inline-flex; align-items: center; padding: 3px 9px; background: var(--blue-light); color: var(--blue); border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+.table-empty { padding: 52px 20px; text-align: center; color: var(--gray-400); font-size: 14px; }
+
+/* ===== IMAGE LIGHTBOX ===== */
+/* Matches Head's "Session Proof" modal — clean white card on a light
+   overlay, instead of the dark theme this used to have. */
+.lightbox-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.65); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.lightbox-inner { background: #fff; border-radius: 14px; max-width: 720px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.lightbox-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #dce3ec; }
+.lightbox-title { font-size: 15px; font-weight: 700; color: #111827; }
+.lightbox-close { background: none; border: none; color: var(--gray-500); cursor: pointer; font-size: 22px; line-height: 1; padding: 2px 8px; border-radius: 6px; display: flex; align-items: center; }
+.lightbox-close:hover { background: #f1f5f9; color: #111827; }
+.lightbox-body { padding: 16px 20px; overflow: auto; display: flex; align-items: center; justify-content: center; background: #f8fafc; min-height: 200px; }
+.lightbox-body img { max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; display: block; }
+.lightbox-no-preview { display: flex; flex-direction: column; align-items: center; gap: 18px; color: var(--gray-500); padding: 44px; text-align: center; }
+.lightbox-no-preview svg { width: 52px; height: 52px; stroke: var(--gray-400); }
+.lightbox-no-preview p { font-size: 15px; }
+.lightbox-open-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: var(--blue); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-main); text-decoration: none; }
+.lightbox-footer { padding: 14px 20px; border-top: 1px solid #dce3ec; display: flex; justify-content: flex-end; }
+.lightbox-download { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: var(--blue); color: #fff; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.lightbox-download:hover { background: #1d4ed8; }
+
+/* ===== RESPONSIVE ===== */
+/* Responsive behavior kept in lockstep with ADMIN_/CSS/attendance-logs.css
+   on purpose — Proof Tracking and Attendance Summary share the same
+   stats-grid/school-overview-grid/mentor-card family and should collapse
+   the same way at the same breakpoints. */
+@media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } .school-overview-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px)  { .school-overview-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .page-content { padding: 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .filter-bar { padding: 12px 16px; gap: 8px; }
+  /* The fixed 150px from the base rule is only meant to stop these
+     boxes shifting position depending on what's loaded into them on a
+     normal-width screen — on mobile, where .filter-bar wraps everything
+     into its own stacked row anyway, let them size naturally instead of
+     forcing 150px on a screen that might not even be that wide. */
+  .filter-select, .filter-date { width: auto; min-width: 0; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+
+/* ===== SHARED BUTTON STYLES ===== */
+.btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; background: var(--blue); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: var(--font-main); cursor: pointer; transition: background var(--transition); }
+.btn-primary:hover { background: #1d4ed8; }
+
+/* ===== INFO MODALS ===== */
+.info-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.info-modal { background: #fff; border-radius: 16px; padding: 34px 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.18); }
+.info-modal-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.info-modal-icon svg { width: 26px; height: 26px; }
+.info-modal-icon.danger { background: #fee2e2; } .info-modal-icon.danger svg { stroke: #dc2626; }
+.info-modal-title   { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 10px; }
+.info-modal-message { font-size: 15px; color: #6b7280; margin: 0 0 26px; line-height: 1.6; }
+.info-modal > .btn-primary { width: 100%; justify-content: center; }

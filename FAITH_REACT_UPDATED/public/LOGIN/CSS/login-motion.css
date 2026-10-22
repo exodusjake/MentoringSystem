@@ -1,0 +1,22 @@
+/* Same click feedback as the landing page, for the login page's clickables.
+   Loaded after login.css. */
+.btn-signin { position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+.btn-signin::after {
+  content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-20deg); transition: left .6s ease; pointer-events: none;
+}
+.btn-signin:hover:not(:disabled)::after { left: 130%; }
+.ripple { position: absolute; border-radius: 50%; transform: scale(0); pointer-events: none; background: rgba(255,255,255,.5); animation: ripple .65s ease-out forwards; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+.back-home:active, .pw-toggle:active, .forgot-link:active { transform: scale(.92); }
+.forgot-link { transition: color .2s, transform .15s; }
+.forgot-link:hover { color: #1d4ed8; }
+.pw-toggle { transition: color .15s, transform .15s; }
+.remember-me { transition: color .2s; }
+.remember-me:hover { color: #1d4ed8; }
+.bottom-links a { background: linear-gradient(#3b82f6, #3b82f6) 0 100% / 0 1px no-repeat; transition: background-size .3s, color .2s; }
+.bottom-links a:hover { background-size: 100% 1px; }
+
+@media (prefers-reduced-motion: reduce) { .btn-signin::after, .ripple { display: none; } }

@@ -1,0 +1,34 @@
+// Styles sidebar-indicator.js injected on every portal page (sliding pill, skeleton screen, sidebar polish).
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+export const SIDEBAR_INDICATOR_CSS = [
+  'html{scroll-behavior:smooth}',
+  '.sidebar{scroll-behavior:smooth;overscroll-behavior:contain}',
+  '.sidebar-nav{position:relative}',
+  '.nav-item{min-height:42px;line-height:1.3;word-break:normal;overflow-wrap:anywhere}',
+  '.nav-item .nav-badge{margin-left:auto;align-self:center}',
+  '#nav-ratings{font-size:14px}',
+  '.sb-indicator{position:absolute;left:12px;right:12px;top:0;height:0;border-radius:var(--radius-md,10px);',
+  'background:var(--sb-active,#2563eb);box-shadow:0 4px 12px rgba(37,99,235,.28);',
+  'pointer-events:none;z-index:0;opacity:0;will-change:transform,height}',
+  '.sb-indicator.ready{opacity:1}',
+  '.sb-indicator.animate{transition:transform .34s ' + EASE + ',height .34s ' + EASE + ',opacity .2s ease}',
+  '.sidebar-nav.has-indicator .nav-item{position:relative;z-index:1}',
+  '.sidebar-nav.has-indicator .nav-item.active{background:transparent}',
+  '.nav-item{transition:background .25s ease,color .25s ease,transform .25s ease}',
+  '.nav-item i{transition:color .25s ease,transform .25s ease}',
+  '.sidebar{transition:transform .35s ' + EASE + ',box-shadow .35s ease}',
+  '.sidebar-overlay{transition:opacity .3s ease}',
+  '.page-skel{position:fixed;top:0;right:0;bottom:0;left:var(--sb-width,260px);z-index:50;background:var(--gray-50,#eef1f6);',
+  'padding:28px;display:flex;flex-direction:column;gap:20px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .25s ease}',
+  '.page-skel.show{opacity:1}',
+  '.page-skel .sk{border-radius:12px;background:linear-gradient(90deg,#e3e7ee 25%,#eef1f6 50%,#e3e7ee 75%);background-size:200% 100%;animation:sk-shimmer 1.2s linear infinite}',
+  '.page-skel .sk-title{height:30px;width:260px;max-width:60%}',
+  '.page-skel .sk-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}',
+  '.page-skel .sk-card{height:96px}',
+  '.page-skel .sk-block{height:260px}',
+  '.page-skel .sk-block.short{height:140px}',
+  '@keyframes sk-shimmer{to{background-position:-200% 0}}',
+  '@media (max-width:768px){.page-skel{left:0;padding:70px 16px 16px}.page-skel .sk-row{grid-template-columns:1fr 1fr}}',
+  '@media (prefers-reduced-motion:reduce){html,.sidebar{scroll-behavior:auto}.sb-indicator.animate,.nav-item,.nav-item i,.page-skel{transition:none!important}.page-skel .sk{animation:none!important}}'
+].join('');

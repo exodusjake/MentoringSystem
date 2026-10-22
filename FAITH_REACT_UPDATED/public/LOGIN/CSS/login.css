@@ -1,0 +1,1033 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh; /* mobile Safari/Chrome: 100vh is measured against
+    the toolbar-collapsed viewport, so with the address bar showing (the
+    normal state) body/the card end up taller than what's actually
+    visible, forcing a page scroll that shouldn't be there. dvh tracks
+    the real visible viewport; plain vh stays as a fallback for older
+    engines without dvh support. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  /* Guarantees a visible gutter above/below the card on short viewports
+     (a small laptop window, a phone/tablet in landscape) — flex centering
+     alone doesn't leave any margin once the card's own height gets close
+     to or exceeds the viewport height, which is what was making it look
+     edge-to-edge top and bottom on those devices. */
+  padding: 24px 16px;
+}
+
+
+/* =============================
+   WRAPPER – The two-column card
+   (holds left side + right side)
+   ============================= */
+.wrapper {
+  display: flex;
+  /* Scales continuously with the viewport at every width instead of
+     sitting at one fixed size — 90vw tracks the window directly, the
+     320px floor is a safety net before the 900px breakpoint below takes
+     over with its own full-width mobile layout, and 1200px keeps it from
+     stretching into an unreasonably wide card on very large monitors
+     while still noticeably growing past where it used to cap out (900px). */
+  width: clamp(320px, 90vw, 1200px);
+  min-height: 550px;
+  /* Let the page scroll when the form exceeds the available height. */
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =============================
+   LEFT SIDE – Dark blue banner
+   ============================= */
+.left-side {
+  /* Percentage instead of a fixed px width so this panel scales together
+     with .wrapper as one cohesive card, rather than staying pinned at one
+     size while only .right-side grows or shrinks around it. min-width is
+     the safety floor that keeps the logo/text from squeezing too tight
+     once .wrapper itself is near its own 320px floor. */
+  width: 38%;
+  min-width: 280px;
+  flex-shrink: 0;
+  background-color: #0b1a5c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 36px;
+  text-align: center;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Logo image on the left side */
+.left-logo-img {
+  width: 200px;     
+  height: auto;     
+  margin-bottom: 24px;
+}
+
+/* Brand name text (e.g. "★ ASTRA MENTORING") */
+.left-brand {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #3b82f6;
+  margin-bottom: 2px;
+}
+
+/* Smaller text under brand name */
+.left-brand-sub {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 40px;
+}
+
+/* Short colored horizontal line */
+.left-divider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #f0b429); /* Blue to gold */
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+/* School name (e.g. "Faith Colleges") */
+.left-school {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+/* Welcome tagline */
+.left-tagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+}
+
+/* Bold words inside the tagline */
+.left-tagline strong {
+  color: #ffffff;
+}
+
+
+/* =============================
+   RIGHT SIDE – White login area
+   ============================= */
+.right-side {
+  flex: 1;
+  min-width: 0;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 36px;
+}
+
+/* Small logo shown at the top of the right side */
+.right-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Small logo image on the right side */
+.right-logo-img {
+  width: 150px;      
+  height: auto;  
+  display: block;
+  margin: 0 auto 2px; 
+}
+
+
+/* =============================
+   LOGIN CARD – The white box with
+   the form inside it
+   ============================= */
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+/* "Welcome Back" heading */
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* Small description below heading */
+.card-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+
+/* =============================
+   FORM FIELDS – Each label + input
+   ============================= */
+
+/* Wrapper around each label + input pair */
+.form-group {
+  margin-bottom: 16px;
+}
+
+/* Label text above each input */
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+/* The input box itself */
+.form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;             
+  transition: border-color 0.2s; 
+}
+
+/* Input styling when the user clicks on it (focused state) */
+.form-group input:focus {
+  border-color: #3b82f6;  
+  background-color: #ffffff;
+}
+
+/* Placeholder text color */
+.form-group input::placeholder {
+  color: #94a3b8;
+}
+
+
+/* =============================
+   REMEMBER ME + FORGOT PASSWORD ROW
+   ============================= */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* "Remember me" checkbox + label */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+}
+
+/* The checkbox inside "Remember me" */
+.remember-me input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: #3b82f6;    
+}
+
+/* "Forgot Password?" button (styled as link) */
+.forgot-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  padding: 0;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+
+/* =============================
+   SIGN IN BUTTON
+   ============================= */
+.btn-signin {
+  width: 100%;
+  padding: 13px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #3b82f6; 
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Darker blue when mouse hovers over button */
+.btn-signin:hover {
+  background-color: #2563eb;
+}
+
+/* Slightly shrinks when clicked */
+.btn-signin:active {
+  transform: scale(0.98);
+}
+
+/* Gray out when disabled (during loading) */
+.btn-signin:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+}
+
+
+/* =============================
+   PASSWORD SHOW/HIDE TOGGLE
+   ============================= */
+.pw-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pw-wrap input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+  transition: color 0.15s;
+}
+
+.pw-toggle:hover { color: #475569; }
+
+.pw-toggle svg {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+/* =============================
+   ERROR BANNER
+   ============================= */
+.error-banner {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+/* =============================
+   FORGOT PASSWORD MODAL
+   ============================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.forgot-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.forgot-icon {
+  width: 52px;
+  height: 52px;
+  background: #eff6ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.forgot-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: #2563eb;
+}
+
+.forgot-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.forgot-body {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* =============================
+   "CONTACT ADMINISTRATOR" TEXT
+   ============================= */
+.contact-text {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* =============================
+   BOTTOM LINKS
+   (Terms of Service, Privacy, Help)
+   ============================= */
+.bottom-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.bottom-links a {
+  font-size: 12px;
+  color: #64748b;
+  text-decoration: none;
+}
+
+.bottom-links a:hover {
+  color: #3b82f6;
+}
+
+
+/* =====================================================
+   RESPONSIVE – Makes the page look good on mobile
+   Use a single column when two readable panels no longer fit
+   ===================================================== */
+@media (max-width: 900px) {
+
+  /* Keep the single-column form full-width on narrow screens. */
+  body { padding: 0; }
+
+  /* Stack left and right panels on top of each other */
+  .wrapper {
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh; /* same dvh correction as body's base rule */
+    max-height: none;
+    border-radius: 0;
+  }
+
+  /* Hide left panel on mobile — show login form directly */
+  .left-side {
+    display: none;
+  }
+
+  /* Right side takes full width */
+  .right-side {
+    padding: 32px 20px;
+  }
+
+  /* Smaller card padding */
+  .login-card {
+    padding: 24px 20px;
+  }
+
+}
+@media (max-height: 760px) {
+  .right-side { padding: 24px; }
+  .right-logo { margin-bottom: 16px; }
+  .right-logo-img { width: 100px; }
+  .login-card { padding: 24px; }
+}
+
+@media (max-width: 480px) {
+  .form-group input { font-size: 16px; }
+  .right-side { padding: 24px 16px; }
+  .login-card { padding: 24px 20px; }
+}
+
+.forgot-card { max-height: calc(100dvh - 32px); overflow-y: auto; }
+
+/* Keeps the card and logo still when the error banner appears: a spacer the
+   banner's size sits under the form and gives way when the banner is shown. */
+.right-side::after { content: ''; flex-shrink: 0; height: var(--login-error-space, 56px); }
+.right-side:has(.error-banner:not([style*="none"]))::after { height: 0; }
+
+/* ── No page scroll: the login screen fits the window ─────
+   The card is capped to the viewport. If the window is really tiny,
+   only the form side scrolls inside the card, never the whole page. */
+html, body { height: 100%; overflow: hidden; }
+body { min-height: 0; padding: 16px; }
+.wrapper { min-height: 0; height: min(640px, calc(100dvh - 32px)); }
+.right-side { position: relative; overflow: hidden; }
+.right-side { justify-content: flex-start; }
+.right-side > .right-logo { margin-top: auto; }
+.right-side > .bottom-links { margin-bottom: auto; }
+@media (max-width: 900px) {
+  body { padding: 0; }
+  .wrapper { height: 100dvh; max-height: 100dvh; }
+}
+
+/* ── Home button (back to landing page) ───────────────── */
+.back-home {
+  position: absolute; top: 16px; left: 16px; z-index: 5;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: #0b1a5c; background: #f4f7fb; border: 1px solid #dce3ec;
+  transition: background .2s, color .2s, border-color .2s, transform .15s;
+}
+.back-home svg { width: 20px; height: 20px; }
+.back-home:hover { background: #f0b429; border-color: #f0b429; transform: translateY(-1px); }
+.back-home:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+/* ── Error banner never moves the layout ──────────────────
+   Its slot is always reserved (just invisible when there is no error), so
+   showing a wrong-credentials message doesn't push the card or the
+   Terms / Privacy / Help links. This replaces the old spacer trick. */
+.error-banner {
+  display: flex !important; align-items: center; justify-content: center;
+  height: 46px; margin-bottom: 14px; padding: 4px 12px; line-height: 1.3; overflow: hidden;
+}
+.error-banner[style*="none"] { visibility: hidden; }
+.right-side::after, .right-side:has(.error-banner:not([style*="none"]))::after { height: 0 !important; }
+
+/* =====================================================
+   ENHANCEMENTS – polish only; layout/no-scroll rules above still apply
+   ===================================================== */
+
+/* ── Left panel: depth, glow, floating shapes ─────────── */
+.left-side {
+  position: relative; overflow: hidden;
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(59,130,246,.38), transparent 46%),
+    radial-gradient(circle at 85% 92%, rgba(240,180,41,.22), transparent 42%),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(160deg, #0b1a5c 0%, #0a1550 55%, #07123f 100%);
+  background-size: auto, auto, 40px 40px, 40px 40px, auto;
+}
+.left-side > :not(.shape) { position: relative; z-index: 1; }
+.left-logo-img { filter: drop-shadow(0 10px 24px rgba(0,0,0,.35)); animation: floaty 6s ease-in-out infinite; }
+.left-divider { width: 56px; height: 3px; }
+
+.left-points { list-style: none; margin-top: 26px; display: grid; gap: 10px; text-align: left; }
+.left-points li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,.78); }
+.left-points svg { width: 18px; height: 18px; padding: 3px; border-radius: 50%; background: rgba(240,180,41,.2); color: #f0b429; flex-shrink: 0; }
+
+.shape { position: absolute; z-index: 0; opacity: .9; animation: floaty 7s ease-in-out infinite; pointer-events: none; }
+.shape.s1 { width: 16px; height: 16px; border-radius: 50%; background: #f0b429; top: 12%; right: 14%; }
+.shape.s2 { width: 34px; height: 34px; border-radius: 50%; border: 5px solid rgba(147,197,253,.55); bottom: 14%; left: 10%; animation-delay: -2s; }
+.shape.s3 { width: 46px; height: 46px; background: rgba(37,99,235,.55); border-radius: 100% 0 0 0; top: 8%; left: 8%; animation-delay: -4s; }
+.shape.s4 { width: 22px; height: 22px; background: #f0b429; bottom: 20%; right: 12%; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); animation-delay: -1s; }
+@keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* ── Card: soft entrance + accent ─────────────────────── */
+.login-card { border-color: #e6ebf3; box-shadow: 0 10px 34px rgba(11,26,92,.09); animation: cardIn .55s cubic-bezier(.2,.7,.2,1) both; }
+.right-logo { animation: cardIn .5s cubic-bezier(.2,.7,.2,1) both; }
+.bottom-links { animation: cardIn .6s .1s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.card-title::after { content: ''; display: block; width: 38px; height: 3px; border-radius: 2px; margin: 8px auto 0; background: linear-gradient(90deg, #3b82f6, #f0b429); }
+
+/* ── Inputs: icons + focus glow ───────────────────────── */
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap input { padding-left: 40px; }
+.input-icon { position: absolute; left: 13px; width: 17px; height: 17px; color: #94a3b8; pointer-events: none; transition: color .2s; }
+.input-wrap:focus-within .input-icon { color: #2563eb; }
+.form-group input { transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.form-group input:focus { box-shadow: 0 0 0 4px rgba(59,130,246,.15); }
+.form-group label { position: relative; }
+.caps-hint { position: absolute; right: 0; top: 0; font-size: 11px; font-weight: 600; color: #b45309; background: #fef3c7; padding: 1px 8px; border-radius: 999px; }
+
+/* ── Button: gradient, lift, spinner ──────────────────── */
+.btn-signin {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 6px 16px rgba(37,99,235,.28);
+  transition: transform .15s, box-shadow .2s, filter .2s;
+}
+.btn-signin:hover { background: linear-gradient(135deg, #1d4ed8, #2563eb); box-shadow: 0 8px 20px rgba(37,99,235,.36); transform: translateY(-1px); }
+.btn-signin:active { transform: scale(.98); }
+.btn-signin:disabled { background: linear-gradient(135deg, #93c5fd, #93c5fd); box-shadow: none; transform: none; }
+.btn-signin:disabled::before {
+  content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 9px; vertical-align: -2px;
+  border: 2px solid rgba(255,255,255,.5); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.btn-signin:focus-visible, .forgot-link:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+/* ── Error banner: attention shake when it appears ────── */
+.error-banner:not([style*="none"]) { animation: shake .4s ease; }
+@keyframes shake { 20%,60% { transform: translateX(-5px); } 40%,80% { transform: translateX(5px); } }
+
+/* ── Short windows: drop extras so the form keeps its room ── */
+@media (max-height: 700px) { .left-points { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .left-logo-img, .shape, .login-card, .right-logo, .bottom-links, .error-banner { animation: none !important; }
+}
+
+
+/* =============================
+   EMAIL VERIFICATION (OTP) STEP
+   School palette: navy #0b1a5c + gold #f0b429
+   ============================= */
+.otp-step { text-align: center; }
+.otp-icon {
+  width: 84px; height: 84px; margin: 0 auto 14px;
+  border-radius: 50%;
+  background: #e8edfb;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 6px #f3f6fd;
+}
+.otp-icon svg { width: 50px; height: 50px; }
+.otp-sub { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+.otp-sub strong { color: #0b1a5c; word-break: break-all; }
+.otp-sub .forgot-link { margin-left: 6px; }
+
+.otp-boxes { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+.otp-boxes input {
+  width: 44px; height: 52px; padding: 0;
+  text-align: center;
+  font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 600; color: #0b1a5c;
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1; border-radius: 8px;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+.otp-boxes input:focus {
+  outline: none; background: #fff;
+  border-color: #0b1a5c; box-shadow: 0 0 0 3px rgba(11,26,92,.14);
+}
+.otp-boxes input.filled { border-color: #3b82f6; background: #fff; }
+.otp-boxes.shake { animation: otpShake .35s; }
+.otp-boxes.shake input { border-color: #dc2626; }
+@keyframes otpShake { 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+
+.otp-notes {
+  list-style: none; text-align: left; margin: 0 0 18px; padding: 0 4px;
+  font-size: 12.5px; color: #64748b;
+}
+.otp-notes li { position: relative; padding-left: 14px; margin-bottom: 6px; }
+.otp-notes li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 5px; height: 5px; border-radius: 50%; background: #f0b429;
+}
+.otp-notes strong { color: #0b1a5c; font-variant-numeric: tabular-nums; }
+.otp-notes .forgot-link { font-size: 12.5px; }
+.otp-notes .forgot-link:disabled { color: #94a3b8; cursor: default; text-decoration: none; }
+.otp-step .btn-signin { background-color: #0b1a5c; }
+.otp-step .btn-signin:hover { background-color: #14297f; }
+.otp-step .btn-signin:disabled { background-color: #8c97c4; }
+.otp-once { margin-top: 14px; font-size: 11.5px; color: #94a3b8; line-height: 1.5; }
+
+@media (max-width: 420px) {
+  .otp-boxes { gap: 6px; }
+  .otp-boxes input { width: 40px; height: 48px; font-size: 20px; }
+}
+
+/* ── OTP step: compact so the whole card fits without sitting low ── */
+.login-card:has(.otp-step:not([style*="none"])) { padding: 22px 28px; }
+.otp-step .otp-icon { width: 60px; height: 60px; margin-bottom: 8px; box-shadow: 0 0 0 4px #f3f6fd; }
+.otp-step .otp-icon svg { width: 36px; height: 36px; }
+.otp-step .card-title { font-size: 20px; margin-bottom: 4px; }
+.otp-step .otp-sub { margin-bottom: 14px; font-size: 12.5px; line-height: 1.5; }
+.otp-step .otp-boxes { margin-bottom: 12px; }
+.otp-step .otp-boxes input { height: 46px; }
+/* The reserved error slot would leave a big gap here; only take space when there is an error. */
+.otp-step .error-banner { height: auto; min-height: 0; margin-bottom: 10px; padding: 8px 12px; }
+.otp-step .error-banner[style*="none"] { display: none !important; }
+.otp-step .otp-notes { margin-bottom: 14px; }
+.otp-step .otp-notes li { margin-bottom: 4px; }
+.otp-step .otp-once { margin-top: 10px; }
+
+/* ===== Liquid glass (light theme) =====
+   A restrained, cool backdrop (soft navy light and fine grid) behind a clear
+   glass card: transparent, blurred, with crisp edge highlights. */
+html:not([data-theme="dark"]) .right-side {
+  background:
+    radial-gradient(ellipse 50% 42% at 20% 20%, rgba(30,64,175,.20), transparent 70%),
+    radial-gradient(ellipse 46% 40% at 82% 84%, rgba(11,26,92,.16), transparent 70%),
+    linear-gradient(rgba(11,26,92,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,26,92,.045) 1px, transparent 1px),
+    linear-gradient(160deg, #e9eef6 0%, #f4f7fb 55%, #e3e9f3 100%);
+  background-size: auto, auto, 36px 36px, 36px 36px, auto;
+}
+html:not([data-theme="dark"]) .login-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%, rgba(255,255,255,.14));
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgba(255,255,255,.6);
+  border-radius: 22px;
+  box-shadow:
+    0 14px 40px rgba(11,26,92,.14),
+    inset 0 1.5px 0 rgba(255,255,255,.9),
+    inset 0 -1px 0 rgba(255,255,255,.25),
+    inset 1px 0 0 rgba(255,255,255,.45),
+    inset -1px 0 0 rgba(255,255,255,.2);
+}
+/* thin specular sheen along the top of the glass */
+html:not([data-theme="dark"]) .login-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(165deg, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 30%);
+  pointer-events: none;
+}
+html:not([data-theme="dark"]) .login-card > * { position: relative; }
+html:not([data-theme="dark"]) .form-group input {
+  background-color: rgba(255,255,255,.28);
+  border: 1.5px solid rgba(255,255,255,.75);
+  box-shadow: inset 0 1px 3px rgba(11,26,92,.10);
+}
+html:not([data-theme="dark"]) .form-group input:focus {
+  background-color: rgba(255,255,255,.55);
+  border-color: #3b82f6;
+}
+html:not([data-theme="dark"]) .btn-signin {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border: 1px solid rgba(255,255,255,.45);
+  box-shadow: 0 6px 18px rgba(37,99,235,.30), inset 0 1.5px 0 rgba(255,255,255,.5);
+}
+html:not([data-theme="dark"]) .back-home {
+  background: rgba(255,255,255,.35);
+  border-color: rgba(255,255,255,.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* ===== Sliding Contact panel =====
+   The blue panel is an overlay that slides from the left to the right edge;
+   the login form (right) and the contact form (left) swap underneath it. */
+.wrapper { position: relative; }
+.left-side {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 38%; z-index: 3;
+  transition: transform .7s cubic-bezier(.65, 0, .25, 1);
+  will-change: transform;
+}
+.wrapper.show-contact .left-side { transform: translateX(calc(100% * 62 / 38)); }
+
+.right-side:not(.contact-side), .contact-side {
+  position: absolute; top: 0; bottom: 0; width: 62%;
+  transition: opacity .45s ease, transform .7s cubic-bezier(.65, 0, .25, 1);
+}
+.right-side:not(.contact-side) { right: 0; }
+.contact-side { left: 0; opacity: 0; transform: translateX(-12%); pointer-events: none; }
+.wrapper.show-contact .contact-side { opacity: 1; transform: none; pointer-events: auto; }
+.wrapper.show-contact .right-side:not(.contact-side) { opacity: 0; transform: translateX(12%); pointer-events: none; }
+
+/* button inside the blue panel */
+.slide-btn {
+  margin-top: 26px; display: inline-flex; align-items: center; gap: 10px;
+  padding: 11px 22px; border-radius: 999px; cursor: pointer;
+  font-family: 'Poppins', sans-serif; font-size: 13.5px; font-weight: 600; color: #fff;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.45);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  transition: background .2s, transform .15s, border-color .2s;
+}
+.slide-btn svg { width: 16px; height: 16px; transition: transform .25s; }
+.slide-btn:hover { background: rgba(255,255,255,.22); border-color: #f0b429; }
+.slide-btn:hover svg { transform: translateX(3px); }
+.slide-btn:active { transform: scale(.96); }
+.slide-btn:focus-visible { outline: 2px solid #f0b429; outline-offset: 3px; }
+.wrapper.show-contact .slide-btn svg { transform: scaleX(-1); }
+.wrapper.show-contact .slide-btn:hover svg { transform: scaleX(-1) translateX(3px); }
+
+/* contact form */
+.contact-card { max-width: 460px; padding: 26px 28px; }
+.contact-card .card-subtitle { margin-bottom: 14px; }
+.contact-card .form-group { margin-bottom: 11px; }
+.contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.contact-card .form-group select,
+.contact-card .form-group textarea {
+  width: 100%; padding: 10px 14px; font-family: 'Poppins', sans-serif; font-size: 14px;
+  color: #1e293b; background-color: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px;
+  outline: none; transition: border-color .2s;
+}
+.contact-card .form-group textarea { resize: none; line-height: 1.45; }
+.contact-card .form-group select:focus,
+.contact-card .form-group textarea:focus { border-color: #3b82f6; background-color: #fff; }
+.contact-card .form-group input { padding: 10px 14px; }
+.char-count { float: right; font-weight: 400; font-size: 11.5px; color: #94a3b8; }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.error-banner.success { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+.mobile-contact-link { display: none; }
+.contact-side .error-banner { margin-bottom: 10px; }
+
+html:not([data-theme="dark"]) .contact-card .form-group select,
+html:not([data-theme="dark"]) .contact-card .form-group textarea {
+  background-color: rgba(255,255,255,.28); border: 1.5px solid rgba(255,255,255,.75);
+  box-shadow: inset 0 1px 3px rgba(11,26,92,.10);
+}
+html[data-theme="dark"] .contact-card .form-group select,
+html[data-theme="dark"] .contact-card .form-group textarea { background-color: #1a2338; color: #f1f5f9; border-color: #3a486a; }
+html[data-theme="dark"] .contact-card .form-group textarea::placeholder { color: #64748b; }
+html[data-theme="dark"] .error-banner.success { background: #0f2a1c; border-color: #14532d; color: #86efac; }
+
+@media (max-height: 760px) { .contact-card { padding: 18px 22px; } }
+
+/* Small screens: the blue panel is hidden, so the two forms simply swap. */
+@media (max-width: 900px) {
+  .right-side:not(.contact-side), .contact-side { position: relative; width: 100%; transform: none; transition: opacity .3s; }
+  .contact-side { display: none; opacity: 1; pointer-events: auto; }
+  .wrapper.show-contact .contact-side { display: flex; }
+  .wrapper.show-contact .right-side:not(.contact-side) { display: none; }
+  .mobile-contact-link { display: inline; }
+  .contact-row { grid-template-columns: 1fr; gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .left-side, .right-side:not(.contact-side), .contact-side { transition: none !important; }
+}
+
+/* Contact panel: compact so the whole form fits inside the card height. */
+.contact-side { padding: 20px 28px; }
+.contact-side .right-logo { margin-bottom: 8px; }
+.contact-side .right-logo-img { width: 70px; }
+.contact-card { padding: 18px 24px; }
+.contact-card .card-title { font-size: 22px; }
+.contact-card .card-subtitle { margin-bottom: 10px; font-size: 12.5px; }
+.contact-card .form-group { margin-bottom: 8px; }
+.contact-card .form-group label { margin-bottom: 4px; font-size: 12.5px; }
+.contact-card .form-group input,
+.contact-card .form-group select,
+.contact-card .form-group textarea { padding: 8px 12px; font-size: 13px; }
+.contact-card .btn-signin { padding: 10px; }
+.contact-side .bottom-links { margin-top: 8px; }
+
+/* ===== Forgot password modal (email -> code + new password) ===== */
+.forgot-card { max-width: 400px; max-height: calc(100dvh - 32px); overflow-y: auto; }
+.forgot-step { width: 100%; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+.forgot-step .forgot-title, .forgot-step .forgot-body { text-align: center; }
+.forgot-step .form-group { margin-bottom: 2px; }
+.forgot-step .error-banner { margin: 2px 0; }
+.forgot-hint { margin: -2px 0 0; font-size: 12px; color: #94a3b8; }
+.forgot-links { display: flex; justify-content: space-between; gap: 12px; }
+.forgot-step > .forgot-link { align-self: center; }
+.forgot-link:disabled { color: #94a3b8; cursor: default; text-decoration: none; }
+html[data-theme="dark"] .forgot-hint { color: #64748b; }
+html[data-theme="dark"] .forgot-body strong { color: #f1f5f9; }
+.forgot-body strong { color: #1e293b; word-break: break-all; }
+
+/* ===== Layout update: no logo on the form side, bigger login card ===== */
+/* "Login now" only appears once the blue panel has slid to the right. */
+.slide-btn { display: none; }
+.wrapper.show-contact .slide-btn { display: inline-flex; }
+
+/* With the logo gone, centre the card (and footer links) vertically. */
+.right-side > .login-card { margin-top: auto; }
+
+.login-card:not(.contact-card) {
+  max-width: 470px;
+  padding: 44px 42px;
+  border-radius: 20px;
+}
+.login-card:not(.contact-card) .card-title { font-size: 28px; }
+.login-card:not(.contact-card) .card-subtitle { font-size: 14px; margin-bottom: 26px; }
+.login-card:not(.contact-card) .form-group { margin-bottom: 18px; }
+.login-card:not(.contact-card) .form-group label { font-size: 14px; margin-bottom: 8px; }
+.login-card:not(.contact-card) .form-group input { padding: 14px 16px; font-size: 15px; border-radius: 10px; }
+.login-card:not(.contact-card) .input-wrap input { padding-left: 46px; }
+.login-card:not(.contact-card) .input-icon { left: 15px; width: 18px; height: 18px; }
+.login-card:not(.contact-card) .btn-signin { padding: 15px; font-size: 16px; border-radius: 10px; }
+.login-card:not(.contact-card) .remember-me,
+.login-card:not(.contact-card) .forgot-link { font-size: 14px; }
+
+/* "Cannot log in? Contact us" — the link looks like "Forgot Password?" */
+.contact-text .forgot-link { font-size: 13px; vertical-align: baseline; }
+
+@media (max-height: 760px) {
+  .login-card:not(.contact-card) { padding: 30px 34px; }
+  .login-card:not(.contact-card) .form-group { margin-bottom: 14px; }
+}
+@media (max-width: 480px) {
+  .login-card:not(.contact-card) { padding: 28px 22px; }
+}
+
+/* ===== Login form: medium size, no card box (form sits straight on the panel) ===== */
+.login-card:not(.contact-card) {
+  max-width: 400px !important;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.login-card:not(.contact-card)::before { display: none !important; }
+.login-card:not(.contact-card) .card-title { font-size: 26px; }
+.login-card:not(.contact-card) .card-subtitle { font-size: 13.5px; margin-bottom: 22px; }
+.login-card:not(.contact-card) .form-group { margin-bottom: 16px; }
+.login-card:not(.contact-card) .form-group label { font-size: 13.5px; margin-bottom: 7px; }
+.login-card:not(.contact-card) .form-group input { padding: 12px 14px; font-size: 14.5px; }
+.login-card:not(.contact-card) .input-wrap input { padding-left: 44px; }
+.login-card:not(.contact-card) .btn-signin { padding: 13px; font-size: 15px; }
+.login-card:not(.contact-card) .remember-me,
+.login-card:not(.contact-card) .forgot-link { font-size: 13px; }
+@media (max-height: 760px) {
+  .login-card:not(.contact-card) { padding: 0 !important; }
+  .login-card:not(.contact-card) .form-group { margin-bottom: 12px; }
+}
+@media (max-width: 480px) {
+  .login-card:not(.contact-card) { padding: 0 4px !important; }
+}
+
+/* "Login now" in the blue panel: same size and look as the "Forgot Password?" link */
+.slide-btn {
+  margin-top: 22px;
+  padding: 0;
+  gap: 6px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.slide-btn svg { width: 14px; height: 14px; }
+.slide-btn:hover { background: none; text-decoration: underline; }
+.slide-btn:active { transform: none; }
+
+/* New logo has dark lettering, so it sits on a white rounded plate on the navy panel. */
+.left-logo-img {
+  width: min(210px, 72%);
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-sizing: border-box;
+}
+
+/* Home button turns blue on hover */
+.back-home:hover,
+html[data-theme="dark"] .back-home:hover {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Left panel logo: same logo and size, just no white plate behind it. */
+.left-logo-img { background: none; border-radius: 0; padding: 0; }
+
+/* Light theme: plain white form side, with a thin outline around the form */
+html:not([data-theme="dark"]) .right-side { background: #ffffff; }
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html:not([data-theme="dark"]) .login-card:not(.contact-card) .form-group input:focus {
+  background-color: #ffffff;
+  border-color: #3b82f6;
+}
+html:not([data-theme="dark"]) .contact-card {
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 6px 24px rgba(11, 26, 92, .08);
+}
+html:not([data-theme="dark"]) .contact-card::before { display: none; }
+html:not([data-theme="dark"]) .contact-card .form-group input,
+html:not([data-theme="dark"]) .contact-card .form-group select,
+html:not([data-theme="dark"]) .contact-card .form-group textarea {
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: none;
+}
+.login-card:not(.contact-card) {
+  border: 1px solid #dbe3ee !important;
+  border-radius: 16px !important;
+  padding: 30px !important;
+}
+html[data-theme="dark"] .login-card:not(.contact-card) { border-color: rgba(255, 255, 255, .16) !important; }
+@media (max-height: 760px) { .login-card:not(.contact-card) { padding: 22px 26px !important; } }
+@media (max-width: 480px)  { .login-card:not(.contact-card) { padding: 22px 18px !important; } }
+
+/* ===== Forgot password step (inside the login card) ===== */
+#forgotStep .form-group { text-align: left; margin-bottom: 12px; }
+#forgotStep .form-group label { font-size: 13px; margin-bottom: 6px; }
+#forgotStep .otp-sub { margin-bottom: 14px; }
+#forgotStep .otp-boxes { margin-bottom: 14px; }
+#forgotStep .btn-signin { margin-top: 4px; }
+#forgotStep .otp-once { margin-top: 12px; }
+#forgotStep .otp-once .forgot-link { font-size: 12.5px; }
+#forgotStep .otp-notes { margin: 6px 0 12px; text-align: left; }
+#forgotStep .forgot-link:disabled { color: #94a3b8; cursor: default; text-decoration: none; }
+#forgotStep #fpResetPane, #forgotStep #fpEmailPane { animation: cardIn .35s cubic-bezier(.2, .7, .2, 1) both; }
+
+/* Forgot-password steps: compact so the whole card fits the window */
+#forgotStep .otp-icon { width: 46px; height: 46px; margin: 0 auto 6px; box-shadow: 0 0 0 3px #f3f6fd; }
+#forgotStep .otp-icon svg { width: 28px; height: 28px; }
+#forgotStep .card-title { font-size: 20px; margin-bottom: 4px; }
+#forgotStep .otp-sub { font-size: 12.5px; line-height: 1.45; margin-bottom: 10px; }
+#forgotStep .otp-boxes { gap: 6px; margin-bottom: 10px; }
+#forgotStep .otp-boxes input { width: 40px; height: 44px; font-size: 19px; }
+#forgotStep .form-group { margin-bottom: 8px; }
+#forgotStep .form-group label { font-size: 12.5px; margin-bottom: 4px; }
+#forgotStep .form-group input { padding: 9px 12px 9px 40px; font-size: 13.5px; }
+#forgotStep .input-icon { left: 12px; width: 16px; height: 16px; }
+#forgotStep .otp-notes { margin: 4px 0 8px; font-size: 12px; }
+#forgotStep .otp-notes li { margin-bottom: 3px; }
+#forgotStep .btn-signin { padding: 10px; font-size: 14px; margin-top: 2px; }
+#forgotStep .otp-once { margin-top: 8px; margin-bottom: 0; }
+#forgotStep .error-banner { margin: 2px 0 6px; padding: 8px 12px; font-size: 12.5px; }
+.login-card:has(#forgotStep:not([style*="none"])) { padding: 18px 26px !important; }

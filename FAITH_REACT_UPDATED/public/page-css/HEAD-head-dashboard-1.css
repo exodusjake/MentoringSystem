@@ -1,0 +1,111 @@
+    /* Head Dashboard — page-scoped only, prefixed .hd- to stay separate
+       from the shared ADMIN_/CSS/dashboard.css rules. */
+
+    .hd-dash-grid { display: flex; flex-direction: column; gap: 20px; }
+    .hd-row { display: grid; gap: 20px; }
+    .hd-row-2 { grid-template-columns: 1fr 1fr; }
+    /* Content-sized, not stretched — Recent Activities scrolls, Mentee Engagement doesn't. */
+    .hd-row-3 { grid-template-columns: 1fr 1fr 1fr; align-items: start; }
+    .hd-row-1 { grid-template-columns: 1fr; }
+    /* Fixed height so Recent Activities scrolls internally instead of growing the row. */
+    .hd-eng-card { height: 430px; }
+    .recent-card .activity-list { flex: 1; min-height: 0; }
+    .hd-row > .card { display: flex; flex-direction: column; }
+    .hd-row > .card > .engagement-total,
+    .hd-row > .card > .card-view-footer { margin-top: auto; }
+    @media (max-width: 1200px) { .hd-row-3 { grid-template-columns: 1fr 1fr; } .hd-row-3 .recent-card { grid-column: 1 / -1; } }
+    @media (max-width: 860px)  { .hd-row-2, .hd-row-3 { grid-template-columns: 1fr; } .hd-row-3 .recent-card { grid-column: auto; } }
+
+    /* ── Header: academic period as a compact pill, not a full banner ── */
+    .hd-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .hd-period-pill { display: flex; align-items: center; gap: 10px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 10px 16px; }
+    .hd-period-pill .academic-icon { width: 32px; height: 32px; border-radius: 8px; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0; }
+    .hd-period-pill .academic-icon svg { width: 16px; height: 16px; }
+    .hd-period-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #2563eb; }
+    .hd-period-value { font-size: 13px; font-weight: 700; color: #1e3a8a; margin-top: 1px; }
+
+    /* ── Card subtitle (under the h2, inside .card-header) ── */
+    .card-header { align-items: flex-start; }
+    .hd-card-sub { font-size: 12.5px; color: #9ca3af; margin-top: 2px; }
+
+    /* ── Segmented distribution bar (Mentor Performance / Mentee Engagement) ── */
+    .hd-card-body { padding: 14px 24px 16px; display: flex; flex-direction: column; gap: 18px; }
+    .hd-seg-bar { display: flex; width: 100%; height: 10px; border-radius: 99px; overflow: hidden; background: #f1f5f9; }
+    .hd-seg-bar > div { height: 100%; }
+
+    /* min-width:0 lets a tile's label shrink; flex-basis gives 2x2 wrap an even split. */
+    .hd-stat-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .hd-performance-card { container-type: inline-size; }
+    .hd-stat-row.hd-performance-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .hd-performance-stats .hd-stat-label { overflow-wrap: anywhere; }
+    @container (max-width: 540px) {
+      .hd-stat-row.hd-performance-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @container (max-width: 300px) {
+      .hd-stat-row.hd-performance-stats { grid-template-columns: minmax(0, 1fr); }
+    }
+    .hd-stat { flex: 1 1 100px; min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 10px; background: #eef1f6; text-decoration: none; transition: background var(--transition, 0.15s ease); }
+    a.hd-stat:hover { background: #e2e8f0; cursor: pointer; }
+    .hd-stat-num { font-size: 22px; font-weight: 800; line-height: 1; }
+    .hd-stat-num.notstarted   { color: #dc2626; }
+    .hd-stat-num.needsattention { color: #f97316; }
+    .hd-stat-num.ontrack   { color: #3b82f6; }
+    .hd-stat-num.excellent { color: #22c55e; }
+    .hd-stat-num.pending   { color: #6b7280; }
+    .hd-stat-num.active    { color: #16a34a; }
+    .hd-stat-num.inactive  { color: #6b7280; }
+    .hd-stat-label { font-size: 11px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: .04em; }
+    .hd-stat--green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .hd-stat--gray  { background: #f8fafc; border: 1px solid #e2e8f0; }
+
+    /* ── Mentee breakdown: small colored dot instead of a big pill badge ── */
+    .hd-dot-breakdown { padding-top: 14px; }
+    .hd-dot-row { display: flex; align-items: center; gap: 9px; }
+    .hd-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+    .hd-dot.excellent       { background: #16a34a; }
+    .hd-dot.on-track        { background: #1d4ed8; }
+    .hd-dot.needs-attention { background: #ea580c; }
+    .hd-dot.no-sessions     { background: #dc2626; }
+    .hd-dot-label { flex: 1; font-size: 13px; color: #374151; }
+    .hd-dot-val   { font-size: 13px; font-weight: 700; color: #111827; }
+
+    /* ── Total/Dropped footer row, combined into one line ── */
+    .hd-total-split { display: flex; align-items: center; justify-content: space-between; }
+    .hd-total-split strong { color: #111827; }
+    .hd-dropped-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 99px; padding: 3px 10px; }
+    .hd-dropped-pill i { font-size: 12px; }
+
+    /* ── Breakdown by School — compact table ── */
+    #schoolBreakdown { display: flex; flex-direction: column; min-width: 0; max-width: 100%; box-sizing: border-box; padding: 4px 22px 6px; overflow-x: auto; }
+    .hd-school-head, .hd-school-row {
+      display: grid;
+      min-width: 1168px; flex-shrink: 0;
+      /* 104px fits "NEEDS ATTENTION" without wrapping or overlapping the next column. */
+      grid-template-columns: 190px 180px repeat(5, 104px) 48px;
+      align-items: center; gap: 18px; padding: 10px 2px;
+    }
+    .hd-school-head { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #9ca3af; border-bottom: 1px solid #eef1f6; padding-bottom: 9px; white-space: nowrap; }
+    .hd-school-head span:nth-child(n+3):nth-child(-n+7) { text-align: left; }
+    .hd-school-head span:last-child { text-align: right; }
+    .hd-school-row { border-bottom: 1px solid #f4f6f9; }
+    .hd-school-row:last-child { border-bottom: none; }
+    .hd-school-row:hover { background: #fafbfc; }
+    .hd-school-name { font-size: 13.5px; font-weight: 700; color: #111827; line-height: 1.3; }
+    .hd-school-sub  { font-size: 10.5px; font-weight: 600; color: #9ca3af; letter-spacing: .03em; margin-top: 1px; }
+    .hd-school-bar  { height: 6px; border-radius: 3px; overflow: hidden; background: #eef1f6; display: flex; }
+    .hd-school-bar > div { height: 100%; }
+    .hd-dot-stat { display: inline-flex; align-items: center; justify-self: start; gap: 6px; font-size: 12.5px; font-weight: 700; color: #374151; white-space: nowrap; }
+    .hd-dot-stat.zero { color: #b6bcc6; font-weight: 600; }
+    .hd-dot-stat .hd-dot { opacity: 1; }
+    .hd-dot-stat.zero .hd-dot { opacity: .35; }
+    .hd-school-total { font-size: 13.5px; font-weight: 800; color: #111827; text-align: right; }
+    @media (max-width: 900px) {
+      #schoolBreakdown { padding: 4px 18px 10px; }
+    }
+
+    /* ── Recent Activities: small type icon per row ── */
+    #recentActivities .activity-item { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+    .hd-activity-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .hd-activity-icon svg { width: 14px; height: 14px; }
+    .hd-activity-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  
