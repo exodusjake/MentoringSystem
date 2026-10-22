@@ -12,10 +12,13 @@
 
   var KEY = 'astraTheme';
   var root = document.documentElement;
-  // React port: the vanilla landing/login pages rewrote their URL to "/" before this script's
-  // path checks could match, so in practice every page got the portal (inversion) theme. Kept as is.
-  var isLanding = false;
-  var isLogin = false;
+  // The page kind lives on <html data-page="landing|login|portal">: set here from the URL before first paint,
+  // then kept current by app/Page.jsx on every route change (the app never reloads between pages).
+  var path = location.pathname;
+  var kind = /^\/(landing|privacy|terms)(\/|$)/.test(path) ? 'landing' : /^\/login(\/|$)/.test(path) ? 'login' : 'portal';
+  if (!root.getAttribute('data-page')) root.setAttribute('data-page', kind);
+  var isLanding = true;
+  var isLogin = true;
   var isPortal = true;
 
   function get() { try { return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light'; } catch (e) { return 'light'; } }
@@ -29,6 +32,9 @@
 
   // ── CSS ──────────────────────────────────────────────────
   var D = 'html[data-theme="dark"] ';
+  var DL = 'html[data-theme="dark"][data-page="landing"] ';   // landing + privacy + terms
+  var DG = 'html[data-theme="dark"][data-page="login"] ';
+  var DP = 'html[data-theme="dark"]:not([data-page="landing"]):not([data-page="login"]) ';   // portals (inverted)
   // P = invert → hue-rotate → contrast, applied to the whole page.
   // C = its exact inverse, applied to anything that must keep real colours.
   var P = 'invert(1) hue-rotate(180deg) contrast(.78)';
@@ -50,8 +56,8 @@
     D + '.theme-toggle{background:#1b1f2a;color:#f59e0b;border-color:rgba(255,255,255,.14);box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.03)}',
     D + '.theme-toggle .ic-sun{display:block}',
     D + '.theme-toggle .ic-moon{display:none}',
-    '.theme-toggle.at-top{bottom:auto;top:20px}',
-    '@media (max-width:768px){.theme-toggle{right:14px;bottom:14px;width:42px;height:42px}.theme-toggle.at-top{top:14px;bottom:auto}}',
+    '.theme-toggle.at-top,html[data-page="login"] .theme-toggle{bottom:auto;top:20px}',
+    '@media (max-width:768px){.theme-toggle{right:14px;bottom:14px;width:42px;height:42px}.theme-toggle.at-top,html[data-page="login"] .theme-toggle{top:14px;bottom:auto}}',
     '@media print{.theme-toggle{display:none!important}}'
   ];
 
@@ -60,81 +66,81 @@
   //   page #0a1120 · alt #0e1628 · card #141f38 · line #24324e
   //   text #f1f5fb / #c5cfe3 · muted #8d9bb8 · accent #60a5fa · gold #f0b429
   if (isLanding) css.push(
-    D + '{color-scheme:dark;--ink:#f1f5fb;--body:#c5cfe3;--muted:#8d9bb8;--line:#24324e;--bg:#0e1628;--card:#141f38;--shadow:0 8px 28px rgba(0,0,0,.5)}',
-    D + 'body{background:#0a1120}',
-    D + '.nav{background:#0a1348}',
-    D + '.nav.scrolled{background:rgba(10,19,72,.95)}',
-    D + '.hero{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(135deg,#0a1348 0%,#0e1c66 55%,#14297f 100%)}',
-    D + '.strip,' + D + 'footer{background:#060b1c}',
-    D + '.alt{background:var(--bg)}',
-    D + '.btn-outline,' + D + '.chip{background:var(--card);color:#e8eefb}',
-    D + '.btn-outline{border-color:#33456b}',
-    D + '.btn-outline:hover{border-color:#60a5fa;color:#fff}',
-    D + '.card,' + D + '.role,' + D + '.step,' + D + '.faq-item{background:var(--card);border-color:var(--line)}',
-    D + '.card:hover,' + D + '.role:hover,' + D + '.step:hover{border-color:#33456b}',
-    D + '.role{border-top-color:#3b82f6}',
-    D + '.ib-blue{background:rgba(96,165,250,.16);color:#93c5fd}',
-    D + '.ib-gold{background:rgba(240,180,41,.15);color:#fcd34d}',
-    D + '.ib-green{background:rgba(52,211,153,.15);color:#6ee7b7}',
-    D + '.ib-violet{background:rgba(167,139,250,.18);color:#c4b5fd}',
-    D + '.ib-red{background:rgba(248,113,113,.15);color:#fca5a5}',
-    D + '.pill.ok{background:rgba(52,211,153,.18);color:#6ee7b7}',
-    D + '.pill.soon{background:rgba(240,180,41,.18);color:#fcd34d}',
-    D + '.pill.go{background:rgba(96,165,250,.2);color:#93c5fd}',
-    D + '.sec-head .eyebrow,' + D + '.why .eyebrow,' + D + '.checks svg,' + D + '.faq-more a,' + D + '.legal a,' + D + '.legal h2::before,' + D + '.toc a::before{color:#60a5fa}',
-    D + '.faq-item summary{color:var(--ink)}',
-    D + '.faq-item summary::after{background:rgba(96,165,250,.18);color:#93c5fd}',
-    D + '.faq-item[open] summary::after{background:var(--gold);color:#0b1a5c}',
-    D + '.toc{background:var(--bg)}',
-    D + '.toc a:hover{background:rgba(96,165,250,.16);color:#fff}',
-    D + '.legal .note{background:rgba(240,180,41,.09);color:#fcd34d}',
-    D + '.legal th{background:#0e1c66}',
-    D + '.legal tr:nth-child(even) td{background:rgba(255,255,255,.03)}',
-    D + '.card:hover{box-shadow:0 10px 30px rgba(0,0,0,.55)}',
-    D + '.chip svg{color:#60a5fa}'
+    DL + '{color-scheme:dark;--ink:#f1f5fb;--body:#c5cfe3;--muted:#8d9bb8;--line:#24324e;--bg:#0e1628;--card:#141f38;--shadow:0 8px 28px rgba(0,0,0,.5)}',
+    DL + 'body{background:#0a1120}',
+    DL + '.nav{background:#0a1348}',
+    DL + '.nav.scrolled{background:rgba(10,19,72,.95)}',
+    DL + '.hero{background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(135deg,#0a1348 0%,#0e1c66 55%,#14297f 100%)}',
+    DL + '.strip,' + DL + 'footer{background:#060b1c}',
+    DL + '.alt{background:var(--bg)}',
+    DL + '.btn-outline,' + DL + '.chip{background:var(--card);color:#e8eefb}',
+    DL + '.btn-outline{border-color:#33456b}',
+    DL + '.btn-outline:hover{border-color:#60a5fa;color:#fff}',
+    DL + '.card,' + DL + '.role,' + DL + '.step,' + DL + '.faq-item{background:var(--card);border-color:var(--line)}',
+    DL + '.card:hover,' + DL + '.role:hover,' + DL + '.step:hover{border-color:#33456b}',
+    DL + '.role{border-top-color:#3b82f6}',
+    DL + '.ib-blue{background:rgba(96,165,250,.16);color:#93c5fd}',
+    DL + '.ib-gold{background:rgba(240,180,41,.15);color:#fcd34d}',
+    DL + '.ib-green{background:rgba(52,211,153,.15);color:#6ee7b7}',
+    DL + '.ib-violet{background:rgba(167,139,250,.18);color:#c4b5fd}',
+    DL + '.ib-red{background:rgba(248,113,113,.15);color:#fca5a5}',
+    DL + '.pill.ok{background:rgba(52,211,153,.18);color:#6ee7b7}',
+    DL + '.pill.soon{background:rgba(240,180,41,.18);color:#fcd34d}',
+    DL + '.pill.go{background:rgba(96,165,250,.2);color:#93c5fd}',
+    DL + '.sec-head .eyebrow,' + DL + '.why .eyebrow,' + DL + '.checks svg,' + DL + '.faq-more a,' + DL + '.legal a,' + DL + '.legal h2::before,' + DL + '.toc a::before{color:#60a5fa}',
+    DL + '.faq-item summary{color:var(--ink)}',
+    DL + '.faq-item summary::after{background:rgba(96,165,250,.18);color:#93c5fd}',
+    DL + '.faq-item[open] summary::after{background:var(--gold);color:#0b1a5c}',
+    DL + '.toc{background:var(--bg)}',
+    DL + '.toc a:hover{background:rgba(96,165,250,.16);color:#fff}',
+    DL + '.legal .note{background:rgba(240,180,41,.09);color:#fcd34d}',
+    DL + '.legal th{background:#0e1c66}',
+    DL + '.legal tr:nth-child(even) td{background:rgba(255,255,255,.03)}',
+    DL + '.card:hover{box-shadow:0 10px 30px rgba(0,0,0,.55)}',
+    DL + '.chip svg{color:#60a5fa}'
   );
 
   if (isLogin) css.push(
-    D + '{color-scheme:dark}',
-    D + 'body{background-color:#070d1c}',
-    D + '.wrapper{box-shadow:0 18px 60px rgba(0,0,0,.65)}',
-    D + '.right-side{background:radial-gradient(ellipse 55% 45% at 18% 14%,rgba(59,130,246,.22),transparent 70%),radial-gradient(ellipse 50% 45% at 88% 90%,rgba(240,180,41,.09),transparent 70%),linear-gradient(160deg,#0f1832,#0a1124)}',
-    D + '.login-card{background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.02));-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)}',
-    D + '.card-title,' + D + '.form-group label,' + D + '.forgot-title{color:#f1f5fb}',
-    D + '.card-subtitle,' + D + '.contact-text,' + D + '.bottom-links a,' + D + '.forgot-body{color:#94a3c0}',
-    D + '.bottom-links a:hover{color:#60a5fa}',
-    D + '.remember-me{color:#c5cfe3}',
-    D + '.forgot-link{color:#60a5fa}',
-    D + '.forgot-link:hover{color:#93c5fd}',
-    D + '.form-group input,' + D + '.contact-card .form-group select,' + D + '.contact-card .form-group textarea{background-color:rgba(255,255,255,.05);color:#f1f5fb;border:1.5px solid rgba(255,255,255,.14);box-shadow:none}',
-    D + '.form-group input:focus,' + D + '.contact-card .form-group select:focus,' + D + '.contact-card .form-group textarea:focus{background-color:rgba(255,255,255,.08);border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}',
-    D + '.form-group input::placeholder,' + D + '.contact-card .form-group textarea::placeholder{color:#6b7a99}',
-    D + '.contact-card .form-group select option{background:#141f38;color:#f1f5fb}',
-    D + '.form-group input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px #17213b inset;-webkit-text-fill-color:#f1f5fb}',
-    D + '.input-icon,' + D + '.pw-toggle{color:#7585a6}',
-    D + '.pw-toggle:hover{color:#cbd5e1}',
-    D + '.error-banner{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:#fca5a5}',
-    D + '.caps-hint{background:rgba(240,180,41,.16);color:#fcd34d}',
-    D + '.forgot-card{background:#121c35;border:1px solid rgba(255,255,255,.1)}',
-    D + '.forgot-icon{background:rgba(96,165,250,.16)}',
-    D + '.forgot-icon svg{stroke:#60a5fa}',
-    D + '.modal-overlay{background:rgba(3,7,18,.72)}',
-    D + '.back-home{background:rgba(255,255,255,.07);color:#e2e8f0;border-color:rgba(255,255,255,.14)}',
-    D + '.back-home:hover{background:#f0b429;border-color:#f0b429;color:#0b1a5c}',
-    D + '.login-loading{background:rgba(7,13,28,.95)!important}',
-    D + '.login-loading .ll-title{color:#f1f5fb!important}',
-    D + '.login-loading .ll-ring,' + D + '.login-loading .ll-bar{border-color:#24324e;background-color:#24324e}',
-    D + '.login-loading .ll-ring{border-top-color:#3b82f6}'
+    DG + '{color-scheme:dark}',
+    DG + 'body{background-color:#070d1c}',
+    DG + '.wrapper{box-shadow:0 18px 60px rgba(0,0,0,.65)}',
+    DG + '.right-side{background:radial-gradient(ellipse 55% 45% at 18% 14%,rgba(59,130,246,.22),transparent 70%),radial-gradient(ellipse 50% 45% at 88% 90%,rgba(240,180,41,.09),transparent 70%),linear-gradient(160deg,#0f1832,#0a1124)}',
+    DG + '.login-card{background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.02));-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)}',
+    DG + '.card-title,' + DG + '.form-group label,' + DG + '.forgot-title{color:#f1f5fb}',
+    DG + '.card-subtitle,' + DG + '.contact-text,' + DG + '.bottom-links a,' + DG + '.forgot-body{color:#94a3c0}',
+    DG + '.bottom-links a:hover{color:#60a5fa}',
+    DG + '.remember-me{color:#c5cfe3}',
+    DG + '.forgot-link{color:#60a5fa}',
+    DG + '.forgot-link:hover{color:#93c5fd}',
+    DG + '.form-group input,' + DG + '.contact-card .form-group select,' + DG + '.contact-card .form-group textarea{background-color:rgba(255,255,255,.05);color:#f1f5fb;border:1.5px solid rgba(255,255,255,.14);box-shadow:none}',
+    DG + '.form-group input:focus,' + DG + '.contact-card .form-group select:focus,' + DG + '.contact-card .form-group textarea:focus{background-color:rgba(255,255,255,.08);border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.2)}',
+    DG + '.form-group input::placeholder,' + DG + '.contact-card .form-group textarea::placeholder{color:#6b7a99}',
+    DG + '.contact-card .form-group select option{background:#141f38;color:#f1f5fb}',
+    DG + '.form-group input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px #17213b inset;-webkit-text-fill-color:#f1f5fb}',
+    DG + '.input-icon,' + DG + '.pw-toggle{color:#7585a6}',
+    DG + '.pw-toggle:hover{color:#cbd5e1}',
+    DG + '.error-banner{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:#fca5a5}',
+    DG + '.caps-hint{background:rgba(240,180,41,.16);color:#fcd34d}',
+    DG + '.forgot-card{background:#121c35;border:1px solid rgba(255,255,255,.1)}',
+    DG + '.forgot-icon{background:rgba(96,165,250,.16)}',
+    DG + '.forgot-icon svg{stroke:#60a5fa}',
+    DG + '.modal-overlay{background:rgba(3,7,18,.72)}',
+    DG + '.back-home{background:rgba(255,255,255,.07);color:#e2e8f0;border-color:rgba(255,255,255,.14)}',
+    DG + '.back-home:hover{background:#f0b429;border-color:#f0b429;color:#0b1a5c}',
+    DG + '.login-loading{background:rgba(7,13,28,.95)!important}',
+    DG + '.login-loading .ll-title{color:#f1f5fb!important}',
+    DG + '.login-loading .ll-ring,' + DG + '.login-loading .ll-bar{border-color:#24324e;background-color:#24324e}',
+    DG + '.login-loading .ll-ring{border-top-color:#3b82f6}'
   );
 
   if (isPortal) css.push(
     '@media screen{',
-    'html[data-theme="dark"]{filter:' + P + ';background:#fff}',
-    D + 'img,' + D + 'video,' + D + 'picture,' + D + '[class*="qr" i] canvas,' + D + '[id*="qr" i] canvas,' + D + '[class*="qr" i] img,' + D + '[id*="qr" i] img,',
-    D + '.no-invert,' + D + '[style*="background-image"]{filter:' + C + '}',
-    D + '.theme-toggle{filter:' + C + '}',
-    D + '.page-skel{background:#eef1f6}',
-    'html{transition:filter .3s ease}',
+    'html[data-theme="dark"]:not([data-page="landing"]):not([data-page="login"]){filter:' + P + ';background:#fff}',
+    DP + 'img,' + DP + 'video,' + DP + 'picture,' + DP + '[class*="qr" i] canvas,' + DP + '[id*="qr" i] canvas,' + DP + '[class*="qr" i] img,' + DP + '[id*="qr" i] img,',
+    DP + '.no-invert,' + DP + '[style*="background-image"]{filter:' + C + '}',
+    DP + '.theme-toggle{filter:' + C + '}',
+    DP + '.page-skel{background:#eef1f6}',
+    'html[data-page="portal"]{transition:filter .3s ease}',
     '}'
   );
 
@@ -158,7 +164,7 @@
     if (document.querySelector('.theme-toggle')) return;
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'theme-toggle' + (isLogin ? ' at-top' : '');
+    btn.className = 'theme-toggle';
     btn.innerHTML = SUN + MOON;
     label(btn);
     btn.addEventListener('click', function () {

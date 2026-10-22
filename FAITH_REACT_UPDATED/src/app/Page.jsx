@@ -30,6 +30,8 @@ export default function Page({ id, onReady, children }) {
     document.title = meta.title;
     setDescription(meta.description);
     document.body.className = meta.bodyClass;
+    // theme.js picks the dark palette from this: hand-tuned for landing/login, inversion for the portals.
+    document.documentElement.setAttribute('data-page', id.startsWith('LANDING/') ? 'landing' : id.startsWith('LOGIN/') ? 'login' : 'portal');
     // apiClient.js (every page except index/landing/privacy/terms) brought scroll containment, the modal
     // scroll lock, confirm-dialog restyling and tooltips; smooth-scroll.js was per page.
     pageFlags.api = !!meta.enhancers.tooltips;
