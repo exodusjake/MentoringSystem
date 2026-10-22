@@ -1410,3 +1410,8 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
   .tab-panel, .tab-panel.tab-leave { transition: none; }
   .tab-panel.tab-enter, .tab-panel.tab-enter * { animation: none !important; }
 }
+
+/* Same label width active or not (bold would otherwise resize tabs and shove the pill mid-slide). */
+.um-tab { font-weight: 600; }
+.um-tab:not(.active) { font-weight: 500; }
+.um-tab { justify-content: center; }

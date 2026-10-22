@@ -757,7 +757,7 @@ export default function AdminUserManagement() {
     // web fonts land after first layout: re-place the pill whenever a tab changes size
     let ro = null;
     if (typeof ResizeObserver !== 'undefined' && tabsRef.current) {
-      ro = new ResizeObserver(() => updateTabPill(false));
+      ro = new ResizeObserver(() => updateTabPill(true));   // keep the glide: the bold active label resizes tabs mid-slide
       tabsRef.current.querySelectorAll('.um-tab').forEach(b => ro.observe(b));
     }
     return () => { cancelAnimationFrame(id); ro?.disconnect(); };
