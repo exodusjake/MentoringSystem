@@ -58,6 +58,23 @@ async function fetchCalendarSheetData() {
   return result;
 }
 
+// "Oct. 5 (Mon), 2026" / "Oct. 5 (Mon) – Oct. 7 (Wed), 2026". The vanilla pages each defined this as a global the
+// sheet script read; it lives here now so every portal prints the same dates.
+function fmtPrintDate(startIso, endIso) {
+  const DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MON = ['Jan.','Feb.','Mar.','Apr.','May','Jun.','Jul.','Aug.','Sep.','Oct.','Nov.','Dec.'];
+  const parse = iso => {
+    if (!iso) return null;
+    const [y, m, d] = String(iso).split('T')[0].split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const s = parse(startIso), e = parse(endIso);
+  if (!s || isNaN(s)) return '—';
+  const fmt = d => `${MON[d.getMonth()]} ${d.getDate()} (${DAY[d.getDay()]})`;
+  if (!e || isNaN(e) || s.getTime() === e.getTime()) return `${fmt(s)}, ${s.getFullYear()}`;
+  return `${fmt(s)} – ${fmt(e)}, ${e.getFullYear()}`;
+}
+
 function calendarSheetEscape(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function buildCalendarSheetBodyHtml({semester, schoolYear, events, prepName, prepTitle, prepSig, appName, appTitle, appSig}) {
  const signature = path => path ? '<img src="' + calendarSheetEscape(CONFIG.getFileUrl(path)) + '" style="max-height:50px;max-width:170px;object-fit:contain;display:block;margin:0 0 -10px;mix-blend-mode:multiply;position:relative;z-index:1;">' : '';
