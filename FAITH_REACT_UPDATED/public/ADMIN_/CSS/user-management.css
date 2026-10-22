@@ -1415,3 +1415,12 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
 .um-tab { font-weight: 600; }
 .um-tab:not(.active) { font-weight: 500; }
 .um-tab { justify-content: center; }
+
+/* ── Toolbar without dead space: search + filters stretch to fill the row and share it with the action buttons ── */
+@media (min-width: 1100px) {
+  body .page-content .card-top-row .search-box { flex: 2 1 200px; min-width: 200px; max-width: none; }
+  body .page-content .card-top-row .filter-btn-wrap { flex: 1 1 118px; min-width: 118px; max-width: none; }
+  body .page-content .card-top-row > .card-actions { flex: 0 0 auto; flex-wrap: nowrap; margin-left: 0; }
+  /* when the buttons still have to wrap to a second row, they take the whole row instead of leaving a gap on the left */
+  body .page-content .card-top-row > .card-actions:has(.bulk-actions.visible) { flex-wrap: wrap; flex: 1 1 100%; }
+}
