@@ -156,7 +156,7 @@ async function safeRegister(endpoint, body) {
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify(body)
   });
-  if (res.ok) return;
+  if (res.ok) return res.json().catch(() => ({}));
   const data = await res.json().catch(() => ({}));
   // Prefer explicit message; fall back to ASP.NET validation errors
   const errMsg = data.message
@@ -1927,6 +1927,7 @@ export default function AdminUserManagement() {
     setSaveConfirmOpen(true);
   }
 
+  const credMail = useRef(null);   // did the credentials email go out for the account just added (null = not applicable)
   async function confirmSaveUser() {
     const isEdit = !!editingId;
     setBusy('save');
@@ -1934,10 +1935,14 @@ export default function AdminUserManagement() {
     try { saved = await saveUser(); } finally { setBusy(null); }
     setSaveConfirmOpen(false);
     if (saved) showStatusSuccess(isEdit ? 'Changes Saved' : 'User Added',
-      isEdit ? 'The account has been updated.' : 'The new account has been created.');
+      isEdit ? 'The account has been updated.'
+        : credMail.current === true ? `The new account has been created. The login email and password were sent to ${form.email.trim()}.`
+        : credMail.current === false ? 'The new account has been created, but the credentials email could not be sent. Please share the login details with the user yourself.'
+        : 'The new account has been created.');
   }
 
   async function saveUser() {
+    credMail.current = null;
     const firstName     = form.firstName.trim();
     const lastName      = form.lastName.trim();
     const email         = form.email.trim();
@@ -2007,10 +2012,10 @@ export default function AdminUserManagement() {
         const departmentID = parseInt(form.mentorDept) || null;
         if (!form.mentorSchool) { showErrorModal('Please select a school for the mentor.'); return; }
         if (!departmentID) { showErrorModal('Please select a department for the mentor.'); return; }
-        await safeRegister('Auth/register-mentor', {
+        credMail.current = (await safeRegister('Auth/register-mentor', {
           firstName, lastName, email, password, contactNumber, studentNumber,
-          school, departmentID, gender
-        });
+          school, departmentID, gender, sendCredentials: true
+        }))?.credentialsEmailSent;
 
       } else if (role === 'Mentee') {
         const school    = form.menteeSchool;
@@ -2020,10 +2025,10 @@ export default function AdminUserManagement() {
         const mentorId  = parseInt(form.menteeAssignMentor) || null;
         if (!school) { showErrorModal('Please select a school for the mentee.'); return; }
 
-        await safeRegister('Auth/register-mentee', {
+        credMail.current = (await safeRegister('Auth/register-mentee', {
           firstName, lastName, email, password, contactNumber, studentNumber,
-          school, course, yearLevel, section, sectionID: null, gender
-        });
+          school, course, yearLevel, section, sectionID: null, gender, sendCredentials: true
+        }))?.credentialsEmailSent;
 
         if (mentorId) {
           const freshUsers = await apiRequest('Users', 'GET', null, true);
@@ -2037,9 +2042,9 @@ export default function AdminUserManagement() {
         }
 
       } else {
-        await apiRequest('Auth/register', 'POST', {
-          firstName, lastName, email, password, contactNumber, studentNumber, role, gender
-        }, true);
+        credMail.current = (await apiRequest('Auth/register', 'POST', {
+          firstName, lastName, email, password, contactNumber, studentNumber, role, gender, sendCredentials: true
+        }, true))?.credentialsEmailSent;
       }
 
       setModalOpen(false);

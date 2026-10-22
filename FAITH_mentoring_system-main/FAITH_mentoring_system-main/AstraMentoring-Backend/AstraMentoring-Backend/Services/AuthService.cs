@@ -400,6 +400,10 @@ namespace AstraMentoring_Backend.Services
         public int? SectionID { get; set; }
         public string? Bio { get; set; }
         public string? Expertise { get; set; }
+
+        // Single "Add User" sets this so the new account's login email and password are emailed to the person.
+        // Left off for CSV bulk import (never mails a whole class by surprise).
+        public bool? SendCredentials { get; set; }
     }
 
     public class LoginRequest
