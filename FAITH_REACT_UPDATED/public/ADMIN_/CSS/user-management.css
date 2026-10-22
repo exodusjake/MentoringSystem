@@ -1368,3 +1368,20 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
 .page-btn { transition: background .18s, border-color .18s, color .18s, transform .12s, box-shadow .18s; }
 .page-btn.active { box-shadow: 0 4px 10px rgba(37, 99, 235, .28); }
 @media (prefers-reduced-motion: reduce) { tbody tr.row-in { animation: none; } }
+
+/* ── Smoother tab switching: text colour follows the pill, one calm crossfade instead of a staggered reveal ── */
+.um-tab { transition: color .22s ease .06s, background .18s ease; }
+.um-tab svg { transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.um-tabs.has-pill .um-tab:hover:not(.active) { background: rgba(255,255,255,0.45); }
+.um-tab-pill { transition: transform .34s cubic-bezier(.32,.72,0,1), width .34s cubic-bezier(.32,.72,0,1); }
+.tab-panel { transition: opacity .12s ease; }
+.tab-panel.tab-leave { opacity: 0; transform: none; }
+.tab-panel.tab-enter { animation: tabFadeIn .26s ease both; }
+@keyframes tabFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.tab-panel.tab-enter .stat-card,
+.tab-panel.tab-enter .school-card,
+.tab-panel.tab-enter .tab-desc { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .um-tab, .um-tab-pill, .tab-panel { transition: none; }
+  .tab-panel.tab-enter { animation: none; }
+}

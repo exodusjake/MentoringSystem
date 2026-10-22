@@ -14,10 +14,11 @@ export const SIDEBAR_INDICATOR_CSS = [
   '.sb-indicator.ready{opacity:1}',
   '.sb-indicator.animate{transition:transform .34s ' + EASE + ',height .34s ' + EASE + ',opacity .2s ease}',
   '.sidebar-nav.has-indicator .nav-item{position:relative;z-index:1}',
-  '.sidebar-nav.has-indicator .nav-item.active{background:transparent}',
-  '.nav-item{transition:background .25s ease,color .25s ease,transform .25s ease}',
-  '.nav-item i{transition:color .25s ease,transform .25s ease}',
-  '.sidebar{transition:transform .35s ' + EASE + ',box-shadow .35s ease}',
+  '.sidebar-nav.has-indicator .nav-item.active{background:transparent;transition:color .2s ease}',
+  '.sidebar-nav.has-indicator .nav-item.active:hover{background:transparent}',
+  '.nav-item{transition:background .15s ease,color .2s ease}',
+  '.nav-item i{transition:color .2s ease}',
+  '.sidebar{will-change:transform;backface-visibility:hidden;transition:transform .35s ' + EASE + ',box-shadow .35s ease}',
   '.sidebar-overlay{transition:opacity .3s ease}',
   '.page-skel{position:fixed;top:0;right:0;bottom:0;left:var(--sb-width,260px);z-index:50;background:var(--gray-50,#eef1f6);',
   'padding:28px;display:flex;flex-direction:column;gap:20px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .25s ease}',
@@ -30,5 +31,5 @@ export const SIDEBAR_INDICATOR_CSS = [
   '.page-skel .sk-block.short{height:140px}',
   '@keyframes sk-shimmer{to{background-position:-200% 0}}',
   '@media (max-width:768px){.page-skel{left:0;padding:70px 16px 16px}.page-skel .sk-row{grid-template-columns:1fr 1fr}}',
-  '@media (prefers-reduced-motion:reduce){html,.sidebar{scroll-behavior:auto}.sb-indicator.animate,.nav-item,.nav-item i,.page-skel{transition:none!important}.page-skel .sk{animation:none!important}}'
+  '@media (prefers-reduced-motion:reduce){html,.sidebar{scroll-behavior:auto}.sb-indicator.animate,.nav-item,.nav-item i,.nav-item.active,.page-skel{transition:none!important}.page-skel .sk{animation:none!important}}'
 ].join('');

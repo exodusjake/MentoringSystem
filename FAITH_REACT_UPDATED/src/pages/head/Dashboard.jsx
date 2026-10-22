@@ -176,6 +176,16 @@ export default function HeadDashboard() {
     return `${perf.total} active mentor account${perf.total !== 1 ? 's' : ''} · ${needsAttention} need${needsAttention !== 1 ? '' : 's'} follow-up; ${perf.counts.Pending} Pending (performance unfinalized).`;
   })();
   const P = v => !loaded ? pulse : (perf ? v : '—');
+  // Tier rows (share of mentors per tier) and the mentors most in need of follow-up — fills the card's lower half.
+  const tierRows = perf ? [
+    ['Not Started', 'var(--status-critical)'], ['Needs Attention', 'var(--status-behind)'], ['On Track', 'var(--status-on-track)'],
+    ['Excellent', 'var(--status-excellent)'], ['Pending', '#6b7280'],
+  ].map(([label, color]) => ({ label, color, count: perf.counts[label], pct: perf.total ? Math.round(perf.counts[label] / perf.total * 100) : 0 })) : [];
+  const followUp = mentors ? mentors
+    .map(m => ({ m, group: mentorTierGroup(m.progressStatus || m.ProgressStatus || 'Pending', m.completedSessions ?? m.CompletedSessions ?? 0) }))
+    .filter(x => x.group === 'Not Started' || x.group === 'Needs Attention')
+    .sort((a, b) => (a.m.overallPercent ?? a.m.OverallPercent ?? 0) - (b.m.overallPercent ?? b.m.OverallPercent ?? 0))
+    .slice(0, 3) : [];
   const perfTitle = loaded && !perf ? 'Data unavailable' : undefined;
 
   // ── Mentee Engagement Breakdown ──
@@ -496,6 +506,38 @@ export default function HeadDashboard() {
                       <span className="hd-stat-label">Pending</span>
                     </div>
                   </div>
+                  {perf ? (
+                    <div className="hd-tier-list">
+                      {tierRows.map(t => (
+                        <div className="hd-tier-row" key={t.label}>
+                          <i className="hd-dot" style={{ background: t.color }}></i>
+                          <span className="hd-tier-label">{t.label}</span>
+                          <div className="hd-tier-track"><div style={{ width: `${t.pct}%`, background: t.color }}></div></div>
+                          <span className="hd-tier-pct">{t.pct}%</span>
+                          <span className="hd-tier-count">{t.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                  {perf ? (
+                    <div className="hd-followup">
+                      <div className="hd-followup-title">Needs follow-up</div>
+                      {followUp.length ? followUp.map(({ m, group }, i) => {
+                        const first = m.firstName || m.FirstName || '';
+                        const last = m.lastName || m.LastName || '';
+                        const id = m.mentorID || m.MentorID;
+                        const pct = m.overallPercent ?? m.OverallPercent ?? 0;
+                        return (
+                          <Link className="hd-followup-row" key={id ?? i} to={`/head/monitoring/detail?id=${id}`}>
+                            <span className="top3-avatar">{((first[0] || '') + (last[0] || '')).toUpperCase() || '?'}</span>
+                            <span className="hd-followup-name">{first} {last}</span>
+                            <span className="hd-followup-tag">{group}</span>
+                            <span className="hd-followup-pct">{pct}%</span>
+                          </Link>
+                        );
+                      }) : <div className="hd-followup-empty">No mentors need follow-up right now.</div>}
+                    </div>
+                  ) : null}
                 </div>
                 <div className="engagement-total">
                   <span>Total Mentors</span>

@@ -21,6 +21,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
   const [loggingOut, setLoggingOut] = useState(false);
   const [badge, setBadge] = useState(0);
   const [dept, setDept] = useState('');
+  const [pendingId, setPendingId] = useState(null);   // item just clicked, highlighted before the route changes
   const sidebarRef = useRef(null);
   const navRef = useRef(null);
   const pillRef = useRef(null);
@@ -35,6 +36,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
   const initials = user ? (((first[0] || '') + (last[0] || '')).toUpperCase() || config.defaultInitials) : config.defaultInitials;
 
   useEffect(() => subscribeBadge(setBadge), []);
+  useEffect(() => { setPendingId(null); }, [activeId]);
 
   // Mentor sidebar: school under the name (non-critical).
   useEffect(() => {
@@ -144,10 +146,13 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
     e.preventDefault();
     if (item.id === activeId) return;
     sset('sbScroll:' + config.role, String(sidebarRef.current.scrollTop));
+    setPendingId(item.id);   // text/icon colours follow the pill straight away
     onNavigate();   // fade to skeleton while the pill glides
     setTimeout(() => navigate(`${config.base}/${item.to}`), NAV_DELAY);
   };
 
+  // Everything the page stylesheets style stays hidden until they are in (no unstyled flash on load).
+  const hide = stylesReady ? undefined : { visibility: 'hidden' };
   const profileHref = `${config.base}/${config.profilePath}`;
 
   // The profile card was a plain link in vanilla (a normal page load, with the skeleton showing while it loads).
@@ -166,14 +171,15 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
 
   return (
     <>
-      <button className={`hamburger${open ? ' active' : ''}`} id="hamburger" aria-label="Toggle menu"
+      <button className={`hamburger${open ? ' active' : ''}`} id="hamburger" aria-label="Toggle menu" style={hide}
         onClick={() => (open ? close() : openDrawer())}>
         <i className={`ti ${open ? 'ti-x' : 'ti-menu-2'}`}></i>
       </button>
 
-      <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close}></div>
+      <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close} style={hide}></div>
 
-      <aside className={`sidebar${open ? ' open' : ''}`} id="sidebar" ref={sidebarRef}>
+      <aside className={`sidebar${open ? ' open' : ''}`} id="sidebar" ref={sidebarRef}
+        style={hide}>
         <a href={profileHref} className="sb-profile" id="sbProfileLink"
           onClick={onProfileClick}>
           <div className="sb-avatar" id="sidebarAvatar">{initials}</div>
@@ -190,7 +196,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
             <div key={i} className={`nav-section${item.className ? ' ' + item.className : ''}`}>{item.section}</div>
           ) : (
             <a key={item.id} href={`${config.base}/${item.to}`} id={item.id}
-              className={`nav-item${item.id === activeId ? ' active' : ''}`}
+              className={`nav-item${item.id === (pendingId || activeId) ? ' active' : ''}`}
               onClick={e => onNavClick(e, item)}>
               <i className={`ti ${item.icon}`}></i>
               {item.label}
@@ -211,7 +217,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
         </div>
       </aside>
 
-      <div id="logoutModal" className={`logout-modal-overlay${logoutOpen ? ' open' : ''}`}>
+      <div id="logoutModal" className={`logout-modal-overlay${logoutOpen ? ' open' : ''}`} style={hide}>
         <div className="logout-modal">
           <div className="logout-modal-icon">
             <i className="ti ti-logout"></i>

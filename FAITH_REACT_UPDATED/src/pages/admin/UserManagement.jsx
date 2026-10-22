@@ -770,22 +770,32 @@ export default function AdminUserManagement() {
   }, []);
 
   function switchTab(next) {
-    setTab(next);
+    if (shownTab === next && tab === next) return;
+    // Pill and tab colours move straight away, straight on the DOM: the heavy panel re-render below
+    // must not hold them up (that wait was the stutter).
+    const bar = tabsRef.current;
+    if (bar) {
+      bar.querySelectorAll('.um-tab').forEach(b => b.classList.toggle('active', b.id === 'tab-btn-' + next));
+      updateTabPill(true);
+    }
     if (next === 'sections' && !sectionsLoadedRef.current) {
       sectionsLoadedRef.current = true;
       fetchSectionMentorView();
     }
-    if (shownTab === next) return;
-
     const token = ++tabToken.current;
     const show = () => {
       if (token !== tabToken.current) return;
-      setPanelCls({ users: '', assignments: '', sections: '', [next]: 'tab-enter' });
-      setShownTab(next);
+      // Let the pill start gliding before React renders the (large) panels.
+      requestAnimationFrame(() => {
+        if (token !== tabToken.current) return;
+        setTab(next);
+        setPanelCls({ users: '', assignments: '', sections: '', [next]: 'tab-enter' });
+        setShownTab(next);
+      });
     };
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setPanelCls(c => ({ ...c, [shownTab]: 'tab-leave' }));       // fade the old panel out…
-      setTimeout(show, 140);                                        // …then bring the new one in
+      setTimeout(show, 120);                                        // …then bring the new one in
     } else {
       show();
     }

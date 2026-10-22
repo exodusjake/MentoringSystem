@@ -109,3 +109,39 @@
     .hd-activity-icon svg { width: 14px; height: 14px; }
     .hd-activity-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
   
+    /* ── Space use: fill the Mentor Performance card, equal-height bottom row, fluid school table ── */
+    .hd-performance-card .hd-card-body { flex: 1; }
+    .hd-tier-list { display: flex; flex-direction: column; gap: 9px; }
+    .hd-tier-row { display: grid; grid-template-columns: 9px 120px minmax(0, 1fr) 40px 28px; align-items: center; gap: 10px; font-size: 12.5px; }
+    .hd-tier-label { color: #374151; font-weight: 600; white-space: nowrap; }
+    .hd-tier-track { height: 6px; border-radius: 99px; background: #eef1f6; overflow: hidden; }
+    .hd-tier-track > div { height: 100%; border-radius: 99px; }
+    .hd-tier-pct { color: #9ca3af; text-align: right; }
+    .hd-tier-count { color: #111827; font-weight: 800; text-align: right; }
+    .hd-followup { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid #eef1f6; }
+    .hd-followup-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #9ca3af; }
+    .hd-followup-row { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; background: #f8fafc; text-decoration: none; color: inherit; }
+    .hd-followup-row:hover { background: #eef1f6; }
+    .hd-followup-row .top3-avatar { width: 28px; height: 28px; font-size: 11px; flex-shrink: 0; }
+    .hd-followup-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .hd-followup-tag { font-size: 10.5px; font-weight: 700; color: #c2410c; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+    .hd-followup-pct { font-size: 12.5px; font-weight: 800; color: #111827; min-width: 36px; text-align: right; }
+    .hd-followup-empty { font-size: 12.5px; color: #9ca3af; padding: 6px 2px; }
+
+    .hd-row-2 .alerts-card .card-body { flex: 1; display: flex; flex-direction: column; }
+    .hd-row-2 .alerts-list { flex: 1; display: flex; flex-direction: column; }
+    .hd-row-2 .alerts-list > .alert-item { flex: 1; }
+
+    @media (min-width: 1201px) {
+      .head-polish .hd-row-3 { align-items: stretch; }
+      .head-polish .hd-row-3 > .hd-eng-card { height: auto; min-height: 400px; }
+      .head-polish .hd-row-3 .top3-list { flex: 1; }
+      .head-polish .hd-row-3 .recent-card .activity-list { max-height: 340px; }
+    }
+
+    #schoolBreakdown { overflow-x: auto; }
+    .hd-school-head, .hd-school-row {
+      min-width: 1024px; width: 100%; box-sizing: border-box;
+      grid-template-columns: minmax(170px, 1.2fr) minmax(160px, 2fr) repeat(5, minmax(104px, 1fr)) 48px;
+    }
+    @media (max-width: 700px) { .hd-tier-row { grid-template-columns: 9px 104px minmax(0, 1fr) 36px 24px; gap: 8px; } }
