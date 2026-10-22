@@ -58,8 +58,6 @@
 /* Marks the card linked from the Dashboard's admin-posts widget. */
 .announce-card.deep-link-highlight { background: #f0fdfa; box-shadow: 0 0 0 2px #0f766e; }
 .announce-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
-.announce-card-mine  { border-left: 4px solid #0f766e; }
-.announce-card-admin { border-left: 4px solid #6366f1; }
 .ann-pin-banner { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #d97706; padding: 0 0 6px; }
 .ann-pin-banner .ti { font-size: 13px; }
 
@@ -309,9 +307,9 @@
   position: relative; --pin-accent: var(--teal, #0d9488);
   background: linear-gradient(135deg, color-mix(in srgb, var(--pin-accent) 9%, #fff) 0%, #fff 55%);
   border-color: color-mix(in srgb, var(--pin-accent) 45%, #dce3ec);
-  box-shadow: inset 5px 0 0 var(--pin-accent), 0 2px 10px color-mix(in srgb, var(--pin-accent) 16%, transparent);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--pin-accent) 16%, transparent);
 }
-.announce-card--pinned:hover { box-shadow: inset 5px 0 0 var(--pin-accent), 0 6px 18px color-mix(in srgb, var(--pin-accent) 24%, transparent); }
+.announce-card--pinned:hover { box-shadow: 0 6px 18px color-mix(in srgb, var(--pin-accent) 24%, transparent); }
 .ann-pin-banner {
   position: absolute; top: -11px; left: 26px; z-index: 2;
   display: inline-flex; align-items: center; gap: 5px; margin: 0; padding: 4px 11px 4px 9px;
