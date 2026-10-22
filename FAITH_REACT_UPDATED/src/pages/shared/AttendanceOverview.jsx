@@ -304,7 +304,7 @@ tr.mentee-row:nth-child(even){background:#f9fafb}
       <th>#</th>
       <th>Name</th>
       <th>Student No.</th>
-      <th>Section</th>
+      <th>Course</th>
       <th style="text-align:center">Completed Checkpoints</th>
       <th style="text-align:center">Attended</th>
       <th style="text-align:center">Missed</th>
