@@ -470,3 +470,28 @@ body.attendance-detail .mnc-status-badge { white-space: normal; text-transform: 
 
 /* White panel around the filters and actions, same card look as Mentor Monitoring's toolbar */
 .att-toolbar.att-toolbar--panel { margin-bottom: 22px; padding: 14px 22px; background: #fff; border: 1px solid #dce3ec; border-radius: 14px; }
+
+/* ── Phones: nothing runs off the right edge on View Mentees / View History (Admin + Head share this page) ── */
+@media screen and (max-width: 640px) {
+  body.attendance-detail .mentee-card { overflow: hidden; }
+  body.attendance-detail .mnc-main { min-width: 0; }
+  body.attendance-detail .mnc-bottom-row { flex-wrap: wrap; gap: 6px; min-width: 0; }
+  body.attendance-detail .mnc-bottom-row .mnc-stats-row { flex-wrap: wrap; gap: 4px; min-width: 0; }
+  body.attendance-detail .mnc-bottom-row .mnc-cta { margin-left: auto; font-size: 12px; padding: 5px 10px; }
+  body.attendance-detail .mnc-name { white-space: normal; overflow-wrap: anywhere; }
+
+  /* View History: each session becomes a small two-line row (session + date, status + attendance) instead of a wide table */
+  body.attendance-detail .history-modal { max-height: 92dvh; border-radius: 14px; }
+  body.attendance-detail .hm-header { padding: 14px 16px 12px; }
+  body.attendance-detail .hm-body { padding: 8px 14px 14px; }
+  body.attendance-detail .hm-footer { padding: 10px 14px; }
+  body.attendance-detail .history-table-wrap { overflow-x: visible; }
+  body.attendance-detail .history-table, body.attendance-detail .history-table tbody { display: block; width: 100%; }
+  body.attendance-detail .history-table thead { display: none; }
+  body.attendance-detail .history-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; padding: 10px 2px; }
+  body.attendance-detail .history-table tbody td { display: block; padding: 0; border: 0; min-width: 0; font-size: 13px; }
+  body.attendance-detail .history-table tbody td:nth-child(1) { grid-column: 1; grid-row: 1; font-weight: 600; overflow-wrap: anywhere; }
+  body.attendance-detail .history-table tbody td:nth-child(2) { grid-column: 1; grid-row: 2; color: #6b7280; }
+  body.attendance-detail .history-table tbody td:nth-child(3) { grid-column: 2; grid-row: 1; justify-self: end; }
+  body.attendance-detail .history-table tbody td:nth-child(4) { grid-column: 2; grid-row: 2; justify-self: end; }
+}

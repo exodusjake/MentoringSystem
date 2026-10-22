@@ -17,6 +17,21 @@
   :where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"],summary){transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,opacity .2s ease,filter .2s ease,scale .16s cubic-bezier(.2,.7,.2,1);-webkit-tap-highlight-color:transparent}
   :where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"]):not(:disabled):not([aria-disabled="true"]):active{scale:.97}
   @media (prefers-reduced-motion:reduce){:where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"],summary){transition:none}:where(button,[role="button"],.btn):active{scale:1!important}}
+
+  /* Swipe hint under sideways-scrolling strips (see installScrollHints) */
+  .scroll-hint{display:none}
+  @media screen and (max-width:620px){
+    .scroll-hint{display:flex;align-items:center;justify-content:center;gap:10px;margin:-2px 0 12px;font-size:11px;font-weight:600;color:#6b7280;letter-spacing:.02em}
+    .sh-dots{display:inline-flex;align-items:center;gap:5px}
+    .sh-dot{display:block;width:6px;height:6px;border-radius:99px;background:#cbd5e1;transition:width .25s ease,background-color .25s ease}
+    .sh-dot.on{width:16px;background:#2563eb}
+    .sh-text::after{content:"A";display:inline-block;margin-left:4px;font-size:14px;line-height:1;animation:shNudge 1.3s ease-in-out infinite}
+    @keyframes shNudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+    .sh-more-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 30px),transparent)}
+    .sh-more-l{-webkit-mask-image:linear-gradient(to left,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(to left,#000 calc(100% - 30px),transparent)}
+    .sh-more-l.sh-more-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 30px,#000 calc(100% - 30px),transparent);mask-image:linear-gradient(to right,transparent,#000 30px,#000 calc(100% - 30px),transparent)}
+  }
+  @media (prefers-reduced-motion:reduce){.sh-text::after{animation:none}}
 </style>
 </head>
 <body>

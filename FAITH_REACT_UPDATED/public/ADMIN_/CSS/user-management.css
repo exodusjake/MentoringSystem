@@ -1415,3 +1415,10 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
 .um-tab { font-weight: 600; }
 .um-tab:not(.active) { font-weight: 500; }
 .um-tab { justify-content: center; }
+
+/* Phones: the All Users / Assignments / Courses switch spans the width and sits in the middle, tabs sharing it equally. */
+@media screen and (max-width: 640px) {
+  body .page-content > .um-tabs, body .main-wrapper .um-tabs { display: flex; width: 100%; max-width: 100%; margin: 0 auto 12px; justify-content: center; justify-self: stretch; grid-column: 1 / -1; box-sizing: border-box; }
+  body .main-wrapper .um-tabs .um-tab { flex: 1 1 0; min-width: 0; justify-content: center; padding: 9px 6px; font-size: 13px; gap: 5px; }
+  body .main-wrapper .um-tabs .um-tab svg { width: 14px; height: 14px; }
+}

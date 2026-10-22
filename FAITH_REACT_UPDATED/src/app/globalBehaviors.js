@@ -343,3 +343,49 @@ export function installSmoothScroll() {
     current = target = window.scrollY;
   }, { passive: true });
 }
+
+// ── Swipe hint for the sideways-scrolling card strips on phones (school filters, summary cards) ──────────────────
+// The strips scroll horizontally at <= 620px; this adds the cue that there is more: the edges fade out while content
+// continues in that direction, and a row of dots + "Swipe" sits underneath (the hint is a sibling of the strip, so the
+// strip's own markup is never touched).
+export function installScrollHints() {
+  const SEL = '.portal-summary-strip, .monitoring-school-strip, .mobile-summary-scroll';
+  const mq = window.matchMedia('(max-width: 620px)');
+  let queued = false;
+
+  function update(el) {
+    const max = el.scrollWidth - el.clientWidth;
+    const over = mq.matches && max > 6 && el.offsetParent !== null;
+    let hint = el.nextElementSibling;
+    if (!(hint && hint.classList.contains('scroll-hint') && hint._for === el)) hint = null;
+    if (!over) {
+      if (hint) hint.remove();
+      el.classList.remove('sh-more-r', 'sh-more-l');
+      return;
+    }
+    const n = el.children.length;
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.className = 'scroll-hint';
+      hint.setAttribute('aria-hidden', 'true');
+      hint._for = el;
+      el.after(hint);
+    }
+    if (hint.dataset.n !== String(n)) {
+      hint.dataset.n = String(n);
+      hint.innerHTML = '<span class="sh-dots">' + '<i class="sh-dot"></i>'.repeat(n) + '</span><span class="sh-text">Swipe</span>';
+    }
+    const pos = max ? el.scrollLeft / max : 0;
+    const active = Math.min(n - 1, Math.max(0, Math.round(pos * (n - 1))));
+    hint.querySelectorAll('.sh-dot').forEach((d, i) => d.classList.toggle('on', i === active));
+    el.classList.toggle('sh-more-l', el.scrollLeft > 6);
+    el.classList.toggle('sh-more-r', el.scrollLeft < max - 6);
+  }
+  function scan() { queued = false; document.querySelectorAll(SEL).forEach(update); }
+  function schedule() { if (!queued) { queued = true; requestAnimationFrame(scan); } }
+
+  document.addEventListener('scroll', e => { if (e.target && e.target.matches && e.target.matches(SEL)) update(e.target); }, true);
+  window.addEventListener('resize', schedule);
+  new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+  schedule();
+}
