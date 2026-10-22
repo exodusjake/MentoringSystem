@@ -290,3 +290,7 @@ footer { background: var(--navy-deep); color: #b8c4f0; padding: 56px 0 0; font-s
   .toc { position: static; }
 }
 @media (max-width: 520px) { .legal table { display: block; overflow-x: auto; } }
+
+/* Justified card text (hyphenation keeps narrow columns from opening wide gaps) */
+.card p, .role p, .step p { text-align: justify; text-justify: inter-word; hyphens: auto; -webkit-hyphens: auto; }
+.card p { text-align-last: center; }
