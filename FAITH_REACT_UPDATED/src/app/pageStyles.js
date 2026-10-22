@@ -28,17 +28,27 @@ function whenLoaded(el) {
 }
 
 // Make `hrefs` the page stylesheets, in order. Resolves once all of them have loaded.
+// A sheet already in the document that has to change position is NOT moved: re-inserting a <link> makes the
+// browser re-apply it asynchronously, which flashed an unstyled page (e.g. Calendar -> Evaluation Forms).
+// A fresh copy goes in at the right place instead, and the old one is dropped once the copy has loaded.
 export function setPageStyles(hrefs) {
   const want = new Set(hrefs);
   for (const [href, el] of links) {
     if (!want.has(href)) { el.remove(); links.delete(href); }
   }
-  // Lay the links out in order just before the marker, moving one only if it is out of place.
+  const stale = [];
   const anchor = marker();
   for (let i = hrefs.length - 1, next = anchor; i >= 0; i--) {
-    const el = linkFor(hrefs[i]);
-    if (el.nextSibling !== next) anchor.parentNode.insertBefore(el, next);
+    let el = linkFor(hrefs[i]);
+    if (el.nextSibling !== next) {
+      if (el.isConnected) {
+        stale.push(el);
+        links.delete(hrefs[i]);
+        el = linkFor(hrefs[i]);
+      }
+      anchor.parentNode.insertBefore(el, next);
+    }
     next = el;
   }
-  return Promise.all(hrefs.map(href => whenLoaded(links.get(href))));
+  return Promise.all(hrefs.map(href => whenLoaded(links.get(href)))).then(() => stale.forEach(el => el.remove()));
 }
