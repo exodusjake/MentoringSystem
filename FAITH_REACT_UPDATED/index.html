@@ -11,7 +11,13 @@
   <meta name="astra-page-styles"/>
   <!-- Applies the saved light/dark theme before first paint. -->
   <script src="/theme.js"></script>
-  <style>#root{display:contents}html.page-loading *,html.page-loading *::before,html.page-loading *::after{transition:none!important;animation:none!important}@keyframes astraPageOut{from{opacity:1}to{opacity:0}}body.page-leave{animation:astraPageOut .22s ease both;pointer-events:none}@keyframes astraPageIn{from{opacity:0}to{opacity:1}}body.page-enter{animation:astraPageIn .3s ease both}@media (prefers-reduced-motion:reduce){body.page-enter{animation:none}}</style>
+  <style>#root{display:contents}html.page-loading *,html.page-loading *::before,html.page-loading *::after{transition:none!important;animation:none!important}@keyframes astraPageOut{from{opacity:1}to{opacity:0}}body.page-leave{animation:astraPageOut .22s ease both;pointer-events:none}@keyframes astraPageIn{from{opacity:0}to{opacity:1}}body.page-enter{animation:astraPageIn .3s ease both}@media (prefers-reduced-motion:reduce){body.page-enter{animation:none}}
+  /* Every button: soft colour/shadow transitions and a small press. Zero specificity, so any button that has its own
+     transition keeps it; the press uses the separate `scale` property so it never fights a button's own transform. */
+  :where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"],summary){transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,opacity .2s ease,filter .2s ease,scale .16s cubic-bezier(.2,.7,.2,1);-webkit-tap-highlight-color:transparent}
+  :where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"]):not(:disabled):not([aria-disabled="true"]):active{scale:.97}
+  @media (prefers-reduced-motion:reduce){:where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"],summary){transition:none}:where(button,[role="button"],.btn):active{scale:1!important}}
+</style>
 </head>
 <body>
   <div id="root"></div>
