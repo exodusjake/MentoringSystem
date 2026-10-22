@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Page from '../../app/Page.jsx';
 import AnnounceContent from '../../components/announcements/AnnounceContent.jsx';
 import AttachmentCards from '../../components/announcements/AttachmentCards.jsx';
@@ -38,6 +38,36 @@ export default function MentorAnnouncements() {
   const [lightbox, setLightbox] = useState(null);
   const activeTabRef = useRef(activeTab);
   activeTabRef.current = activeTab;
+
+  // Sliding highlight behind the two tabs, and a direction for the list change (Administration -> My = forward).
+  const tabsRef = useRef(null);
+  const pillRef = useRef(null);
+  const pillFirst = useRef(true);
+  const prevTab = useRef(activeTab);
+  const dirRef = useRef('');
+  if (prevTab.current !== activeTab) { dirRef.current = activeTab === 'mine' ? 'ann-fwd' : 'ann-back'; prevTab.current = activeTab; }
+  const tabDir = dirRef.current;
+  function placePill(animate) {
+    const bar = tabsRef.current, pill = pillRef.current;
+    const btn = bar && bar.querySelector('.ann-tab.active');
+    if (!btn || !pill) return;
+    pill.style.transition = animate ? '' : 'none';
+    pill.style.width = btn.offsetWidth + 'px';
+    pill.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+    if (!animate) { void pill.offsetWidth; pill.style.transition = ''; }
+  }
+  useLayoutEffect(() => { placePill(!pillFirst.current); pillFirst.current = false; }, [activeTab]);
+  useEffect(() => {
+    const onResize = () => placePill(false);
+    window.addEventListener('resize', onResize);
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined' && tabsRef.current) {
+      ro = new ResizeObserver(() => placePill(true));   // the bold active label resizes tabs mid-slide
+      tabsRef.current.querySelectorAll('.ann-tab').forEach(b => ro.observe(b));
+    }
+    if (document.fonts) document.fonts.ready.then(() => placePill(false));
+    return () => { window.removeEventListener('resize', onResize); ro?.disconnect(); };
+  }, []);
 
   // post / edit modal
   const [postOpen, setPostOpen] = useState(false);
@@ -445,7 +475,8 @@ export default function MentorAnnouncements() {
             </button>
           </div>
 
-          <div className="ann-tabs">
+          <div className="ann-tabs has-pill" ref={tabsRef}>
+            <span className="ann-tab-pill" ref={pillRef} aria-hidden="true"></span>
             <button className={`ann-tab${activeTab === 'notifications' ? ' active' : ''}`} id="tab-notifications" onClick={() => switchTab('notifications')}>
               <i className="ti ti-building"></i> Administration
               <span className="ann-unread-dot" id="dot-notifications" style={{ display: dots.notifications ? '' : 'none' }}></span>
@@ -463,7 +494,7 @@ export default function MentorAnnouncements() {
             </div>
           </div>
 
-          <div id="announcementsList" className="announcements-list">{list}</div>
+          <div id="announcementsList" key={activeTab} className={`announcements-list ann-swap ${tabDir}`}>{list}</div>
         </main>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>

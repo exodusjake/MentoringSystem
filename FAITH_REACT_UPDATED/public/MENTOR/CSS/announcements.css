@@ -391,3 +391,23 @@
   body .main-wrapper .ann-tab { position: relative; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 8px; font-size: 13px; gap: 5px; }
   body .main-wrapper .ann-tab .ann-unread-dot { position: absolute; top: 6px; right: 8px; margin: 0; }
 }
+
+/* ── Tab switch: sliding highlight + the list slides in from the side of the tab you chose ── */
+.ann-tabs.has-pill { position: relative; }
+.ann-tab-pill { position: absolute; top: 0; bottom: 0; left: 0; width: 0; border-radius: 10px; background: #0f766e; box-shadow: 0 4px 12px rgba(15,118,110,.28); pointer-events: none; z-index: 0; will-change: transform, width; transition: transform .36s cubic-bezier(.32,.72,0,1), width .36s cubic-bezier(.32,.72,0,1); }
+.ann-tabs.has-pill .ann-tab { position: relative; z-index: 1; transition: color .22s ease .05s, background-color .18s ease, border-color .18s ease; }
+.ann-tabs.has-pill .ann-tab.active { background: transparent; border-color: transparent; }
+.ann-tabs.has-pill .ann-tab.active .ann-unread-dot { box-shadow: 0 0 0 2px #0f766e; }
+.ann-swap.ann-fwd  { animation: annListFwd .38s cubic-bezier(.22,1,.36,1) both; }
+.ann-swap.ann-back { animation: annListBack .38s cubic-bezier(.22,1,.36,1) both; }
+@keyframes annListFwd  { from { opacity: 0; transform: translateX(26px); }  to { opacity: 1; transform: none; } }
+@keyframes annListBack { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+.ann-swap.ann-fwd > *, .ann-swap.ann-back > * { animation: annCardIn .42s cubic-bezier(.22,1,.36,1) both; }
+.ann-swap > *:nth-child(2) { animation-delay: .04s; }
+.ann-swap > *:nth-child(3) { animation-delay: .08s; }
+.ann-swap > *:nth-child(4) { animation-delay: .12s; }
+.ann-swap > *:nth-child(n+5) { animation-delay: .15s; }
+@keyframes annCardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.btn-post-announce { animation: annBtnIn .3s ease both; }
+@keyframes annBtnIn { from { opacity: 0; scale: .92; } to { opacity: 1; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .ann-tab-pill, .ann-tabs.has-pill .ann-tab { transition: none; } .ann-swap, .ann-swap > *, .btn-post-announce { animation: none !important; } }
