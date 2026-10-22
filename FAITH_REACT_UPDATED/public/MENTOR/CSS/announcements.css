@@ -379,3 +379,15 @@
 @media (max-width: 640px) {
   .announce-card--pinned .ann-pin-banner { position: static; align-self: flex-start; display: inline-flex; margin: 0 0 10px; }
 }
+
+/* Phones: the Post Announcement button only exists on "My Announcements". It used to appear inside the header and
+   push everything down while the two tabs re-wrapped. Now it floats at the header's right edge (nothing moves when it
+   appears) and the tabs are always two equal columns. */
+@media screen and (max-width: 640px) {
+  body .main-wrapper .page-header { position: relative; flex-wrap: nowrap; }
+  body .main-wrapper .page-header > div { min-width: 0; max-width: calc(100% - 128px); }
+  body .main-wrapper .page-header .btn-post-announce { position: absolute; top: 0; right: 0; margin: 0; padding: 8px 12px; font-size: 12.5px; white-space: nowrap; min-height: 0; }
+  body .main-wrapper .ann-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  body .main-wrapper .ann-tab { position: relative; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 8px; font-size: 13px; gap: 5px; }
+  body .main-wrapper .ann-tab .ann-unread-dot { position: absolute; top: 6px; right: 8px; margin: 0; }
+}
