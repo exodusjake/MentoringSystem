@@ -292,7 +292,7 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   body .main-wrapper .mentees-grid { gap: 10px; }
   body .main-wrapper .mentee-card .mc-identity { padding: 12px 14px; }
   body .main-wrapper .mentee-card .mc-body { padding: 10px 14px; }
-  body .main-wrapper .mentee-hero, body .main-wrapper .activity-hero { padding: 14px 16px; margin-bottom: 14px; }
+  body .main-wrapper .mentor-hero { padding: 14px 16px; margin-bottom: 14px; }
   body .main-wrapper .hero-avatar { width: 48px; height: 48px; font-size: 18px; }
   body .main-wrapper .section-card-head { padding: 12px 14px; }
   body .main-wrapper .mentee-cards-grid.single-section { padding: 10px 12px 12px; }
