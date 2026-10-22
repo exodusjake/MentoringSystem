@@ -96,10 +96,43 @@ async function request(endpoint, method = "GET", body = null, requiresAuth = fal
     }
 }
 
+// Identical GETs already in flight share one network call (several components ask for Settings etc. on the
+// same page load). A few rarely-changing endpoints are also kept for a short time, so moving between pages
+// doesn't refetch them. Any write clears everything, so this browser never sees its own changes late.
+const CACHEABLE = /^(Settings|CalendarEvents|MentorProfiles)(\?|$)/i;
+const CACHE_TTL = 30000;
+const inflight = new Map();
+const cache = new Map();
+
+function cacheKey(endpoint, requiresAuth) {
+    return `${requiresAuth ? getSession()?.token || '' : ''}|${endpoint}`;
+}
+
 // Every request drives the global loading bar (components/LoadingBar.jsx), as apiClient.js's wrapper did.
 export function apiRequest(endpoint, method = "GET", body = null, requiresAuth = false) {
+    const isGet = method.toUpperCase() === 'GET';
+    if (!isGet) { cache.clear(); inflight.clear(); }
+    const key = isGet ? cacheKey(endpoint, requiresAuth) : null;
+
+    if (key) {
+        const hit = cache.get(key);
+        if (hit && Date.now() - hit.at < CACHE_TTL) return Promise.resolve(structuredClone(hit.data));
+        const pending = inflight.get(key);
+        if (pending) return pending.then(data => structuredClone(data));
+    }
+
     emit('request:begin');
     let p;
     try { p = request(endpoint, method, body, requiresAuth); } catch (e) { emit('request:end'); throw e; }
+    if (key) {
+        const shared = p.then(data => {
+            if (CACHEABLE.test(endpoint)) cache.set(key, { at: Date.now(), data });
+            return data;
+        });
+        inflight.set(key, shared);
+        const clear = () => { if (inflight.get(key) === shared) inflight.delete(key); };
+        shared.then(clear, clear);
+        p = shared.then(data => structuredClone(data));
+    }
     return p.finally(() => emit('request:end'));
 }
