@@ -37,3 +37,15 @@ Set `root` back to `/var/www/astra;`, then `sudo nginx -t && sudo systemctl relo
 - No CORS change is needed when the site and API share the same origin, as before.
 - `Frontend:BaseUrl` in the backend config should stay the site's address, so e-mail links keep working.
 - If the site and API are on different origins, add the site's origin to `Cors:AllowedOrigins` on the backend.
+
+## Security headers
+`deployment/nginx-security-headers.conf` adds CSP, HSTS, nosniff, anti-framing and referrer/permissions policies.
+```bash
+sudo mkdir -p /etc/nginx/snippets && sudo cp nginx-security-headers.conf /etc/nginx/snippets/astra-security-headers.conf
+# in the site's server block:  include /etc/nginx/snippets/astra-security-headers.conf;
+sudo nginx -t && sudo systemctl reload nginx
+```
+Check with `curl -sI https://<site>/`. After enabling, click through each portal once (login, QR scan, a PDF proof, the
+landing page) and watch the browser console for "Refused to ..." messages; add the blocked origin to the matching CSP directive.
+Remove `server_tokens off;` from the snippet if nginx complains it is not allowed there (it belongs at `http`/`server` level).
+The API sends its own headers (Program.cs), so nothing else is needed for `/api` and `/uploads`.

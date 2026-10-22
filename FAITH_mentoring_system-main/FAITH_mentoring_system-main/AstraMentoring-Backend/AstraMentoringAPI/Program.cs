@@ -153,6 +153,29 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Browser hardening on every response (API and /uploads files): no MIME sniffing, no framing, no referrer leaks,
+// HTTPS only (HSTS is ignored over plain HTTP), and a locked-down CSP on API responses (production only).
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        var h = context.Response.Headers;
+        h["X-Content-Type-Options"] = "nosniff";
+        h["X-Frame-Options"] = "SAMEORIGIN";   // PDF proofs are shown in an iframe on the same site
+        h["Referrer-Policy"] = "strict-origin-when-cross-origin";
+        h["Permissions-Policy"] = "camera=(self), microphone=(), geolocation=(), payment=()";
+        if (!app.Environment.IsDevelopment())   // Swagger UI needs inline scripts in Development
+        {
+            // API responses are JSON only. /uploads is left without a CSP so the browser's PDF viewer keeps working.
+            if (context.Request.Path.StartsWithSegments("/api"))
+                h["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'";
+            h["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+        }
+        return Task.CompletedTask;
+    });
+    await next();
+});
+
 app.UseCors("AllowFrontend");
 
 // Catch-all for unhandled errors: log the details, return a generic JSON message.

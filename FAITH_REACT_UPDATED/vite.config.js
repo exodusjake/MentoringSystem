@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => {
     build: {
       // Route components are lazy-loaded, so each page becomes its own chunk.
       chunkSizeWarningLimit: 600,
+      // No source maps, so the original source isn't served to anyone opening DevTools.
+      sourcemap: false,
+      // Drop console.* and debugger from the bundle, so API errors and internals aren't printed in the browser console.
+      rolldownOptions: { output: { minify: { compress: { dropConsole: true, dropDebugger: true } } } },
     },
   };
 });
