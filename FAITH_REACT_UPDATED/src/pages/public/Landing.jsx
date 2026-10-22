@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import FadeLink from '../../components/FadeLink.jsx';
 import Page from '../../app/Page.jsx';
 import { prefetchRoute } from '../../lib/prefetch.js';
 import { useLenis, useNavScrolled, usePublicEffects } from './publicEffects.js';
@@ -83,7 +84,7 @@ export default function Landing() {
               {' '}
               <a href="#contact" className={spy === '#contact' ? 'active' : undefined}>Contact</a>
               {' '}
-              <Link to="/login" className="btn btn-gold">Log in</Link>
+              <FadeLink to="/login" className="btn btn-gold">Log in</FadeLink>
             </nav>
           </div>
         </header>
@@ -101,7 +102,7 @@ export default function Landing() {
                 Book sessions, record attendance with a dynamic QR code, and submit e-signed logsheets, all in one place for FAITH Colleges.
               </p>
               <div className="hero-actions">
-                <Link to="/login" className="btn btn-gold">Log in to your portal</Link>
+                <FadeLink to="/login" className="btn btn-gold">Log in to your portal</FadeLink>
                 {' '}
                 <a href="#features" className="btn btn-ghost">Explore features</a>
               </div>
@@ -323,7 +324,7 @@ export default function Landing() {
                   Role-based access, so everyone sees only what they should
                 </li>
               </ul>
-              <Link to="/login" className="btn btn-primary">Get started</Link>
+              <FadeLink to="/login" className="btn btn-primary">Get started</FadeLink>
             </div>
           </div>
         </section>
@@ -526,7 +527,7 @@ export default function Landing() {
               <h2>Ready to start your mentoring sessions?</h2>
               <p>Log in with your institutional account to open your portal.</p>
             </div>
-            <Link to="/login" className="btn btn-gold">Log in now</Link>
+            <FadeLink to="/login" className="btn btn-gold">Log in now</FadeLink>
           </div>
         </div>
         {/* FOOTER */}
@@ -560,7 +561,7 @@ export default function Landing() {
               <h4>Access &amp; Legal</h4>
               <ul>
                 <li>
-                  <Link to="/login">Log in</Link>
+                  <FadeLink to="/login">Log in</FadeLink>
                 </li>
                 <li>
                   <Link to="/privacy">Privacy Policy</Link>

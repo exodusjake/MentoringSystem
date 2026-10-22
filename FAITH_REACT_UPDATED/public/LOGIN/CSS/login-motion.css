@@ -20,3 +20,11 @@
 .bottom-links a:hover { background-size: 100% 1px; }
 
 @media (prefers-reduced-motion: reduce) { .btn-signin::after, .ripple { display: none; } }
+
+/* ── Log in button: no twitch when it switches to its "Logging in…" state ──
+   (it used to drop 1px as the hover lift was cancelled by :disabled, and the spinner shifted the label) */
+.btn-signin { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; }
+.btn-signin:hover:not(:disabled) { transform: none; }
+.btn-signin:active:not(:disabled) { transform: scale(.985); }
+.btn-signin:disabled { transform: none; transition: background .2s, box-shadow .2s; }
+.btn-signin:disabled::before { margin-right: 0; vertical-align: baseline; flex-shrink: 0; }
