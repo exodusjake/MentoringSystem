@@ -388,3 +388,56 @@ html:has(#formsList) footer {
 }
 .ann-pin-banner .ti { display: inline-block; font-size: 12px; color: inherit; transform: none; }
 
+
+/* ── Announcement card & kebab menu: refined look that follows the system theme (blue / navy, soft depth) ── */
+.announce-card {
+  border-radius: 16px; border-color: #e1e8f2;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 4px 14px rgba(15,23,42,.05);
+  transition: box-shadow .25s ease, transform .25s cubic-bezier(.22,1,.36,1), border-color .25s ease;
+}
+.announce-card:hover { transform: translateY(-1px); border-color: #c9d6ea; box-shadow: 0 2px 4px rgba(15,23,42,.05), 0 12px 28px rgba(37,99,235,.10); }
+.announce-card .ann-avatar { box-shadow: 0 0 0 3px #fff, 0 0 0 4px #dbe5f5, 0 6px 14px rgba(37,99,235,.22); letter-spacing: .02em; }
+.announce-card .ann-avatar-indigo { background: linear-gradient(135deg, #2563eb, #6366f1); }
+.announce-card .ann-avatar-teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+.announce-card .ann-card-name { font-size: 15.5px; letter-spacing: -.005em; }
+.announce-card .ann-card-date { font-size: 12.5px; letter-spacing: .01em; }
+.announce-card .announce-title { font-size: 17px; letter-spacing: -.01em; line-height: 1.35; }
+.announce-card .announce-content { color: var(--gray-600, #4b5563); }
+
+/* Audience badge: tinted pill with a status dot and a hairline border */
+.announce-card .ann-card-badges .badge { padding: 5px 12px 5px 10px; font-size: 12px; font-weight: 600; gap: 7px; border: 1px solid transparent; }
+.announce-card .ann-card-badges .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: .85; }
+.announce-card .badge.aud-both   { background: #f1edff; border-color: #ddd3fb; }
+.announce-card .badge.aud-mentor { background: #eaf2ff; border-color: #c9ddfb; }
+.announce-card .badge.aud-mentee { background: #e6f8f0; border-color: #bfeed9; }
+.announce-card .badge.aud-admin  { background: #f1f4f9; border-color: #dde3ee; }
+
+/* Kebab button + menu */
+.ann-kebab-btn { width: 36px; height: 36px; border-radius: 10px; transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
+.ann-kebab-btn:hover, .ann-kebab-wrap:has(.ann-kebab-menu.open) .ann-kebab-btn { background: #eaf2ff; color: #2563eb; }
+.ann-kebab-wrap:has(.ann-kebab-menu.open) .ann-kebab-btn { box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.ann-kebab-menu {
+  top: 42px; min-width: 176px; padding: 6px; border-radius: 14px; border-color: #e1e8f2;
+  box-shadow: 0 2px 6px rgba(15,23,42,.06), 0 18px 40px rgba(15,23,42,.16);
+  transform-origin: top right;
+}
+.ann-kebab-menu.open { animation: annMenuIn .18s cubic-bezier(.22,1,.36,1) both; }
+@keyframes annMenuIn { from { opacity: 0; transform: translateY(-6px) scale(.96); } to { opacity: 1; transform: none; } }
+.ann-kebab-menu button { padding: 10px 12px; border-radius: 9px; gap: 10px; font-weight: 500; transition: background .15s ease, color .15s ease; }
+.ann-kebab-menu button i { font-size: 16px; width: 18px; text-align: center; color: #6b7a99; transition: color .15s ease; }
+.ann-kebab-menu button:hover { background: #eaf2ff; color: #1d4ed8; }
+.ann-kebab-menu button:hover i { color: #2563eb; }
+.ann-kebab-menu button.kebab-pin i { color: #d97706; }
+.ann-kebab-menu button.kebab-pin:hover { background: #fff6e0; color: #b45309; }
+.ann-kebab-menu button.kebab-danger { margin-top: 5px; position: relative; }
+.ann-kebab-menu button.kebab-danger::before { content: ''; position: absolute; left: 8px; right: 8px; top: -3px; height: 1px; background: #eef1f6; }
+.ann-kebab-menu button.kebab-danger i { color: #dc2626; }
+.ann-kebab-menu button.kebab-danger:hover { background: #fdecec; color: #b91c1c; }
+
+/* See more / comments */
+.announce-card .btn-see-more { display: inline-flex; align-items: center; gap: 4px; padding: 4px 0; transition: color .15s ease, gap .2s ease; }
+.announce-card .btn-see-more:hover { color: #1d4ed8; gap: 7px; }
+.announce-card .card-comments { border-top-color: #eaeff7; }
+.announce-card .add-comment-trigger { padding: 7px 12px; margin-left: -12px; border-radius: 999px; transition: color .15s ease, background .15s ease; }
+.announce-card .add-comment-trigger:hover { background: #eaf2ff; color: #2563eb; }
+@media (prefers-reduced-motion: reduce) { .announce-card, .announce-card:hover { transform: none; transition: none; } .ann-kebab-menu.open { animation: none; } }
