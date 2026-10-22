@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Page from '../../app/Page.jsx';
-import { showConfirm } from '../../components/Notify.jsx';
+import { showConfirm, showToast as notify } from '../../components/Notify.jsx';
 import Overlay from '../../components/Overlay.jsx';
 import { apiRequest } from '../../lib/api.js';
 
@@ -425,7 +425,12 @@ export default function AdminSettings() {
         MaintenanceEta: res?.eta || '',
         MaintenanceMessage: message,
       });
-      showToast((mentor || mentee) ? 'Maintenance mode is on.' : 'Portals reopened.', 'success');
+      if (mentor || mentee) {
+        const etaTxt = etaIso ? ` Back by ${new Date(etaIso).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.` : '';
+        notify(`${who} ${mentor && mentee ? 'portals are' : 'portal is'} now closed to users. Admin and Head can still sign in.${etaTxt}`, 'warning', 8000, 'Maintenance mode is on');
+      } else {
+        notify('The Mentor and Mentee portals are open again. Everyone can sign in and use the system.', 'success', 6000, 'Portals reopened');
+      }
       flashBtn('maintenance', 'Applied ✓');
     } catch (e) {
       showToast(e.message || 'Failed to update maintenance mode.', 'error');

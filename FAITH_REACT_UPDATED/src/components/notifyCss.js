@@ -21,6 +21,7 @@ export const NOTIFY_CSS = `
       .nf-toast.nf-hide { opacity: 0; transform: translateX(28px) scale(.97); transition-duration: .22s; }
       .nf-toast-success { --nf-accent: #16a34a; --nf-track: #bbf7d0; --nf-tint: #dcfce7; }
       .nf-toast-error   { --nf-accent: #dc2626; --nf-track: #fecaca; --nf-tint: #fee2e2; }
+      .nf-toast-warning { --nf-accent: #d97706; --nf-track: #fde68a; --nf-tint: #fef3c7; }
       .nf-toast-info    { --nf-accent: #2563eb; --nf-track: #bfdbfe; --nf-tint: #dbeafe; }
       .nf-toast-progress {
         position: absolute; left: 0; right: 0; top: 0; height: 5px; z-index: 2;

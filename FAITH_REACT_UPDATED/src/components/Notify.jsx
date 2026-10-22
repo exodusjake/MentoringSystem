@@ -19,6 +19,7 @@ export function showConfirm(message, options = {}) {
 const ICONS = {
   error:   <svg viewBox="0 0 24 24"><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
   success: <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>,
+  warning: <svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3.5 17.2a1.8 1.8 0 0 0 2.6 2.6l5.8-5.8a4 4 0 0 0 5.1-5.4l-2.4 2.4-2.1-.5-.5-2.1z"/></svg>,
   info:    <svg viewBox="0 0 24 24"><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.5" x2="12.01" y2="7.5"/></svg>,
 };
 
