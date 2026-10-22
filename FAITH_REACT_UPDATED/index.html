@@ -18,6 +18,17 @@
   :where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"]):not(:disabled):not([aria-disabled="true"]):active{scale:.97}
   @media (prefers-reduced-motion:reduce){:where(button,[role="button"],.btn,input[type="button"],input[type="submit"],input[type="reset"],summary){transition:none}:where(button,[role="button"],.btn):active{scale:1!important}}
 
+  /* Phones / small tablets, every portal and public page: the page must never be wider than the screen. A wide table or grid
+     used to stretch the layout once data loaded, and the phone then zoomed out and shifted the page sideways. Grid / card
+     columns may shrink below their content, media is capped, and wide tables scroll inside their own box. */
+  @media screen and (max-width:900px){
+    html,body{overflow-x:hidden;max-width:100%}
+    .main-wrapper,.page-content,main{min-width:0;max-width:100%}
+    .main-wrapper :is([class*="grid"],[class*="-card"],[class*="card-"],.card,.table-card,section):not([class*="modal"]):not([class*="overlay"]):not([class*="dialog"]){min-width:0;max-width:100%}
+    .main-wrapper :is(.table-wrapper,.table-scroll,.history-table-wrap,[class*="table-wrap"]){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    img,video,canvas,iframe,svg{max-width:100%}
+  }
+
   /* Swipe hint under sideways-scrolling strips (see installScrollHints) */
   .scroll-hint{display:none}
   @media screen and (max-width:620px){
