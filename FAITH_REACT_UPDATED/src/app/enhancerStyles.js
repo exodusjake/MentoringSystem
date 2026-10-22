@@ -9,16 +9,16 @@ export const MODAL_MOTION_CSS = [
   '@keyframes mmOverlayOut{from{opacity:1}to{opacity:0}}',
   '@keyframes mmDialogIn{from{opacity:0;transform:translateY(20px) scale(.95)}to{opacity:1;transform:none}}',
   '@keyframes mmDialogOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(12px) scale(.97)}}',
-  '.modal-overlay,.info-modal-overlay{animation:mmOverlayIn .24s ease both;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}',
-  '.modal-overlay>*,.info-modal-overlay>*{animation:mmDialogIn .36s ' + EASE + ' both}',
-  '.modal-overlay.mm-closing{display:flex}',
+  '.modal-overlay,.info-modal-overlay,.lightbox-overlay{animation:mmOverlayIn .24s ease both;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}',
+  '.modal-overlay>*,.info-modal-overlay>*,.lightbox-overlay>*{animation:mmDialogIn .36s ' + EASE + ' both}',
+  '.modal-overlay.mm-closing,.lightbox-overlay.mm-closing{display:flex}',
   '.mm-closing{animation:mmOverlayOut ' + OUT_MS + 'ms ease both!important;pointer-events:none}',
   '.mm-closing>*{animation:mmDialogOut ' + OUT_MS + 'ms ease both!important}',
   // buttons that open these modals get a little tactile feedback
   '.card-actions>button,.card-actions>.btn-primary,.card-actions>.btn-outline{transition:transform .15s ' + EASE + ',box-shadow .2s ease,background-color .2s ease,border-color .2s ease}',
   '.card-actions>button:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(37,99,235,.14)}',
   '.card-actions>button:active{transform:translateY(0) scale(.97);box-shadow:none}',
-  '@media (prefers-reduced-motion:reduce){.modal-overlay,.info-modal-overlay,.modal-overlay>*,.info-modal-overlay>*{animation:none!important}.card-actions>button{transition:none}}'
+  '@media (prefers-reduced-motion:reduce){.modal-overlay,.info-modal-overlay,.lightbox-overlay,.modal-overlay>*,.info-modal-overlay>*,.lightbox-overlay>*{animation:none!important}.card-actions>button{transition:none}}'
 ].join('');
 export const MODAL_OUT_MS = OUT_MS;
 

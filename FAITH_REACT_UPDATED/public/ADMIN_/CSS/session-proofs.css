@@ -277,3 +277,16 @@ button.proof-chip.yes { min-width: 72px; padding: 5px 16px; justify-content: cen
 .info-modal-title   { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 10px; }
 .info-modal-message { font-size: 15px; color: #6b7280; margin: 0 0 26px; line-height: 1.6; }
 .info-modal > .btn-primary { width: 100%; justify-content: center; }
+
+/* View sessions: the list rows ease in one after another once the dialog has opened */
+@keyframes ptRowIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.pt-sessions-body > * { animation: ptRowIn .38s cubic-bezier(.22,1,.36,1) both; }
+.pt-sessions-body > *:nth-child(1) { animation-delay: .12s; }
+.pt-sessions-body > *:nth-child(2) { animation-delay: .17s; }
+.pt-sessions-body > *:nth-child(3) { animation-delay: .22s; }
+.pt-sessions-body > *:nth-child(4) { animation-delay: .27s; }
+.pt-sessions-body > *:nth-child(5) { animation-delay: .32s; }
+.pt-sessions-body > *:nth-child(n+6) { animation-delay: .36s; }
+.pt-toggle-btn .pt-chevron { transition: transform .25s cubic-bezier(.22,1,.36,1); }
+.pt-toggle-btn:hover .pt-chevron { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) { .pt-sessions-body > * { animation: none; } }
