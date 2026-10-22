@@ -201,3 +201,24 @@ button {
   button { transition: none; }
   button:hover, button:active { transform: none !important; }
 }
+
+/* Manage Session: a proper teal button (the delete-icon styling made it a tiny underlined link that turned red) */
+.slot-manage-btn {
+  position: absolute; top: 50%; right: 18px; translate: 0 -50%;
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
+  font-family: var(--font); font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none;
+  color: #0f766e; background: #ecfdf9; border: 1px solid #a7e3d6; border-radius: 10px;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, translate .2s ease, scale .16s ease;
+}
+.slot-manage-btn i { font-size: 15px; }
+.slot-manage-btn .slot-manage-arrow { transition: transform .22s cubic-bezier(.22,1,.36,1); }
+.slot-manage-btn:hover { background: #0f766e; color: #fff; border-color: #0f766e; box-shadow: 0 6px 14px rgba(15,118,110,.25); translate: 0 calc(-50% - 1px); }
+.slot-manage-btn:hover .slot-manage-arrow { transform: translateX(3px); }
+.slot-manage-btn:active { scale: .97; }
+.slot-manage-btn:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
+@media (max-width: 600px) {
+  .slot-card:has(.slot-manage-btn) { padding-bottom: 62px; }
+  .slot-manage-btn { top: auto; bottom: 14px; right: 16px; translate: none; }
+  .slot-manage-btn:hover { translate: 0 -1px; }
+}
+@media (prefers-reduced-motion: reduce) { .slot-manage-btn, .slot-manage-btn .slot-manage-arrow { transition: none; } }

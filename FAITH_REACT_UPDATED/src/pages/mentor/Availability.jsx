@@ -79,7 +79,7 @@ function SlotCard({ slot, isPast, onDelete }) {
     <div className={`slot-card ${cardCls}${isPast ? ' slot-past' : ''}`}>
       {!slot.linkedSessionID
         ? <button className="slot-delete-btn" title="Delete slot" onClick={() => onDelete(slot.availabilityID)}><i className="ti ti-trash"></i></button>
-        : <Link className="slot-delete-btn" to="/mentor/sessions" title="Cancel or delete in Sessions" aria-label="Manage session" style={{ fontSize: '12px', color: '#0f766e' }}>Manage Session <i className="ti ti-external-link"></i></Link>}
+        : <Link className="slot-manage-btn" to="/mentor/sessions" title="Cancel or delete in Sessions" aria-label="Manage session"><i className="ti ti-settings-2"></i> Manage Session <i className="ti ti-arrow-right slot-manage-arrow"></i></Link>}
       <div className="slot-cal-block">
         <span className="slot-cal-month">{month}</span>
         <span className="slot-cal-day">{day}</span>
