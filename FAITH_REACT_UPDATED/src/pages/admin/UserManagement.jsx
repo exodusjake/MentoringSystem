@@ -782,6 +782,8 @@ export default function AdminUserManagement() {
       sectionsLoadedRef.current = true;
       fetchSectionMentorView();
     }
+    const ORDER = ['users', 'assignments', 'sections'];
+    const dir = ORDER.indexOf(next) >= ORDER.indexOf(shownTab) ? 'tab-fwd' : 'tab-back';   // slide direction follows the tab order
     const token = ++tabToken.current;
     const show = () => {
       if (token !== tabToken.current) return;
@@ -789,13 +791,13 @@ export default function AdminUserManagement() {
       requestAnimationFrame(() => {
         if (token !== tabToken.current) return;
         setTab(next);
-        setPanelCls({ users: '', assignments: '', sections: '', [next]: 'tab-enter' });
+        setPanelCls({ users: '', assignments: '', sections: '', [next]: 'tab-enter ' + dir });
         setShownTab(next);
       });
     };
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setPanelCls(c => ({ ...c, [shownTab]: 'tab-leave' }));       // fade the old panel out…
-      setTimeout(show, 120);                                        // …then bring the new one in
+      setPanelCls(c => ({ ...c, [shownTab]: 'tab-leave ' + dir }));       // slide + fade the old panel out…
+      setTimeout(show, 170);                                        // …then bring the new one in
     } else {
       show();
     }

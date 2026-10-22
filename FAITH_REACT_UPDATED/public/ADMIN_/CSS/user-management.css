@@ -1385,3 +1385,28 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
   .um-tab, .um-tab-pill, .tab-panel { transition: none; }
   .tab-panel.tab-enter { animation: none; }
 }
+
+/* ── Directional panel transition: the old panel slides out, the new one slides in from the same side ── */
+.tab-panel { transition: opacity .17s ease, transform .17s cubic-bezier(.4,0,1,1); }
+.tab-panel.tab-leave.tab-fwd  { opacity: 0; transform: translateX(-28px); }
+.tab-panel.tab-leave.tab-back { opacity: 0; transform: translateX(28px); }
+.tab-panel.tab-enter.tab-fwd  { animation: tabInFwd .45s cubic-bezier(.22,1,.36,1) both; }
+.tab-panel.tab-enter.tab-back { animation: tabInBack .45s cubic-bezier(.22,1,.36,1) both; }
+@keyframes tabInFwd  { from { opacity: 0; transform: translateX(32px); }  to { opacity: 1; transform: none; } }
+@keyframes tabInBack { from { opacity: 0; transform: translateX(-32px); } to { opacity: 1; transform: none; } }
+/* a light cascade on the blocks inside the incoming panel */
+.tab-panel.tab-enter .tab-desc,
+.tab-panel.tab-enter .stat-card,
+.tab-panel.tab-enter .school-card,
+.tab-panel.tab-enter .table-card { animation: tabItemUp .5s cubic-bezier(.22,1,.36,1) both; }
+.tab-panel.tab-enter .stat-card:nth-child(1) { animation-delay: .05s; }
+.tab-panel.tab-enter .stat-card:nth-child(2) { animation-delay: .09s; }
+.tab-panel.tab-enter .stat-card:nth-child(3) { animation-delay: .13s; }
+.tab-panel.tab-enter .stat-card:nth-child(4) { animation-delay: .17s; }
+.tab-panel.tab-enter .stat-card:nth-child(5) { animation-delay: .21s; }
+.tab-panel.tab-enter .table-card { animation-delay: .14s; }
+@keyframes tabItemUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .tab-panel, .tab-panel.tab-leave { transition: none; }
+  .tab-panel.tab-enter, .tab-panel.tab-enter * { animation: none !important; }
+}
