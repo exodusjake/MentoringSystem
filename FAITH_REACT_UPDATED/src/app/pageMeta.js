@@ -325,7 +325,8 @@ export const PAGE_META = {
   "styles": [
    "/HEAD/CSS/setup.css",
    "/ADMIN_/CSS/page-polish.css",
-   "/HEAD/CSS/page-polish.css"
+   "/HEAD/CSS/page-polish.css",
+   "/setup-fit.css"
   ],
   "enhancers": {
    "select": false,
@@ -583,7 +584,8 @@ export const PAGE_META = {
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/setup.css",
-   "/ADMIN_/CSS/page-polish.css"
+   "/ADMIN_/CSS/page-polish.css",
+   "/setup-fit.css"
   ],
   "enhancers": {
    "select": false,
@@ -791,7 +793,8 @@ export const PAGE_META = {
   "description": "",
   "bodyClass": "",
   "styles": [
-   "/MENTOR/CSS/setup.css"
+   "/MENTOR/CSS/setup.css",
+   "/setup-fit.css"
   ],
   "enhancers": {
    "select": false,
@@ -909,7 +912,8 @@ export const PAGE_META = {
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/setup.css",
-   "/MENTEE/CSS/page-polish.css"
+   "/MENTEE/CSS/page-polish.css",
+   "/setup-fit.css"
   ],
   "enhancers": {
    "select": false,
