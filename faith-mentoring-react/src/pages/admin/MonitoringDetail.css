@@ -1,0 +1,55 @@
+.admin-monitor-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 18px 0;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.admin-monitor-tabs button {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 10px 14px;
+}
+
+.admin-monitor-tabs button.active {
+  border-bottom-color: var(--primary, #5b4bdb);
+  color: var(--primary, #5b4bdb);
+  font-weight: 600;
+}
+
+.print-signoff {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 32px;
+  padding-top: 20px;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .sessions-section,
+  .sessions-section * {
+    visibility: visible !important;
+  }
+
+  .sessions-section {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    box-shadow: none !important;
+  }
+
+  .admin-monitor-tabs,
+  .btn-primary,
+  .btn-outline,
+  .toolbar,
+  .modal-overlay {
+    display: none !important;
+  }
+}

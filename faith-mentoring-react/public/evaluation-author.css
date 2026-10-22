@@ -1,0 +1,21 @@
+/* Shared author treatment for evaluation cards across portals. */
+.evaluation-author {
+  display: block;
+  margin: 5px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #334155;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-transform: none;
+}
+.evaluation-author strong {
+  font-size: inherit;
+  font-weight: 700;
+  color: #0f172a;
+}
+.announce-item.announce-item-eval.eval-submitted,
+.announce-item.announce-item-eval.eval-submitted:hover {
+  opacity: 1;
+}

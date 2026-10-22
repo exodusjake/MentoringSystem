@@ -1,0 +1,396 @@
+/* ============================================================
+   ASTRA MENTEE — mentee-dashboard.css
+   ============================================================ */
+
+:root {
+  --teal:    #0f766e;
+  --teal-lt: #ccfbf1;
+  --green:   #16a34a;
+  --green-lt:#dcfce7;
+  --blue:    #2563eb;
+  --blue-lt: #dbeafe;
+  --orange:  #ea580c;
+  --orange-lt:#ffedd5;
+  --purple:  #7c3aed;
+  --purple-lt:#ede9fe;
+  --red:     #dc2626;
+  --red-lt:  #fee2e2;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.semester-badge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--indigo);
+  background: var(--indigo-lt);
+  border: 1px solid #c7d2fe;
+  border-radius: 20px;
+  padding: 5px 14px;
+  white-space: nowrap;
+  /* No align-self:center — centering floats the badge mid-way when the heading wraps to 2 lines on phone. */
+  flex-shrink: 0;
+}
+
+/* ── STAT CARDS ── */
+.att-card {
+  max-width: 380px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #eef2ff 0%, #fff 70%);
+  border-color: #c7d2fe;
+  border-left: 4px solid var(--indigo);
+}
+
+.stat-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid #dce3ec;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  transition: box-shadow 0.15s;
+}
+.stat-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+
+.stat-icon-wrap {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.stat-icon-wrap i { font-size: 15px; }
+.stat-icon-wrap.indigo { background: var(--indigo-lt); color: var(--indigo); }
+.stat-icon-wrap.teal   { background: var(--teal-lt);   color: var(--teal);   }
+.stat-icon-wrap.green  { background: var(--green-lt);  color: var(--green);  }
+.stat-icon-wrap.blue   { background: var(--blue-lt);   color: var(--blue);   }
+.stat-icon-wrap.orange { background: var(--orange-lt); color: var(--orange); }
+.stat-icon-wrap.purple { background: var(--purple-lt); color: var(--purple); }
+.stat-icon-wrap.red    { background: var(--red-lt);    color: var(--red);    }
+
+.stat-body { flex: 1; min-width: 0; }
+.stat-value { font-size: 22px; font-weight: 700; color: #111827; line-height: 1.1; }
+.stat-label { font-size: 12px; font-weight: 600; color: #374151; margin-top: 2px; }
+.stat-sub   { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+
+.stat-frac { font-size: 15px; font-weight: 500; color: #9CA3AF; margin-left: 2px; }
+
+.next-session-topic { font-size: 15px; font-weight: 600; color: #111827; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.next-session-card .stat-label { margin-bottom: 0; }
+
+/* ── 4-QUADRANT GRID ── */
+/* Upcoming Sessions | Recent Sessions — Announcements | Evaluation Announcements */
+.quad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.quad-grid .card { min-width: 0; display: flex; flex-direction: column; }
+.quad-grid .sessions-list,
+.quad-grid .announcements-list { flex: 1; }
+
+.announcements-card {
+  background: linear-gradient(160deg, #eef2ff 0%, #fff 50%);
+  border-color: #c7d2fe;
+}
+.sessions-card {
+  background: linear-gradient(160deg, #eff6ff 0%, #fff 50%);
+  border-color: #bfdbfe;
+}
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border: 1px solid #dce3ec;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+}
+
+.card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  background: #f4f7fb;
+  border-bottom: 1px solid #dce3ec;
+  gap: 12px;
+}
+.card-header-row h2 { font-size: 17px; font-weight: 700; color: #111827; }
+.card-desc { font-size: 13px; color: #9CA3AF; margin-top: 3px; }
+
+.view-all-link { font-size: 13px; font-weight: 600; color: var(--indigo); text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.view-all-link:hover { text-decoration: underline; }
+
+.card-view-footer { display: flex; justify-content: flex-end; padding: 12px 20px 14px; border-top: 1px solid #e8edf3; }
+.card-view-link { font-size: 13px; font-weight: 600; color: var(--indigo); text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color 0.15s; }
+.card-view-link:hover { text-decoration: underline; }
+.card-view-link .ti { font-size: 14px; }
+
+/* ── SESSIONS LIST ── */
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #dce3ec;
+  border-left: 3px solid var(--indigo);
+  transition: box-shadow 0.15s;
+}
+.session-item:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+
+/* Mini-calendar date block */
+.session-date-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 46px;
+  padding: 7px 10px;
+  background: var(--indigo-lt);
+  border-radius: 10px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.session-month { font-size: 9px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; color: var(--indigo); }
+.session-day   { font-size: 22px; font-weight: 800; color: var(--indigo); line-height: 1.2; margin-top: 1px; }
+
+.session-info { flex: 1; min-width: 0; }
+.session-title { font-size: 13px; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.session-time  { font-size: 12px; color: #6B7280; margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+/* ── Status variants ── */
+.session-item-cancelled {
+  background: #fff5f5; border-color: #fecaca; border-left-color: #dc2626;
+}
+.session-item-cancelled .session-date-block { background: #fee2e2; }
+.session-item-cancelled .session-month, .session-item-cancelled .session-day { color: #dc2626; }
+.session-item-cancelled .session-title { color: #b91c1c; text-decoration: line-through; text-decoration-color: #fca5a5; }
+
+.session-item-completed {
+  background: #f0fdf4; border-color: #bbf7d0; border-left-color: #16a34a;
+}
+.session-item-completed .session-date-block { background: #dcfce7; }
+.session-item-completed .session-month, .session-item-completed .session-day { color: #16a34a; }
+
+.session-cancelled-tag { display: inline-block; font-size: 10px; font-weight: 700; color: #b91c1c; background: #fee2e2; border-radius: 20px; padding: 2px 8px; letter-spacing: .02em; }
+.session-completed-tag { display: inline-block; font-size: 10px; font-weight: 700; color: #15803d; background: #dcfce7; border-radius: 20px; padding: 2px 8px; letter-spacing: .02em; }
+.session-course-tag { display: inline-block; font-size: 10px; font-weight: 700; color: #4338ca; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 4px; padding: 1px 7px; vertical-align: middle; letter-spacing: .03em; margin-left: 4px; }
+
+.session-att-tag { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; border-radius: 20px; padding: 2px 8px; letter-spacing: .02em; }
+.session-att-tag.att-present { background: #dcfce7; color: #15803d; }
+.session-att-tag.att-absent  { background: #fee2e2; color: #b91c1c; }
+
+.sessions-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: #9CA3AF; padding: 4px 2px 6px; margin-top: 4px; }
+.sessions-section-label-recent { margin-top: 12px; }
+
+.session-status { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+.status-scheduled { background: var(--blue-lt);  color: var(--blue);  }
+.status-completed  { background: var(--green-lt); color: var(--green); }
+.status-cancelled  { background: var(--red-lt);   color: var(--red);   }
+
+/* ── ANNOUNCEMENTS LIST ── */
+.announcements-list { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px; }
+
+.announce-item {
+  padding: 16px 22px;
+  background: #f4f7fb;
+  border-radius: 10px;
+  border-left: 3px solid var(--indigo);
+}
+.announce-item.from-mentor { background: #f0fdfa; border-left-color: var(--teal); }
+.announce-title { font-size: 15px; font-weight: 600; color: #111827; margin-bottom: 6px; word-break: break-word; overflow-wrap: break-word; }
+.announce-body  { font-size: 14px; color: #374151; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; overflow-wrap: break-word; }
+.announce-body.expanded { display: block; overflow: visible; }
+.announce-show-more { font-size: 12px; font-weight: 600; color: var(--indigo); background: none; border: none; padding: 5px 0 0; cursor: pointer; font-family: inherit; display: block; }
+.announce-show-more:hover { text-decoration: underline; }
+.announce-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; gap: 8px; flex-wrap: wrap; }
+.announce-date  { font-size: 11px; color: #9CA3AF; flex-shrink: 0; }
+/* Unconditional, not just mobile — this card is narrow inside the 2-column grid even on wide screens. */
+.announce-source-wrap { display: flex; align-items: center; gap: 5px; min-width: 0; flex-wrap: wrap; }
+.announce-poster-name { font-size: 11px; font-weight: 600; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+.announce-source { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
+.announce-source.admin      { background: var(--indigo-lt); color: var(--indigo); }
+.announce-source.head       { background: var(--purple-lt); color: var(--purple); }
+.announce-source.mentor     { background: var(--teal-lt);   color: var(--teal);   }
+.announce-source.evaluation { background: #fef3c7;           color: #92400e;       }
+
+/* Clicked once — recedes so it stops competing with still-unread items. */
+.announce-item[data-announcement-id] { cursor: pointer; transition: opacity 0.15s ease; }
+.announce-item[data-announcement-id].viewed { opacity: 0.6; }
+.announce-item[data-announcement-id].viewed:hover { opacity: 0.9; }
+
+.announce-item.announce-item-eval { border-left-color: #d97706; background: #fffbeb; cursor: pointer; }
+/* Date on its own line, then the evaluation controls aligned left, on every card. */
+.announce-item-eval .announce-footer { flex-direction: column; align-items: flex-start; }
+.announce-item-eval .announce-source-wrap { width: 100%; }
+.announce-item-eval .announce-source-wrap > span:not([class]) { font-size: 11px; color: #6b7280; }
+
+.dash-eval-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; background: #d97706; color: #fff; text-decoration: none; flex-shrink: 0; transition: background 0.15s; }
+.dash-eval-btn:hover { background: #b45309; }
+.dash-eval-btn i { font-size: 11px; }
+.dash-eval-closed { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; background: #D1D5DB; color: #9CA3AF; flex-shrink: 0; opacity: 0.7; cursor: not-allowed; }
+.dash-eval-deadline { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: #6B7280; flex-shrink: 0; }
+.dash-eval-deadline i { font-size: 12px; }
+.dash-eval-deadline.soon { color: #d97706; font-weight: 600; }
+.dash-eval-deadline.past { color: #ef4444; font-weight: 600; }
+
+.dash-eval-mark-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; background: #fff; border: 1px solid #d1d5db; color: #6B7280; cursor: pointer; flex-shrink: 0; font-family: inherit; transition: all 0.15s; }
+.dash-eval-mark-btn:hover { border-color: #d97706; color: #d97706; }
+.dash-eval-mark-btn i { font-size: 11px; }
+.dash-eval-submitted-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; background: #bbf7d0; color: #14532d; flex-shrink: 0; }
+.dash-eval-submitted-badge i { font-size: 11px; }
+.dash-eval-upload-label { position: relative; }
+.dash-eval-upload-label.is-uploading { opacity: 0.6; pointer-events: none; }
+.dash-eval-upload-label.is-uploading i { animation: eval-spin 0.7s linear infinite; }
+@keyframes eval-spin { to { transform: rotate(360deg); } }
+.eval-view-proof-link { font-size: 10px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: #2563eb; text-decoration: none; flex-shrink: 0; }
+.eval-view-proof-link:hover { text-decoration: underline; }
+.eval-upload-error { display: block; font-size: 10.5px; color: #dc2626; margin-top: 3px; }
+.eval-upload-error:empty { display: none; }
+.dash-eval-link-muted { font-size: 10px; font-weight: 600; color: #9CA3AF; text-decoration: underline; flex-shrink: 0; }
+.dash-eval-link-muted:hover { color: #6B7280; }
+
+/* Self-reported as submitted — recedes so it stops competing with ones still pending. */
+.announce-item.announce-item-eval.eval-submitted { border-left-color: #e5e7eb; background: #f9fafb; opacity: 0.6; }
+.announce-item.announce-item-eval.eval-submitted:hover { opacity: 0.9; }
+
+
+/* ── MENTOR PREVIEW ── */
+.mentor-preview-card {
+  margin-bottom: 24px;
+}
+
+.mentor-preview {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 24px;
+  background: linear-gradient(135deg, #eef2ff 0%, #fff 70%);
+  border-top: 1px solid #dce3ec;
+}
+
+.mentor-avatar-lg {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--indigo), #4338ca);
+  color: #fff; font-size: 26px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.28);
+}
+
+.mentor-info-block { flex: 1; min-width: 0; }
+.mentor-info-name  { font-size: 20px; font-weight: 700; color: #111827; line-height: 1.2; }
+.mentor-info-dept  { font-size: 13px; color: #6B7280; margin-top: 4px; line-height: 1.5; }
+.mentor-info-dept strong { color: #374151; font-weight: 600; }
+.mentor-info-tags  { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.mentor-tag {
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+  background: var(--indigo-lt); color: var(--indigo);
+  border: 1px solid #c7d2fe;
+}
+
+/* ── EMPTY / SKELETON ── */
+.list-skeleton { padding: 24px; text-align: center; font-size: 14px; color: #9CA3AF; }
+.empty-state   { padding: 28px; text-align: center; color: #9CA3AF; font-size: 14px; }
+.empty-state i { font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1100px) { .quad-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .att-card { max-width: 100%; }
+
+  /* Tighter gap once wrapped at phone width. */
+  .announce-footer { gap: 6px; }
+  .announce-source-wrap { gap: 4px; }
+  .dash-eval-deadline { width: 100%; }
+}
+@media (max-width: 480px) {
+  .mentor-preview { flex-direction: column; align-items: center; text-align: center; }
+  .mentor-avatar-lg { width: 56px; height: 56px; font-size: 20px; }
+  .mentor-info-tags { justify-content: center; }
+  .card-header-row { padding: 14px 16px 12px; }
+  .session-item { padding: 10px 12px; gap: 10px; }
+  .session-day  { font-size: 18px; }
+}
+
+/* Compact dashboard previews with author and role above the announcement. */
+.announcements-card { min-width: 0; align-self: start; }
+.announcements-card .announcements-list { max-height: 360px; max-height: min(360px, 50vh); overflow-y: auto; padding: 12px; gap: 10px; }
+.announcements-card .announce-item { padding: 12px 14px; min-width: 0; }
+.announcements-card .announce-author-row { margin-bottom: 8px; }
+.announcements-card .announce-source-wrap { flex-wrap: wrap; gap: 6px; }
+.announcements-card .announce-poster-name { font-size: 14px; color: #1f2937; font-weight: 600; white-space: normal; max-width: none; overflow-wrap: anywhere; }
+.announcements-card .announce-title { font-size: 14px; margin-bottom: 4px; }
+.announcements-card .announce-body { max-height: 3.2em; -webkit-line-clamp: 2; overflow: hidden; }
+.announcements-card .announce-footer { margin-top: 6px; }
+.announcements-card .announce-item.viewed { opacity: 1; }
+@media (max-width: 600px) { .announcements-card .announce-item { padding: 10px 12px; } }
+
+/* Evaluation instructions expand in place on desktop and mobile. */
+.eval-upload-instructions { flex-basis: 100%; min-width: 0; font-size: 12px; line-height: 1.6; text-transform: none; overflow-wrap: anywhere; }
+.eval-upload-instructions summary { cursor: pointer; color: #64748b; padding: 4px 0; }
+.eval-upload-instructions summary:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; border-radius: 4px; }
+.eval-upload-instructions[open] { color: #475569; }
+.eval-upload-instructions[open] summary { margin-bottom: 6px; }
+
+/* ── Evaluation card actions (dashboard preview) ──
+   Deadline note on its own line, then a tidy row: Evaluation tag + action buttons.
+   Upload proof / Open Form become proper pill buttons; instructions sit in a
+   contained, scrollable box so a long note can't stretch the card. */
+.announce-item-eval .announce-source-wrap { align-items: center; gap: 8px; }
+.announce-item-eval .dash-eval-deadline { width: 100%; font-size: 12px; }
+.announce-item-eval .announce-source-wrap > span:not([class]) { width: 100%; font-size: 11.5px; color: #6b7280; margin-top: -4px; }
+.announce-item-eval .announce-source.evaluation { order: 1; }
+.announce-item-eval .dash-eval-mark-btn,
+.announce-item-eval .dash-eval-btn,
+.announce-item-eval .dash-eval-closed { order: 2; font-size: 11px; padding: 6px 14px; border-radius: 20px; gap: 6px; }
+.announce-item-eval .dash-eval-mark-btn { background: #eef2ff; border-color: #c7d2fe; color: #4f46e5; }
+.announce-item-eval .dash-eval-mark-btn:hover { background: #4f46e5; border-color: #4f46e5; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(79,70,229,.25); }
+.announce-item-eval .dash-eval-mark-btn:active { transform: scale(.96); }
+.announce-item-eval .dash-eval-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(217,119,6,.3); }
+.announce-item-eval .eval-upload-instructions { order: 3; flex-basis: 100%; margin-top: 2px; background: #f8fafc; border: 1px solid #e5eaf1; border-radius: 10px; padding: 2px 12px; }
+.announce-item-eval .eval-upload-instructions summary { font-size: 12px; font-weight: 600; padding: 7px 0; list-style-position: inside; }
+.announce-item-eval .eval-upload-instructions[open] { padding-bottom: 10px; max-height: 150px; overflow-y: auto; }
+.announce-item-eval .eval-upload-error { order: 4; flex-basis: 100%; }
+
+/* ===== Fill the space: Mentor + Semester Completion share one row; paired cards match heights ===== */
+.top-row { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
+.top-row > .mentor-preview-card { margin: 0; display: flex; flex-direction: column; }
+.top-row .mentor-preview { flex: 1; }
+.top-row > .att-card {
+  max-width: none; margin: 0; padding: 22px 26px; align-items: center; gap: 18px;
+}
+.top-row > .att-card .stat-icon-wrap { width: 54px; height: 54px; flex-shrink: 0; }
+.top-row > .att-card .stat-icon-wrap i { font-size: 26px; }
+.top-row > .att-card .stat-value { font-size: 38px; line-height: 1.05; }
+.top-row > .att-card .stat-frac { font-size: 20px; }
+.top-row > .att-card .stat-label { font-size: 13px; margin-top: 4px; }
+.top-row > .att-card .stat-sub { font-size: 13px; }
+@media (max-width: 960px) { .top-row { grid-template-columns: minmax(0, 1fr); } }
+
+.quad-grid { align-items: stretch; }
+.quad-grid .announcements-card { align-self: stretch; }
+.quad-grid .announcements-card .announcements-list { flex: 1 1 auto; min-height: 0; max-height: min(420px, 55vh); }
+.quad-grid .sessions-list { min-height: 0; }
+.quad-grid .sessions-list > .empty-state,
+.quad-grid .announcements-list > .empty-state { margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.quad-grid .card-view-footer { margin-top: auto; }

@@ -1,0 +1,69 @@
+    /* Neutralize colored stat card accents on this page */
+    .detail-stats-grid .sc-blue,
+    .detail-stats-grid .sc-purple,
+    .detail-stats-grid .sc-orange { border-top: 3px solid #e2e8f0; }
+    .detail-stats-grid .stat-icon.blue,
+    .detail-stats-grid .stat-icon.purple,
+    .detail-stats-grid .stat-icon.orange { background: #f1f5f9; }
+    .detail-stats-grid .stat-icon.blue svg,
+    .detail-stats-grid .stat-icon.purple svg,
+    .detail-stats-grid .stat-icon.orange svg { stroke: #64748b; }
+
+    /* 3-column row for this page's 3 stat cards, not the shared 4-column grid. */
+    .detail-stats-grid { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 700px) { .detail-stats-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .detail-stats-grid { grid-template-columns: 1fr; } }
+
+    /* Mentoring Logsheet — page-scoped .ses-* classes, doesn't touch the shared .session-row. */
+    .ses-section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 14px; flex-wrap: wrap; }
+    .ses-filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 14px 18px; margin-bottom: 20px; }
+    .ses-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; margin-bottom: 28px; }
+    .ses-card { background: #fff; border: 1px solid #dce3ec; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-sm); transition: box-shadow var(--transition); cursor: pointer; }
+    .ses-card:hover { box-shadow: var(--shadow-md); }
+    .ses-card.ses-card--pending { cursor: default; }
+    .ses-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .ses-title-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; min-width: 0; }
+    .ses-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+    .ses-course { font-size: 11px; font-weight: 600; color: var(--gray-500); background: #f4f7fb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1px 7px; flex-shrink: 0; }
+    .ses-when { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 12px; color: var(--gray-400); }
+    .ses-when-line { display: inline-flex; align-items: center; gap: 5px; }
+    .ses-when svg { width: 12px; height: 12px; stroke: var(--gray-400); flex-shrink: 0; }
+    .ses-when-sep { color: var(--gray-300); }
+    .ses-desc { font-size: 12.5px; color: var(--gray-500); line-height: 1.4; }
+    .ses-desc-text { word-break: break-word; }
+    .ses-desc-more { display: inline; background: none; border: none; padding: 0; margin-left: 4px; font-family: var(--font-main); font-size: 12.5px; font-weight: 600; color: var(--blue); cursor: pointer; }
+    .ses-desc-more:hover { text-decoration: underline; }
+    .ses-divider { height: 1px; background: #eef1f6; }
+    .ses-stats { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: wrap; }
+    .ses-footer { display: flex; justify-content: center; }
+    .ses-view-link { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font-family: var(--font-main); font-size: 13px; font-weight: 600; color: var(--blue); cursor: pointer; padding: 2px; }
+    .ses-view-link:hover { text-decoration: underline; }
+    .ses-view-link:disabled { color: var(--gray-400); cursor: default; text-decoration: none; }
+    .ses-view-link svg { width: 13px; height: 13px; stroke: currentColor; }
+
+    /* Share row heights so wrapped titles and descriptions do not shift badges. */
+    .ses-card { display: grid; grid-template-rows: subgrid; grid-row: span 5; min-width: 0; }
+    .ses-top { grid-row: 1; align-items: flex-start; flex-wrap: wrap; }
+    .ses-when { grid-row: 2; }
+    .ses-desc { grid-row: 3; }
+    .ses-card > .ses-divider { display: none; }
+    .ses-stats { grid-row: 4; align-content: start; border-top: 1px solid #eef1f6; padding-top: 12px; }
+    .ses-footer { grid-row: 5; border-top: 1px solid #eef1f6; padding-top: 12px; }
+    .ses-stats .sr-metric { font-size: 12px; padding: 4px 8px; white-space: nowrap; }
+    .ses-stats .sr-proof-pill { padding: 0; }
+
+    /* Proof preview modal — opens the image/PDF inline instead of a new tab. */
+    button.proof-chip { border: none; font-family: inherit; }
+    .proof-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.65); z-index: 1000; align-items: center; justify-content: center; padding: 24px; }
+    .proof-modal-overlay.open { display: flex; }
+    .proof-modal { background: #fff; border-radius: 14px; max-width: 720px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+    .proof-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #dce3ec; font-weight: 700; font-size: 15px; color: #111827; }
+    .proof-modal-close { background: none; border: none; font-size: 22px; line-height: 1; color: #6b7280; cursor: pointer; padding: 2px 8px; border-radius: 6px; }
+    .proof-modal-close:hover { background: #f1f5f9; color: #111827; }
+    .proof-modal-body { padding: 16px 20px; overflow: auto; display: flex; align-items: center; justify-content: center; background: #f8fafc; min-height: 200px; }
+    .proof-modal-body img { max-width: 100%; max-height: 70vh; border-radius: 8px; display: block; }
+    .proof-modal-body iframe { width: 100%; height: 65vh; border: none; border-radius: 8px; background: #fff; }
+    .proof-modal-footer { padding: 14px 20px; border-top: 1px solid #dce3ec; display: flex; justify-content: flex-end; }
+    .proof-modal-download { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: #0d9488; color: #fff; border-radius: 9px; font-size: 14px; font-weight: 600; text-decoration: none; }
+    .proof-modal-download:hover { background: #0d6560; }
+  

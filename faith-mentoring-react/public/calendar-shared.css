@@ -1,0 +1,55 @@
+/* Let individual controls wrap only when their minimum widths no longer fit. */
+.cal-toolbar { gap: 10px; }
+.cal-toolbar > .cal-toolbar-left,
+.cal-toolbar > .cal-toolbar-right,
+.cal-toolbar > .cal-toolbar-left > .ev-legend { display: contents; }
+.cal-toolbar .cal-search-box {
+  flex: 1 1 140px;
+  min-width: 140px;
+  max-width: 232px;
+  box-sizing: border-box;
+  margin-left: auto;
+}
+.cal-toolbar .cal-search-box input { width: 100%; min-width: 0; }
+.cal-toolbar .ev-legend-group { flex-shrink: 0; }
+@media (max-width: 600px) {
+  .cal-toolbar { flex-direction: row; align-items: center; }
+  .cal-toolbar .cal-search-box { margin-left: 0; }
+}
+
+/* Group narrow toolbars by purpose, using actual space beside the sidebar. */
+.cal-toolbar { container-type: inline-size; }
+@container (max-width: 1000px) {
+  .cal-toolbar > .cal-toolbar-left { display: block; width: 100%; }
+  .cal-toolbar > .cal-toolbar-left > .ev-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    overflow: visible;
+  }
+  .cal-toolbar .ev-legend-group { flex: 1 1 120px; justify-content: center; min-height: 40px; }
+  .cal-toolbar > .cal-toolbar-right {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+  }
+  .cal-toolbar .cal-search-box { width: 100%; max-width: none; min-width: 0; margin-left: 0; }
+  .cal-toolbar .cal-type-filter { width: 100%; min-width: 0; }
+  .cal-toolbar-right > :is(button, select, .cal-search-box) { min-height: 44px; box-sizing: border-box; }
+  .cal-toolbar-right > button { justify-content: center; white-space: normal; }
+}
+@container (max-width: 420px) {
+  .cal-toolbar > .cal-toolbar-right { grid-template-columns: minmax(0, 1fr); }
+}
+
+.cal-toolbar { margin-bottom: 22px; flex-direction: row; align-items: center; }
+.cal-toolbar .cal-legend { margin: 0; padding: 0; border: 0; background: transparent; }
+.cal-toolbar .cal-type-filter { width: 160px; }
+.cal-toolbar :is(.cal-search-box, .cal-type-filter, .btn-export-cal, .btn-add-personal, .btn-generate) { min-height: 40px; box-sizing: border-box; }
+.cal-layout { align-items: start; }
+@container (max-width: 1000px) {
+  .cal-toolbar .cal-type-filter { width: 100%; }
+  .cal-toolbar .btn-generate-wrap { margin-left: 0; width: 100%; }
+  .cal-toolbar .btn-generate { flex: 1; justify-content: center; white-space: normal; }
+}
