@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { leavePage } from '../../lib/pageTransition.js';
 import Page from '../../app/Page.jsx';
 import Empty from '../../components/Empty.jsx';
 import { showToast } from '../../components/Notify.jsx';
@@ -135,7 +136,7 @@ export default function AttendanceOverview({ cfg }) {
 
   function openDetail(mentorId) {
     const school = activeSchool ? `&school=${encodeURIComponent(activeSchool)}` : '';
-    navigate(`${cfg.base}/attendance/detail?id=${mentorId}${school}`);
+    leavePage(() => navigate(`${cfg.base}/attendance/detail?id=${mentorId}${school}`));
   }
 
   // ── EXPORT ──

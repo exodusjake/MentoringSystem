@@ -61,6 +61,13 @@ export default function Page({ id, onReady, children }) {
         setReady(true);
         requestAnimationFrame(() => requestAnimationFrame(() => { if (alive) root.classList.remove('page-loading'); }));
         chrome?.pageReady();
+        if (chrome) requestAnimationFrame(() => {
+          const main = document.querySelector('.main-wrapper');
+          if (!main) return;
+          main.classList.remove('main-leave');
+          main.classList.add('main-enter');
+          setTimeout(() => main.classList.remove('main-enter'), 600);
+        });
         if (isPublic) {
           document.body.classList.add('page-enter');
           setTimeout(() => document.body.classList.remove('page-enter'), 400);
