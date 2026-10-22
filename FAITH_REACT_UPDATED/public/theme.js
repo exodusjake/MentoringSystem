@@ -42,7 +42,7 @@
 
   var css = [
     // toggle button
-    '.theme-toggle{position:fixed;right:20px;bottom:20px;z-index:2147483000;width:46px;height:46px;border-radius:50%;',
+    '.theme-toggle{position:fixed!important;right:20px!important;bottom:20px!important;top:auto!important;left:auto!important;z-index:2147483000;width:46px;height:46px;border-radius:50%;',
     'display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;',
     'background:#ffffff;color:#1e293b;border:1px solid rgba(15,23,42,.14);box-shadow:0 6px 18px rgba(15,23,42,.18);',
     'transition:transform .25s ease,background .3s ease,color .3s ease,border-color .3s ease,box-shadow .3s ease}',
@@ -56,8 +56,7 @@
     D + '.theme-toggle{background:#1b1f2a;color:#f59e0b;border-color:rgba(255,255,255,.14);box-shadow:0 6px 18px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.03)}',
     D + '.theme-toggle .ic-sun{display:block}',
     D + '.theme-toggle .ic-moon{display:none}',
-    '.theme-toggle.at-top,html[data-page="login"] .theme-toggle{bottom:auto;top:20px}',
-    '@media (max-width:768px){.theme-toggle{right:14px;bottom:14px;width:42px;height:42px}.theme-toggle.at-top,html[data-page="login"] .theme-toggle{top:14px;bottom:auto}}',
+    '@media (max-width:768px){.theme-toggle{right:14px!important;bottom:14px!important;width:42px;height:42px}}',
     '@media print{.theme-toggle{display:none!important}}'
   ];
 
