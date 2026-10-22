@@ -315,3 +315,8 @@
   .cal-day { min-height: 60px; padding: 4px 3px; }
   .cal-day-num { font-size: 12px; width: 22px; height: 22px; }
 }
+
+/* Very narrow phones: the Generate Sheet button + info icon may wrap instead of poking 6px past the screen edge. */
+@media screen and (max-width: 380px) {
+  .btn-generate-wrap { max-width: 100%; flex-wrap: wrap; }
+}

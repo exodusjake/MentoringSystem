@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
   <title>AstraMentoring</title>
   <link rel="icon" href="/IMAGES/fav-con.png"/>
   <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
@@ -22,7 +22,7 @@
      used to stretch the layout once data loaded, and the phone then zoomed out and shifted the page sideways. Grid / card
      columns may shrink below their content, media is capped, and wide tables scroll inside their own box. */
   @media screen and (max-width:900px){
-    html,body{overflow-x:hidden;max-width:100%}
+    html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
     .main-wrapper,.page-content,main{min-width:0;max-width:100%}
     .main-wrapper :is([class*="grid"],[class*="-card"],[class*="card-"],.card,.table-card,section):not([class*="modal"]):not([class*="overlay"]):not([class*="dialog"]){min-width:0;max-width:100%}
     .main-wrapper :is(.table-wrapper,.table-scroll,.history-table-wrap,[class*="table-wrap"]){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
