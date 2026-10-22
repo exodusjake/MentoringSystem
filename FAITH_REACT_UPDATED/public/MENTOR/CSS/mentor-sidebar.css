@@ -232,3 +232,21 @@ footer p { font-size: 12px; color: var(--gray-400); }
   .hamburger.active { left: calc(var(--sb-width) - 34px - 10px); }
   .main-wrapper { padding-top: 52px; }
 }
+
+/* ── Mentor portal: every button eases between states and reacts to hover / press ──
+   (mentor-sidebar.css loads on every mentor page). Uses the individual translate / scale properties so a
+   button's own transform (rotating close icons, centred controls) is never overridden. */
+button, a.btn, [role="button"], input[type="button"], input[type="submit"], summary {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .22s ease, opacity .2s ease, filter .2s ease,
+              transform .22s cubic-bezier(.22,1,.36,1), translate .2s cubic-bezier(.22,1,.36,1), scale .16s cubic-bezier(.22,1,.36,1), rotate .25s ease !important;
+}
+button[class*="btn"]:not(:disabled):not([class*="close"]):not([class*="kebab"]):hover,
+a.btn:hover, .sc-action-btn:not(:disabled):hover, .btn-form-submit:not(:disabled):hover {
+  translate: 0 -1px; filter: brightness(1.05);
+}
+button:not(:disabled):active, a.btn:active, [role="button"]:active { translate: 0 0; scale: .97; filter: none; }
+button:disabled { opacity: .6; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+  button, a.btn, [role="button"], input[type="button"], input[type="submit"], summary { transition: none !important; }
+  button:not(:disabled):active, button[class*="btn"]:hover { translate: none; scale: none; }
+}
