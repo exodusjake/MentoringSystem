@@ -250,3 +250,85 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   button, a.btn, [role="button"], input[type="button"], input[type="submit"], summary { transition: none !important; }
   button:not(:disabled):active, button[class*="btn"]:hover { translate: none; scale: none; }
 }
+
+/* ═══ Mentor portal, phones only (<= 640px): smaller boxes everywhere. Desktop / tablet layouts are untouched. ═══
+   Prefixed with body .main-wrapper so these win over each page's own mobile rules. */
+@media screen and (max-width: 640px) {
+  body .main-wrapper .page-content { padding: 14px 12px 0; }
+  body .main-wrapper .page-header { margin-bottom: 12px; gap: 8px; }
+  body .main-wrapper .page-header h1 { font-size: 21px; }
+  body .main-wrapper .page-header p { font-size: 13px; margin-top: 3px; }
+  body .main-wrapper .semester-badge { padding: 3px 10px; font-size: 12px; margin-top: 0; }
+
+  /* Dashboard */
+  body .main-wrapper .stats-grid { gap: 8px; margin-bottom: 10px; }
+  body .main-wrapper .stat-card { padding: 10px 12px; gap: 10px; }
+  body .main-wrapper .card-header-row { padding: 10px 14px; }
+  body .main-wrapper .card-header-row h2 { font-size: 15px; }
+  body .main-wrapper .card-desc { font-size: 12px; margin-top: 1px; }
+  body .main-wrapper .card-body { padding: 10px 14px; }
+  body .main-wrapper .card-view-footer { padding: 8px 14px; }
+  body .main-wrapper .announcements-list { padding: 8px; gap: 8px; }
+  body .main-wrapper .announce-item { padding: 10px 12px; }
+
+  /* Sessions */
+  body .main-wrapper .session-stats-strip { border-radius: 12px; margin-bottom: 12px; }
+  body .main-wrapper .sstat { padding: 9px 6px; }
+  body .main-wrapper .sstat-val { font-size: 19px; }
+  body .main-wrapper .sstat-lbl { font-size: 9.5px; margin-top: 3px; letter-spacing: .05em; }
+  body .main-wrapper .session-card { padding: 12px 14px; }
+  body .main-wrapper .sessions-loading { padding: 28px; }
+
+  /* Availability */
+  body .main-wrapper .slot-card { padding: 12px 14px; gap: 12px; }
+  body .main-wrapper .req-card { padding: 12px 14px; gap: 10px; }
+  body .main-wrapper .avail-collapse-hdr { padding: 12px 14px; }
+  body .main-wrapper .avail-collapse-body { padding: 10px; }
+  body .main-wrapper .avail-empty { padding: 24px 16px; }
+
+  /* My Mentees / My Activities */
+  body .main-wrapper .section-card { padding: 14px 14px; }
+  body .main-wrapper .section-cards-grid { gap: 10px; }
+  body .main-wrapper .mentees-grid { gap: 10px; }
+  body .main-wrapper .mentee-card .mc-identity { padding: 12px 14px; }
+  body .main-wrapper .mentee-card .mc-body { padding: 10px 14px; }
+  body .main-wrapper .mentee-hero, body .main-wrapper .activity-hero { padding: 14px 16px; margin-bottom: 14px; }
+  body .main-wrapper .hero-avatar { width: 48px; height: 48px; font-size: 18px; }
+  body .main-wrapper .section-card-head { padding: 12px 14px; }
+  body .main-wrapper .mentee-cards-grid.single-section { padding: 10px 12px 12px; }
+  body .main-wrapper .mcard-identity { padding: 12px 14px; }
+  body .main-wrapper .mcard-body { padding: 10px 14px; gap: 8px; }
+
+  /* Announcements */
+  body .main-wrapper .announce-card { padding: 12px 14px; }
+  body .main-wrapper .ann-card-top { margin-bottom: 8px; gap: 10px; }
+  body .main-wrapper .ann-avatar { width: 38px; height: 38px; font-size: 14px; }
+  body .main-wrapper .announce-title { font-size: 15px; }
+
+  /* Calendar */
+  body .main-wrapper .cal-header { padding: 10px 14px; }
+  body .main-wrapper .cal-sidebar-header { padding: 12px 14px 10px; }
+  body .main-wrapper .cal-loading { padding: 22px; }
+
+  /* Profile */
+  body .main-wrapper .ph-banner { height: 90px; }
+  body .main-wrapper .ph-edit-row { padding: 14px 14px 16px; gap: 14px; }
+  body .main-wrapper .ph-strip-field { padding: 10px 0; }
+  body .main-wrapper .detail-card { padding: 12px 14px; }
+  body .main-wrapper .sig-section { padding: 14px; }
+  body .main-wrapper .sig-img-wrap { padding: 12px; }
+  body .main-wrapper .sig-none-state { padding: 18px; }
+  body .main-wrapper .sig-dz-idle { padding: 16px; }
+
+  /* Search, dropdowns and buttons */
+  body .main-wrapper .toolbar { gap: 8px; margin-bottom: 12px; }
+  body .main-wrapper .search-wrap { padding: 0 12px; height: 38px; min-width: 0; }
+  body .main-wrapper .toolbar > .dd-trigger { height: 38px; min-height: 0; padding: 0 10px; font-size: 13px; }
+  body .main-wrapper .mentee-filter { min-height: 38px; }
+  body .dd-menu { padding: 4px; border-radius: 10px; }
+  body .dd-opt { padding: 7px 10px; font-size: 13px; }
+
+  /* Dialogs */
+  body .modal-card { padding: 18px 16px; }
+  body .qr-modal-card { padding: 22px 16px 16px; }
+}
