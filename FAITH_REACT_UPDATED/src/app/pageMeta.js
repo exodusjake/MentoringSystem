@@ -628,7 +628,7 @@ export const PAGE_META = {
    "select": true,
    "date": false,
    "time": false,
-   "modalMotion": false,
+   "modalMotion": true,
    "emptyStates": true,
    "tooltips": true,
    "smoothScroll": true
