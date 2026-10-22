@@ -434,3 +434,67 @@ footer p {
   .hamburger.active { left: calc(var(--sb-width) - 34px - 10px); }
   .main-wrapper { padding-top: 52px; }
 }
+
+/* ═══ Admin portal, phones only (<= 640px): smaller boxes everywhere. Desktop / tablet layouts are untouched.
+   (Head shares these stylesheets, so it is excluded: body:not(.head-polish).) ═══ */
+@media screen and (max-width: 640px) {
+  body:not(.head-polish) .main-wrapper .page-content { padding: 14px 12px 0; }
+  body:not(.head-polish) .main-wrapper .page-header { margin-bottom: 12px; gap: 8px; }
+  body:not(.head-polish) .main-wrapper .page-header h1 { font-size: 21px; }
+  body:not(.head-polish) .main-wrapper .page-header p { font-size: 13px; margin-top: 3px; }
+
+  /* Stat boxes */
+  body:not(.head-polish) .main-wrapper :is(.stats-grid, .assign-stats-grid, .detail-stats-grid) { gap: 8px; margin-bottom: 10px; }
+  body:not(.head-polish) .main-wrapper .stat-card { padding: 10px 12px; gap: 10px; }
+  body:not(.head-polish) .main-wrapper .stat-value { font-size: 20px; }
+  body:not(.head-polish) .main-wrapper .school-card { padding: 12px 14px; }
+
+  /* Cards, tables and their headers */
+  body:not(.head-polish) .main-wrapper :is(.card-header, .card-header-row, .panel-header, .section-card-head, .forms-section-header, .cal-header, .settings-card-header) { padding: 10px 14px; }
+  body:not(.head-polish) .main-wrapper :is(.card-body, .settings-fields) { padding: 12px 14px; }
+  body:not(.head-polish) .main-wrapper .card-top-row { padding: 12px; gap: 8px; }
+  body:not(.head-polish) .main-wrapper .toolbar { padding: 10px 12px; gap: 8px; }
+  body:not(.head-polish) .main-wrapper .card-view-footer { padding: 8px 14px; }
+  body:not(.head-polish) .main-wrapper .table-footer { padding: 8px 12px; }
+  body:not(.head-polish) .main-wrapper .cal-sidebar-header { padding: 10px 14px 8px; }
+
+  /* Mentor / mentee / attendance cards */
+  body:not(.head-polish) .main-wrapper .mentor-cards-body { padding: 10px 12px; }
+  body:not(.head-polish) .main-wrapper :is(.mentor-card, .att-mentor-card, .mentee-card, .pt-card) { padding: 12px 14px; gap: 10px; }
+  body:not(.head-polish) .main-wrapper .pt-card-top { padding: 12px 14px; }
+  body:not(.head-polish) .main-wrapper :is(.sec-header, .sec-group-header, .mentor-accordion-header) { padding: 10px 14px; }
+  body:not(.head-polish) .main-wrapper .sec-body { padding: 10px; }
+  body:not(.head-polish) .main-wrapper :is(.sections-wrapper, .mentees-section) { padding: 12px; }
+  body:not(.head-polish) .main-wrapper .mentor-hero { padding: 14px 16px; gap: 12px; margin-bottom: 12px; }
+  body:not(.head-polish) .main-wrapper .hero-avatar { width: 48px; height: 48px; font-size: 18px; }
+  body:not(.head-polish) .main-wrapper .admin-log-card-header { padding: 10px 14px; gap: 10px; }
+
+  /* Announcements and evaluation forms */
+  body:not(.head-polish) .main-wrapper .announce-card { padding: 12px 14px; }
+  body:not(.head-polish) .main-wrapper .forms-list { padding: 10px; gap: 8px; }
+  body:not(.head-polish) .main-wrapper .ann-card-top { margin-bottom: 8px; gap: 10px; }
+  body:not(.head-polish) .main-wrapper .ann-avatar { width: 38px; height: 38px; font-size: 14px; }
+  body:not(.head-polish) .main-wrapper .announce-title { font-size: 15px; }
+
+  /* Settings and profile */
+  body:not(.head-polish) .main-wrapper .settings-card { border-radius: 14px; }
+  body:not(.head-polish) .main-wrapper .ph-banner { height: 90px; }
+  body:not(.head-polish) .main-wrapper .ph-edit-row { padding: 14px 14px 16px; gap: 14px; }
+  body:not(.head-polish) .main-wrapper .ph-strip-field { padding: 10px 14px; }
+  body:not(.head-polish) .main-wrapper .detail-card { padding: 12px 14px; }
+  body:not(.head-polish) .main-wrapper .sig-section { padding: 14px; }
+  body:not(.head-polish) .main-wrapper .sig-img-wrap { padding: 12px; }
+  body:not(.head-polish) .main-wrapper .sig-none-state { padding: 18px; }
+  body:not(.head-polish) .main-wrapper .sig-dz-idle { padding: 16px; }
+
+  /* Search, dropdowns, buttons */
+  body:not(.head-polish) .main-wrapper .search-box,
+  body:not(.head-polish) .main-wrapper .search-wrap { min-height: 38px; }
+  body:not(.head-polish) .main-wrapper .card-top-row :is(.search-box, .filter-btn-wrap) { min-height: 38px; }
+  body:not(.head-polish) .dd-menu { padding: 4px; border-radius: 10px; }
+  body:not(.head-polish) .dd-opt { padding: 7px 10px; font-size: 13px; }
+
+  /* Dialogs */
+  body:not(.head-polish) .modal { padding: 0; }
+  body:not(.head-polish) :is(.modal-body, .modal-header, .modal-footer) { padding-left: 16px; padding-right: 16px; }
+}
