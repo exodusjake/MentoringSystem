@@ -95,6 +95,7 @@ export function installConfirmDialogs() {
 
   function enhance(card) {
     if (card.dataset.astraConfirm) return;
+    if (card.matches('.qr-modal-card') || card.querySelector('#qr-reader')) return;   // the QR scanner is a full dialog with its own close button and a scrolling body, not a confirm
     if (card.querySelector('input:not([type="hidden"]),select,textarea,table,canvas,img,iframe')) return;   // forms / rich content stay as they are
     if ((card.textContent || '').length > 700) return;
     let actions = card.querySelector(ACTIONS);
