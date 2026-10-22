@@ -96,6 +96,22 @@ async function request(endpoint, method = "GET", body = null, requiresAuth = fal
     }
 }
 
+// Stale-while-revalidate GET for pages that can draw from the last response: onData(data) is called at once
+// with the copy saved from this tab's previous visit (if any), then again with the fresh response. A failed
+// refresh rejects and leaves whatever was shown. The copy is per user and cleared on logout (session.js).
+export function swrRequest(endpoint, onData) {
+    const key = `swr:${getSession()?.user?.userID ?? ''}:${endpoint}`;
+    try {
+        const saved = sessionStorage.getItem(key);
+        if (saved) onData(JSON.parse(saved));
+    } catch (e) { /* storage unavailable or corrupt: just wait for the network */ }
+    return apiRequest(endpoint, 'GET', null, true).then(data => {
+        try { sessionStorage.setItem(key, JSON.stringify(data)); } catch (e) { /* quota: skip saving */ }
+        onData(data);
+        return data;
+    });
+}
+
 // Identical GETs already in flight share one network call (several components ask for Settings etc. on the
 // same page load). A few rarely-changing endpoints are also kept for a short time, so moving between pages
 // doesn't refetch them. Any write clears everything, so this browser never sees its own changes late.

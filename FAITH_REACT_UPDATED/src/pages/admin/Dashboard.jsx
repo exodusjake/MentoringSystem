@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
 import Empty from '../../components/Empty.jsx';
 import MentorSectionProgress from '../../components/MentorSectionProgress.jsx';
-import { apiRequest } from '../../lib/api.js';
+import { apiRequest, swrRequest } from '../../lib/api.js';
 import { loadScript } from '../../lib/loadScript.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
@@ -105,21 +105,23 @@ export default function AdminDashboard() {
         setPeriod(last ? `${last.sem} · S.Y. ${last.sy}` : '— · S.Y. —');
       }
     })();
-    (async () => {
-      try {
-        const [users, stats, monitor] = await Promise.all([
-          apiRequest('Users', 'GET', null, true).catch(() => null),
-          apiRequest('Users/stats', 'GET', null, true).catch(() => null),
-          apiRequest('MonitorActivities', 'GET', null, true).catch(() => null),
-        ]);
-        setData({ users, stats, monitor });
-        // Fetch more than the visible ~5 rows so scrolling the card actually reveals more.
-        const acts = await apiRequest('Activities?top=25', 'GET', null, true).catch(() => null);
-        setActivities(acts);
-      } catch (e) {
-        console.error('Dashboard load error:', e);
+    // Each part paints from the saved copy of the last visit straight away, then updates when fresh data arrives.
+    // A failed refresh keeps what is shown; with nothing shown it becomes null ("Unavailable").
+    const parts = {};
+    const part = (key, endpoint) => swrRequest(endpoint, d => {
+      parts[key] = d;
+      if ('users' in parts && 'stats' in parts && 'monitor' in parts) setData({ users: parts.users, stats: parts.stats, monitor: parts.monitor });
+    }).catch(() => {
+      if (!(key in parts)) {
+        parts[key] = null;
+        if ('users' in parts && 'stats' in parts && 'monitor' in parts) setData({ users: parts.users, stats: parts.stats, monitor: parts.monitor });
       }
-    })();
+    });
+    part('users', 'Users');
+    part('stats', 'Users/stats');
+    part('monitor', 'MonitorActivities');
+    // Fetch more than the visible ~5 rows so scrolling the card actually reveals more.
+    swrRequest('Activities?top=25', setActivities).catch(() => setActivities(prev => prev === undefined ? null : prev));
   }, []);
 
   const loaded = !!data;

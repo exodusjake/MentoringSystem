@@ -101,7 +101,7 @@ namespace AstraMentoring_Backend.Services
             // Course reports are read once per mentor and reused for scoring and course progress.
             var courseReportCache = new Dictionary<int, List<CheckpointReportStatusDto>>();
             var lateReports = mentors.Count > 0
-                ? await GetReportStatesAsync(conn, mentors.Select(m => m.MentorID).ToArray(), settings?.SchoolYear, settings?.Semester, cancellationToken: cancellationToken, courseReportCache: courseReportCache)
+                ? await GetReportStatesAsync(conn, mentors.Select(m => m.MentorID).ToArray(), settings?.SchoolYear, settings?.Semester, cancellationToken: cancellationToken, courseReportCache: courseReportCache, parallelConnectionString: _connectionString)
                 : new Dictionary<int, ReportState>();
             var checkpointRows = mentors.Count > 0
                 ? (await conn.QueryAsync<CheckpointSummary>(new CommandDefinition(CheckpointSummarySql, new { MentorIds = mentors.Select(m => m.MentorID).ToArray(), SchoolYear = settings?.SchoolYear, Semester = settings?.Semester }, cancellationToken: cancellationToken))).ToLookup(r => r.MentorID)
@@ -115,7 +115,17 @@ namespace AstraMentoring_Backend.Services
                 m.CompletedSlots = checkpointRows[m.MentorID].Where(r => r.Completed).Select(r => r.SlotName).ToList();
                 m.SlotAttendance = string.Join(", ", checkpointRows[m.MentorID].Select(r => $"{r.SlotName}:{r.Attendees}"));
                 m.SectionProgress = sectionProgress[m.MentorID].ToList();
-                if(settings?.SchoolYear!=null&&settings.Semester!=null)await CourseWorkflow.ApplyProgressAsync(conn,m.MentorID,settings.SchoolYear,settings.Semester,m.SectionProgress,courseReportCache.GetValueOrDefault(m.MentorID));
+            }
+            // Per-mentor course progress queries are independent, so they run side by side on their own connections.
+            if (settings?.SchoolYear != null && settings.Semester != null)
+                await ForEachParallelAsync(mentors, cancellationToken, async (m, ct) =>
+                {
+                    using var mentorConn = new SqlConnection(_connectionString);
+                    await CourseWorkflow.ApplyProgressAsync(mentorConn, m.MentorID, settings.SchoolYear, settings.Semester, m.SectionProgress, courseReportCache.GetValueOrDefault(m.MentorID));
+                });
+
+            foreach (var m in mentors)
+            {
                 ApplyCheckpointMetrics(m, m.SectionProgress);
                 // Scale required sessions by number of sections this mentor handles
                 int effective     = requiredSessions * Math.Max(1, m.SectionCount);
@@ -299,7 +309,7 @@ namespace AstraMentoring_Backend.Services
             => (await GetReportStatesAsync(conn, mentorIds, schoolYear, semester, transaction))
                 .ToDictionary(r => r.Key, r => r.Value.LateCount);
 
-        private static async Task<Dictionary<int,ReportState>> GetReportStatesAsync(SqlConnection conn, int[] mentorIds, string? schoolYear, string? semester, System.Data.IDbTransaction? transaction = null, CancellationToken cancellationToken = default, Dictionary<int, List<CheckpointReportStatusDto>>? courseReportCache = null)
+        private static async Task<Dictionary<int,ReportState>> GetReportStatesAsync(SqlConnection conn, int[] mentorIds, string? schoolYear, string? semester, System.Data.IDbTransaction? transaction = null, CancellationToken cancellationToken = default, Dictionary<int, List<CheckpointReportStatusDto>>? courseReportCache = null, string? parallelConnectionString = null)
         {
             // Each checkpoint is one required report, even across several sections.
             // DueCount = checkpoints whose deadline has passed.
@@ -325,20 +335,40 @@ namespace AstraMentoring_Backend.Services
                 """, new { MentorIds=mentorIds, SchoolYear=schoolYear, Semester=semester }, transaction, cancellationToken: cancellationToken));
             var result=rows.ToDictionary(r=>r.MentorID);
             if(schoolYear!=null&&semester!=null&&transaction==null)
-            foreach(var mentorId in mentorIds)
             {
-                if(await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM SessionCourseScopes c JOIN Sessions s ON s.SessionID=c.SessionID WHERE s.MentorID=@mentorId AND s.SchoolYear=@schoolYear AND s.Semester=@semester",new {mentorId,schoolYear,semester})==0)
+                // With a connection string each mentor is read on its own connection, a few at a time; otherwise one by one on conn.
+                var perMentor=new System.Collections.Concurrent.ConcurrentDictionary<int,(ReportState? State,List<CheckpointReportStatusDto> Reports)>();
+                async Task ReadMentorAsync(SqlConnection c,int mentorId)
                 {
-                    // Same check CourseWorkflow.ReportsAsync starts with: no course sessions means no course reports.
-                    courseReportCache?.TryAdd(mentorId, new List<CheckpointReportStatusDto>());
-                    continue;
+                    if(await c.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM SessionCourseScopes c JOIN Sessions s ON s.SessionID=c.SessionID WHERE s.MentorID=@mentorId AND s.SchoolYear=@schoolYear AND s.Semester=@semester",new {mentorId,schoolYear,semester})==0)
+                    {
+                        // Same check CourseWorkflow.ReportsAsync starts with: no course sessions means no course reports.
+                        perMentor[mentorId]=(null,new List<CheckpointReportStatusDto>());
+                        return;
+                    }
+                    var local=new Dictionary<int,List<CheckpointReportStatusDto>>();
+                    var reports=await ReadReportStatusesAsync(c,mentorId,schoolYear,semester,local);
+                    var due=reports.Where(r=>r.DeadlineExclusive.HasValue&&r.DeadlineExclusive<=DateTimeOffset.UtcNow).GroupBy(r=>r.SlotName).ToArray();
+                    perMentor[mentorId]=(new ReportState {MentorID=mentorId,DueCount=due.Length,LateCount=due.Count(g=>g.Any(r=>r.LogStatus=="Submitted"&&r.SubmittedAt>=r.DeadlineExclusive)),MissingCount=due.Count(g=>g.Any(r=>r.LogStatus!="Submitted"||!r.SubmittedAt.HasValue)),IncompleteCount=due.Count(g=>g.Any(r=>r.LogStatus=="Submitted"&&!r.DocumentsComplete))},local.GetValueOrDefault(mentorId)??new List<CheckpointReportStatusDto>());
                 }
-                var reports=await ReadReportStatusesAsync(conn,mentorId,schoolYear,semester,courseReportCache);
-                var due=reports.Where(r=>r.DeadlineExclusive.HasValue&&r.DeadlineExclusive<=DateTimeOffset.UtcNow).GroupBy(r=>r.SlotName).ToArray();
-                result[mentorId]=new ReportState {MentorID=mentorId,DueCount=due.Length,LateCount=due.Count(g=>g.Any(r=>r.LogStatus=="Submitted"&&r.SubmittedAt>=r.DeadlineExclusive)),MissingCount=due.Count(g=>g.Any(r=>r.LogStatus!="Submitted"||!r.SubmittedAt.HasValue)),IncompleteCount=due.Count(g=>g.Any(r=>r.LogStatus=="Submitted"&&!r.DocumentsComplete))};
+                if(parallelConnectionString!=null)
+                    await ForEachParallelAsync(mentorIds,cancellationToken,async (mentorId,ct)=>{using var mentorConn=new SqlConnection(parallelConnectionString);await ReadMentorAsync(mentorConn,mentorId);});
+                else
+                    foreach(var mentorId in mentorIds)await ReadMentorAsync(conn,mentorId);
+                foreach(var mentorId in mentorIds)
+                {
+                    var (state,reports)=perMentor[mentorId];
+                    courseReportCache?.TryAdd(mentorId,reports);
+                    if(state!=null)result[mentorId]=state;
+                }
             }
             return result;
         }
+
+        // Runs work for each item with at most four in flight (each on its own connection, so the pool is not exhausted).
+        private static Task ForEachParallelAsync<T>(IEnumerable<T> items, CancellationToken cancellationToken, Func<T, CancellationToken, Task> work)
+            => Parallel.ForEachAsync(items, new ParallelOptions { MaxDegreeOfParallelism = 4, CancellationToken = cancellationToken },
+                async (item, ct) => await work(item, ct));
 
         // Official credit uses the current published schedule; raw history is retained
         // separately. There is no published-calendar version history to grandfather

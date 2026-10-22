@@ -34,6 +34,8 @@ export function clearSession() {
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
     });
+    // Saved page data from swrRequest (lib/api.js) belongs to the user who just left.
+    Object.keys(sessionStorage).filter(k => k.startsWith('swr:')).forEach(k => sessionStorage.removeItem(k));
 }
 
 export function isLoggedIn() {
