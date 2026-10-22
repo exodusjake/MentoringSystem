@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { showToast } from '../../components/Notify.jsx';
+import { showConfirm, showToast } from '../../components/Notify.jsx';
 import Overlay from '../../components/Overlay.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { checkpointWindow } from '../../lib/checkpoint-window.js';
@@ -211,6 +211,16 @@ export default function SessionQrModal({ open, session, dateStr, calendar, onClo
   async function saveQrAttendance() {
     const s = sessionRef.current;
     if (!s || !rowsRef.current.length || !canFinishAttendance(s, rowsRef.current, calendarRef.current)) return;
+    const rows0 = rowsRef.current;
+    const presentN = rows0.filter(r => r.isPresent).length;
+    const absentN = rows0.length - presentN;
+    const ok = await showConfirm(
+      `Once you save, the attendance is final and QR scanning for this session closes. You will not be able to scan again.
+
+${presentN} mentee${presentN !== 1 ? 's' : ''} scanned and will be marked present.${absentN ? ` ${absentN} mentee${absentN !== 1 ? 's' : ''} not scanned will be marked absent.` : ''}`,
+      { title: 'Save attendance and finish session?', confirmText: 'Save & Close', cancelText: 'Keep Scanning' }
+    );
+    if (!ok) return;
     setSaving(true);
     try {
       const requests = rowsRef.current.map(row => {
