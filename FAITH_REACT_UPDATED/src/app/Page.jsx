@@ -46,10 +46,21 @@ export default function Page({ id, onReady, children }) {
       document.head.appendChild(st);
       injected.push(st);
     }
+    // Public pages start at the top and fade in once styled (no blank flash / leftover scroll from the last page).
+    const isPublic = !chrome;
+    if (isPublic && !window.location.hash) window.scrollTo(0, 0);
     let alive = true;
     const hrefs = meta.styles;
     setPageStyles(chrome ? [...hrefs, ...PORTAL_PARTIAL_STYLES.filter(h => !hrefs.includes(h))] : hrefs)
-      .then(() => { if (alive) { setReady(true); chrome?.pageReady(); } });
+      .then(() => {
+        if (!alive) return;
+        setReady(true);
+        chrome?.pageReady();
+        if (isPublic) {
+          document.body.classList.add('page-enter');
+          setTimeout(() => document.body.classList.remove('page-enter'), 400);
+        }
+      });
     return () => { alive = false; injected.forEach(st => st.remove()); };
   }, [id]);
 

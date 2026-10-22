@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
+import { prefetchRoute } from '../../lib/prefetch.js';
 import { useLenis, useNavScrolled, usePublicEffects } from './publicEffects.js';
 
 // LANDING/HTML/landing.html
@@ -9,6 +10,7 @@ export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
   const [spy, setSpy] = useState('#home');
   usePublicEffects();
+  useEffect(() => { prefetchRoute('login', ['/LOGIN/CSS/login.css', '/LOGIN/CSS/login-motion.css']); }, []);
   useLenis();
   useNavScrolled(setScrolled);
 

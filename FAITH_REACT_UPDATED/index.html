@@ -11,7 +11,7 @@
   <meta name="astra-page-styles"/>
   <!-- Applies the saved light/dark theme before first paint. -->
   <script src="/theme.js"></script>
-  <style>#root{display:contents}</style>
+  <style>#root{display:contents}@keyframes astraPageIn{from{opacity:0}to{opacity:1}}body.page-enter{animation:astraPageIn .3s ease both}@media (prefers-reduced-motion:reduce){body.page-enter{animation:none}}</style>
 </head>
 <body>
   <div id="root"></div>

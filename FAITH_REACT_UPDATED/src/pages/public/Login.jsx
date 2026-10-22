@@ -5,6 +5,7 @@ import PasswordMeter from '../../components/PasswordMeter.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { CONFIG } from '../../lib/config.js';
 import { useStyle } from '../../lib/injectStyle.js';
+import { prefetchRoute } from '../../lib/prefetch.js';
 import { validate as validatePassword } from '../../lib/passwordPolicy.js';
 import { getSession, isLoggedIn, saveSession } from '../../lib/session.js';
 import OtpBoxes from './OtpBoxes.jsx';
@@ -54,6 +55,7 @@ const EMAIL_OTP_ICON = (
 // LOGIN/HTML/login.html + LOGIN/JS/login.js + contact.js + fit-screen.js
 export default function Login() {
   useStyle('loginLoadingCss', LOADING_CSS);
+  useEffect(() => { prefetchRoute('landing', ['/LANDING/CSS/landing.css', '/LANDING/CSS/motion.css']); }, []);
   const navigate = useNavigate();
   usePublicEffects();
 
