@@ -498,3 +498,22 @@ footer p {
   body:not(.head-polish) .modal { padding: 0; }
   body:not(.head-polish) :is(.modal-body, .modal-header, .modal-footer) { padding-left: 16px; padding-right: 16px; }
 }
+
+/* ═══ Head portal, phones / small tablets: stop the page from growing wider than the screen ═══
+   Once data loaded, a wide table (e.g. Breakdown by School, min-width 1168px) forced its grid column - and so the whole
+   page - wider than the viewport; the phone then zoomed out and shifted left. Grid columns may now shrink below their
+   content (minmax(0,1fr)) and wide content scrolls inside its own box instead. Admin is excluded; desktop is untouched. */
+@media screen and (max-width: 900px) {
+  html:has(body.head-polish) { overflow-x: hidden; }
+  body.head-polish { overflow-x: hidden; max-width: 100vw; }
+  body.head-polish .main-wrapper, body.head-polish .page-content, body.head-polish main { min-width: 0; max-width: 100%; }
+  body.head-polish .hd-dash-grid, body.head-polish .hd-row { min-width: 0; max-width: 100%; }
+  body.head-polish .hd-row-1 { grid-template-columns: minmax(0, 1fr); }
+  body.head-polish .hd-row-2 { grid-template-columns: minmax(0, 1fr); }
+  body.head-polish .hd-row-3 { grid-template-columns: minmax(0, 1fr); }
+  body.head-polish .hd-row > .card, body.head-polish .card, body.head-polish .table-card { min-width: 0; max-width: 100%; }
+  body.head-polish #schoolBreakdown { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  body.head-polish :is(.stats-grid, .school-overview-grid, .att-mentor-list, .mentor-list, .pt-cards-grid, .detail-stats-grid) { min-width: 0; max-width: 100%; }
+  body.head-polish :is(.page-header, .toolbar, .card-top-row) { max-width: 100%; }
+  body.head-polish img, body.head-polish svg, body.head-polish canvas { max-width: 100%; }
+}
