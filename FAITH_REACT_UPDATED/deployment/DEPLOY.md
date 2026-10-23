@@ -60,3 +60,8 @@ The API sends its own headers (Program.cs), so nothing else is needed for `/api`
   `onclick="..."` or `<script>` in a print template, regenerate the hashes by hashing the exact text and update the `script-src` line.
 - `server_tokens off;` is in `/etc/nginx/conf.d/01-hide-version.conf`. Backups of the previous config: `~/nginx-backup/` on the server.
 - Roll back: copy the newest `~/nginx-backup/astra.conf.*` over `/etc/nginx/conf.d/astra.conf`, then `sudo nginx -t && sudo systemctl reload nginx`.
+
+## Build gotcha (Git Bash on Windows)
+Do not build with `VITE_API_BASE_URL=/api npm run build` from **Git Bash**: it rewrites `/api` into `C:/Program Files/Git/api`, the site then
+calls a file path and every request fails with "Failed to fetch". Use `deploy-frontend.ps1` (PowerShell) or set `MSYS_NO_PATHCONV=1` first.
+Check a build with: `grep -c "Program Files" dist/assets/*.js` (every file must print 0).
