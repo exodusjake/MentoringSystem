@@ -56,3 +56,33 @@
 @media screen and (max-width:640px) {
  #mentorGrid:has(> .mentor-card) { grid-template-columns:1fr; }
 }
+
+/* Head portal on phones: roomier dropdowns (the trigger and its menu), with matching search and date fields.
+   Rules that reach the trigger carry !important because the dropdown copies the page's own field look into inline styles. */
+@media screen and (max-width:768px) {
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) { gap:12px; }
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) .dd-trigger.dd-boxed,
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) .dp-trigger {
+  box-sizing:border-box; min-height:52px; padding:0 14px 0 16px !important; gap:10px;
+  font-size:15px !important; font-weight:500 !important; color:#0f172a !important;
+  background-color:#fff !important; border:1.5px solid #c3cddb !important; border-radius:14px !important;
+  box-shadow:0 1px 2px rgba(15,23,42,.06);
+ }
+ body.head-polish .dd-trigger.dd-boxed .dd-chev { width:18px; height:18px; color:#475569; }
+ body.head-polish .dd-trigger.dd-boxed.open, body.head-polish .dd-trigger.dd-boxed:focus-visible { border-color:#2563eb !important; box-shadow:0 0 0 4px rgba(37,99,235,.14); }
+ body.head-polish .dd-trigger .dd-label.is-placeholder { color:#94a3b8; }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) {
+  box-sizing:border-box; min-height:52px; padding:0 16px; border:1.5px solid #c3cddb; border-radius:14px; box-shadow:0 1px 2px rgba(15,23,42,.06);
+ }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) input { font-size:16px; }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) svg { width:18px; height:18px; }
+ body.head-polish .filter-bar .btn-clear { min-height:48px; padding:0 22px; font-size:15px; border-radius:14px; }
+
+ /* the menu that opens under a dropdown */
+ body.head-polish .dd-menu { padding:8px; border:1px solid #c3cddb; border-radius:16px; box-shadow:0 18px 44px rgba(15,23,42,.24); }
+ body.head-polish .dd-opt { min-height:48px; padding:12px 14px; gap:12px; font-size:15px; border-radius:12px; }
+ body.head-polish .dd-opt .dd-opt-text { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.3; }
+ body.head-polish .dd-opt .dd-check { width:18px; height:18px; }
+ body.head-polish .dd-group { padding:12px 14px 6px; font-size:11.5px; }
+ body.head-polish .dd-empty { padding:16px; font-size:14px; }
+}

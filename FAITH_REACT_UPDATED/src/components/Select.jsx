@@ -110,25 +110,43 @@ function EnhancedSelect({ children, className = '', style, onChange, disabled, i
   // Position the menu, then fade it in (and wire the outside-click / reflow listeners).
   useLayoutEffect(() => {
     if (!open) return;
-    const r = btnRef.current.getBoundingClientRect();
     const m = menuRef.current;
-    const gap = 6;
-    m.style.minWidth = Math.max(r.width, 160) + 'px';
-    m.style.maxWidth = Math.min(window.innerWidth - 16, 420) + 'px';
-    const mh = Math.min(m.scrollHeight, 300);
-    const below = window.innerHeight - r.bottom - gap - 8;
-    const above = r.top - gap - 8;
-    const up = mh > below && above > below;
-    const left = Math.min(Math.max(8, r.left), window.innerWidth - m.offsetWidth - 8);
-    setMenuPos({
-      up,
-      maxHeight: Math.max(120, Math.min(300, up ? above : below)),
-      left,
-      ...(up ? { top: 'auto', bottom: window.innerHeight - r.top + gap } : { bottom: 'auto', top: r.bottom + gap }),
-    });
+    const place = () => {
+      const r = btnRef.current.getBoundingClientRect();
+      const gap = 6;
+      // Head portal on phones: rows are taller there, so the menu may be a little taller too.
+      const cap = window.innerWidth <= 768 && document.body.classList.contains('head-polish') ? 340 : 300;
+      m.style.minWidth = Math.max(r.width, 160) + 'px';
+      m.style.maxWidth = Math.min(window.innerWidth - 16, 420) + 'px';
+      const mh = Math.min(m.scrollHeight, cap);
+      const below = window.innerHeight - r.bottom - gap - 8;
+      const above = r.top - gap - 8;
+      const up = mh > below && above > below;
+      const left = Math.min(Math.max(8, r.left), window.innerWidth - m.offsetWidth - 8);
+      return {
+        up,
+        maxHeight: Math.max(120, Math.min(cap, up ? above : below)),
+        left,
+        ...(up ? { top: 'auto', bottom: window.innerHeight - r.top + gap } : { bottom: 'auto', top: r.bottom + gap }),
+      };
+    };
+    setMenuPos(place());
     const raf = requestAnimationFrame(() => setMenuShow(true));
     const outside = e => { if (!m.contains(e.target) && !btnRef.current.contains(e.target)) closeRef.current(); };
-    const reflow = e => { if (e && e.type === 'scroll' && m.contains(e.target)) return; closeRef.current(); };
+    const startWidth = window.innerWidth;
+    const reflow = e => {
+      if (e && e.type === 'scroll' && m.contains(e.target)) return;
+      // On a phone, the on-screen keyboard closing (after typing in a search box) or the address bar sliding away resizes
+      // or nudges the page. That used to close the menu the instant it opened, so keep it attached to its trigger instead;
+      // it closes only if the trigger leaves the screen or the width changes (rotation).
+      if (window.innerWidth <= 768 && window.innerWidth === startWidth && btnRef.current) {
+        const r = btnRef.current.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) { closeRef.current(); return; }
+        setMenuPos(place());
+        return;
+      }
+      closeRef.current();
+    };
     document.addEventListener('mousedown', outside, true);
     window.addEventListener('resize', reflow);
     window.addEventListener('scroll', reflow, true);
