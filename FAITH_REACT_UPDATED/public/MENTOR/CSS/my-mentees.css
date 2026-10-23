@@ -244,3 +244,19 @@
   .concern-btn { justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { .concern-overlay, .concern-modal { animation: none; } }
+
+/* A flagged mentee: a red glowing frame while the concern waits for a response; green once an Admin/Head has responded. */
+.mentee-card.is-flagged { border-color: #dc2626; animation: flagGlow 2.4s ease-in-out infinite; }
+@keyframes flagGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(220,38,38,.18), 0 6px 18px rgba(220,38,38,.14); }
+  50% { box-shadow: 0 0 0 5px rgba(220,38,38,.3), 0 8px 26px rgba(220,38,38,.28); }
+}
+.mentee-card.is-flagged .mc-identity { background: linear-gradient(135deg, #fee2e2 0%, #fff5f5 85%); border-right-color: #fca5a5; }
+.mentee-card.is-flagged .mc-flag-btn { color: #fff; background: #dc2626; border-color: #dc2626; }
+.mentee-card.flag-answered { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,.16); }
+.mentee-card.flag-answered .mc-identity { background: linear-gradient(135deg, #dcfce7 0%, #f7fef9 85%); border-right-color: #86efac; }
+.mc-flag-state { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; padding: 4px 10px; font-family: var(--font, inherit); font-size: 11px; font-weight: 700; border-radius: 999px; border: 1.5px solid; cursor: pointer; transition: transform .15s, box-shadow .18s; }
+.mc-flag-state:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+.mc-flag-state.open { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
+.mc-flag-state.answered { color: #15803d; background: #dcfce7; border-color: #86efac; }
+@media (prefers-reduced-motion: reduce) { .mentee-card.is-flagged { animation: none; box-shadow: 0 0 0 3px rgba(220,38,38,.25); } }

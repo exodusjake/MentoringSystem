@@ -13,7 +13,7 @@ namespace AstraMentoringAPI.Controllers
         private readonly MenteeConcernsService _service;
         public MenteeConcernsController(MenteeConcernsService service) { _service = service; }
 
-        // The mentor is always the signed-in caller, never a value from the request body.
+        // The mentor / responder is always the signed-in caller, never a value from the request body.
         private int CallerId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
         // POST /api/MenteeConcerns — a mentor flags one of their own mentees with a written concern.
@@ -33,24 +33,39 @@ namespace AstraMentoringAPI.Controllers
             };
         }
 
-        // GET /api/MenteeConcerns/notifications — the bell: newest concerns plus this user's unread count.
+        // GET /api/MenteeConcerns/notifications — the Admin/Head bell. `count` = concerns still awaiting a response.
         [HttpGet("notifications")]
         [Authorize(Roles = "Admin,Head")]
-        public async Task<IActionResult> Notifications() => Ok(await _service.GetFeedAsync(CallerId));
+        public async Task<IActionResult> Notifications() => Ok(await _service.GetStaffFeedAsync());
 
-        [HttpPatch("{id:int}/read")]
+        // POST /api/MenteeConcerns/{id}/respond — the first Admin/Head to respond closes the concern for everyone.
+        [HttpPost("{id:int}/respond")]
         [Authorize(Roles = "Admin,Head")]
-        public async Task<IActionResult> MarkRead(int id)
-            => await _service.MarkReadAsync(CallerId, id) ? Ok(new { message = "Marked as read" }) : NotFound(new { message = "Concern not found." });
-
-        [HttpPatch("read-all")]
-        [Authorize(Roles = "Admin,Head")]
-        public async Task<IActionResult> MarkAllRead()
+        public async Task<IActionResult> Respond(int id, [FromBody] RespondRequest req)
         {
-            await _service.MarkAllReadAsync(CallerId);
-            return Ok(new { message = "All concerns marked as read" });
+            var result = await _service.RespondAsync(CallerId, id, req.Message);
+            return result.Status switch
+            {
+                MenteeConcernsService.RespondStatus.Ok => Ok(new { message = "Your response was sent to the mentor.", item = result.Item }),
+                MenteeConcernsService.RespondStatus.InvalidMessage => BadRequest(new { message = $"Please write a response of {MenteeConcernsService.MinResponseLength} to {MenteeConcernsService.MaxResponseLength} characters." }),
+                MenteeConcernsService.RespondStatus.NotFound => NotFound(new { message = "Concern not found." }),
+                MenteeConcernsService.RespondStatus.AlreadyResponded => StatusCode(409, new { message = $"{result.Item?.ResponderName ?? "Another admin"} already responded to this concern.", item = result.Item }),
+                _ => StatusCode(500, new { message = "Something went wrong on the server. Please try again." }),
+            };
         }
+
+        // GET /api/MenteeConcerns/mine — the mentor's own concerns. `count` = responses they have not opened yet.
+        [HttpGet("mine")]
+        [Authorize(Roles = "Mentor")]
+        public async Task<IActionResult> Mine() => Ok(await _service.GetMineAsync(CallerId));
+
+        // PATCH /api/MenteeConcerns/{id}/ack — the mentor opened the response.
+        [HttpPatch("{id:int}/ack")]
+        [Authorize(Roles = "Mentor")]
+        public async Task<IActionResult> Acknowledge(int id)
+            => await _service.AcknowledgeAsync(CallerId, id) ? Ok(new { message = "Marked as seen" }) : NotFound(new { message = "Concern not found." });
     }
 
     public record SubmitConcernRequest(int MenteeId, string? Category, string? Message);
+    public record RespondRequest(string? Message);
 }

@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Page from '../../app/Page.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import Overlay from '../../components/Overlay.jsx';
 import Select from '../../components/Select.jsx';
+import { ConcernDetailModal } from '../../components/concernShared.jsx';
 import { apiRequest } from '../../lib/api.js';
+import { emit, on } from '../../lib/events.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 import { sampleHtml, useTour } from '../../app/tour.js';
@@ -33,6 +35,7 @@ function ConcernModal({ target, onClose }) {
     try {
       await apiRequest('MenteeConcerns', 'POST', { menteeId: target.id, category, message: trimmed }, true);
       showToast('Your concern was sent to the Admin and Head Admin.', 'success');
+      emit('concerns:changed');   // this page's flag marks and the bell refresh
       onClose();
     } catch (e) {
       setError(e.message || 'Could not send the concern. Please try again.');
@@ -88,6 +91,28 @@ function ConcernModal({ target, onClose }) {
 export default function MyMentees() {
   useBackGuard();
   const wt = useTour().active;   // walkthrough: show sample data
+
+  const loadConcerns = useCallback(async () => {
+    try { const data = await apiRequest('MenteeConcerns/mine', 'GET', null, true); setConcerns(data?.items || []); }
+    catch (e) { /* the cards just show no flag */ }
+  }, []);
+  useEffect(() => { loadConcerns(); return on('concerns:changed', loadConcerns); }, [loadConcerns]);
+
+  // Per mentee: an Open concern keeps the card red; an answered one the mentor has not opened yet shows a green mark.
+  const flagByMentee = {};
+  for (const c of concerns) {   // newest first
+    const f = flagByMentee[c.menteeID] || (flagByMentee[c.menteeID] = {});
+    if (c.status !== 'Responded') f.open = f.open || c;
+    else if (!c.mentorSeen) f.fresh = f.fresh || c;
+  }
+  async function openFlag(item) {
+    setConcernDetail(item);
+    if (item.status === 'Responded' && !item.mentorSeen) {
+      setConcerns(list => list.map(c => c.concernID === item.concernID ? { ...c, mentorSeen: true } : c));
+      try { await apiRequest(`MenteeConcerns/${item.concernID}/ack`, 'PATCH', null, true); emit('concerns:changed'); }
+      catch (e) { loadConcerns(); }
+    }
+  }
   const mentorId = getSession()?.user?.userID;
 
   const [state, setState] = useState('loading');        // 'loading' | 'ready' | 'failed'
@@ -100,6 +125,8 @@ export default function MyMentees() {
   const [sortMode, setSortMode] = useState('section');
   const [activeSection, setActiveSection] = useState(null);
   const [concernTarget, setConcernTarget] = useState(null);   // { id, name } of the mentee being flagged
+  const [concerns, setConcerns] = useState([]);                // this mentor's own flagged concerns (with any response)
+  const [concernDetail, setConcernDetail] = useState(null);    // a concern being read
 
   useEffect(() => {
     (async () => {
@@ -230,9 +257,10 @@ export default function MyMentees() {
       const dept      = m.departmentName || detail.departmentName || '—';
       const school    = m.school       || '—';
       const isDropOut = detail.isDropOut || false;
+      const flag = flagByMentee[m.menteeUserID] || {};
 
       return (
-        <div className={`mentee-card${isDropOut ? ' is-dropout' : ''}`} key={m.assignmentID ?? m.menteeUserID}>
+        <div className={`mentee-card${isDropOut ? ' is-dropout' : ''}${flag.open ? ' is-flagged' : flag.fresh ? ' flag-answered' : ''}`} key={m.assignmentID ?? m.menteeUserID}>
           <button type="button" className="mc-flag-btn" title="Report a concern to the Admin and Head Admin" aria-label={`Report a concern about ${name}`}
             onClick={() => setConcernTarget({ id: m.menteeUserID, name })}><i className="ti ti-flag"></i></button>
           <div className="mc-identity">
@@ -241,6 +269,11 @@ export default function MyMentees() {
               <div className="mc-name">{name}</div>
               <div className="mc-email">{email}</div>
               <div className="mc-role-badge">Mentee</div>
+              {flag.open
+                ? <div><button type="button" className="mc-flag-state open" onClick={() => openFlag(flag.open)}><i className="ti ti-flag-filled"></i> Flagged · awaiting response</button></div>
+                : flag.fresh
+                  ? <div><button type="button" className="mc-flag-state answered" onClick={() => openFlag(flag.fresh)}><i className="ti ti-message-check"></i> Admin responded · view</button></div>
+                  : null}
             </div>
           </div>
           <div className="mc-body">
@@ -317,6 +350,7 @@ export default function MyMentees() {
         </footer>
       </div>
       <ConcernModal target={concernTarget} onClose={() => setConcernTarget(null)} />
+      <ConcernDetailModal item={concernDetail} role="mentor" onClose={() => setConcernDetail(null)} />
     </Page>
   );
 }
