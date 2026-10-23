@@ -36,6 +36,7 @@ const STEPS = [
   { page: 'logsheet', all: '.log-session-card', nth: 0, sample: true, title: 'Scheduled Session', text: 'A checkpoint that has not happened yet. Its Logsheet button stays grey, and the report shows Pending, until the session is completed and attendance is recorded.' },
   { page: 'logsheet', all: '.log-session-card', nth: 1, sample: true, title: 'Completed Session', text: 'Date, time and who was present (1 of 2 here). The green Logsheet button and “Submitted On Time” mean this checkpoint is already submitted.' },
   { page: 'logsheet', all: '.log-card-actions', nth: 1, sample: true, title: 'Print', text: 'Print this session’s logsheet. The arrow next to Print lets you pick the Logsheet, Mentor’s Notes or Non-Attendance form instead.' },
+  { page: 'logsheet', sel: '.btn-view-logsheet.btn-view--done', sample: true, title: 'Open the Logsheet', text: 'Click the Logsheet button on a session to open its review window. We will open it for you next. (On the greyed-out Logsheet button of a scheduled session nothing opens yet.)' },
   { page: 'logsheet', sel: '.lpm-left-panel', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Logsheet Remarks', text: 'Opening Logsheet shows the mentees who were present. Type an optional remark for each one; it appears on the form right away. Save Draft keeps your work without submitting.' },
   { page: 'logsheet', sel: '.lpm-preview-scroll', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Live Preview', text: 'The official FAITH Colleges Mentoring Logsheet, filled in from your session: date, mentee names, time in and out, and your signature.' },
   { page: 'logsheet', sel: '.lpm-preview-tabs', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Three Forms', text: 'Every checkpoint has three forms: the Logsheet, Mentor’s Notes and Non-Attendance. Press Next to go through them in order.' },
@@ -63,7 +64,7 @@ const ICONS = {
   'My Mentees': 'ti-users', 'Mentee Card': 'ti-id',
   'Sessions': 'ti-calendar-event', 'Log Session': 'ti-plus', 'Session Counts': 'ti-chart-bar', 'Session Card': 'ti-notes', 'Attendance': 'ti-qrcode', 'Upload Proof': 'ti-upload',
   'Availability': 'ti-clock-plus', 'Post Slot': 'ti-plus', 'Open Slot': 'ti-calendar-time',
-  'Logsheet': 'ti-clipboard-list', 'Logsheet Progress': 'ti-chart-bar', 'Logged or Not Yet': 'ti-circle-check', 'Scheduled Session': 'ti-calendar-event', 'Completed Session': 'ti-circle-check', 'Print': 'ti-printer', 'Logsheet Remarks': 'ti-notes', 'Live Preview': 'ti-eye', 'Three Forms': 'ti-files', 'Mentor’s Notes': 'ti-notebook', 'Non-Attendance': 'ti-user-x', 'Upload Logsheet': 'ti-upload', 'Attendance Overview': 'ti-activity',
+  'Logsheet': 'ti-clipboard-list', 'Logsheet Progress': 'ti-chart-bar', 'Logged or Not Yet': 'ti-circle-check', 'Scheduled Session': 'ti-calendar-event', 'Completed Session': 'ti-circle-check', 'Print': 'ti-printer', 'Open the Logsheet': 'ti-pointer', 'Logsheet Remarks': 'ti-notes', 'Live Preview': 'ti-eye', 'Three Forms': 'ti-files', 'Mentor’s Notes': 'ti-notebook', 'Non-Attendance': 'ti-user-x', 'Upload Logsheet': 'ti-upload', 'Attendance Overview': 'ti-activity',
   'Announcements': 'ti-speakerphone', 'Administration': 'ti-building', 'My Announcements': 'ti-speakerphone',
   'Calendar': 'ti-calendar', 'Profile': 'ti-user-circle', 'Replay Walkthrough': 'ti-route', 'Logout': 'ti-logout',
 };
@@ -103,6 +104,9 @@ const annCard = (mine, name, initials, date, title, body, pinned) =>
   (pinned ? '<div class="ann-pin-banner"><i class="ti ti-pinned"></i> Pinned</div>' : '') +
   '<div class="ann-card-top"><div class="ann-avatar ' + (mine ? 'ann-avatar-teal' : 'ann-avatar-indigo') + '">' + initials + '</div><div class="ann-card-info"><div class="ann-card-name">' + name +
   '</div><div class="ann-card-date">' + date + '</div></div></div><div class="announce-title">' + title + '</div><div class="announce-content">' + body + '</div></div>';
+
+// A sample mentee signature (inline, so no file is needed).
+const SAMPLE_SIGNATURE = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 44"><path d="M6 32 C14 6 24 6 21 27 S32 38 40 14 C44 4 50 30 58 20 S72 8 78 25 S94 36 114 10" fill="none" stroke="#1f2937" stroke-width="2" stroke-linecap="round"/></svg>');
 
 export const MENTOR_SAMPLE = {
   dashboard: {
@@ -147,7 +151,7 @@ export const MENTOR_SAMPLE = {
         { ...base, sessionID: -2, sessionDate: '2026-10-21T18:31:00', actualStart: '2026-10-21T18:31:00', actualEnd: '2026-10-21T23:55:00', sessionStatus: 'Completed', slotName: 'Before Prelims',
           reportStatus: 'Submitted On Time', logStatus: 'Submitted', documentsComplete: true, topic: 'Before Prelims Session.',
           mentees: [
-            { menteeID: 3, menteeName: 'Daniela Mentee', sectionCode: 'BSIT', isPresent: true, attendanceRecorded: true, scannedAt: '2026-10-21T18:31:00', _attendedEndTime: '2026-10-21T23:55:00', remarks: '', mentorNotes: '' },
+            { menteeID: 3, menteeName: 'Daniela Mentee', sectionCode: 'BSIT', isPresent: true, attendanceRecorded: true, scannedAt: '2026-10-21T18:31:00', _attendedEndTime: '2026-10-21T23:55:00', remarks: '', mentorNotes: '', signatureFilePath: SAMPLE_SIGNATURE, _hasProof: true },
             { menteeID: 2, menteeName: 'Charizze Mentee', sectionCode: 'BSIT', isPresent: false, attendanceRecorded: true, absenceReason: '' },
           ] },
       ];

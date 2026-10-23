@@ -184,7 +184,7 @@ function ModalLogsheet({ s, mentor }) {
                   <td>{m.menteeName}</td>
                   <td>{LogsheetData.time(m.scannedAt)}</td>
                   <td>{LogsheetData.time(m._attendedEndTime)}</td>
-                  <td className="sig-cell">{(mHasProof && m.signatureFilePath) ? <MenteeSig src={CONFIG.getFileUrl(m.signatureFilePath)} /> : null}</td>
+                  <td className="sig-cell">{(mHasProof && m.signatureFilePath) ? <MenteeSig src={String(m.signatureFilePath).startsWith('data:') ? m.signatureFilePath : CONFIG.getFileUrl(m.signatureFilePath)} /> : null}</td>
                   <td>{m.remarks || ''}</td>
                 </tr>
               );
