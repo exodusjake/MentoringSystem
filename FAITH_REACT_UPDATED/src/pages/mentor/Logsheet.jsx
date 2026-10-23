@@ -7,6 +7,7 @@ import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { CONFIG } from '../../lib/config.js';
 import { dashboardSessionState } from '../../lib/dashboard-sessions.js';
+import { windowState } from '../../lib/checkpoint-window-state.js';
 import { LogsheetData } from '../../lib/logsheet-data.js';
 import { buildMentorNotesForm, buildNonAttendanceForm, buildPrintForm, openLogsheetPrintWindow } from '../../lib/logsheetForms.js';
 import { getSession } from '../../lib/session.js';
@@ -760,7 +761,13 @@ export default function MentorLogsheet() {
     const attStr = total > 0 ? `${present}/${total} present` : 'No attendance yet';
     const displayStatus = s._sample ? s.sessionStatus : logDisplayStatus(s);
     const reportStatus = s.slotName ? LogsheetData.reportStatus(s, calendar) : '';
-    const reportBadgeCls = reportStatus === 'Pending' ? 'report-pending' : reportStatus === 'Submitted Late' ? 'report-late' : '';
+    // A completed session held outside its checkpoint window is not counted, which used to read only "Pending".
+    const winState = reportStatus === 'Pending' && displayStatus === 'Completed' ? windowState(s, calendar) : 'unknown';
+    const outsideWindow = winState === 'late' || winState === 'early';
+    const reportLabel = winState === 'late' ? 'Late' : winState === 'early' ? 'Early' : reportStatus;
+    const reportTip = winState === 'late' ? 'Held after the checkpoint window closed, so it is not counted toward this checkpoint.'
+      : winState === 'early' ? 'Held before the checkpoint window opened, so it is not counted toward this checkpoint.' : undefined;
+    const reportBadgeCls = outsideWindow || reportStatus === 'Submitted Late' ? 'report-late' : reportStatus === 'Pending' ? 'report-pending' : '';
     const badgeCls = displayStatus === 'Closed' ? 'badge-closed' : statusBadgeClass(displayStatus === 'In Progress' ? 'Scheduled' : displayStatus);
     const cardCls = `status-${(displayStatus === 'In Progress' ? 'Scheduled' : displayStatus || '').toLowerCase()}`;
     const isCancelled = s.sessionStatus === 'Cancelled';
@@ -810,7 +817,7 @@ export default function MentorLogsheet() {
             </div>
             {!hideSection && sections.length ? <div className="log-section-tags">{sections.map(sec => <span className="log-section-tag" key={sec}>{sec}</span>)}</div> : null}
             <div className="log-card-statuses">
-              {s.slotName ? <span className={`status-badge ${reportBadgeCls}`}>{reportStatus}</span> : null}
+              {s.slotName ? <span className={`status-badge ${reportBadgeCls}`} title={reportTip}>{reportLabel}</span> : null}
               <span className={`status-badge ${badgeCls}`}>{displayStatus}</span>
               {s.sessionStatus === 'Completed' && !(s._anyProof !== undefined ? s._anyProof : s.proofFilePath)
                 ? <span className="log-proof-flag" title="No proof photo uploaded yet"><i className="ti ti-photo-off"></i></span>
