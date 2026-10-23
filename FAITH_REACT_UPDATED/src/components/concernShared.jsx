@@ -41,7 +41,27 @@ const CSS = [
   '.cb-mbtn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:14px;font-weight:600;padding:10px 20px;color:#fff;background:#2563eb;border:none;border-radius:10px;cursor:pointer;transition:background-color .18s,opacity .18s,transform .15s}',
   '.cb-mbtn:hover:not(:disabled){background:#1d4ed8}.cb-mbtn:active:not(:disabled){transform:scale(.97)}.cb-mbtn:disabled{opacity:.5;cursor:not-allowed}',
   '.cb-mbtn.ghost{color:#374151;background:#fff;border:1.5px solid #dce3ec}.cb-mbtn.ghost:hover:not(:disabled){background:#f4f7fb}',
-  '@media (max-width:520px){.cb-overlay{padding:0;align-items:flex-end}.cb-modal{max-width:none;border-radius:18px 18px 0 0;max-height:92dvh}}',
+  // Phones: a compact bottom sheet (about three quarters of the screen at most, smaller type and spacing), and the floating
+  // dark-mode button is hidden while it is open (it sits above everything and covered the Send button).
+  '@media (max-width:768px){body.cb-modal-open .theme-toggle{display:none!important}}',
+  '@media (max-width:520px){',
+  '.cb-overlay{padding:0;align-items:flex-end}',
+  '.cb-modal{max-width:none;max-height:76dvh;border-radius:16px 16px 0 0;border-top-width:5px}',
+  '.cb-mhead{gap:10px;padding:12px 14px 8px}',
+  '.cb-mhead-icon{width:34px;height:34px;font-size:18px;border-radius:10px}',
+  '.cb-mtitle{font-size:15px;line-height:1.25}',
+  '.cb-mclose{width:30px;height:30px}',
+  '.cb-mbody{padding:2px 14px 6px}',
+  '.cb-status{margin:2px 0;padding:3px 9px;font-size:11px}',
+  '.cb-facts{gap:3px 10px;margin:8px 0 10px;font-size:12px}',
+  '.cb-label{margin:9px 0 5px;font-size:10.5px}',
+  '.cb-quote{padding:9px 11px;font-size:13px;line-height:1.5}',
+  '.cb-wait{margin-top:10px;padding:9px 11px;font-size:12px}',
+  '.cb-text{min-height:84px;padding:9px 10px;font-size:16px}',   // 16px keeps iPhones from zooming in on the field
+  '.cb-hint{font-size:10.5px}',
+  '.cb-mfoot{gap:8px;padding:10px 14px calc(12px + env(safe-area-inset-bottom))}',
+  '.cb-mfoot .cb-mbtn{flex:1;justify-content:center;padding:10px 12px;font-size:13.5px}',
+  '}',
   '@media (prefers-reduced-motion:reduce){.cb-overlay{animation:none}}',
 ].join('');
 export const useConcernStyles = () => useStyle('concern-shared', CSS);
@@ -69,6 +89,12 @@ export function ConcernDetailModal({ item, role, onClose, onRespond }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => { setText(''); setBusy(false); setError(''); }, [item?.concernID]);
+  const isOpen = !!item;
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    document.body.classList.add('cb-modal-open');
+    return () => document.body.classList.remove('cb-modal-open');
+  }, [isOpen]);
   useEffect(() => {
     const onKey = e => { if (e.key === 'Escape' && !busy) onClose(); };
     document.addEventListener('keydown', onKey);

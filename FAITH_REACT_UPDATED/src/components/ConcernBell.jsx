@@ -56,6 +56,16 @@ const CSS = [
   '.cb-empty{padding:34px 20px;text-align:center;font-size:13px;color:#9ca3af}',
   '.cb-empty i{display:block;margin-bottom:8px;font-size:34px;opacity:.5}',
   '.cb-foot{padding:9px 16px;text-align:center;font-size:11.5px;color:#9ca3af;border-top:1px solid #f1f5f9}',
+  // Phones: the dropdown stays within about 60% of the screen height, with tighter rows.
+  '@media (max-width:768px){',
+  '.cb-panel{top:48px;width:calc(100vw - 20px);max-height:min(60dvh,calc(100dvh - 76px))}',
+  '.cb-head{padding:11px 14px;gap:8px}.cb-title{font-size:14px}.cb-pill-count{font-size:10.5px}',
+  '.cb-item{gap:10px;padding:10px 12px}',
+  '.cb-avatar{width:34px;height:34px;font-size:12.5px}',
+  '.cb-name{font-size:13px}.cb-meta{font-size:11px}',
+  '.cb-msg{font-size:12px}.cb-reply{margin-top:6px;padding:0 8px;font-size:11.5px;-webkit-line-clamp:1}',
+  '.cb-foot{padding:7px 12px;font-size:11px}',
+  '}',
   '@media (prefers-reduced-motion:reduce){.cb-panel,.cb-btn.ring i{animation:none}}',
 ].join('');
 
