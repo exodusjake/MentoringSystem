@@ -1,6 +1,6 @@
 // Admin and Head Admin walkthroughs for Tour.jsx's engine (same engine as the mentor and mentee tours, themed
-// in the portals' blue via `wt-admin`). Unlike the mentor/mentee tours there is no sample data: these portals
-// show system-wide data that already exists, so the tour just highlights the real sidebar and dashboard.
+// in the portals' blue via `wt-admin`). The dashboards show SAMPLE data while the tour runs (tourSample.js);
+// the other pages show the real data, so those steps just highlight the real sidebar items.
 //   - Runs once, right after the account finishes first-time setup (pages/{admin,head}/Setup.jsx set the flag).
 //   - Replay any time from Profile → "Replay Walkthrough" (under Change Signature).
 
@@ -10,11 +10,12 @@ const welcome = (portal, text) => ({ page: 'dashboard', center: true, title: 'We
 const ADMIN_STEPS = [
   welcome('Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentors, mentees, engagement and alerts.'),
-  { page: 'dashboard', sel: '.stats-grid', title: 'Key Numbers', text: 'Total mentors and mentees, and the mentee status counts. Click the Mentors card to jump to Mentor Monitoring.' },
-  { page: 'dashboard', sel: '.engagement-card', title: 'Mentee Engagement', text: 'How many mentees are active, inactive or unassigned, and how many are doing well or need attention.' },
-  { page: 'dashboard', sel: '.alerts-card', title: 'System Alerts', text: 'Things that need your attention, such as mentors who are behind on their sessions.' },
-  { page: 'dashboard', sel: '.top3-card', title: 'Top 3 Mentors', text: 'The best-performing mentors this semester.' },
-  { page: 'dashboard', sel: '.recent-card', title: 'Recent Activities', text: 'The latest sessions and updates across the program.' },
+  { page: 'dashboard', sel: '.stats-grid', sample: true, title: 'Key Numbers', text: 'Total mentors and mentees, and the mentee status counts. Click the Mentors card to jump to Mentor Monitoring.' },
+  { page: 'dashboard', sel: '.engagement-card', sample: true, title: 'Mentee Engagement', text: 'How many mentees are active, inactive or unassigned, and how many are doing well or need attention.' },
+  { page: 'dashboard', sel: '.chart-card', sample: true, title: 'Mentor Performance', text: 'Every active mentor grouped by overall score: Not Started, Needs Attention, On Track, Excellent, or Pending while their reports are still unfinalized.' },
+  { page: 'dashboard', sel: '.alerts-card', sample: true, title: 'System Alerts', text: 'Things that need your attention, such as mentors who need follow-up, unassigned mentees and completed sessions with no proof.' },
+  { page: 'dashboard', sel: '.top3-card', sample: true, title: 'Top 3 Mentors', text: 'The best-performing mentors this semester, ranked by Timeliness (25%) + Completeness (25%) + Evaluation Rating (50%).' },
+  { page: 'dashboard', sel: '.recent-card', sample: true, title: 'Recent Activities', text: 'The latest sessions scheduled and proofs uploaded across the program.' },
   nav('users', 'nav-users', 'User Management', 'Add or import users, edit or deactivate accounts, assign mentors to mentees, and mark mentees who dropped out.'),
   nav('attendance', 'nav-attendance', 'Attendance Logs', 'Attendance for every session and mentee, with the logsheet behind each record.'),
   nav('monitoring', 'nav-sessions', 'Mentor Monitoring', 'Each mentor’s progress and status (Excellent, On Track, Behind or Critical). Open a mentor to see their sessions and mentees.'),
@@ -33,10 +34,10 @@ const ADMIN_STEPS = [
 const HEAD_STEPS = [
   welcome('Head Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentor performance, mentee engagement and alerts.'),
-  { page: 'dashboard', sel: '.hd-performance-card', title: 'Mentor Performance', text: 'How mentors are doing this semester, grouped by status, with the breakdown by school.' },
-  { page: 'dashboard', sel: '.alerts-card', title: 'System Alerts', text: 'Things that need attention, such as mentors who are behind on their sessions.' },
-  { page: 'dashboard', sel: '.top3-card', title: 'Top 3 Mentors', text: 'The best-performing mentors this semester.' },
-  { page: 'dashboard', sel: '.recent-card', title: 'Recent Activities', text: 'The latest sessions and updates across the program.' },
+  { page: 'dashboard', sel: '.hd-performance-card', sample: true, title: 'Mentor Performance', text: 'How mentors are doing this semester, grouped by status, with the breakdown by school.' },
+  { page: 'dashboard', sel: '.alerts-card', sample: true, title: 'System Alerts', text: 'Things that need attention, such as mentors who need follow-up, unassigned mentees and completed sessions with no proof.' },
+  { page: 'dashboard', sel: '.top3-card', sample: true, title: 'Top 3 Mentors', text: 'The best-performing mentors this semester, ranked by Timeliness (25%) + Completeness (25%) + Evaluation Rating (50%).' },
+  { page: 'dashboard', sel: '.recent-card', sample: true, title: 'Recent Activities', text: 'The latest sessions scheduled and proofs uploaded across the program.' },
   nav('monitoring', 'nav-performance', 'Mentor Monitoring', 'Each mentor’s progress and status (Excellent, On Track, Behind or Critical). Open a mentor to see their sessions and mentees.'),
   nav('attendance', 'nav-attendance', 'Attendance Summary', 'Attendance for every session and mentee, with the logsheet behind each record.'),
   nav('proofs', 'nav-proof', 'Proof Tracking', 'Review the proof photos mentors upload for completed sessions, and see which are still missing.'),
@@ -60,5 +61,5 @@ const ICONS = {
   'Profile': 'ti-user-circle', 'Replay Walkthrough': 'ti-route', 'System Settings': 'ti-settings', 'Logout': 'ti-logout',
 };
 
-export const ADMIN_TOUR = { base: '/admin/', keyPrefix: 'astra_walkthrough_admin', theme: 'wt-themed wt-admin', steps: ADMIN_STEPS, icons: ICONS, samplePages: [] };
-export const HEAD_TOUR = { base: '/head/', keyPrefix: 'astra_walkthrough_head', theme: 'wt-themed wt-admin', steps: HEAD_STEPS, icons: ICONS, samplePages: [] };
+export const ADMIN_TOUR = { base: '/admin/', keyPrefix: 'astra_walkthrough_admin', theme: 'wt-themed wt-admin', steps: ADMIN_STEPS, icons: ICONS, samplePages: ['dashboard'] };
+export const HEAD_TOUR = { base: '/head/', keyPrefix: 'astra_walkthrough_head', theme: 'wt-themed wt-admin', steps: HEAD_STEPS, icons: ICONS, samplePages: ['dashboard'] };

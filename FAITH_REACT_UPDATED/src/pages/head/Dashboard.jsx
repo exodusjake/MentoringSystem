@@ -7,6 +7,8 @@ import { apiRequest } from '../../lib/api.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { useTour } from '../../app/tour.js';
+import { TOUR_SAMPLE } from '../../app/tourSample.js';
 
 // HEAD/HTML/head-dashboard.html + HEAD/JS/dashboard.js
 
@@ -121,6 +123,7 @@ const Unavailable = () => <span style={{ fontSize: '12px', opacity: 0.65 }}>Unav
 
 export default function HeadDashboard() {
   useBackGuard();
+  const wt = useTour().active;   // walkthrough: show sample data
   const navigate = useNavigate();
   const [data, setData] = useState(null);       // { stats, settings, activities, recent } once loaded
   const [viewed, setViewed] = useState(() => getViewedActivityIds());
@@ -146,8 +149,9 @@ export default function HeadDashboard() {
     })();
   }, []);
 
-  const loaded = !!data;
-  const { stats, settings, activities, recent } = data || {};
+  const view = wt ? { stats: TOUR_SAMPLE.stats, settings: data?.settings || {}, activities: TOUR_SAMPLE.monitor, recent: TOUR_SAMPLE.activities } : data;
+  const loaded = !!view;
+  const { stats, settings, activities, recent } = view || {};
   const pulse = <span className="stat-pulse">—</span>;
   // setText(): a missing value shows an em dash
   const S = v => !loaded ? pulse : (v !== null && v !== undefined ? v : '—');

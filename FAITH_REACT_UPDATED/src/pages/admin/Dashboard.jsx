@@ -7,6 +7,8 @@ import { apiRequest, swrRequest } from '../../lib/api.js';
 import { loadScript } from '../../lib/loadScript.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { useTour } from '../../app/tour.js';
+import { TOUR_SAMPLE } from '../../app/tourSample.js';
 
 // ADMIN_/HTML/dashboard.html + ADMIN_/JS/dashboard.js
 
@@ -79,6 +81,7 @@ const Unavailable = () => <span style={{ fontSize: '12px', opacity: 0.65 }}>Unav
 
 export default function AdminDashboard() {
   useBackGuard();
+  const wt = useTour().active;   // walkthrough: show sample data
   const navigate = useNavigate();
   const [data, setData] = useState(null);                 // { users, stats, monitor } once loaded
   const [activities, setActivities] = useState(undefined); // undefined = still loading
@@ -124,8 +127,9 @@ export default function AdminDashboard() {
     swrRequest('Activities?top=25', setActivities).catch(() => setActivities(prev => prev === undefined ? null : prev));
   }, []);
 
-  const loaded = !!data;
-  const { users, stats, monitor } = data || {};
+  const view = wt ? TOUR_SAMPLE.adminData : data;
+  const loaded = !!view;
+  const { users, stats, monitor } = view || {};
   const pulse = <span className="stat-pulse">—</span>;
   const mentors = mentorsOf(monitor);
 
@@ -220,7 +224,7 @@ export default function AdminDashboard() {
       });
     });
     return () => { alive = false; };
-  }, [data]);
+  }, [data, wt]);
   useEffect(() => () => { chartRef.current?.destroy(); }, []);
 
   // ── Alerts ──
@@ -304,9 +308,10 @@ export default function AdminDashboard() {
 
   // ── Recent activities ──
   let recent = <div className="activity-skeleton"><span className="spinner"></span> Loading activities...</div>;
-  if (activities !== undefined) {
-    if (activities && activities.length > 0) {
-      const sorted = [...activities].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+  const acts = wt ? TOUR_SAMPLE.activities : activities;
+  if (acts !== undefined) {
+    if (acts && acts.length > 0) {
+      const sorted = [...acts].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
       // No slice — the card scrolls instead, so a burst of activity doesn't push earlier items off.
       recent = sorted.map((a, i) => {
         const id = a.sessionID ?? a.SessionID;
