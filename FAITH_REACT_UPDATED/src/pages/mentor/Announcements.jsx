@@ -13,6 +13,8 @@ import { update as updateSidebarAnnBadge } from '../../lib/announcementBadge.js'
 import { attachIcon, fileUrl, formatFileSize } from '../../lib/attachments.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { sampleHtml, useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/announcements.html + MENTOR/JS/announcements.js
 
@@ -20,6 +22,8 @@ const MAX_ATTACHMENTS = 5;
 
 export default function MentorAnnouncements() {
   useBackGuard();
+  const tour = useTour();
+  const wt = tour.active;   // walkthrough: show sample data
   useToolbarState();
   const currentUser = getSession()?.user;
   const myId = currentUser?.userID;
@@ -494,7 +498,7 @@ export default function MentorAnnouncements() {
             </div>
           </div>
 
-          <div id="announcementsList" key={activeTab} className={`announcements-list ann-swap ${tabDir}`}>{list}</div>
+          <div id="announcementsList" key={wt ? `wt-${tour.annTab}` : activeTab} className={`announcements-list ann-swap ${tabDir}`} dangerouslySetInnerHTML={sampleHtml(wt, SM.announcements(tour.annTab))}>{wt ? undefined : list}</div>
         </main>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>

@@ -11,6 +11,8 @@ import { checkpointDateAllowed, checkpointToday, checkpointWindow } from '../../
 import { sessionDisplayStatus } from '../../lib/dashboard-sessions.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { sampleHtml, useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 import SessionProofModal from './SessionProofModal.jsx';
 import SessionQrModal from './SessionQrModal.jsx';
 
@@ -40,6 +42,7 @@ function proofUnavailableReason(session) {
 
 export default function MentorSessions() {
   useBackGuard();
+  const wt = useTour().active;   // walkthrough: show sample data
   const currentUser = getSession()?.user;
 
   const [allSessions, setAllSessions] = useState(null);        // null loading, false failed
@@ -516,7 +519,7 @@ export default function MentorSessions() {
           <div className="page-header">
             <div>
               <h1>Sessions</h1>
-              <p id="sessionSubtitle">{sessionsLoaded ? `${sessions.length} session${sessions.length !== 1 ? 's' : ''} on record` : 'Your mentoring session log'}</p>
+              <p id="sessionSubtitle">{wt ? SM.sessions.subtitle : sessionsLoaded ? `${sessions.length} session${sessions.length !== 1 ? 's' : ''} on record` : 'Your mentoring session log'}</p>
             </div>
             <div className="page-header-right">
               <button id="logSessionBtn" className="btn-log-session" onClick={openLogSessionModal}>
@@ -526,12 +529,12 @@ export default function MentorSessions() {
           </div>
 
           <div className="session-stats-strip">
-            <div className="sstat"><div className="sstat-val" id="sTotalSessions">{sessionsLoaded ? sessions.length : pulse}</div><div className="sstat-lbl">Total</div></div>
-            <div className="sstat"><div className="sstat-val green" id="sCompleted">{sessionsLoaded ? completedCount : pulse}</div><div className="sstat-lbl">Completed</div></div>
-            <div className="sstat"><div className="sstat-val blue" id="sScheduled">{sessionsLoaded ? scheduledCount : pulse}</div><div className="sstat-lbl">Scheduled</div></div>
-            <div className="sstat"><div className="sstat-val gray" id="sCancelled">{sessionsLoaded ? cancelledCount : pulse}</div><div className="sstat-lbl">Cancelled</div></div>
-            <div className="sstat"><div className="sstat-val blue" id="sInProgress">{sessionsLoaded ? inProgressCount : '—'}</div><div className="sstat-lbl">In Progress</div></div>
-            <div className="sstat"><div className="sstat-val gray" id="sClosed">{sessionsLoaded ? closedCount : '—'}</div><div className="sstat-lbl">Closed</div></div>
+            <div className="sstat"><div className="sstat-val" id="sTotalSessions">{wt ? SM.sessions.counts.total : sessionsLoaded ? sessions.length : pulse}</div><div className="sstat-lbl">Total</div></div>
+            <div className="sstat"><div className="sstat-val green" id="sCompleted">{wt ? SM.sessions.counts.completed : sessionsLoaded ? completedCount : pulse}</div><div className="sstat-lbl">Completed</div></div>
+            <div className="sstat"><div className="sstat-val blue" id="sScheduled">{wt ? SM.sessions.counts.scheduled : sessionsLoaded ? scheduledCount : pulse}</div><div className="sstat-lbl">Scheduled</div></div>
+            <div className="sstat"><div className="sstat-val gray" id="sCancelled">{wt ? SM.sessions.counts.cancelled : sessionsLoaded ? cancelledCount : pulse}</div><div className="sstat-lbl">Cancelled</div></div>
+            <div className="sstat"><div className="sstat-val blue" id="sInProgress">{wt ? SM.sessions.counts.inProgress : sessionsLoaded ? inProgressCount : '—'}</div><div className="sstat-lbl">In Progress</div></div>
+            <div className="sstat"><div className="sstat-val gray" id="sClosed">{wt ? SM.sessions.counts.closed : sessionsLoaded ? closedCount : '—'}</div><div className="sstat-lbl">Closed</div></div>
           </div>
 
           {/* Proof completion indicator */}
@@ -560,7 +563,7 @@ export default function MentorSessions() {
             </Select>
           </div>
 
-          <div id="sessionsList" className="sessions-list">{cards}</div>
+          <div id="sessionsList" className="sessions-list" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.sessions.list)}>{wt ? undefined : cards}</div>
         </main>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>

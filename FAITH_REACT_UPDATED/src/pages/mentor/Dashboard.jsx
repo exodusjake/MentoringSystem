@@ -7,6 +7,8 @@ import { dashboardSessionState } from '../../lib/dashboard-sessions.js';
 import { sanitizeHtml } from '../../lib/security-utils.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { sampleHtml, useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/mentor-dashboard.html + MENTOR/JS/mentor-dashboard.js
 
@@ -58,6 +60,7 @@ const Skeleton = ({ text }) => <div className="list-skeleton"><span className="s
 const pulse = <span className="stat-pulse">—</span>;
 
 export default function MentorDashboard() {
+  const wt = useTour().active;   // walkthrough: show sample data
   useBackGuard();
   const navigate = useNavigate();
   const currentUser = getSession()?.user;
@@ -299,7 +302,7 @@ export default function MentorDashboard() {
             <div className="stat-card">
               <div className="stat-icon-wrap teal"><i className="ti ti-users"></i></div>
               <div className="stat-body">
-                <div className="stat-value" id="statMentees">{stats.mentees}</div>
+                <div className="stat-value" id="statMentees">{wt ? SM.dashboard.mentees : stats.mentees}</div>
                 <div className="stat-label">My Mentees</div>
                 <div className="stat-sub">Assigned this semester</div>
               </div>
@@ -307,7 +310,7 @@ export default function MentorDashboard() {
             <div className="stat-card">
               <div className="stat-icon-wrap green"><i className="ti ti-circle-check"></i></div>
               <div className="stat-body">
-                <div className="stat-value" id="statCompleted" title={stats.completedTitle}>{stats.completed}</div>
+                <div className="stat-value" id="statCompleted" title={stats.completedTitle}>{wt ? SM.dashboard.completed : stats.completed}</div>
                 <div className="stat-label">Course Checkpoints Completed</div>
                 <div className="stat-sub">This semester</div>
               </div>
@@ -315,7 +318,7 @@ export default function MentorDashboard() {
             <div className="stat-card">
               <div className="stat-icon-wrap blue"><i className="ti ti-calendar-event"></i></div>
               <div className="stat-body">
-                <div className="stat-value" id="statUpcoming">{stats.upcoming}</div>
+                <div className="stat-value" id="statUpcoming">{wt ? SM.dashboard.upcoming : stats.upcoming}</div>
                 <div className="stat-label">Upcoming Sessions</div>
                 <div className="stat-sub">Scheduled or awaiting attendance</div>
               </div>
@@ -323,7 +326,7 @@ export default function MentorDashboard() {
             <div className="stat-card">
               <div className="stat-icon-wrap"><i className="ti ti-chart-bar"></i></div>
               <div className="stat-body">
-                <div className="stat-value" id="statAttRate" title={stats.attTitle}>{stats.attRate}</div>
+                <div className="stat-value" id="statAttRate" title={stats.attTitle}>{wt ? SM.dashboard.attRate : stats.attRate}</div>
                 <div className="stat-label">Semester Completion</div>
                 <div className="stat-sub">Completed course checkpoints / required course checkpoints</div>
               </div>
@@ -338,7 +341,7 @@ export default function MentorDashboard() {
                   <p className="card-desc">Scheduled sessions ahead.</p>
                 </div>
               </div>
-              <div id="upcomingSessionsList" className="sessions-list">{upcomingList}</div>
+              <div id="upcomingSessionsList" className="sessions-list" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.dashboard.upcomingList)}>{wt ? undefined : upcomingList}</div>
               <div className="card-view-footer">
                 <Link to="/mentor/sessions" className="card-view-link">View all sessions <i className="ti ti-arrow-right"></i></Link>
               </div>
@@ -350,7 +353,7 @@ export default function MentorDashboard() {
                   <p className="card-desc">Latest completed, cancelled, and past scheduled sessions.</p>
                 </div>
               </div>
-              <div id="recentSessionsList" className="sessions-list">{recentList}</div>
+              <div id="recentSessionsList" className="sessions-list" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.dashboard.recentList)}>{wt ? undefined : recentList}</div>
               <div className="card-view-footer">
                 <Link to="/mentor/sessions" className="card-view-link">View all sessions <i className="ti ti-arrow-right"></i></Link>
               </div>
@@ -365,14 +368,14 @@ export default function MentorDashboard() {
                   <p className="card-desc">Latest from the administration.</p>
                 </div>
               </div>
-              <div id="announcementsList" className="announcements-list">{announceList}</div>
+              <div id="announcementsList" className="announcements-list" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.dashboard.announcements)}>{wt ? undefined : announceList}</div>
               <div className="card-view-footer">
                 <Link to="/mentor/announcements" className="card-view-link">View all announcements <i className="ti ti-arrow-right"></i></Link>
               </div>
             </div>
             <div className="card calendar-overview-card">
               <div className="card-header-row"><div><h2>Upcoming Activities &amp; Deadlines</h2><p className="card-desc">Ongoing and upcoming items from the published calendar.</p></div></div>
-              <div id="calendarOverviewList" className="calendar-overview-list" aria-live="polite">{overviewList}</div>
+              <div id="calendarOverviewList" className="calendar-overview-list" aria-live="polite" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.dashboard.calendar)}>{wt ? undefined : overviewList}</div>
               <div className="card-view-footer"><Link to="/mentor/calendar" className="card-view-link">View Calendar <i className="ti ti-arrow-right"></i></Link></div>
             </div>
           </div>

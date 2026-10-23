@@ -4,11 +4,14 @@ import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { sampleHtml, useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/my-mentees.html + MENTOR/JS/my-mentees.js
 
 export default function MyMentees() {
   useBackGuard();
+  const wt = useTour().active;   // walkthrough: show sample data
   const mentorId = getSession()?.user?.userID;
 
   const [state, setState] = useState('loading');        // 'loading' | 'ready' | 'failed'
@@ -194,7 +197,7 @@ export default function MyMentees() {
         <main className="page-content">
           <div className="page-header">
             <h1>My Mentees</h1>
-            <p id="menteeSubtitle">{subtitle}</p>
+            <p id="menteeSubtitle">{wt ? SM.mentees.subtitle : subtitle}</p>
           </div>
 
           {/* Section filter cards — shown only for a mentor with more than one section. */}
@@ -227,7 +230,7 @@ export default function MyMentees() {
               </div>
             </div>
 
-            <div id="menteesGrid" className="mentees-grid">{grid}</div>
+            <div id="menteesGrid" className="mentees-grid" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.mentees.grid)}>{wt ? undefined : grid}</div>
           </div>
         </main>
         <footer>

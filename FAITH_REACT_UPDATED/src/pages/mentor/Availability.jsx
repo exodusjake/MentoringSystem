@@ -10,6 +10,8 @@ import { apiRequest } from '../../lib/api.js';
 import { checkpointToday } from '../../lib/checkpoint-window.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { sampleHtml, useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/availability.html + MENTOR/JS/availability.js
 
@@ -102,6 +104,7 @@ let rangeSeq = 0;
 
 export default function Availability() {
   useBackGuard();
+  const wt = useTour().active;   // walkthrough: show sample data
   const currentUser = getSession()?.user;
   const [period, setPeriod] = useState({ schoolYear: '2026-2027', semester: '1st Semester' });
   const [slotWindows, setSlotWindows] = useState({});        // SlotName -> { startDate, endDate }
@@ -266,15 +269,15 @@ export default function Availability() {
             <i className="ti ti-calendar-event"></i>
             Open Slots
           </div>
-          <div id="slotsLoading" className="avail-loading" style={{ display: slotsLoaded ? 'none' : undefined }}>
+          <div id="slotsLoading" className="avail-loading" style={{ display: wt || slotsLoaded ? 'none' : undefined }}>
             {allSlots === false ? 'Failed to load slots.' : <><span className="spinner"></span> Loading slots...</>}
           </div>
-          <div id="slotsEmpty" className="avail-empty" style={{ display: slotsLoaded && !activeSlots.length ? 'block' : 'none' }}>
+          <div id="slotsEmpty" className="avail-empty" style={{ display: !wt && slotsLoaded && !activeSlots.length ? 'block' : 'none' }}>
             <i className="ti ti-calendar-plus"></i>
             <p>No open slots yet — click <strong>Post Slot</strong> to add one.</p>
           </div>
-          <div id="slotsGrid" className="avail-grid" style={{ display: slotsLoaded && activeSlots.length ? 'flex' : 'none' }}>
-            {activeSlots.map(s => <SlotCard slot={s} isPast={false} onDelete={setDeleteId} key={s.availabilityID} />)}
+          <div id="slotsGrid" className="avail-grid" style={{ display: wt || (slotsLoaded && activeSlots.length) ? 'flex' : 'none' }} key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, SM.availability.slots)}>
+            {wt ? undefined : activeSlots.map(s => <SlotCard slot={s} isPast={false} onDelete={setDeleteId} key={s.availabilityID} />)}
           </div>
 
           <div className="avail-collapsibles">

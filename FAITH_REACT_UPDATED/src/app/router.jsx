@@ -7,6 +7,8 @@ import { PORTAL_CONFIG } from './portals.js';
 import { PAGES } from '../pages/index.js';
 import { TourProvider } from './Tour.jsx';
 
+const MentorTourProvider = props => <TourProvider portal="mentor" {...props} />;
+
 // `/` (the vanilla index.html): straight to the signed-in role's dashboard, else the landing page.
 function RootRedirect() {
   const role = getSession().role;
@@ -86,7 +88,7 @@ export const router = createBrowserRouter([
     { path: 'announcements', element: page('mentor/announcements') },
     { path: 'calendar', element: page('mentor/calendar') },
     { path: 'profile', element: page('mentor/profile') },
-  ]),
+  ], MentorTourProvider),
   portalRoutes('mentee', [
     { path: 'dashboard', element: page('mentee/dashboard') },
     { path: 'schedule', element: page('mentee/schedule') },

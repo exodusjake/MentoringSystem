@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TourContext } from './tour.js';
+import { MENTOR_TOUR } from './tourMentor.js';
 
-// MENTEE/JS/walkthrough.js — spotlight tour across the mentee portal: the page is blurred and the part
+// MENTEE/JS/walkthrough.js — spotlight tour across the mentee portal (and, with the config in tourMentor.js, the mentor portal): the page is blurred and the part
 // being explained stays sharp, with a tooltip beside it. Order follows the portal:
 // Dashboard → Sessions → Schedule Session → Announcements → Profile → Logout.
 // - Runs once, automatically, right after the mentee uploads their e-signature in setup (the pending flag).
@@ -11,9 +12,6 @@ import { TourContext } from './tour.js';
 // - Every page shows SAMPLE data while the tour runs (the pages read it through useTour()); nothing real
 //   is read, changed or saved, and the page reloads when the tour ends so the real data comes back.
 
-const BASE = '/mentee/';
-const STATE_KEY = 'astra_walkthrough_state';
-const SAMPLE_PAGES = ['dashboard', 'sessions', 'schedule', 'announcements'];
 
 const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -98,6 +96,11 @@ const ICONS = {
   'Announcements': 'ti-speakerphone', 'Admin Announcement': 'ti-building', 'My Mentor Announcement': 'ti-speakerphone',
   'Profile': 'ti-user-circle', 'Logout': 'ti-logout',
 };
+const MENTEE_TOUR = {
+  base: '/mentee/', keyPrefix: 'astra_walkthrough', steps: STEPS, icons: ICONS,
+  samplePages: ['dashboard', 'sessions', 'schedule', 'announcements'],
+};
+const TOURS = { mentee: MENTEE_TOUR, mentor: MENTOR_TOUR };
 const PAD = 8;
 
 function holeClip(r) {
@@ -106,7 +109,7 @@ function holeClip(r) {
 }
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-export function TourProvider({ children }) {
+export function TourProvider({ children, portal = 'mentee' }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [ui, setUi] = useState({ active: false, scheduleApproved: false, modalOpen: false, annTab: 'admin' });
@@ -114,7 +117,7 @@ export function TourProvider({ children }) {
   navRef.current = navigate;
   const engine = useRef(null);
 
-  if (!engine.current) engine.current = createEngine(patch => setUi(u => ({ ...u, ...patch })), p => navRef.current(p));
+  if (!engine.current) engine.current = createEngine(patch => setUi(u => ({ ...u, ...patch })), p => navRef.current(p), TOURS[portal]);
   const E = engine.current;
 
   const start = useCallback(() => E.replay(), [E]);
@@ -133,11 +136,12 @@ export function TourProvider({ children }) {
 
 // The tour engine: imperative like the vanilla script (it owns three body-level elements), reporting what the
 // pages need to know (active, modal/approval/tab hooks) through `set`.
-function createEngine(set, go2) {
+function createEngine(set, go2, cfg) {
+  const steps = cfg.steps, stateKey = cfg.keyPrefix + '_state';
   let userId = null;
   try { userId = JSON.parse(localStorage.getItem('user') || 'null')?.userID ?? null; } catch (e) {}
-  const PENDING_KEY = 'astra_walkthrough_pending_' + userId;
-  const DONE_KEY = 'astra_walkthrough_done_' + userId;
+  const PENDING_KEY = cfg.keyPrefix + '_pending_' + userId;
+  const DONE_KEY = cfg.keyPrefix + '_done_' + userId;
 
   let blur, ring, tip, index = 0, timer = null, waiter = null, scrollTimer = null, styled = false, dir = 1;
   let earlyBlur = null, sampleOn = false, autoTimer = null, resumeTimer = null;
@@ -152,7 +156,7 @@ function createEngine(set, go2) {
 
   function place() {
     if (!E.active) return;
-    const step = STEPS[index], el = targetOf(step), vw = window.innerWidth, vh = window.innerHeight;
+    const step = steps[index], el = targetOf(step), vw = window.innerWidth, vh = window.innerHeight;
     const tw = tip.offsetWidth, th = tip.offsetHeight;
     let left, top;
     if (!el) { blur.style.clipPath = 'none'; ring.classList.add('none'); left = (vw - tw) / 2; top = (vh - th) / 2; }
@@ -187,16 +191,17 @@ function createEngine(set, go2) {
     approve: () => { scheduleApproved = true; set({ modalOpen: false, scheduleApproved: true }); },
     tabAdmin: () => set({ annTab: 'admin' }),
     tabMentor: () => set({ annTab: 'mentor' }),
+    tabMine: () => set({ annTab: 'mine' }),
   };
   const runHook = name => { if (name && HOOKS[name]) HOOKS[name](); };
 
   function show() {
-    const step = STEPS[index], last = index === STEPS.length - 1;
+    const step = steps[index], last = index === steps.length - 1;
     const html =
-      '<div class="wt-head"><div class="wt-icon"><i class="ti ' + (ICONS[step.title] || 'ti-bulb') + '"></i></div>' +
-      '<div class="wt-step">Step ' + (index + 1) + ' of ' + STEPS.length + (step.sample ? '<span class="wt-sample">SAMPLE DATA</span>' : '') + '</div></div>' +
+      '<div class="wt-head"><div class="wt-icon"><i class="ti ' + (cfg.icons[step.title] || 'ti-bulb') + '"></i></div>' +
+      '<div class="wt-step">Step ' + (index + 1) + ' of ' + steps.length + (step.sample ? '<span class="wt-sample">SAMPLE DATA</span>' : '') + '</div></div>' +
       '<h3 class="wt-title">' + esc(step.title) + '</h3><p class="wt-text">' + esc(step.text) + '</p>' +
-      '<div class="wt-bar"><span style="width:' + ((index + 1) / STEPS.length * 100) + '%"></span></div>' +
+      '<div class="wt-bar"><span style="width:' + ((index + 1) / steps.length * 100) + '%"></span></div>' +
       '<div class="wt-foot">' + (last ? '<span></span>' : '<button type="button" class="wt-skip" data-act="skip">Skip tour</button>') +
       '<div class="wt-btns">' + (index > 0 ? '<button type="button" class="wt-btn wt-back" data-act="back">Back</button>' : '') +
       '<button type="button" class="wt-btn wt-next" data-act="next">' + (last ? 'Finish' : 'Next') + '</button></div></div>';
@@ -237,9 +242,9 @@ function createEngine(set, go2) {
   // Wait (up to ~3s) for the step's target to exist on this page, then show it; skip it if it never does.
   function render() {
     clearInterval(waiter);
-    const step = STEPS[index];
+    const step = steps[index];
     syncSidebar(step);
-    if (SAMPLE_PAGES.includes(step.page)) sampleOn = true;
+    if (cfg.samplePages.includes(step.page)) sampleOn = true;
     runHook(step.enter);
     let tries = 0;
     waiter = setInterval(() => {
@@ -248,7 +253,7 @@ function createEngine(set, go2) {
       else if (++tries > 30) {
         clearInterval(waiter);
         const nxt = index + dir;
-        if (nxt < 0 || nxt >= STEPS.length) return finish();
+        if (nxt < 0 || nxt >= steps.length) return finish();
         go(nxt);
       }
     }, 100);
@@ -256,11 +261,11 @@ function createEngine(set, go2) {
 
   // Move to another step; cross-page moves navigate and resume there.
   function go(i) {
-    runHook(STEPS[index].leave);
+    runHook(steps[index].leave);
     dir = i >= index ? 1 : -1;
-    const from = STEPS[index].page, to = STEPS[i].page;
+    const from = steps[index].page, to = steps[i].page;
     index = i;
-    ssSet(STATE_KEY, JSON.stringify({ i }));
+    ssSet(stateKey, JSON.stringify({ i }));
     if (from !== to) {
       // fade out, keep the blur up, then move to the next page and pick the tour up there
       ring.classList.remove('show'); tip.classList.remove('show');
@@ -274,7 +279,7 @@ function createEngine(set, go2) {
         document.removeEventListener('keydown', onKey);
         clearTimeout(timer); clearInterval(waiter);
         set({ active: false });
-        go2(BASE + to);
+        go2(cfg.base + to);
         resume(i);
       }, 260);
       return;
@@ -286,14 +291,14 @@ function createEngine(set, go2) {
     const b = e.target.closest('[data-act]');
     if (!b) return;
     const act = b.getAttribute('data-act');
-    if (act === 'next') { if (index >= STEPS.length - 1) return finish(); go(index + 1); }
+    if (act === 'next') { if (index >= steps.length - 1) return finish(); go(index + 1); }
     else if (act === 'back') { if (index > 0) go(index - 1); }
     else if (act === 'skip') finish();
   }
   function onKey(e) {
     if (!E.active) return;
     if (e.key === 'Escape') finish();
-    else if (e.key === 'ArrowRight' && index < STEPS.length - 1) go(index + 1);
+    else if (e.key === 'ArrowRight' && index < steps.length - 1) go(index + 1);
     else if (e.key === 'ArrowLeft' && index > 0) go(index - 1);
   }
 
@@ -308,9 +313,9 @@ function createEngine(set, go2) {
     if (!E.active) return;
     E.active = false;
     teardown();
-    runHook(STEPS[index].leave);
+    runHook(steps[index].leave);
     syncSidebar(null);
-    ssDel(STATE_KEY);
+    ssDel(stateKey);
     lsDel(PENDING_KEY);
     lsSet(DONE_KEY, '1'); // one-time: never auto-shown again; replay is manual
     [blur, ring, tip].forEach(n => n.classList.remove('show'));
@@ -324,11 +329,11 @@ function createEngine(set, go2) {
   function begin(startIndex) {
     if (E.active) return;
     injectStyles();
-    index = Math.min(Math.max(0, startIndex || 0), STEPS.length - 1);
+    index = Math.min(Math.max(0, startIndex || 0), steps.length - 1);
     // if resumed on the wrong page (e.g. user navigated away), send them to the step's page
-    if (STEPS[index].page !== currentPage()) {
-      ssSet(STATE_KEY, JSON.stringify({ i: index }));
-      go2(BASE + STEPS[index].page);
+    if (steps[index].page !== currentPage()) {
+      ssSet(stateKey, JSON.stringify({ i: index }));
+      go2(cfg.base + steps[index].page);
       resume(index);
       return;
     }
@@ -368,8 +373,8 @@ function createEngine(set, go2) {
   E.replay = () => {
     if (E.active || E.resuming) return;
     lsDel(DONE_KEY);
-    ssSet(STATE_KEY, JSON.stringify({ i: 0 }));
-    if (currentPage() !== STEPS[0].page) { go2(BASE + STEPS[0].page); resume(0); return; }
+    ssSet(stateKey, JSON.stringify({ i: 0 }));
+    if (currentPage() !== steps[0].page) { go2(cfg.base + steps[0].page); resume(0); return; }
     begin(0);
   };
 
@@ -379,11 +384,11 @@ function createEngine(set, go2) {
     if (!autoRan) {
       autoRan = true;
       let state = null;
-      try { state = JSON.parse(ssGet(STATE_KEY) || 'null'); } catch (e) {}
+      try { state = JSON.parse(ssGet(stateKey) || 'null'); } catch (e) {}
       if (state && typeof state.i === 'number') { resume(state.i); return; }
     }
     // first time: right after the e-signature step (setup sets the flag)
-    if (pathname === BASE + 'dashboard' && lsGet(PENDING_KEY) === '1' && lsGet(DONE_KEY) !== '1') {
+    if (pathname === cfg.base + 'dashboard' && lsGet(PENDING_KEY) === '1' && lsGet(DONE_KEY) !== '1') {
       autoTimer = setTimeout(() => begin(0), 900);
       return () => clearTimeout(autoTimer);
     }

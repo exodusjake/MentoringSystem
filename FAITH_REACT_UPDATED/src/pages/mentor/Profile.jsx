@@ -6,11 +6,13 @@ import { apiRequest } from '../../lib/api.js';
 import { CONFIG } from '../../lib/config.js';
 import { getSession, saveSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { useTour } from '../../app/tour.js';
 
 // MENTOR/HTML/profile.html + MENTOR/JS/profile.js + profile-edit.js
 
 export default function MentorProfile() {
   useBackGuard();
+  const tour = useTour();
   const userId = getSession()?.user?.userID;
   const [user, setUser] = useState(null);
   const [mentorProfile, setMentorProfile] = useState(null);
@@ -145,6 +147,15 @@ export default function MentorProfile() {
             {loadFailed ? 'Failed to load profile. Please refresh.' : <><span className="spinner"></span> Loading profile...</>}
           </div>
           <div id="profileCard" className="profile-wrapper" style={{ display: user ? 'block' : 'none' }}>
+            <div className="walkthrough-card">
+              <div className="walkthrough-card-icon"><i className="ti ti-route"></i></div>
+              <div className="walkthrough-card-text">
+                <div className="walkthrough-card-title">Portal Walkthrough</div>
+                <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Mentor Portal.</div>
+              </div>
+              <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
+            </div>
+
             <div className="ph-card">
               <div className="ph-banner">
                 <button type="button" className="edit-btn" onClick={() => setEditOpen(true)}>
