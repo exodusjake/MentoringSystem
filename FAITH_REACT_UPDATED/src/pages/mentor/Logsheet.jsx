@@ -11,6 +11,8 @@ import { LogsheetData } from '../../lib/logsheet-data.js';
 import { buildMentorNotesForm, buildNonAttendanceForm, buildPrintForm, openLogsheetPrintWindow } from '../../lib/logsheetForms.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { useTour } from '../../app/tour.js';
+import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/logsheet.html + MENTOR/JS/logsheet.js
 
@@ -64,6 +66,58 @@ function buildSectionNumMap(sectionSessions) {
 }
 // Submitted and up to date. A submitted logsheet that gained attendance later needs a resubmit.
 function isFinalSubmitted(s) { return s?.logStatus === 'Submitted' && !s?.needsUpdate; }
+
+// Walkthrough only: the preview modal filled with a sample session (the page's own paper forms, static side panel).
+function SampleLogsheetModal({ open, tab, mentor, guidanceOfficer }) {
+  const s = SM.logsheet.sessions[1];
+  const present = s.mentees.filter(m => m.isPresent), absent = s.mentees.filter(m => !m.isPresent);
+  const row = (m, cls, label, placeholder) => (
+    <div className="lrm-mentee-row">
+      <div className="lrm-mentee-info">
+        <div className={`lrm-avatar ${cls}`}>{initials(m.menteeName)}</div>
+        <div className="lrm-mentee-text"><div className="lrm-mentee-name">{m.menteeName}</div><div className="lrm-mentee-sec">{m.sectionCode}</div></div>
+        <span className={`lrm-status-dot ${cls}`}>{label}</span>
+      </div>
+      <textarea className="lrm-textarea" placeholder={placeholder} readOnly></textarea>
+    </div>
+  );
+  const heading = tab === 'logsheet' ? 'Logsheet Remarks' : tab === 'notes' ? "Mentor's Notes" : 'Absence Reasons';
+  const last = tab === 'nonattend';
+  return (
+    <Overlay open={open} className="lpm-overlay" activeClass={null} display="flex" id="logsheetSampleOverlay">
+      <div className="lpm-modal lpm-modal-wide">
+        <div className="lpm-header">
+          <div><div className="lpm-title">{s.slotName}</div><div className="lpm-sub">{fmtDateShort(s.sessionDate)} · {LogsheetData.time(s.actualStart)} – {LogsheetData.time(s.actualEnd)} · Before Prelims Session.</div></div>
+          <div className="lpm-header-right"><button className="lpm-close-btn" type="button">×</button></div>
+        </div>
+        <div className="lpm-split-body">
+          <div className="lpm-left-panel">
+            <div className="lpm-panel-heading">{heading}</div>
+            <div className="lpm-remarks-list">
+              {last ? <><div className="lrm-section-label lrm-absent-label">Absent ({absent.length})</div>{absent.map(m => row(m, 'absent', 'Absent', 'Reason for absence…'))}</>
+                : <><div className="lrm-section-label">Present ({present.length})</div>{present.map(m => row(m, 'present', 'Present', tab === 'logsheet' ? 'Remarks…' : 'Notes…'))}</>}
+            </div>
+            <div className="lpm-left-footer"><div className="lpm-footer-btns">
+              <button className="lpm-btn-draft" type="button">Save Draft</button>
+              {last ? <button className="lpm-btn-upload" type="button">Upload Logsheet</button>
+                : <button className="lpm-btn-next" type="button">Next: {tab === 'logsheet' ? "Mentor's Notes" : 'Non-Attendance'} <i className="ti ti-arrow-right"></i></button>}
+            </div></div>
+          </div>
+          <div className="lpm-right-panel">
+            <div className="lpm-preview-tabs">
+              {PREVIEW_TAB_ORDER.map(t => <button key={t} type="button" className={`lpm-ptab${tab === t ? ' active' : ''}`}>{PREVIEW_TAB_LABELS[t]}</button>)}
+            </div>
+            <div className="lpm-preview-scroll"><div className="lpm-body">
+              {tab === 'logsheet' ? <ModalLogsheet s={s} mentor={mentor} />
+                : tab === 'notes' ? <ModalNotes s={s} mentor={mentor} />
+                : <ModalNonAttendance s={s} mentor={mentor} semLabel={LogsheetData.periodLabel(s)} guidanceOfficer={guidanceOfficer} />}
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
 
 // ── paper forms shown in the preview modal ──
 function Logo() {
@@ -234,6 +288,8 @@ const clone = v => JSON.parse(JSON.stringify(v));
 
 export default function MentorLogsheet() {
   useBackGuard();
+  const tour = useTour();
+  const wt = tour.active;   // walkthrough: show sample data
   const currentUser = getSession()?.user;
 
   const [sysSettings, setSysSettings] = useState({ SchoolYear: '2026-2027', Semester: '1st Semester', GuidanceOfficer: 'Guidance Officer' });
@@ -702,7 +758,7 @@ export default function MentorLogsheet() {
     const present = presentList.length;
     const total = (s.mentees || []).length;
     const attStr = total > 0 ? `${present}/${total} present` : 'No attendance yet';
-    const displayStatus = logDisplayStatus(s);
+    const displayStatus = s._sample ? s.sessionStatus : logDisplayStatus(s);
     const reportStatus = s.slotName ? LogsheetData.reportStatus(s, calendar) : '';
     const reportBadgeCls = reportStatus === 'Pending' ? 'report-pending' : reportStatus === 'Submitted Late' ? 'report-late' : '';
     const badgeCls = displayStatus === 'Closed' ? 'badge-closed' : statusBadgeClass(displayStatus === 'In Progress' ? 'Scheduled' : displayStatus);
@@ -785,6 +841,7 @@ export default function MentorLogsheet() {
   }
 
   function renderCards() {
+    if (wt) return <div className="log-section-cards log-section-cards--ungrouped">{SM.logsheet.sessions.map(s => renderCard(s, false))}</div>;
     if (allSessions === null) return <div className="log-loading"><i className="ti ti-loader"></i> Loading sessions…</div>;
     if (allSessions === false) return <div className="log-loading">Failed to load logsheet. Please refresh.</div>;
     const list = getFiltered();
@@ -936,7 +993,7 @@ export default function MentorLogsheet() {
           <div className="page-header">
             <div>
               <h1>Mentoring Logsheet</h1>
-              <p id="logsheetSubtitle">{sessionsLoaded ? `${sessions.length} session${sessions.length !== 1 ? 's' : ''} on record` : 'Loading…'}</p>
+              <p id="logsheetSubtitle">{wt ? SM.logsheet.subtitle : sessionsLoaded ? `${sessions.length} session${sessions.length !== 1 ? 's' : ''} on record` : 'Loading…'}</p>
             </div>
             <div className="print-btn-group" onClick={e => e.stopPropagation()}>
               <button className="btn-export-main" onClick={() => exportAllSessions('all')}>
@@ -963,32 +1020,32 @@ export default function MentorLogsheet() {
           <div className="log-stats-strip">
             <div className="lstat lstat-progress">
               <div className="lstat-progress-top">
-                <div className="lstat-val green" id="lStatCompleted">{statsOn ? (available ? completedP : '—') : pulse}</div>
-                <div className="lstat-progress-req" id="lStatRequired">{statsOn ? (available ? `of ${totalRequired} required` : 'Progress unavailable') : 'Loading target...'}</div>
+                <div className="lstat-val green" id="lStatCompleted">{wt ? '1' : statsOn ? (available ? completedP : '—') : pulse}</div>
+                <div className="lstat-progress-req" id="lStatRequired">{wt ? 'of 6 required' : statsOn ? (available ? `of ${totalRequired} required` : 'Progress unavailable') : 'Loading target...'}</div>
               </div>
               <div className="lstat-progress-bar">
-                <div className="lstat-progress-fill" id="lStatProgressFill" style={{ width: `${statsOn ? pct : 0}%` }}></div>
+                <div className="lstat-progress-fill" id="lStatProgressFill" style={{ width: `${wt ? 17 : statsOn ? pct : 0}%` }}></div>
               </div>
               <div className="lstat-lbl">Checkpoints Completed This Semester <details className="lstat-help"><summary aria-label="About checkpoints completed this semester"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Semester Progress</div>Checkpoint progress is for the current semester.</div></details></div>
             </div>
             <div className="lstat">
-              <div className="lstat-val" id="lStatTotal">{statsOn ? sessions.length : pulse}</div>
+              <div className="lstat-val" id="lStatTotal">{wt ? '2' : statsOn ? sessions.length : pulse}</div>
               <div className="lstat-lbl">Total Sessions on Record <details className="lstat-help"><summary aria-label="About total sessions on record"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Session Records</div>Session totals include all records across school years and semesters.</div></details></div>
             </div>
             <div className="lstat">
-              <div className="lstat-val blue" id="lStatScheduled">{statsOn ? scheduledN : pulse}</div>
+              <div className="lstat-val blue" id="lStatScheduled">{wt ? '1' : statsOn ? scheduledN : pulse}</div>
               <div className="lstat-lbl">Scheduled</div>
             </div>
-            <div className="lstat"><div className="lstat-val gray" id="lStatClosed">{statsOn ? closedN : '—'}</div><div className="lstat-lbl">Closed (not conducted) <details className="lstat-help"><summary aria-label="About closed (not conducted)"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Closed Sessions</div>Closed means the session was not conducted before its calendar deadline.</div></details></div></div>
+            <div className="lstat"><div className="lstat-val gray" id="lStatClosed">{wt ? '0' : statsOn ? closedN : '—'}</div><div className="lstat-lbl">Closed (not conducted) <details className="lstat-help"><summary aria-label="About closed (not conducted)"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Closed Sessions</div>Closed means the session was not conducted before its calendar deadline.</div></details></div></div>
             <div className="lstat">
-              <div className="lstat-val gray" id="lStatCancelled">{statsOn ? cancelledN : pulse}</div>
+              <div className="lstat-val gray" id="lStatCancelled">{wt ? '0' : statsOn ? cancelledN : pulse}</div>
               <div className="lstat-lbl">Cancelled</div>
             </div>
           </div>
 
           {/* Remarks completion indicator */}
-          <div className="log-remarks-bar" id="logRemarksBar" style={{ display: sessionsLoaded ? 'flex' : 'none' }}>
-            {remarksPill}
+          <div className="log-remarks-bar" id="logRemarksBar" style={{ display: wt || sessionsLoaded ? 'flex' : 'none' }}>
+            {wt ? <span className="log-remarks-pill log-remarks-pill--pending" id="logRemarksPill"><i className="ti ti-notes"></i> 1 session not yet logged</span> : remarksPill}
             <div className="log-remarks-info-wrap">
               <span className="log-remarks-info-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
@@ -1082,6 +1139,8 @@ export default function MentorLogsheet() {
           </div>
         </div>
       </Overlay>
+
+      <SampleLogsheetModal open={wt && tour.modalOpen} tab={tour.annTab} mentor={mentor} guidanceOfficer={sysSettings.GuidanceOfficer} />
 
       {/* Upload Confirmation Modal */}
       <Overlay open={uploadConfirm} className="modal-overlay" activeClass="open" id="uploadConfirmOverlay"

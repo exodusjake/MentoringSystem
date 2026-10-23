@@ -30,7 +30,18 @@ const STEPS = [
   { page: 'availability', sel: '.btn-post-slot', title: 'Post Slot', text: 'Choose a checkpoint, a date and one or more start times. Mentees see these slots on their Schedule page.' },
   { page: 'availability', sel: '.slot-card', sample: true, title: 'Open Slot', text: 'Open means nobody has booked it yet. Once a mentee books it, the card changes to Session Created and shows who is attending.' },
   // Logsheet / Attendance
-  { page: 'logsheet', sel: '#nav-logsheet', side: 'right', title: 'Logsheet', text: 'Your logsheet is built automatically from your Sessions: attendance, time and mentees are filled in for you. Add remarks and mentor’s notes, submit each checkpoint and print the forms.' },
+  { page: 'logsheet', sel: '#nav-logsheet', side: 'right', title: 'Logsheet', text: 'Your logsheet is built automatically from your Sessions: attendance, time and mentees are pulled in for you. Here you add remarks, submit each checkpoint and print the forms.' },
+  { page: 'logsheet', sel: '.log-stats-strip', sample: true, title: 'Logsheet Progress', text: 'How many of the required checkpoints you have completed this semester, plus your total, scheduled, closed (not conducted) and cancelled sessions.' },
+  { page: 'logsheet', sel: '.log-remarks-bar', sample: true, title: 'Logged or Not Yet', text: 'A session counts as not yet logged until you click Upload Logsheet inside it. That is when it is marked Submitted and becomes visible to the Admin.' },
+  { page: 'logsheet', all: '.log-session-card', nth: 0, sample: true, title: 'Scheduled Session', text: 'A checkpoint that has not happened yet. Its Logsheet button stays grey, and the report shows Pending, until the session is completed and attendance is recorded.' },
+  { page: 'logsheet', all: '.log-session-card', nth: 1, sample: true, title: 'Completed Session', text: 'Date, time and who was present (1 of 2 here). The green Logsheet button and “Submitted On Time” mean this checkpoint is already submitted.' },
+  { page: 'logsheet', all: '.log-card-actions', nth: 1, sample: true, title: 'Print', text: 'Print this session’s logsheet. The arrow next to Print lets you pick the Logsheet, Mentor’s Notes or Non-Attendance form instead.' },
+  { page: 'logsheet', sel: '.lpm-left-panel', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Logsheet Remarks', text: 'Opening Logsheet shows the mentees who were present. Type an optional remark for each one; it appears on the form right away. Save Draft keeps your work without submitting.' },
+  { page: 'logsheet', sel: '.lpm-preview-scroll', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Live Preview', text: 'The official FAITH Colleges Mentoring Logsheet, filled in from your session: date, mentee names, time in and out, and your signature.' },
+  { page: 'logsheet', sel: '.lpm-preview-tabs', sample: true, enter: 'logSheet', leave: 'closeModal', title: 'Three Forms', text: 'Every checkpoint has three forms: the Logsheet, Mentor’s Notes and Non-Attendance. Press Next to go through them in order.' },
+  { page: 'logsheet', sel: '.lpm-left-panel', sample: true, enter: 'logNotes', leave: 'closeModal', title: 'Mentor’s Notes', text: 'Write private notes about each mentee who attended. This is the Guidance copy.' },
+  { page: 'logsheet', sel: '.lpm-left-panel', sample: true, enter: 'logAbsent', leave: 'closeModal', title: 'Non-Attendance', text: 'Mentees who did not attend are listed here (Charizze Mentee in this sample). Add the reason for each absence; the form goes to the Guidance Office.' },
+  { page: 'logsheet', sel: '.lpm-btn-upload', sample: true, enter: 'logAbsent', leave: 'closeModal', title: 'Upload Logsheet', text: 'On the last form, Upload Logsheet submits the checkpoint. After that the button turns green on the card, and you can Unsubmit if something needs fixing.' },
   { page: 'attendance', sel: '#nav-activities', side: 'right', title: 'Attendance Overview', text: 'See each mentee’s attendance toward the semester requirement, and your own overall performance.' },
   // Announcements
   { page: 'announcements', sel: '#nav-announce', side: 'right', title: 'Announcements', text: 'Posts from the administration and your own posts to your mentees. A red badge shows when something is new.' },
@@ -52,14 +63,14 @@ const ICONS = {
   'My Mentees': 'ti-users', 'Mentee Card': 'ti-id',
   'Sessions': 'ti-calendar-event', 'Log Session': 'ti-plus', 'Session Counts': 'ti-chart-bar', 'Session Card': 'ti-notes', 'Attendance': 'ti-qrcode', 'Upload Proof': 'ti-upload',
   'Availability': 'ti-clock-plus', 'Post Slot': 'ti-plus', 'Open Slot': 'ti-calendar-time',
-  'Logsheet': 'ti-clipboard-list', 'Attendance Overview': 'ti-activity',
+  'Logsheet': 'ti-clipboard-list', 'Logsheet Progress': 'ti-chart-bar', 'Logged or Not Yet': 'ti-circle-check', 'Scheduled Session': 'ti-calendar-event', 'Completed Session': 'ti-circle-check', 'Print': 'ti-printer', 'Logsheet Remarks': 'ti-notes', 'Live Preview': 'ti-eye', 'Three Forms': 'ti-files', 'Mentor’s Notes': 'ti-notebook', 'Non-Attendance': 'ti-user-x', 'Upload Logsheet': 'ti-upload', 'Attendance Overview': 'ti-activity',
   'Announcements': 'ti-speakerphone', 'Administration': 'ti-building', 'My Announcements': 'ti-speakerphone',
   'Calendar': 'ti-calendar', 'Profile': 'ti-user-circle', 'Replay Walkthrough': 'ti-route', 'Logout': 'ti-logout',
 };
 
 export const MENTOR_TOUR = {
   base: '/mentor/', keyPrefix: 'astra_walkthrough_mentor', theme: 'wt-mentor', steps: STEPS, icons: ICONS,
-  samplePages: ['dashboard', 'mentees', 'sessions', 'availability', 'announcements'],
+  samplePages: ['dashboard', 'mentees', 'sessions', 'availability', 'announcements', 'logsheet'],
 };
 
 // ── SAMPLE DATA (tour only) ────────────────────────────────
@@ -123,6 +134,24 @@ export const MENTOR_SAMPLE = {
     slots:
       '<div class="slot-card slot-open" data-wt="1"><button class="slot-delete-btn" type="button" title="Delete slot"><i class="ti ti-trash"></i></button><div class="slot-cal-block"><span class="slot-cal-month">OCT</span><span class="slot-cal-day">26</span></div>' +
       '<div class="slot-body"><div class="slot-status-row"><span class="slot-status-dot"></span><span class="slot-status-label">Open</span></div><div class="slot-time"><i class="ti ti-clock"></i> 10:00 AM</div><span class="slot-name-tag">After Prelims</span></div></div>',
+  },
+  logsheet: {
+    subtitle: '2 sessions on record',
+    // Real-shaped session records (rendered by the Logsheet page's own card and form code).
+    sessions: (() => {
+      const base = { schoolYear: '2025-2026', semester: '1st Semester', sessionSectionCode: 'BSIT', sectionCode: 'BSIT', _sample: true, _anyProof: true, isMakeup: false };
+      const waiting = (id, name) => ({ menteeID: id, menteeName: name, sectionCode: 'BSIT', attendanceRecorded: false });
+      return [
+        { ...base, sessionID: -1, sessionDate: '2026-10-26T09:00:00', sessionStatus: 'Scheduled', slotName: 'After Prelims', reportStatus: 'Pending', logStatus: null, topic: '',
+          mentees: [waiting(1, 'Glenn Agno'), waiting(2, 'Charizze Mentee'), waiting(3, 'Daniela Mentee'), waiting(4, 'Test Mentee')] },
+        { ...base, sessionID: -2, sessionDate: '2026-10-21T18:31:00', actualStart: '2026-10-21T18:31:00', actualEnd: '2026-10-21T23:55:00', sessionStatus: 'Completed', slotName: 'Before Prelims',
+          reportStatus: 'Submitted On Time', logStatus: 'Submitted', documentsComplete: true, topic: 'Before Prelims Session.',
+          mentees: [
+            { menteeID: 3, menteeName: 'Daniela Mentee', sectionCode: 'BSIT', isPresent: true, attendanceRecorded: true, scannedAt: '2026-10-21T18:31:00', _attendedEndTime: '2026-10-21T23:55:00', remarks: '', mentorNotes: '' },
+            { menteeID: 2, menteeName: 'Charizze Mentee', sectionCode: 'BSIT', isPresent: false, attendanceRecorded: true, absenceReason: '' },
+          ] },
+      ];
+    })(),
   },
   announcements: tab => '<div data-wt-tab="' + tab + '">' + (tab === 'mine'
     ? annCard(true, 'Nicole Mentor', 'NM', 'Oct 21, 2026', 'Welcome and Guidance for My Mentees', 'Welcome to our Mentoring System! I am glad to be part of your learning journey. As your mentor, I am here to guide you, share my knowledge, and help you develop your skills and achieve your goals.', false)

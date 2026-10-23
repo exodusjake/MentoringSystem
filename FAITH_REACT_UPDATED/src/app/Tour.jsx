@@ -209,6 +209,9 @@ function createEngine(set, go2, cfg) {
     tabAdmin: () => set({ annTab: 'admin' }),
     tabMentor: () => set({ annTab: 'mentor' }),
     tabMine: () => set({ annTab: 'mine' }),
+    logSheet: () => set({ modalOpen: true, annTab: 'logsheet' }),
+    logNotes: () => set({ modalOpen: true, annTab: 'notes' }),
+    logAbsent: () => set({ modalOpen: true, annTab: 'nonattend' }),
   };
   const runHook = name => { if (name && HOOKS[name]) HOOKS[name](); };
 
