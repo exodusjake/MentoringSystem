@@ -4,7 +4,7 @@
 $ErrorActionPreference = 'Stop'
 $key  = "$HOME\.ssh\astra-key.pem"
 $ec2  = 'ec2-user@18.136.217.232'
-$api  = 'https://18-136-217-232.sslip.io/api'     # the API the deployed site calls (must end with /api)
+$api  = '/api'     # same-origin: the API on whatever host served the page (Nginx proxies /api/). Must end with /api
 $root = Split-Path -Parent $PSScriptRoot
 $tgz  = 'astra-react.tgz'    # relative name on purpose: GNU tar (Git) reads 'C:\...' as a remote host
 

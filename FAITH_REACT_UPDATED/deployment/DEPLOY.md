@@ -49,3 +49,14 @@ Check with `curl -sI https://<site>/`. After enabling, click through each portal
 landing page) and watch the browser console for "Refused to ..." messages; add the blocked origin to the matching CSP directive.
 Remove `server_tokens off;` from the snippet if nginx complains it is not allowed there (it belongs at `http`/`server` level).
 The API sends its own headers (Program.cs), so nothing else is needed for `/api` and `/uploads`.
+
+## Security headers: what is installed on the live server
+- The snippet is `/etc/nginx/snippets/astra-security-headers.conf` (a copy of `nginx-security-headers.conf`), included in `astra.conf` inside
+  **every static location** (images, html/js/css/json, `/`, `/sw.js`). nginx does not inherit `add_header` into a location that has its own,
+  so a new location with an `add_header` needs the `include` line too. `/api/` and `/uploads/` have none on purpose: the API sets its own headers.
+- The build uses `VITE_API_BASE_URL=/api` (same origin), so the policy's `connect-src 'self'` covers the API on any hostname that points at the
+  server (`astramentoring.live`, `www.`, the sslip.io name), and no CORS entry is needed. `deploy-frontend.ps1` already does this.
+- The print windows write fixed inline snippets, allowed in the policy by SHA-256 hash (no `'unsafe-inline'`). If you change an inline
+  `onclick="..."` or `<script>` in a print template, regenerate the hashes by hashing the exact text and update the `script-src` line.
+- `server_tokens off;` is in `/etc/nginx/conf.d/01-hide-version.conf`. Backups of the previous config: `~/nginx-backup/` on the server.
+- Roll back: copy the newest `~/nginx-backup/astra.conf.*` over `/etc/nginx/conf.d/astra.conf`, then `sudo nginx -t && sudo systemctl reload nginx`.
