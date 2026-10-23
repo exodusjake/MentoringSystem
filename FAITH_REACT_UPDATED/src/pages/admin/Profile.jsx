@@ -6,6 +6,7 @@ import { apiRequest } from '../../lib/api.js';
 import { CONFIG } from '../../lib/config.js';
 import { getSession, saveSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { useTour } from '../../app/tour.js';
 
 // ADMIN_/HTML/profile.html + ADMIN_/JS/profile.js + profile-edit.js
 
@@ -13,6 +14,7 @@ const userIdOf = u => u?.userID || u?.UserID || u?.userId;
 
 export default function AdminProfile() {
   useBackGuard();
+  const tour = useTour();
   const [currentUser, setCurrentUser] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const [sig, setSig] = useState({ loaded: false, path: null });
@@ -221,6 +223,14 @@ export default function AdminProfile() {
                         <span>No signature on file yet.</span>
                       </div>
                       <button className="btn-change-sig" id="btnChangeSig" onClick={openSigModal}>{sig.path ? 'Change Signature' : 'Upload Signature'}</button>
+                      <div className="sig-tour">
+                        <div className="sig-tour-icon"><i className="ti ti-route"></i></div>
+                        <div className="sig-tour-text">
+                          <div className="sig-tour-title">Portal Walkthrough</div>
+                          <div className="sig-tour-sub">New here or need a refresher? Take the guided tour again.</div>
+                        </div>
+                        <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
+                      </div>
                     </div>
                   </div>
                 </div>

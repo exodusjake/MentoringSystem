@@ -70,7 +70,7 @@ const ICONS = {
 };
 
 export const MENTOR_TOUR = {
-  base: '/mentor/', keyPrefix: 'astra_walkthrough_mentor', theme: 'wt-mentor', steps: STEPS, icons: ICONS,
+  base: '/mentor/', keyPrefix: 'astra_walkthrough_mentor', theme: 'wt-themed wt-mentor', steps: STEPS, icons: ICONS,
   samplePages: ['dashboard', 'mentees', 'sessions', 'availability', 'announcements', 'logsheet'],
 };
 

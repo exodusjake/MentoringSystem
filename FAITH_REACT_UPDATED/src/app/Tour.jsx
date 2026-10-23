@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TourContext } from './tour.js';
 import { MENTOR_TOUR } from './tourMentor.js';
+import { ADMIN_TOUR, HEAD_TOUR } from './tourAdmin.js';
 
 // MENTEE/JS/walkthrough.js — spotlight tour across the mentee portal (and, with the config in tourMentor.js, the mentor portal): the page is blurred and the part
 // being explained stays sharp, with a tooltip beside it. Order follows the portal:
@@ -88,21 +89,24 @@ const CSS = [
   '.wt-back{background:#fff;border-color:#dce3ec;color:#374151}.wt-back:hover{background:#f4f7fb}',
   '.wt-next{background:#4f46e5;color:#fff}.wt-next:hover{background:#4338ca;box-shadow:0 4px 12px rgba(79,70,229,.35)}',
   '.wt-tip button:focus-visible{outline:2px solid #818cf8;outline-offset:2px}',
-  '.wt-blur.wt-mentor{background:rgba(4,47,46,.4)}',
-  '.wt-ring.wt-mentor{border-color:#14b8a6;box-shadow:0 0 0 4px rgba(20,184,166,.25),0 0 30px rgba(15,118,110,.55);animation-name:wtGlowT}',
-  '@keyframes wtGlowT{0%,100%{box-shadow:0 0 0 4px rgba(20,184,166,.25),0 0 24px rgba(15,118,110,.45)}50%{box-shadow:0 0 0 7px rgba(20,184,166,.14),0 0 38px rgba(15,118,110,.7)}}',
-  '.wt-tip.wt-mentor{padding:0 0 16px;overflow:hidden;border:1px solid #99f6e4;border-radius:18px;box-shadow:0 24px 56px rgba(4,47,46,.4)}',
-  '.wt-mentor .wt-head{margin:0 0 14px;padding:14px 18px;background:linear-gradient(135deg,#0f766e,#14b8a6)}',
-  '.wt-mentor .wt-icon{background:rgba(255,255,255,.2);color:#fff}',
-  '.wt-mentor .wt-step{color:rgba(255,255,255,.9)}',
-  '.wt-mentor .wt-sample{background:#fff;color:#0f766e}',
-  '.wt-mentor .wt-title{margin-left:18px;margin-right:18px;color:#134e4a}',
-  '.wt-mentor .wt-text,.wt-mentor .wt-bar,.wt-mentor .wt-foot{margin-left:18px;margin-right:18px}',
-  '.wt-mentor .wt-bar{background:#ccfbf1}.wt-mentor .wt-bar span{background:linear-gradient(90deg,#0f766e,#2dd4bf)}',
-  '.wt-mentor .wt-next{background:#0f766e}.wt-mentor .wt-next:hover{background:#115e59;box-shadow:0 4px 12px rgba(15,118,110,.4)}',
-  '.wt-mentor .wt-back{border-color:#99f6e4;color:#0f766e}.wt-mentor .wt-back:hover{background:#f0fdfa}',
-  '.wt-mentor .wt-skip:hover{color:#0f766e}',
-  '.wt-tip.wt-mentor button:focus-visible{outline:2px solid #2dd4bf}',
+  // Per-portal colours (the engine adds `wt-themed` plus the portal class when the config has a theme).
+  '.wt-mentor{--wt-a:#0f766e;--wt-b:#14b8a6;--wt-a-rgb:15,118,110;--wt-b-rgb:20,184,166;--wt-border:#99f6e4;--wt-soft:#f0fdfa;--wt-bar:#ccfbf1;--wt-title:#134e4a;--wt-dark:#115e59;--wt-bar-end:#2dd4bf;--wt-blur:rgba(4,47,46,.4)}',
+  '.wt-admin{--wt-a:#2563eb;--wt-b:#60a5fa;--wt-a-rgb:37,99,235;--wt-b-rgb:96,165,250;--wt-border:#bfdbfe;--wt-soft:#eff6ff;--wt-bar:#dbeafe;--wt-title:#1e3a8a;--wt-dark:#1d4ed8;--wt-bar-end:#93c5fd;--wt-blur:rgba(15,23,42,.42)}',
+  '.wt-blur.wt-themed{background:var(--wt-blur)}',
+  '.wt-ring.wt-themed{border-color:var(--wt-b);box-shadow:0 0 0 4px rgba(var(--wt-b-rgb),.25),0 0 30px rgba(var(--wt-a-rgb),.55);animation-name:wtGlowT}',
+  '@keyframes wtGlowT{0%,100%{box-shadow:0 0 0 4px rgba(var(--wt-b-rgb),.25),0 0 24px rgba(var(--wt-a-rgb),.45)}50%{box-shadow:0 0 0 7px rgba(var(--wt-b-rgb),.14),0 0 38px rgba(var(--wt-a-rgb),.7)}}',
+  '.wt-tip.wt-themed{padding:0 0 16px;overflow:hidden;border:1px solid var(--wt-border);border-radius:18px;box-shadow:0 24px 56px rgba(var(--wt-a-rgb),.35)}',
+  '.wt-themed .wt-head{margin:0 0 14px;padding:14px 18px;background:linear-gradient(135deg,var(--wt-a),var(--wt-b))}',
+  '.wt-themed .wt-icon{background:rgba(255,255,255,.2);color:#fff}',
+  '.wt-themed .wt-step{color:rgba(255,255,255,.9)}',
+  '.wt-themed .wt-sample{background:#fff;color:var(--wt-a)}',
+  '.wt-themed .wt-title{margin-left:18px;margin-right:18px;color:var(--wt-title)}',
+  '.wt-themed .wt-text,.wt-themed .wt-bar,.wt-themed .wt-foot{margin-left:18px;margin-right:18px}',
+  '.wt-themed .wt-bar{background:var(--wt-bar)}.wt-themed .wt-bar span{background:linear-gradient(90deg,var(--wt-a),var(--wt-bar-end))}',
+  '.wt-themed .wt-next{background:var(--wt-a)}.wt-themed .wt-next:hover{background:var(--wt-dark);box-shadow:0 4px 12px rgba(var(--wt-a-rgb),.4)}',
+  '.wt-themed .wt-back{border-color:var(--wt-border);color:var(--wt-a)}.wt-themed .wt-back:hover{background:var(--wt-soft)}',
+  '.wt-themed .wt-skip:hover{color:var(--wt-a)}',
+  '.wt-tip.wt-themed button:focus-visible{outline:2px solid var(--wt-b)}',
   '@media (prefers-reduced-motion:reduce){.wt-blur,.wt-ring,.wt-tip,.wt-inner,.wt-bar span{transition:none;animation:none}}',
 ].join('');
 const ICONS = {
@@ -116,7 +120,7 @@ const MENTEE_TOUR = {
   base: '/mentee/', keyPrefix: 'astra_walkthrough', steps: STEPS, icons: ICONS,
   samplePages: ['dashboard', 'sessions', 'schedule', 'announcements'],
 };
-const TOURS = { mentee: MENTEE_TOUR, mentor: MENTOR_TOUR };
+const TOURS = { mentee: MENTEE_TOUR, mentor: MENTOR_TOUR, admin: ADMIN_TOUR, head: HEAD_TOUR };
 const PAD = 8;
 
 function holeClip(r) {

@@ -8,6 +8,8 @@ import { PAGES } from '../pages/index.js';
 import { TourProvider } from './Tour.jsx';
 
 const MentorTourProvider = props => <TourProvider portal="mentor" {...props} />;
+const AdminTourProvider = props => <TourProvider portal="admin" {...props} />;
+const HeadTourProvider = props => <TourProvider portal="head" {...props} />;
 
 // `/` (the vanilla index.html): straight to the signed-in role's dashboard, else the landing page.
 function RootRedirect() {
@@ -60,7 +62,7 @@ export const router = createBrowserRouter([
     { path: 'calendar', element: page('head/calendar') },
     { path: 'evaluations', element: page('head/evaluations') },
     { path: 'account', element: page('head/account') },
-  ]),
+  ], HeadTourProvider),
 
   portalRoutes('admin', [
     { path: 'dashboard', element: page('admin/dashboard') },
@@ -76,7 +78,7 @@ export const router = createBrowserRouter([
     { path: 'evaluations', element: page('admin/evaluations') },
     { path: 'profile', element: page('admin/profile') },
     { path: 'settings', element: page('admin/settings') },
-  ]),
+  ], AdminTourProvider),
 
   portalRoutes('mentor', [
     { path: 'dashboard', element: page('mentor/dashboard') },
