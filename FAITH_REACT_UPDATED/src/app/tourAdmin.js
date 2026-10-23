@@ -9,6 +9,7 @@ const welcome = (portal, text) => ({ page: 'dashboard', center: true, title: 'We
 
 const ADMIN_STEPS = [
   welcome('Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
+  { page: 'dashboard', sel: '.concern-bell', title: 'Concern Alerts', text: 'When a mentor flags a mentee with a serious concern, the bell at the top right shows a red count. Click it to read the concern and who sent it.' },
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentors, mentees, engagement and alerts.'),
   { page: 'dashboard', sel: '.stats-grid', sample: true, title: 'Key Numbers', text: 'Total mentors and mentees, and the mentee status counts. Click the Mentors card to jump to Mentor Monitoring.' },
   { page: 'dashboard', sel: '.engagement-card', sample: true, title: 'Mentee Engagement', text: 'How many mentees are active, inactive or unassigned, and how many are doing well or need attention.' },
@@ -33,6 +34,7 @@ const ADMIN_STEPS = [
 
 const HEAD_STEPS = [
   welcome('Head Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
+  { page: 'dashboard', sel: '.concern-bell', title: 'Concern Alerts', text: 'When a mentor flags a mentee with a serious concern, the bell at the top right shows a red count. Click it to read the concern and who sent it.' },
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentor performance, mentee engagement and alerts.'),
   { page: 'dashboard', sel: '.hd-performance-card', sample: true, title: 'Mentor Performance', text: 'How mentors are doing this semester, grouped by status, with the breakdown by school.' },
   { page: 'dashboard', sel: '.alerts-card', sample: true, title: 'System Alerts', text: 'Things that need attention, such as mentors who need follow-up, unassigned mentees and completed sessions with no proof.' },
@@ -52,7 +54,7 @@ const HEAD_STEPS = [
 ];
 
 const ICONS = {
-  'Welcome to the Admin Portal': 'ti-hand-stop', 'Welcome to the Head Admin Portal': 'ti-hand-stop', 'You’re all set!': 'ti-circle-check',
+  'Concern Alerts': 'ti-bell', 'Welcome to the Admin Portal': 'ti-hand-stop', 'Welcome to the Head Admin Portal': 'ti-hand-stop', 'You’re all set!': 'ti-circle-check',
   'Dashboard': 'ti-layout-dashboard', 'Key Numbers': 'ti-chart-bar', 'Mentee Engagement': 'ti-users', 'Mentor Performance': 'ti-chart-bar',
   'System Alerts': 'ti-alert-triangle', 'Top 3 Mentors': 'ti-trophy', 'Recent Activities': 'ti-history',
   'User Management': 'ti-users', 'Attendance Logs': 'ti-calendar-stats', 'Attendance Summary': 'ti-calendar-stats',

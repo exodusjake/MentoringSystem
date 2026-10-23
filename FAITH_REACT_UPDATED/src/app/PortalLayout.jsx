@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { refresh as refreshBadge } from '../lib/announcementBadge.js';
+import ConcernBell from '../components/ConcernBell.jsx';
 import { useStyle } from '../lib/injectStyle.js';
 import { getSession } from '../lib/session.js';
 import { RequirePortal } from './guards.jsx';
@@ -67,6 +68,8 @@ function PortalShell({ config }) {
     <ChromeContext.Provider value={{ pageReady }}>
       <Sidebar config={config} activeId={active?.id} onNavigate={showSkel} stylesReady={stylesReady} />
       <Outlet />
+      {/* Mentor-reported concerns: only the Admin and Head Admin portals have the bell. */}
+      {(config.base === '/admin' || config.base === '/head') ? <ConcernBell /> : null}
       <div className="page-skel show" aria-hidden="true" ref={skelRef}>
         <div className="sk sk-title"></div>
         <div className="sk-row"><div className="sk sk-card"></div><div className="sk sk-card"></div><div className="sk sk-card"></div><div className="sk sk-card"></div></div>

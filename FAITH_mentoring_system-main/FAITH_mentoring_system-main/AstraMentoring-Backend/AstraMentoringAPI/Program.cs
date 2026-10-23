@@ -128,6 +128,7 @@ builder.Services.AddScoped<SettingsService>();
 builder.Services.AddScoped<SectionsService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<MonitorActivitiesService>();
+builder.Services.AddScoped<MenteeConcernsService>();
 builder.Services.AddScoped<AttendanceLogsService>();
 builder.Services.AddScoped<SessionProofsAdminService>();
 builder.Services.AddScoped<SessionsAdminService>();

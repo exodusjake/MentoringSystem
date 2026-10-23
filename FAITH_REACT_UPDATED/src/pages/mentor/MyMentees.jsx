@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Page from '../../app/Page.jsx';
+import { showToast } from '../../components/Notify.jsx';
+import Overlay from '../../components/Overlay.jsx';
 import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { getSession } from '../../lib/session.js';
@@ -8,6 +10,80 @@ import { sampleHtml, useTour } from '../../app/tour.js';
 import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/my-mentees.html + MENTOR/JS/my-mentees.js
+
+// "Flag a mentee": a serious written report that goes straight to the Admin and Head Admin (their bell, top right).
+const CONCERN_CATEGORIES = ['Attendance', 'Academic performance', 'Behavior or conduct', 'Personal or welfare', 'Safety', 'Other'];
+const CONCERN_MIN = 10, CONCERN_MAX = 1000;
+
+function ConcernModal({ target, onClose }) {
+  const [category, setCategory] = useState('');
+  const [message, setMessage] = useState('');
+  const [understood, setUnderstood] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const open = !!target;
+  useEffect(() => { if (open) { setCategory(''); setMessage(''); setUnderstood(false); setBusy(false); setError(''); } }, [target]);
+
+  const trimmed = message.trim();
+  const valid = !!category && trimmed.length >= CONCERN_MIN && trimmed.length <= CONCERN_MAX && understood;
+
+  async function send() {
+    if (!valid || busy) return;
+    setBusy(true); setError('');
+    try {
+      await apiRequest('MenteeConcerns', 'POST', { menteeId: target.id, category, message: trimmed }, true);
+      showToast('Your concern was sent to the Admin and Head Admin.', 'success');
+      onClose();
+    } catch (e) {
+      setError(e.message || 'Could not send the concern. Please try again.');
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Overlay open={open} className="concern-overlay" activeClass={null} display="flex" onClick={e => { if (e.target === e.currentTarget && !busy) onClose(); }}>
+      <div className="concern-modal" role="alertdialog" aria-modal="true" aria-labelledby="concernTitle">
+        <div className="concern-head">
+          <div className="concern-head-icon"><i className="ti ti-alert-triangle"></i></div>
+          <div className="concern-head-text">
+            <div className="concern-title" id="concernTitle">Report a concern</div>
+            <div className="concern-sub">About <strong>{target?.name}</strong></div>
+          </div>
+          <button type="button" className="concern-close" onClick={onClose} disabled={busy} aria-label="Close">&times;</button>
+        </div>
+        <div className="concern-body">
+          <div className="concern-warning">
+            <i className="ti ti-shield-exclamation"></i>
+            <span><strong>This is a serious report.</strong> It goes straight to the Admin and Head Admin, who will see your name, the mentee's name and everything you write. Use it for welfare, safety, repeated absences or conduct. For normal progress notes, use the Logsheet.</span>
+          </div>
+          <label className="concern-label" htmlFor="concernCategory">What is this about?</label>
+          <Select id="concernCategory" className="concern-select" value={category} onChange={e => setCategory(e.target.value)} disabled={busy}>
+            <option value="">Choose a category…</option>
+            {CONCERN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </Select>
+          <label className="concern-label" htmlFor="concernMessage">Describe your concern</label>
+          <textarea id="concernMessage" className="concern-text" rows={6} maxLength={CONCERN_MAX} disabled={busy}
+            placeholder="What happened or what have you noticed? Include dates, what the mentee said or did, and what you have already tried."
+            value={message} onChange={e => setMessage(e.target.value)}></textarea>
+          <div className={`concern-count${trimmed.length > 0 && trimmed.length < CONCERN_MIN ? ' short' : ''}`}>
+            {trimmed.length < CONCERN_MIN ? `At least ${CONCERN_MIN} characters · ` : ''}{message.length}/{CONCERN_MAX}
+          </div>
+          <label className="concern-check">
+            <input type="checkbox" checked={understood} onChange={e => setUnderstood(e.target.checked)} disabled={busy} />
+            <span>I understand this will be seen by the Admin and Head Admin.</span>
+          </label>
+          {error ? <div className="concern-error" role="alert">{error}</div> : null}
+        </div>
+        <div className="concern-foot">
+          <button type="button" className="concern-btn concern-btn-cancel" onClick={onClose} disabled={busy}>Cancel</button>
+          <button type="button" className="concern-btn concern-btn-send" onClick={send} disabled={!valid || busy}>
+            <i className="ti ti-send"></i> {busy ? 'Sending…' : 'Send to Admin & Head'}
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
 
 export default function MyMentees() {
   useBackGuard();
@@ -23,6 +99,7 @@ export default function MyMentees() {
   const [search, setSearch] = useState('');
   const [sortMode, setSortMode] = useState('section');
   const [activeSection, setActiveSection] = useState(null);
+  const [concernTarget, setConcernTarget] = useState(null);   // { id, name } of the mentee being flagged
 
   useEffect(() => {
     (async () => {
@@ -156,6 +233,8 @@ export default function MyMentees() {
 
       return (
         <div className={`mentee-card${isDropOut ? ' is-dropout' : ''}`} key={m.assignmentID ?? m.menteeUserID}>
+          <button type="button" className="mc-flag-btn" title="Report a concern to the Admin and Head Admin" aria-label={`Report a concern about ${name}`}
+            onClick={() => setConcernTarget({ id: m.menteeUserID, name })}><i className="ti ti-flag"></i></button>
           <div className="mc-identity">
             <div className="mc-avatar">{photoURL ? <img src={photoURL} alt={name} /> : initials}</div>
             <div className="mc-name-block">
@@ -237,6 +316,7 @@ export default function MyMentees() {
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
         </footer>
       </div>
+      <ConcernModal target={concernTarget} onClose={() => setConcernTarget(null)} />
     </Page>
   );
 }

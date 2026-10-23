@@ -18,6 +18,7 @@ const STEPS = [
   // My Mentees
   { page: 'mentees', sel: '#nav-mentees', side: 'right', title: 'My Mentees', text: 'Everyone assigned to you this semester.' },
   { page: 'mentees', sel: '.mentee-card', sample: true, title: 'Mentee Card', text: 'Name, email, course, year, section, school, contact number and student number. A Drop Out tag appears if the mentee has dropped out.' },
+  { page: 'mentees', sel: '.mc-flag-btn', sample: true, title: 'Flag a Concern', text: 'See something serious, like welfare, safety, repeated absences or conduct? Tap the flag on that mentee, write what you noticed and send it. It goes straight to the Admin and Head Admin, who see it in the bell at the top right of their portal.' },
   // Sessions
   { page: 'sessions', sel: '#nav-sessions', side: 'right', title: 'Sessions', text: 'Every mentoring session you have logged, with attendance and proof.' },
   { page: 'sessions', sel: '#logSessionBtn', title: 'Log Session', text: 'Create a session for a checkpoint slot: pick the slot, date and start time, and add notes. The end time is recorded when you save the end of the session.' },
@@ -61,7 +62,7 @@ const ICONS = {
   'Welcome to the Mentor Portal': 'ti-hand-stop', 'You’re all set!': 'ti-circle-check',
   'Dashboard': 'ti-layout-dashboard', 'Your Numbers': 'ti-chart-bar', 'Upcoming Sessions': 'ti-calendar-event', 'Recent Sessions': 'ti-history',
   'Dashboard Announcements': 'ti-speakerphone', 'Activities & Deadlines': 'ti-calendar-time',
-  'My Mentees': 'ti-users', 'Mentee Card': 'ti-id',
+  'My Mentees': 'ti-users', 'Mentee Card': 'ti-id', 'Flag a Concern': 'ti-flag',
   'Sessions': 'ti-calendar-event', 'Log Session': 'ti-plus', 'Session Counts': 'ti-chart-bar', 'Session Card': 'ti-notes', 'Attendance': 'ti-qrcode', 'Upload Proof': 'ti-upload',
   'Availability': 'ti-clock-plus', 'Post Slot': 'ti-plus', 'Open Slot': 'ti-calendar-time',
   'Logsheet': 'ti-clipboard-list', 'Logsheet Progress': 'ti-chart-bar', 'Logged or Not Yet': 'ti-circle-check', 'Scheduled Session': 'ti-calendar-event', 'Completed Session': 'ti-circle-check', 'Print': 'ti-printer', 'Open the Logsheet': 'ti-pointer', 'Logsheet Remarks': 'ti-notes', 'Live Preview': 'ti-eye', 'Three Forms': 'ti-files', 'Mentor’s Notes': 'ti-notebook', 'Non-Attendance': 'ti-user-x', 'Upload Logsheet': 'ti-upload', 'Attendance Overview': 'ti-activity',
@@ -84,7 +85,7 @@ function dashSession(month, day, title, section, time, tag, att, cls) {
 }
 const menteeCard = (name, email, studentNo) => {
   const initials = name.split(' ').map(p => p[0]).join('').slice(0, 2);
-  return '<div class="mentee-card" data-wt="1"><div class="mc-identity"><div class="mc-avatar">' + initials + '</div><div class="mc-name-block"><div class="mc-name">' + name +
+  return '<div class="mentee-card" data-wt="1"><button type="button" class="mc-flag-btn" aria-label="Report a concern"><i class="ti ti-flag"></i></button><div class="mc-identity"><div class="mc-avatar">' + initials + '</div><div class="mc-name-block"><div class="mc-name">' + name +
     '</div><div class="mc-email">' + email + '</div><div class="mc-role-badge">Mentee</div></div></div><div class="mc-body"><div class="mc-chips"><span class="mc-chip course">BSIT</span>' +
     '<span class="mc-chip">1st Year</span><span class="mc-chip section">BSIT</span></div>' +
     '<div class="mc-info-row"><i class="ti ti-building"></i><span>SAS &middot; School of Technology</span></div>' +
