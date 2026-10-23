@@ -53,6 +53,7 @@ function targetOf(step) {
   return step.sel ? document.querySelector(step.sel) : null;
 }
 function usable(step) {
+  if (step.center) return true; // a welcome / finish card with nothing highlighted
   const el = targetOf(step);
   if (!el) return false;
   const r = el.getBoundingClientRect();
@@ -87,6 +88,21 @@ const CSS = [
   '.wt-back{background:#fff;border-color:#dce3ec;color:#374151}.wt-back:hover{background:#f4f7fb}',
   '.wt-next{background:#4f46e5;color:#fff}.wt-next:hover{background:#4338ca;box-shadow:0 4px 12px rgba(79,70,229,.35)}',
   '.wt-tip button:focus-visible{outline:2px solid #818cf8;outline-offset:2px}',
+  '.wt-blur.wt-mentor{background:rgba(4,47,46,.4)}',
+  '.wt-ring.wt-mentor{border-color:#14b8a6;box-shadow:0 0 0 4px rgba(20,184,166,.25),0 0 30px rgba(15,118,110,.55);animation-name:wtGlowT}',
+  '@keyframes wtGlowT{0%,100%{box-shadow:0 0 0 4px rgba(20,184,166,.25),0 0 24px rgba(15,118,110,.45)}50%{box-shadow:0 0 0 7px rgba(20,184,166,.14),0 0 38px rgba(15,118,110,.7)}}',
+  '.wt-tip.wt-mentor{padding:0 0 16px;overflow:hidden;border:1px solid #99f6e4;border-radius:18px;box-shadow:0 24px 56px rgba(4,47,46,.4)}',
+  '.wt-mentor .wt-head{margin:0 0 14px;padding:14px 18px;background:linear-gradient(135deg,#0f766e,#14b8a6)}',
+  '.wt-mentor .wt-icon{background:rgba(255,255,255,.2);color:#fff}',
+  '.wt-mentor .wt-step{color:rgba(255,255,255,.9)}',
+  '.wt-mentor .wt-sample{background:#fff;color:#0f766e}',
+  '.wt-mentor .wt-title{margin-left:18px;margin-right:18px;color:#134e4a}',
+  '.wt-mentor .wt-text,.wt-mentor .wt-bar,.wt-mentor .wt-foot{margin-left:18px;margin-right:18px}',
+  '.wt-mentor .wt-bar{background:#ccfbf1}.wt-mentor .wt-bar span{background:linear-gradient(90deg,#0f766e,#2dd4bf)}',
+  '.wt-mentor .wt-next{background:#0f766e}.wt-mentor .wt-next:hover{background:#115e59;box-shadow:0 4px 12px rgba(15,118,110,.4)}',
+  '.wt-mentor .wt-back{border-color:#99f6e4;color:#0f766e}.wt-mentor .wt-back:hover{background:#f0fdfa}',
+  '.wt-mentor .wt-skip:hover{color:#0f766e}',
+  '.wt-tip.wt-mentor button:focus-visible{outline:2px solid #2dd4bf}',
   '@media (prefers-reduced-motion:reduce){.wt-blur,.wt-ring,.wt-tip,.wt-inner,.wt-bar span{transition:none;animation:none}}',
 ].join('');
 const ICONS = {
@@ -138,6 +154,7 @@ export function TourProvider({ children, portal = 'mentee' }) {
 // pages need to know (active, modal/approval/tab hooks) through `set`.
 function createEngine(set, go2, cfg) {
   const steps = cfg.steps, stateKey = cfg.keyPrefix + '_state';
+  const theme = cfg.theme ? ' ' + cfg.theme : '';
   let userId = null;
   try { userId = JSON.parse(localStorage.getItem('user') || 'null')?.userID ?? null; } catch (e) {}
   const PENDING_KEY = cfg.keyPrefix + '_pending_' + userId;
@@ -339,9 +356,9 @@ function createEngine(set, go2, cfg) {
     }
     E.active = true;
     set({ active: true, scheduleApproved, modalOpen: false });
-    blur = earlyBlur || document.createElement('div'); blur.className = 'wt-blur show';
-    ring = document.createElement('div'); ring.className = 'wt-ring';
-    tip = document.createElement('div'); tip.className = 'wt-tip';
+    blur = earlyBlur || document.createElement('div'); blur.className = 'wt-blur show' + theme;
+    ring = document.createElement('div'); ring.className = 'wt-ring' + theme;
+    tip = document.createElement('div'); tip.className = 'wt-tip' + theme;
     tip.setAttribute('role', 'dialog'); tip.setAttribute('aria-label', 'Portal walkthrough');
     document.body.append(blur, ring, tip);
     earlyBlur = null;
@@ -358,7 +375,7 @@ function createEngine(set, go2, cfg) {
     injectStyles();
     E.resuming = true;
     if (!earlyBlur) {
-      earlyBlur = document.createElement('div'); earlyBlur.className = 'wt-blur show'; earlyBlur.style.transition = 'none';
+      earlyBlur = document.createElement('div'); earlyBlur.className = 'wt-blur show' + theme; earlyBlur.style.transition = 'none';
       document.body.appendChild(earlyBlur);
     }
     clearTimeout(resumeTimer);

@@ -147,15 +147,6 @@ export default function MentorProfile() {
             {loadFailed ? 'Failed to load profile. Please refresh.' : <><span className="spinner"></span> Loading profile...</>}
           </div>
           <div id="profileCard" className="profile-wrapper" style={{ display: user ? 'block' : 'none' }}>
-            <div className="walkthrough-card">
-              <div className="walkthrough-card-icon"><i className="ti ti-route"></i></div>
-              <div className="walkthrough-card-text">
-                <div className="walkthrough-card-title">Portal Walkthrough</div>
-                <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Mentor Portal.</div>
-              </div>
-              <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
-            </div>
-
             <div className="ph-card">
               <div className="ph-banner">
                 <button type="button" className="edit-btn" onClick={() => setEditOpen(true)}>
@@ -235,6 +226,14 @@ export default function MentorProfile() {
                     <span>No signature on file yet.</span>
                   </div>
                   <button className="btn-change-sig" id="btnChangeSig" onClick={openSigModal}>{sig.path ? 'Change Signature' : 'Upload Signature'}</button>
+                  <div className="sig-tour">
+                    <div className="sig-tour-icon"><i className="ti ti-route"></i></div>
+                    <div className="sig-tour-text">
+                      <div className="sig-tour-title">Portal Walkthrough</div>
+                      <div className="sig-tour-sub">New here or need a refresher? Take the guided tour of the Mentor Portal again.</div>
+                    </div>
+                    <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
+                  </div>
                 </div>
               </div>
             </div>
