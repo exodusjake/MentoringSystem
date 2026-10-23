@@ -92,6 +92,9 @@ export default function MyMentees() {
   useBackGuard();
   const wt = useTour().active;   // walkthrough: show sample data
 
+  const [concerns, setConcerns] = useState([]);                // this mentor's own flagged concerns (with any response)
+  const [concernDetail, setConcernDetail] = useState(null);    // a concern being read
+
   const loadConcerns = useCallback(async () => {
     try { const data = await apiRequest('MenteeConcerns/mine', 'GET', null, true); setConcerns(data?.items || []); }
     catch (e) { /* the cards just show no flag */ }
@@ -125,8 +128,6 @@ export default function MyMentees() {
   const [sortMode, setSortMode] = useState('section');
   const [activeSection, setActiveSection] = useState(null);
   const [concernTarget, setConcernTarget] = useState(null);   // { id, name } of the mentee being flagged
-  const [concerns, setConcerns] = useState([]);                // this mentor's own flagged concerns (with any response)
-  const [concernDetail, setConcernDetail] = useState(null);    // a concern being read
 
   useEffect(() => {
     (async () => {
