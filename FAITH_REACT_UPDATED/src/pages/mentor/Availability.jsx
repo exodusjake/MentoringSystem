@@ -36,6 +36,42 @@ function fmtTime(t) {
   const h12  = hour % 12 || 12;
   return `${h12}:${m} ${ampm}`;
 }
+// A slot or session only has a start time, so "a gap of at least 30 minutes" is measured start to start.
+const MIN_GAP_MINUTES = 30;
+const minutesOf = hhmm => { const [h, m] = String(hhmm).split(':'); return (parseInt(h, 10) || 0) * 60 + (parseInt(m, 10) || 0); };
+const hhmmOf = mins => `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
+
+// Returns an error message for the first new start time that clashes, or '' when they all fit.
+function slotConflict(starts, date, sessions, slots) {
+  const day = String(date).slice(0, 10);
+  const busy = [
+    ...sessions
+      .filter(s => s.sessionStatus !== 'Cancelled' && String(s.sessionDate).slice(0, 10) === day)
+      .map(s => ({ kind: 'session', min: minutesOf(String(s.sessionDate).split('T')[1] || '') })),
+    ...slots
+      .filter(s => s.linkedSessionStatus !== 'Cancelled' && String(s.availableDate).slice(0, 10) === day)
+      .map(s => ({ kind: 'slot', min: minutesOf(s.startTime) })),
+  ];
+  const mine = starts.map(minutesOf);
+  for (let i = 0; i < mine.length; i++) {
+    for (const b of busy) {
+      const gap = Math.abs(mine[i] - b.min);
+      if (gap >= MIN_GAP_MINUTES) continue;
+      const what = b.kind === 'session' ? 'a session' : 'a slot';
+      const at = fmtTime(hhmmOf(b.min));
+      return gap === 0
+        ? `You already have ${what} at ${at} on ${fmtDate(day)}. Pick a different time.`
+        : `${fmtTime(starts[i])} is only ${gap} minute${gap !== 1 ? 's' : ''} from ${what} at ${at} on ${fmtDate(day)}. Leave at least ${MIN_GAP_MINUTES} minutes between start times.`;
+    }
+    for (let j = i + 1; j < mine.length; j++) {
+      if (Math.abs(mine[i] - mine[j]) < MIN_GAP_MINUTES) {
+        return `${fmtTime(starts[i])} and ${fmtTime(starts[j])} are too close together. Leave at least ${MIN_GAP_MINUTES} minutes between start times.`;
+      }
+    }
+  }
+  return '';
+}
+
 function initials(name) {
   return name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2) || 'M';
 }
@@ -221,6 +257,22 @@ export default function Availability() {
     }
     setPosting(true);
     try {
+      // Check against fresh data: the lists on screen may be stale or still loading.
+      let sessions, slots;
+      try {
+        const [sessRes, slotRes] = await Promise.all([
+          apiRequest(`SessionsAdmin/${currentUser.userID}/sessions`, 'GET', null, true),
+          apiRequest(`AvailabilityWorkflow/mentor/${currentUser.userID}/slots`, 'GET', null, true),
+        ]);
+        sessions = sessRes?.sessions || [];
+        slots = Array.isArray(slotRes) ? slotRes : [];
+      } catch (e) {
+        setPostError('Could not check your existing sessions and slots. Please try again.');
+        return;
+      }
+      const clash = slotConflict(ranges.map(r => r.start), slotDate, sessions, slots);
+      if (clash) { setPostError(clash); return; }
+
       for (const r of ranges) {
         await apiRequest(`AvailabilityWorkflow/mentor/${currentUser.userID}/slots`, 'POST',
           { availableDate: slotDate, startTime: r.start, slotName }, true);
