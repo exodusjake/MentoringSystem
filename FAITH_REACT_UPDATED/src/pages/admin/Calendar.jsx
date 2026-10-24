@@ -67,6 +67,60 @@ function fmtDateRange(startIso, endIso) {
   return `${sStr} – ${eStr}`;
 }
 
+// "Before Midterms" has to finish before the Midterms period starts, and "After Midterms" has to begin after
+// it ends. Only checked once the exam period has been added for that school year + semester.
+const SLOT_RULE = /^(Before|After) (Prelims|Midterms|Finals)$/;
+const isoDay = v => String(v).slice(0, 10);
+function shiftDay(iso, days) {
+  const d = parseDate(iso);
+  d.setDate(d.getDate() + days);
+  return toIsoDate(d);
+}
+function fmtDay(iso) { return fmtDateRange(iso, iso); }
+
+function periodRange(events, exam, schoolYear, semester, ignoreId) {
+  const rows = events.filter(e => e.eventType === 'Period' && e.slotName === exam
+    && e.schoolYear === schoolYear && e.semester === semester && e.eventID !== ignoreId);
+  if (!rows.length) return null;
+  return {
+    start: rows.map(e => isoDay(e.startDate)).sort()[0],
+    end: rows.map(e => isoDay(e.endDate || e.startDate)).sort().reverse()[0],
+  };
+}
+
+function slotOrderIssue(slot, start, end, period) {
+  const m = SLOT_RULE.exec(slot || '');
+  if (!m || !period) return null;
+  const exam = m[2];
+  if (m[1] === 'Before' && end >= period.start) {
+    return `"${slot}" must end before ${exam} starts on ${fmtDay(period.start)}. Pick an end date of ${fmtDay(shiftDay(period.start, -1))} or earlier.`;
+  }
+  if (m[1] === 'After' && start <= period.end) {
+    return `"${slot}" must start after ${exam} ends on ${fmtDay(period.end)}. Pick a start date of ${fmtDay(shiftDay(period.end, 1))} or later.`;
+  }
+  return null;
+}
+
+function termOrderError(events, { type, slot, start, end, schoolYear, semester, ignoreId }) {
+  if (type === 'Session Schedule') {
+    const m = SLOT_RULE.exec(slot || '');
+    if (!m) return null;
+    return slotOrderIssue(slot, start, end, periodRange(events, m[2], schoolYear, semester, ignoreId));
+  }
+  if (type === 'Period') {
+    for (const ev of events) {
+      if (ev.eventType !== 'Session Schedule' || ev.eventID === ignoreId) continue;
+      if (ev.schoolYear !== schoolYear || ev.semester !== semester) continue;
+      const m = SLOT_RULE.exec(ev.slotName || '');
+      if (!m || m[2] !== slot) continue;
+      const evStart = isoDay(ev.startDate), evEnd = isoDay(ev.endDate || ev.startDate);
+      const issue = slotOrderIssue(ev.slotName, evStart, evEnd, { start, end });
+      if (issue) return `This would put the existing "${ev.slotName}" schedule (${fmtDateRange(evStart, evEnd)}) out of order. ${issue}`;
+    }
+  }
+  return null;
+}
+
 function escCsv(v) {
   if (v == null) return '';
   let s = String(v);
@@ -224,6 +278,15 @@ export default function AdminCalendar() {
     if (!slotted && !title) { setErrorMsg('Please enter an activity title.'); return; }
     if (!start) { setErrorMsg('Please select a start date.'); return; }
     if (end < start) { setErrorMsg('End date cannot be before the start date.'); return; }
+
+    const current = editingId ? allEvents.find(e => e.eventID === editingId) : null;
+    const orderError = termOrderError(allEvents, {
+      type, slot, start, end,
+      schoolYear: current?.schoolYear || sem.schoolYear,
+      semester: current?.semester || sem.semester,
+      ignoreId: editingId,
+    });
+    if (orderError) { setErrorMsg(orderError); return; }
 
     if (editingId) {
       setConfirmDlg({ mode: 'update', onConfirm: () => doSaveEvent(type, slotted, slot, title, start, end, note) });
