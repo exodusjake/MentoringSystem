@@ -1,0 +1,271 @@
+/* ===== EVALUATION RATINGS CSS ===== */
+/* Same stat-card/table-card/filter-bar conventions as session-proofs.css, duplicated per page. */
+
+:root {
+  --blue:         #2563eb;
+  --blue-light:   #eff6ff;
+  --green:        #16a34a;
+  --green-light:  #f0fdf4;
+  --red:          #dc2626;
+  --red-light:    #fef2f2;
+  --amber:        #d97706;
+  --amber-light:  #fffbeb;
+  --font-main:    'DM Sans', sans-serif;
+  --transition:   0.15s ease;
+  --radius:       16px;
+  --shadow-sm:    0 2px 8px rgba(0,0,0,0.09);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* ===== PAGE ===== */
+.page-content { padding: 32px 36px; flex: 1; min-width: 0; }
+.page-header  { margin-bottom: 28px; }
+.page-header h1 { font-size: 32px; font-weight: 700; color: var(--gray-900); line-height: 1.2; }
+.page-header p  { font-size: 15px; color: var(--gray-500); margin-top: 4px; }
+
+/* ===== REPORT TABS (Rankings / Program Report) ===== */
+/* Same solid-fill segmented-pill pattern as .um-tab (user-management.css). */
+.rpt-tabs { display: inline-flex; gap: 4px; background: #e9ecf0; border-radius: 14px; padding: 5px; margin-bottom: 20px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.08); }
+.rpt-tab {
+  padding: 10px 22px; background: transparent; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 500; color: #6b7280; font-family: var(--font-main);
+  cursor: pointer; transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.rpt-tab:hover { background: rgba(255,255,255,0.6); color: #374151; }
+.rpt-tab.active { background: #2563eb; color: #fff; font-weight: 600; box-shadow: 0 2px 8px rgba(37,99,235,0.35); }
+
+/* Smoothness: panels ease in when switching tabs (see switchRptTab), and the
+   ui-dropdown.js trigger keeps the filter's fixed width. */
+@keyframes rptPanelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rpt-panel-in { animation: rptPanelIn .28s cubic-bezier(.22,1,.36,1); }
+.rpt-panel-out { opacity: 0; transform: translateY(-4px); transition: opacity .13s ease, transform .13s ease; pointer-events: none; }
+
+/* Sliding pill (moveRptPill in evaluation-ratings.js): once it exists, the
+   active tab itself goes transparent and the pill supplies the blue. */
+.rpt-tabs { position: relative; }
+.rpt-tab { position: relative; z-index: 1; }
+.rpt-tab-pill {
+  position: absolute; z-index: 0; top: 5px; bottom: 5px; left: 0; border-radius: 10px;
+  background: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+  transition: transform .32s cubic-bezier(.22,1,.36,1), width .32s cubic-bezier(.22,1,.36,1);
+  pointer-events: none;
+}
+.rpt-tabs.has-pill .rpt-tab.active { background: transparent; box-shadow: none; }
+.rpt-tabs.has-pill .rpt-tab.active:hover { background: transparent; }
+@media (prefers-reduced-motion: reduce) { .rpt-tab-pill { transition: none; } .rpt-panel-out { transition: none; } }
+.rpt-tab:active { transform: scale(.97); }
+.rpt-tab { transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .12s ease; }
+@media (min-width: 769px) { .dd-trigger.filter-select { width: 170px !important; flex-shrink: 0; } }
+@media (prefers-reduced-motion: reduce) { .rpt-panel-in { animation: none; } .rpt-tab { transition: none; } }
+
+/* ===== STAT CARDS ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 16px; }
+
+.stat-card { background: #fff; border: 1px solid #dce3ec; border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow-sm); transition: box-shadow 0.15s; }
+.stat-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.stat-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.stat-label { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; }
+
+.stat-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.stat-icon svg { width: 15px; height: 15px; }
+.stat-icon.green { background: var(--green-light); } .stat-icon.green svg { stroke: var(--green); }
+.stat-icon.amber { background: var(--amber-light); } .stat-icon.amber svg { stroke: var(--amber); }
+
+.stat-value { font-size: 24px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+
+/* ===== RANKING COLUMNS ===== */
+/* Golden-ratio split (1.618fr : 1fr) — bars only reach 100%, so the Top 3 list fills the
+   space a full-width chart would otherwise leave empty. */
+.ranking-columns { display: grid; grid-template-columns: minmax(0,1.618fr) minmax(0,1fr); gap: 20px; align-items: start; margin-bottom: 28px; }
+@media (max-width: 1024px) { .ranking-columns { grid-template-columns: minmax(0,1fr); } }
+
+/* ===== CHART CARD ===== */
+.chart-card { background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+.chart-card-header { padding: 20px 24px 14px; background: #f4f7fb; border-bottom: 1px solid #dce3ec; }
+/* Horizontal bars so a growing mentor roster scrolls vertically instead of squeezing names
+   into unreadable rotated x-axis labels. Canvas height is set in JS, proportional to mentor count. */
+/* 300px = 10 rows at PX_PER_BAR (26px, evaluation-ratings.js) + this wrapper's 40px padding. */
+.chart-body { padding: 20px 24px; max-height: 300px; overflow-y: auto; overflow-x: hidden; }
+/* Canvas height set in JS (renderChart), proportional to mentor count, triggers this wrapper's scroll. */
+.chart-scroll-inner { position: relative; width: 100%; }
+.chart-scroll-inner canvas { width: 100% !important; }
+
+/* ===== TOP 3 CARD ===== */
+.top3-card { background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+.top3-list { display: flex; flex-direction: column; }
+.top3-row { display: flex; align-items: center; gap: 14px; padding: 16px 22px; border-bottom: 1px solid #eef1f6; transition: background var(--transition); }
+.top3-row:last-child { border-bottom: none; }
+.top3-row:hover { background: #f4f7fb; }
+.top3-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.top3-rank.rank-1 { background: linear-gradient(135deg,#fbbf24,#d97706); }
+.top3-rank.rank-2 { background: linear-gradient(135deg,#cbd5e1,#94a3b8); }
+.top3-rank.rank-3 { background: linear-gradient(135deg,#fdba74,#c2611a); }
+.top3-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-light); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.top3-info { flex: 1; min-width: 0; }
+.top3-name { font-size: 14px; font-weight: 600; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top3-dept { font-size: 12px; color: var(--gray-400); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top3-pct { text-align: right; flex-shrink: 0; font-size: 15px; font-weight: 700; color: var(--blue); }
+.top3-empty { padding: 40px 22px; text-align: center; color: var(--gray-400); font-size: 13px; }
+
+/* ===== TABLE CARD ===== */
+.table-card { background: #fff; border: 1px solid #dce3ec; border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+
+.table-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; gap: 12px; flex-wrap: wrap;
+  background: #f4f7fb; border-bottom: 1px solid #dce3ec;
+  border-radius: 16px 16px 0 0;
+}
+.table-card-title { font-size: 17px; font-weight: 700; color: var(--gray-900); }
+.table-card-sub   { font-size: 13px; color: var(--gray-500); margin-top: 3px; }
+.table-card-count { font-size: 14px; color: var(--gray-500); margin-left: 6px; }
+/* Keeps it pinned right if it wraps onto its own line. */
+.table-card-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.save-count { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; background: rgba(255,255,255,0.25); border-radius: 999px; font-size: 11px; font-weight: 700; margin-left: 2px; }
+
+/* ===== FILTER BAR ===== */
+.filter-bar { display: flex; align-items: center; gap: 10px; padding: 16px 22px; border-bottom: 1px solid #eef1f6; flex-wrap: wrap; }
+
+.search-box { display: flex; align-items: center; gap: 8px; border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 180px; background: #fff; }
+.search-box svg { width: 16px; height: 16px; stroke: var(--gray-400); flex-shrink: 0; }
+.search-box input { border: none; outline: none; font-size: 14px; color: var(--gray-700); width: 100%; font-family: var(--font-main); background: transparent; }
+
+.filter-select { border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 13px; font-size: 14px; color: var(--gray-700); font-family: var(--font-main); background: #fff; cursor: pointer; outline: none; width: 150px; flex-shrink: 0; }
+.filter-select:focus { border-color: var(--blue); }
+
+/* ===== TABLE ===== */
+/* table-layout:auto sizes each column to its own content instead of a fixed % share
+   that leaves dead gaps between narrow columns (same fix applied to #prTable below). */
+/* Caps the body to ~10 rows and scrolls the rest so a growing roster doesn't push
+   Print/Export/filters down the page; header stays pinned via position:sticky. */
+.table-wrapper { overflow-x: auto; overflow-y: auto; max-height: 610px; }
+table { width: auto; min-width: 0; border-collapse: collapse; table-layout: auto; }
+thead { position: sticky; top: 0; z-index: 1; }
+
+thead th { padding: 12px 10px; text-align: left; font-size: 11.5px; font-weight: 600; color: var(--gray-500); background: #f4f7fb; border-bottom: 1px solid #dce3ec; white-space: normal; line-height: 1.3; vertical-align: bottom; text-transform: uppercase; letter-spacing: 0.02em; overflow-wrap: normal; }
+tbody tr { border-bottom: 1px solid #eef1f6; transition: background var(--transition); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f4f7fb; }
+tbody td { padding: 7px 10px; font-size: 13.5px; color: var(--gray-700); vertical-align: middle; white-space: nowrap; }
+
+.td-primary { font-weight: 600; color: var(--gray-900); }
+.td-center  { text-align: center; }
+table th:first-child, table td:first-child { padding-left: 18px; }
+
+/* Read-only rating display, used by Head's view-only copy of this page. */
+.rating-chip { display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+.rating-chip.rated   { background: var(--blue-light); color: var(--blue); }
+.rating-chip.unrated { background: #eef1f6; color: var(--gray-500); }
+
+/* One column per fixed checkpoint, matching FAITH's rubric sheet. Checkmark content is
+   provisional pending client confirmation of what each cell should show. */
+.slot-mark { color: var(--green); font-weight: 700; }
+.slot-empty { color: var(--gray-300); }
+
+.rating-input {
+  width: 100%; max-width: 80px; padding: 5px 8px; border: 1px solid #dce3ec; border-radius: 8px;
+  font-size: 13.5px; font-family: var(--font-main); color: var(--gray-900); text-align: right;
+}
+.rating-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.rating-input.dirty { border-color: var(--amber); background: var(--amber-light); }
+.rating-input.unrated-placeholder { color: var(--gray-400); }
+
+.table-empty { padding: 52px 20px; text-align: center; color: var(--gray-400); font-size: 14px; }
+
+/* ===== PROGRAM REPORT TAB ===== */
+/* Applied explicitly per-cell from JS, not by column position — position-based selectors
+   broke when College Department was added as a new first column. */
+.pr-center { text-align: center; }
+.pr-amount { font-weight: 700; color: var(--green); }
+.pr-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid #eef1f6; }
+.pr-summary-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 14px 22px; }
+.pr-summary-item + .pr-summary-item { border-left: 1px solid #eef1f6; }
+.pr-summary-label { color: var(--gray-500); font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.pr-summary-value { color: var(--gray-900); font-size: 20px; line-height: 1.2; }
+.pr-summary-note { color: var(--gray-500); font-size: 11px; }
+/* Table sizing is shared with the ===== TABLE ===== defaults above — nothing #prTable-specific needed. */
+
+/* ===== SHARED BUTTONS ===== */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  background: var(--blue); color: #fff; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; font-family: var(--font-main); cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-primary:hover { background: #1d4ed8; }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Green, not blue — Print is already .btn-primary blue on this page; green reads as commit/confirm. */
+.btn-save {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  background: #16a34a; color: #fff; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; font-family: var(--font-main); cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-save:hover { background: #15803d; }
+.btn-save:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  background: #fff; color: var(--gray-700); border: 1px solid #dce3ec; border-radius: 10px;
+  font-size: 14px; font-weight: 500; font-family: var(--font-main); cursor: pointer;
+  transition: background var(--transition);
+}
+.btn-outline:hover { background: #f4f7fb; }
+
+/* Blue-outline, distinct from plain-gray .btn-outline — matches the Export/Print pair used app-wide. */
+.btn-export {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  background: #fff; color: #2563eb; border: 1px solid #2563eb; border-radius: 10px;
+  font-size: 14px; font-weight: 600; font-family: var(--font-main); cursor: pointer;
+  text-decoration: none; transition: background var(--transition), color var(--transition);
+}
+.btn-export:hover { background: #2563eb; color: #fff; }
+
+.form-error { font-size: 13px; color: var(--red); background: var(--red-light); border-radius: 8px; padding: 10px 14px; }
+
+/* ===== CONFIRM SAVE MODAL ===== */
+/* Same simple "Are you sure?" pattern as Delete/Publish confirms elsewhere (calendar-events.css). */
+.info-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.info-modal { background: #fff; border-radius: 16px; padding: 34px 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.18); }
+.info-modal-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.info-modal-icon svg { width: 26px; height: 26px; }
+.info-modal-icon.confirm { background: var(--green-light); }
+.info-modal-icon.confirm svg { stroke: var(--green); }
+.info-modal-title   { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 10px; }
+.info-modal-message { font-size: 15px; color: #6b7280; margin: 0 0 26px; line-height: 1.6; }
+.info-modal-actions { display: flex; justify-content: center; gap: 10px; }
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  /* table-layout:auto already sizes columns to content; overflow-x:auto scrolls if still too narrow. */
+  table { min-width: 0 !important; }
+}
+@media (max-width: 600px) {
+  .table-card-head { padding: 16px; }
+  .table-card-actions { width: 100%; flex-wrap: wrap; gap: 12px; }
+  .table-card-actions > button { flex: 1 1 120px; min-height: 44px; justify-content: center; }
+  .page-content { padding: 20px 16px; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .pr-summary-item { padding: 12px 14px; }
+  .pr-summary-value { font-size: 18px; }
+}
+
+/* Shared by Admin and Head: explain the workload behind each score. */
+.mentor-course-progress { display:flex; flex-wrap:nowrap; gap:4px; margin-top:5px; }
+.mentor-course-progress:empty { display:none; }
+.mentor-course-chip { display:inline-block; padding:3px 7px; border-radius:6px; background:#eff6ff; color:#1d4ed8; font-size:11px; font-weight:500; white-space:nowrap; }
+.slot-partial-tip { display:none; position:fixed; z-index:10000; background:#fff; border:1px solid #dce3ec; border-radius:12px; padding:10px 14px; box-shadow:0 8px 24px rgba(0,0,0,0.12); pointer-events:none; white-space:nowrap; }
+.slot-tip-row { display:flex; align-items:center; gap:7px; font-size:13px; color:#374151; }
+.slot-tip-row + .slot-tip-row { margin-top:5px; }
+.slot-tip-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; background:#d1d5db; }
+.slot-tip-dot.done { background:#22c55e; }
+
+/* Smooth Rankings <-> Program Report switch: the wrapper animates the page height. */
+.rpt-panels { position: relative; }
+.rpt-panels.rpt-switching {
+  overflow: hidden; box-sizing: border-box; padding: 6px; margin: -6px;
+  transition: height .32s cubic-bezier(.22, 1, .36, 1);
+}
+.rpt-panel-out { opacity: 0; transform: translateY(-4px); transition: opacity .14s ease, transform .14s ease; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .rpt-panels.rpt-switching { transition: none; } }

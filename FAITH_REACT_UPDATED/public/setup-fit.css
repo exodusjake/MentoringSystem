@@ -1,0 +1,78 @@
+/* First-login signature setup: the page fits the screen (no page scroll) and offers Upload or Draw.
+   Loaded after each portal's setup.css; --sig-accent is set per portal by SetupPage. */
+html, body { height: 100%; overflow: hidden; }
+body { min-height: 0; display: block; }
+.setup-page {
+  --a: var(--sig-accent, #2563eb);
+  position: relative; width: 100%; height: 100dvh; min-height: 0; padding: 12px 16px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+}
+.setup-brand { position: absolute; top: 10px; left: 20px; margin: 0; padding: 0; gap: 8px; align-self: auto; }
+.setup-brand .brand-logo { width: 46px; height: 46px; }
+.setup-brand .brand-name { font-size: 17px; color: var(--a); }
+
+.setup-card {
+  max-width: 560px; max-height: calc(100dvh - 24px); padding: 22px 28px 20px; overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; scrollbar-width: none;
+}
+.setup-card::-webkit-scrollbar { display: none; }
+.setup-title { font-size: 19px; margin-bottom: 4px; }
+.setup-sub { font-size: 13px; line-height: 1.45; margin-bottom: 12px; }
+
+/* Upload | Draw switch with a sliding pill */
+.sig-tabs { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin-bottom: 12px; background: #eef1f6; border-radius: 12px; }
+.sig-tab-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); background: var(--a); border-radius: 9px; box-shadow: 0 3px 10px color-mix(in srgb, var(--a) 35%, transparent); transition: transform .32s cubic-bezier(.32,.72,0,1); }
+.sig-tabs[data-mode="draw"] .sig-tab-pill { transform: translateX(calc(100% + 4px)); }
+.sig-tab { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 8px 10px; border: 0; background: transparent; border-radius: 9px; font-family: var(--font); font-size: 13.5px; font-weight: 600; color: #6b7280; cursor: pointer; transition: color .2s ease .05s; }
+.sig-tab svg { width: 16px; height: 16px; }
+.sig-tab.active { color: #fff; }
+
+/* Fixed-size signature area shared by both methods */
+.sig-area { height: clamp(120px, 24dvh, 190px); margin-bottom: 10px; display: flex; }
+.sig-area > * { flex: 1; min-width: 0; }
+.sig-dropzone { min-height: 0; height: 100%; margin: 0; }
+.sig-dropzone:hover, .sig-dropzone.drag-over { border-color: var(--a); background: color-mix(in srgb, var(--a) 7%, #fff); }
+.sig-preview { max-height: 100%; padding: 8px; }
+.dz-icon { width: 32px; height: 32px; }
+.dz-idle { padding: 12px; gap: 4px; }
+
+/* Draw pad: the surface only looks like paper — the exported PNG is the ink alone, with a transparent background */
+.sig-pad { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.sig-pad-surface { position: relative; flex: 1; min-height: 0; border: 2px dashed #d1d5db; border-radius: 10px; background: repeating-conic-gradient(#f3f4f6 0% 25%, #fafafa 0% 50%) 0 0 / 16px 16px; overflow: hidden; transition: border-color .2s ease; }
+.sig-pad-surface:hover, .sig-pad-surface:focus-within { border-color: var(--a); }
+.sig-pad-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; z-index: 2; }
+.sig-pad-line { position: absolute; left: 6%; right: 6%; bottom: 24%; height: 1px; background: #cbd5e1; z-index: 1; pointer-events: none; }
+.sig-pad-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 1; font-size: 13px; color: #9ca3af; letter-spacing: .02em; }
+.sig-pad-hint span { background: rgba(255,255,255,.85); padding: 2px 10px; border-radius: 99px; }
+.sig-pad-tools { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.sig-pens { display: flex; gap: 8px; }
+.sig-pen { width: 22px; height: 22px; border-radius: 50%; background: var(--pen); border: 2px solid #fff; box-shadow: 0 0 0 1px #d1d5db; cursor: pointer; padding: 0; transition: box-shadow .18s ease, scale .16s ease; }
+.sig-pen.active { box-shadow: 0 0 0 2px var(--a); }
+.sig-pad-btns { display: flex; gap: 6px; }
+.sig-tool-btn { border: 1.5px solid #e5e7eb; background: #fff; color: #4b5563; border-radius: 8px; padding: 5px 12px; font-family: var(--font); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
+.sig-tool-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--a) 8%, #fff); border-color: var(--a); color: var(--a); }
+.sig-tool-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Compact the rest so everything fits */
+.setup-error { margin-bottom: 8px; padding: 7px 12px; font-size: 12.5px; }
+.setup-privacy-notice { padding: 8px 12px; margin-bottom: 0; background: color-mix(in srgb, var(--a) 7%, #fff); border-color: color-mix(in srgb, var(--a) 22%, #fff); }
+.setup-privacy-notice p { font-size: 11.5px; line-height: 1.45; }
+.setup-privacy-notice strong, .pn-icon { color: var(--a); }
+.pn-icon { width: 16px; height: 16px; }
+.setup-consent { margin-top: 10px; }
+.setup-consent span { font-size: 12px; line-height: 1.4; }
+.setup-consent input[type="checkbox"] { accent-color: var(--a); }
+.setup-actions { margin-top: 12px; }
+.setup-actions .btn-primary { background: var(--a); }
+.setup-actions .btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--a) 85%, #000); }
+
+@media (max-width: 520px) {
+  .setup-brand { left: 14px; top: 8px; }
+  .setup-brand .brand-logo { width: 36px; height: 36px; }
+  .setup-card { padding: 18px 16px 16px; margin-top: 36px; max-height: calc(100dvh - 48px); }
+  .setup-actions { flex-direction: row; }
+  .btn-primary, .btn-back, .btn-retake { width: auto; }
+  .actions-right { margin-left: auto; }
+}
+@media (max-height: 640px) { .setup-sub { display: none; } .setup-brand { display: none; } }
+@media (prefers-reduced-motion: reduce) { .sig-tab-pill, .sig-tab, .sig-pen { transition: none; } }

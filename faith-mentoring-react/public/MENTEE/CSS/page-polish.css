@@ -1,0 +1,114 @@
+/* Mentee presentation only; mirrors Admin/Head spacing and surfaces. */
+@media screen {
+ body.mentee-polish { --mentee-shadow:0 2px 8px rgba(17,24,39,.09); --mentee-shadow-hover:0 6px 18px rgba(17,24,39,.16); }
+ .mentee-polish .main-wrapper { min-width:0; }
+ .mentee-polish .page-header { margin-bottom:24px; gap:12px; flex-wrap:wrap; }
+ .mentee-polish .page-header > div { min-width:0; }
+ .mentee-polish .page-header h1 { font-size:clamp(24px,2.2vw,32px); line-height:1.2; }
+ .mentee-polish .page-header p { font-size:14px; line-height:1.5; margin-top:6px; }
+ .mentee-polish :is(.card,.stat-card,.announce-card,.mentor-card,.ph-card,.detail-card,.scm-card,.sch-slot-card,.hist-item,.setup-card) { box-shadow:var(--mentee-shadow); transition:box-shadow 160ms ease; min-width:0; }
+ .mentee-polish :is(.quad-grid,.sch-grid,.profile-details-row,.announcements-list,.sessions-cards-list,.hist-list) { gap:16px; }
+ .mentee-polish :is(.announce-card,.detail-card,.sch-slot-card) { padding:20px; }
+ .mentee-polish .stat-card { padding:16px 20px; }
+ .mentee-polish :is(.stat-value,.sstat-val) { font-variant-numeric:tabular-nums; line-height:1.2; }
+ .mentee-polish :is(.card-header-row h2,.hist-header h2,.mentor-section-title) { font-size:17px; line-height:1.4; }
+ .mentee-polish :is(.mentor-info-name,.mentor-name,.ph-name,.hist-slot-date,.sch-slot-mentor,.info-value,.detail-value,.ph-field-value) { overflow-wrap:anywhere; word-break:normal; }
+ .mentee-polish :is(.scm-body,.mentor-name-block,.mentor-info-block,.hist-item-left,.hist-item-right,.ph-identity-info,.ph-strip-field,.comment-bubble) { min-width:0; }
+ .mentee-polish .toolbar { gap:10px; flex-wrap:wrap; }
+ .mentee-polish .search-wrap { min-width:0; min-height:44px; }
+ .mentee-polish .filter-select { min-height:44px; max-width:100%; }
+ .mentee-polish :is(.btn-detail,.btn-qr,.btn-request,.btn-save,.btn-cancel,.btn-change-sig) { min-height:42px; justify-content:center; }
+ .mentee-polish :is(button,a,input,select,textarea):focus-visible { outline:2px solid var(--indigo,#4f46e5); outline-offset:3px; }
+ .mentee-polish .status-in-progress { color:#92400e; background:#fef3c7; }
+ .mentee-polish .scm-date-row { align-items:flex-start; justify-content:space-between; gap:8px; }
+ .mentee-polish .scm-date-row .session-status { flex-shrink:0; }
+ .mentee-polish .scm-meta { margin-top:8px; line-height:1.6; }
+ .mentee-polish .sch-slot-header { align-items:flex-start; gap:12px; }
+ .mentee-polish .sch-slot-header > :last-child { flex-shrink:0; }
+ .mentee-polish .hist-item { gap:16px; padding:18px 20px; }
+ .mentee-polish .hist-item-right { gap:8px; }
+ .mentee-polish .hist-purpose { overflow-wrap:anywhere; }
+ .mentee-polish :is(.modal-card,.edit-modal-card,.qr-modal-card,.confirm-card) { max-height:calc(100dvh - 32px); overflow-y:auto; }
+ .mentee-polish :is(.modal-title,.qr-label) { padding-right:34px; line-height:1.4; }
+ .mentee-polish .form-group { min-width:0; }
+ .mentee-polish :is(.form-group input,.form-group textarea,.form-group select) { max-width:100%; min-width:0; }
+ @media (hover:hover) and (pointer:fine) {
+  .mentee-polish :is(.card,.stat-card,.announce-card,.mentor-card,.ph-card,.detail-card,.scm-card,.sch-slot-card):hover { box-shadow:var(--mentee-shadow-hover); }
+ }
+ @media (max-width:768px) {
+  .mentee-polish .page-content { padding:20px 16px 0; }
+  .mentee-polish .quad-grid { grid-template-columns:minmax(0,1fr); }
+  .mentee-polish .sch-grid { grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); }
+  .mentee-polish .profile-details-row { grid-template-columns:minmax(0,1fr); }
+ }
+ @media (max-width:620px) {
+  .mentee-polish .page-header { margin-bottom:18px; }
+  .mentee-polish :is(.quad-grid,.sch-grid,.announcements-list,.sessions-cards-list,.hist-list) { gap:12px; }
+  .mentee-polish :is(.announce-card,.detail-card,.sch-slot-card,.hist-item) { padding:16px; }
+  .mentee-polish .toolbar { display:grid; grid-template-columns:minmax(0,1fr); }
+  .mentee-polish .toolbar :is(.search-wrap,.filter-select) { width:100%; max-width:none; }
+  .mentee-polish .scm-card { display:grid; grid-template-columns:minmax(0,1fr); }
+  .mentee-polish .scm-num-block { width:auto; min-width:0; text-align:center; align-items:center; padding:12px 16px; border-right:0; border-bottom:1px solid #e2e8f0; }
+  .mentee-polish .scm-num-value { font-size:14px; }
+  .mentee-polish .scm-body { padding:14px 16px; }
+  .mentee-polish .scm-date { flex:1 1 150px; }
+  .mentee-polish .scm-right { min-width:0; padding:0 16px 16px; align-items:stretch; }
+  .mentee-polish .scm-actions { flex-direction:row; flex-wrap:wrap; align-items:stretch; gap:8px; }
+  .mentee-polish .scm-actions > * { flex:1 1 120px; }
+  .mentee-polish .sstat { padding:16px 10px; }
+  .mentee-polish .sstat-lbl { line-height:1.5; }
+  .mentee-polish .att-progress-banner { padding:16px; }
+  .mentee-polish .att-progress-title { font-size:14px; }
+  .mentee-polish .att-progress-sub { font-size:12px; line-height:1.5; }
+  .mentee-polish .att-num { font-size:24px; }
+  .mentee-polish .hist-item { flex-direction:row; align-items:flex-start; flex-wrap:wrap; }
+  .mentee-polish .hist-item-left { flex:1 1 155px; }
+  .mentee-polish .hist-item-right { flex:0 1 auto; margin-left:auto; align-items:flex-end; }
+  .mentee-polish .ann-tabs { flex-wrap:wrap; }
+  .mentee-polish .attach-item--card { max-width:100%; min-width:0; width:100%; }
+  .mentee-polish .ph-edit-row { padding:20px 16px; gap:20px; }
+  .mentee-polish :is(.ph-edit-inline,.sig-section) { min-width:0; max-width:100%; flex-basis:100%; }
+  .mentee-polish :is(.form-row,.mentor-info-grid) { grid-template-columns:minmax(0,1fr); }
+  .mentee-polish .ph-identity { gap:12px; padding-left:16px; padding-right:16px; }
+  .mentee-polish .ph-fields-strip { padding-left:16px; padding-right:16px; flex-wrap:wrap; }
+  .mentee-polish .ph-strip-field { flex:1 1 130px; }
+  .mentee-polish .ph-strip-divider { display:none; }
+  .mentee-polish :is(.modal-card,.edit-modal-card,.qr-modal-card) { padding:24px 18px; }
+  .mentee-polish .qr-canvas-wrap { padding:10px; }
+  .mentee-polish .qr-canvas-wrap canvas { max-width:100%; height:auto !important; }
+  .mentee-polish :is(.modal-footer,.edit-modal-footer,.ph-edit-inline-footer,.setup-actions) { gap:8px; flex-wrap:wrap; }
+  .mentee-polish :is(.modal-footer,.edit-modal-footer,.ph-edit-inline-footer) > button { flex:1 1 120px; }
+  .mentee-polish .semester-badge { white-space:normal; line-height:1.5; }
+  .mentee-polish .setup-card { padding:24px 18px; }
+ }
+ @media (prefers-reduced-motion:reduce) {
+  .mentee-polish :is(.card,.stat-card,.announce-card,.mentor-card,.ph-card,.detail-card,.scm-card,.sch-slot-card,.hist-item,.setup-card) { transition:none; }
+ }
+}
+
+/* Compact dashboard previews and aligned session/history status columns. */
+@media screen {
+ .mentee-polish .announcements-card .card-header-row { padding:14px 18px; }
+ .mentee-polish .announcements-card .announcements-list { flex:0 1 auto; max-height:320px; overflow-y:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding:12px; gap:8px; }
+ .mentee-polish .announcements-card .announce-item { flex-shrink:0; padding:12px 14px; }
+ .mentee-polish .announcements-card .announce-title { font-size:14px; margin-bottom:4px; line-height:1.4; }
+ .mentee-polish .announcements-card .announce-body { font-size:13px; line-height:1.45; -webkit-line-clamp:2; }
+ .mentee-polish .announcements-card .announce-body.expanded { display:block; }
+ .mentee-polish .announcements-card .announce-footer { margin-top:6px; gap:6px; }
+ .mentee-polish .announcements-card .card-view-footer { margin-top:auto; padding:12px 18px; }
+ .mentee-polish .scm-body { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 12px; align-content:center; }
+ .mentee-polish .scm-date-row { display:contents; }
+ .mentee-polish .scm-date { grid-column:1; grid-row:1; }
+ .mentee-polish .scm-status-stack { grid-column:2; grid-row:1 / span 2; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+ .mentee-polish .scm-meta { grid-column:1; grid-row:2; margin-top:0; }
+ .mentee-polish .hist-item { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+ .mentee-polish .hist-item-right { align-self:stretch; justify-content:space-between; align-items:flex-end; margin-left:0; }
+ .mentee-polish .hist-meta { margin-top:12px; text-align:right; white-space:normal; max-width:145px; }
+ @media (max-width:620px) {
+  .mentee-polish .announcements-card .announcements-list { max-height:290px; padding:10px; }
+  .mentee-polish .announcements-card .announce-item { padding:10px 12px; }
+  .mentee-polish .scm-body { gap:8px; }
+  .mentee-polish .hist-item { column-gap:10px; }
+  .mentee-polish .hist-meta { max-width:120px; }
+ }
+}

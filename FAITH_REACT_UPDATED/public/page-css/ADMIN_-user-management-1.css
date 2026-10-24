@@ -1,0 +1,6 @@
+    /* Replace the native <summary> triangle with our own chevron. */
+    #importStartModal summary { list-style: none; }
+    #importStartModal summary::-webkit-details-marker { display: none; }
+    #importStartModal summary .chevron { transition: transform .15s; }
+    #importStartModal details[open] summary .chevron { transform: rotate(180deg); }
+  

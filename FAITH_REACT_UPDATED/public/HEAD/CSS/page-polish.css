@@ -1,0 +1,88 @@
+/* Head-specific surfaces; common typography and elevation come from Admin page-polish.css. */
+@media screen {
+ .head-polish :is(.card,.cal-right-panel,.att-mentor-card) { box-shadow:var(--admin-shadow); transition:box-shadow 160ms ease; }
+ .head-polish :is(.card,.cal-right-panel,.att-mentor-card):focus-within { box-shadow:var(--admin-shadow-hover); }
+ .head-polish :is(.hd-dash-grid,.hd-row,.att-mentor-list) { gap:16px; }
+ .head-polish .card-header { padding:16px 20px; }
+ .head-polish .hd-card-body { padding:16px 20px; gap:14px; }
+ .head-polish .hd-card-sub { font-size:12px; line-height:1.5; }
+ .head-polish .att-mentor-card { padding:16px 20px; gap:12px; }
+ .head-polish .amr-name { font-size:15px; line-height:1.5; white-space:normal; overflow-wrap:anywhere; }
+ .head-polish .amr-dept { font-size:12px; line-height:1.5; }
+ @media (hover:hover) and (pointer:fine) {
+  .head-polish :is(.card,.cal-right-panel,.att-mentor-card):hover { box-shadow:var(--admin-shadow-hover); }
+ }
+ @media (max-width:620px) {
+  .head-polish :is(.hd-dash-grid,.hd-row,.att-mentor-list) { gap:12px; }
+  .head-polish :is(.card-header,.hd-card-body,.att-mentor-card) { padding:14px 16px; }
+ }
+ @media (prefers-reduced-motion:reduce) {
+  .head-polish :is(.card,.cal-right-panel,.att-mentor-card) { transition:none; }
+ }
+}
+
+/* Compact Head dashboard on phones; retain the desktop card alignment. */
+@media screen and (max-width:620px) {
+ .head-polish .hd-dash-grid .hd-eng-card { height:auto; min-height:0; }
+ .head-polish .hd-dash-grid :is(.card-header,.card-body,.hd-card-body,.eng-breakdown,.engagement-total) { padding:12px 16px; }
+ .head-polish .hd-dash-grid .hd-card-body { gap:10px; }
+ .head-polish .hd-dash-grid .alerts-list { gap:8px; }
+ .head-polish .hd-dash-grid .alert-item { display:grid; grid-template-columns:30px minmax(0,1fr) auto; gap:4px 8px; padding:10px 12px; align-items:center; }
+ .head-polish .hd-dash-grid .alert-icon { width:30px; height:30px; grid-column:1; grid-row:1 / 3; }
+ .head-polish .hd-dash-grid .alert-body { display:contents; }
+ .head-polish .hd-dash-grid .alert-title-row { grid-column:2 / -1; grid-row:1; gap:4px; margin:0; }
+ .head-polish .hd-dash-grid .alert-sub { grid-column:2; grid-row:2; min-width:0; overflow-wrap:anywhere; line-height:1.4; }
+ .head-polish .hd-dash-grid .alert-item:not(:has(.alert-link)) .alert-sub { grid-column:2 / -1; }
+ .head-polish .hd-dash-grid .alert-link { grid-column:3; grid-row:2; align-self:end; }
+ .head-polish .hd-dash-grid .top3-row { padding:12px 16px; gap:10px; }
+ .head-polish .hd-dash-grid .card-view-footer { padding:10px 16px; }
+ .head-polish .hd-dash-grid :is(.activity-list,.alerts-card > .card-body) { scrollbar-width:none; }
+ .head-polish .hd-dash-grid :is(.activity-list,.alerts-card > .card-body)::-webkit-scrollbar { display:none; }
+ .head-polish .hd-dash-grid .recent-card .activity-list { max-height:320px; }
+}
+
+/* Mentor Monitoring cards: same layout as Admin's (left-to-right grid,
+   each card at its own height, amber Pending badge, one-row footer). */
+@media screen {
+ #mentorGrid:has(> .mentor-card) { display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); align-items:start; }
+ #mentorGrid > .mentor-card { min-width:0; box-sizing:border-box; }
+}
+#mentorGrid .mrc-footer .mc-badge.pending { background:#fffbeb; color:#92400e; border:1px solid #fde68a; }
+@media screen and (min-width:768px) {
+ #mentorGrid .mrc-footer { flex-direction:row; align-items:center; flex-wrap:nowrap; gap:8px; }
+ #mentorGrid .mr-badges { align-items:center; flex-wrap:nowrap; gap:6px; flex-shrink:0; }
+ #mentorGrid .mrc-footer .mr-view-btn { margin-left:auto; align-self:center; }
+}
+@media screen and (max-width:640px) {
+ #mentorGrid:has(> .mentor-card) { grid-template-columns:1fr; }
+}
+
+/* Head portal on phones: roomier dropdowns (the trigger and its menu), with matching search and date fields.
+   Rules that reach the trigger carry !important because the dropdown copies the page's own field look into inline styles. */
+@media screen and (max-width:768px) {
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) { gap:12px; }
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) .dd-trigger.dd-boxed,
+ body.head-polish :is(.filter-bar,.ann-filter-bar,.toolbar,.att-filter-group,.att-toolbar,.cal-toolbar) .dp-trigger {
+  box-sizing:border-box; min-height:52px; padding:0 14px 0 16px !important; gap:10px;
+  font-size:15px !important; font-weight:500 !important; color:#0f172a !important;
+  background-color:#fff !important; border:1.5px solid #c3cddb !important; border-radius:14px !important;
+  box-shadow:0 1px 2px rgba(15,23,42,.06);
+ }
+ body.head-polish .dd-trigger.dd-boxed .dd-chev { width:18px; height:18px; color:#475569; }
+ body.head-polish .dd-trigger.dd-boxed.open, body.head-polish .dd-trigger.dd-boxed:focus-visible { border-color:#2563eb !important; box-shadow:0 0 0 4px rgba(37,99,235,.14); }
+ body.head-polish .dd-trigger .dd-label.is-placeholder { color:#94a3b8; }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) {
+  box-sizing:border-box; min-height:52px; padding:0 16px; border:1.5px solid #c3cddb; border-radius:14px; box-shadow:0 1px 2px rgba(15,23,42,.06);
+ }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) input { font-size:16px; }
+ body.head-polish :is(.filter-bar .search-box,.ann-search-box,.toolbar .search-box,.att-filter-group .search-box,.cal-search-box) svg { width:18px; height:18px; }
+ body.head-polish .filter-bar .btn-clear { min-height:48px; padding:0 22px; font-size:15px; border-radius:14px; }
+
+ /* the menu that opens under a dropdown */
+ body.head-polish .dd-menu { padding:8px; border:1px solid #c3cddb; border-radius:16px; box-shadow:0 18px 44px rgba(15,23,42,.24); }
+ body.head-polish .dd-opt { min-height:48px; padding:12px 14px; gap:12px; font-size:15px; border-radius:12px; }
+ body.head-polish .dd-opt .dd-opt-text { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.3; }
+ body.head-polish .dd-opt .dd-check { width:18px; height:18px; }
+ body.head-polish .dd-group { padding:12px 14px 6px; font-size:11.5px; }
+ body.head-polish .dd-empty { padding:16px; font-size:14px; }
+}

@@ -1,0 +1,13 @@
+/* Only school filters swipe. Numeric summaries stay visible in a 2-by-2 grid. */
+@media screen and (max-width:620px) {
+ body .page-content > .stats-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+ body .page-content > .stats-grid > .stat-card { min-width:0; }
+ body .page-content .monitoring-school-strip {
+  display:grid; grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:min(82%,280px);
+  gap:10px; min-width:0; max-width:100%; overflow-x:auto; padding:4px 4px 8px;
+  scroll-snap-type:x proximity; overscroll-behavior-x:contain; scrollbar-width:none;
+ }
+ .monitoring-school-strip::-webkit-scrollbar { display:none; }
+ .monitoring-school-strip > * { min-width:0; scroll-snap-align:start; }
+}
+.monitoring-school-strip:focus-visible { outline:2px solid #2563eb; outline-offset:3px; }

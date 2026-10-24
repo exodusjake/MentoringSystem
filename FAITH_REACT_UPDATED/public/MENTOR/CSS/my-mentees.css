@@ -1,0 +1,262 @@
+/* ============================================================
+   ASTRA MENTOR — my-mentees.css
+   ============================================================ */
+
+/* ── SECTION CARDS (mentors with more than one section) ── */
+/* Click to filter the list in place; click again to clear. Same pattern as User Management's Sections tab. */
+.section-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-card {
+  background: #fff;
+  border: 2px solid #dce3ec;
+  border-radius: 16px;
+  padding: 22px 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.section-card:hover { border-color: var(--teal, #0f766e); box-shadow: 0 6px 18px rgba(15,118,110,0.14); transform: translateY(-2px); }
+.section-card.active { border-color: var(--teal, #0f766e); box-shadow: 0 4px 14px rgba(15,118,110,0.2); }
+
+.sc-top { width: 42px; height: 42px; border-radius: 11px; background: #f0fdfa; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.sc-top i { font-size: 20px; color: var(--teal, #0f766e); }
+
+.sc-section { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 5px; }
+.sc-count   { font-size: 13px; font-weight: 600; color: var(--teal, #0f766e); }
+.sc-course  { font-size: 12px; color: #9CA3AF; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+
+.search-wrap {
+  display: flex; align-items: center; gap: 9px; background: #fff;
+  border: 1px solid #dce3ec; border-radius: 10px; padding: 9px 15px;
+  flex: 1; max-width: 380px;
+}
+.search-wrap i { font-size: 16px; color: #9CA3AF; flex-shrink: 0; }
+.search-wrap input { border: none; outline: none; font-family: var(--font); font-size: 14px; color: #374151; background: transparent; width: 100%; }
+.search-wrap input::placeholder { color: #9CA3AF; }
+
+/* Dropdown popup/trigger behaviour comes from the shared /ui-dropdown.js;
+   this only supplies the trigger's box (it copies the select's border/padding). */
+.filter-wrap { position: relative; display: flex; align-items: center; min-width: 200px; }
+.filter-wrap > i { position: absolute; left: 13px; font-size: 16px; color: #9CA3AF; pointer-events: none; z-index: 1; }
+.mentee-filter {
+  padding: 10px 14px 10px 38px; border: 1px solid #dce3ec; border-radius: 10px;
+  font-family: var(--font); font-size: 14px; color: #374151; background: #fff;
+}
+@media (max-width: 640px) {
+  .toolbar { flex-wrap: wrap; }
+  .search-wrap { max-width: none; flex-basis: 100%; }
+  .filter-wrap { flex: 1; }
+}
+
+/* ── MENTEE LIST ── */
+.mentees-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+/* ── MENTEE CARD (horizontal strip) ── */
+.mentee-card {
+  background: #fff;
+  border: 1px solid #dce3ec;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  transition: box-shadow 0.15s;
+}
+.mentee-card:hover { box-shadow: 0 3px 14px rgba(0,0,0,0.10); }
+
+/* Left: identity */
+.mc-identity {
+  display: flex; align-items: center; gap: 13px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #f0fdfa 0%, #fff 80%);
+  border-right: 2px solid #c8d3e0;
+  width: 300px; flex-shrink: 0;
+}
+
+.mc-avatar {
+  width: 65px; height: 65px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--teal, #0f766e), #0d9488);
+  color: #fff; font-size: 25px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(15,118,110,0.28);
+  overflow: hidden;
+}
+.mc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.mc-name-block { flex: 1; min-width: 0; }
+.mc-name  { font-size: 15px; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mc-email { font-size: 13px; color: #6B7280; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mc-role-badge {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 5px;
+  font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  color: var(--teal, #0f766e); background: #f0fdfa;
+  border: 1px solid #99f6e4; border-radius: 20px; padding: 2px 9px;
+}
+.mc-role-badge::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--teal, #0f766e); }
+
+/* Middle: academic info */
+.mc-body {
+  min-width: 0;
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  gap: 7px; padding: 14px 20px;
+}
+
+.mc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mc-chip {
+  font-size: 13px; font-weight: 600; padding: 3px 11px;
+  border-radius: 20px; background: #f4f7fb; color: #374151;
+  border: 1px solid #dce3ec;
+}
+.mc-chip.course  { background: #f0fdfa; color: var(--teal, #0f766e); border-color: #99f6e4; }
+.mc-chip.section { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+
+.mc-info-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: #6B7280;
+}
+.mc-info-row i { font-size: 14px; color: #9CA3AF; flex-shrink: 0; }
+
+.mc-bottom-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 2px; gap: 10px;
+}
+
+.mc-school-year {
+  font-size: 11px; font-weight: 700; color: var(--teal, #0f766e);
+  background: #f0fdfa; border: 1px solid #99f6e4;
+  border-radius: 20px; padding: 3px 10px; white-space: nowrap;
+}
+
+.mc-student-no {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 500; color: #6B7280; white-space: nowrap;
+}
+.mc-student-no i { font-size: 14px; color: #9CA3AF; }
+.mc-student-no.no-id { font-size: 12px; color: #C0C9D5; font-style: italic; }
+
+/* ── DROPOUT VISUAL ── */
+.mc-chip.dropout-chip { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; font-weight: 700; }
+
+/* Red tint for dropped-out mentee cards */
+.mentee-card.is-dropout { border-color: #fca5a5; border-left: 4px solid #ef4444; background: #fff5f5; }
+.mentee-card.is-dropout .mc-identity { background: linear-gradient(135deg, #fee2e2 0%, #fff5f5 80%); border-right-color: #fca5a5; }
+
+/* Empty / loading states */
+.mentees-empty {
+  text-align: center; padding: 56px 28px;
+  color: #9CA3AF; font-size: 14px;
+}
+.mentees-empty i { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.4; }
+
+@media (max-width: 1024px) {
+  /* Stack while the sidebar leaves too little room for both columns. */
+  .mentee-card { flex-direction: column; }
+  .mc-identity { width: 100%; border-right: none; border-bottom: 2px solid #c8d3e0; }
+}
+
+/* Compact course filters and equal-width mentee cards. */
+.section-cards-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 210px)); gap: 10px; margin-bottom: 18px; }
+.section-card { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 10px; row-gap: 2px; padding: 12px; border-radius: 12px; }
+.sc-top { grid-column: 1; grid-row: 1 / 4; width: 32px; height: 32px; margin: 0; align-self: center; }
+.sc-top i { font-size: 17px; }
+.sc-section, .sc-count, .sc-course { grid-column: 2; min-width: 0; margin: 0; }
+.sc-section { font-size: 15px; overflow-wrap: anywhere; }
+.sc-count { font-size: 12px; }
+.sc-course { font-size: 11px; }
+@media (min-width: 769px) {
+  .mentees-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .mentee-card { min-width: 0; display: grid; grid-template-rows: subgrid; grid-row: span 2; gap: 0; overflow: hidden; }
+  .mc-identity { width: 100%; padding: 12px 14px; gap: 10px; border-right: 0; border-bottom: 1px solid #dce3ec; }
+  .mc-avatar { width: 42px; height: 42px; font-size: 17px; }
+  .mc-name { white-space: normal; overflow-wrap: anywhere; font-size: 14px; }
+  .mc-email { white-space: normal; overflow-wrap: anywhere; font-size: 12px; }
+  .mc-body { padding: 12px 14px; gap: 6px; justify-content: flex-start; }
+  .mc-chip { font-size: 11px; padding: 3px 8px; }
+  .mc-info-row, .mc-student-no { font-size: 12px; }
+  .mc-info-row span { min-width: 0; overflow-wrap: anywhere; }
+  .mc-bottom-row { margin-top: auto; padding-top: 4px; gap: 6px; }
+  .mc-school-year { font-size: 10px; padding: 3px 7px; white-space: normal; }
+  .mentees-empty { grid-column: 1 / -1; }
+}
+@media (min-width: 769px) and (max-width: 1250px) {
+  .mentees-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .section-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── Flag a mentee: report a serious concern to the Admin and Head Admin ── */
+.mc-flag-btn { position: absolute; top: 10px; right: 10px; z-index: 2; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: #b91c1c; background: #fff; border: 1.5px solid #fecaca; border-radius: 10px; cursor: pointer; transition: background-color .18s, color .18s, border-color .18s, transform .15s, box-shadow .18s; }
+.mc-flag-btn:hover { background: #dc2626; border-color: #dc2626; color: #fff; box-shadow: 0 4px 12px rgba(220,38,38,.35); }
+.mc-flag-btn:active { transform: scale(.92); }
+.mc-flag-btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
+.mc-identity { padding-right: 52px; }
+
+.concern-overlay { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15,23,42,.62); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: concernFade .2s ease both; }
+@keyframes concernFade { from { opacity: 0; } to { opacity: 1; } }
+.concern-modal { width: 100%; max-width: 520px; max-height: calc(100dvh - 32px); display: flex; flex-direction: column; background: #fff; border-radius: 18px; border-top: 6px solid #dc2626; box-shadow: 0 28px 70px rgba(127,29,29,.35); overflow: hidden; animation: concernRise .28s cubic-bezier(.22,1,.36,1) both; }
+@keyframes concernRise { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+.concern-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; background: linear-gradient(180deg, #fef2f2, #fff); }
+.concern-head-icon { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff; background: #dc2626; border-radius: 14px; box-shadow: 0 6px 16px rgba(220,38,38,.4); }
+.concern-head-text { flex: 1; min-width: 0; }
+.concern-title { font-size: 18px; font-weight: 700; color: #7f1d1d; }
+.concern-sub { font-size: 13px; color: #6b7280; margin-top: 2px; }
+.concern-sub strong { color: #111827; }
+.concern-close { width: 32px; height: 32px; border: none; background: transparent; font-size: 24px; line-height: 1; color: #6b7280; border-radius: 8px; cursor: pointer; }
+.concern-close:hover { background: #fee2e2; color: #991b1b; }
+.concern-body { padding: 4px 20px 6px; overflow-y: auto; }
+.concern-warning { display: flex; gap: 10px; padding: 12px 14px; margin: 6px 0 14px; font-size: 12.5px; line-height: 1.5; color: #7f1d1d; background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #dc2626; border-radius: 10px; }
+.concern-warning i { font-size: 20px; color: #dc2626; flex-shrink: 0; margin-top: 1px; }
+.concern-label { display: block; margin: 12px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #374151; }
+.concern-select, .concern-text { width: 100%; box-sizing: border-box; font-family: var(--font, inherit); font-size: 14px; color: #111827; background: #f4f7fb; border: 1.5px solid #dce3ec; border-radius: 10px; padding: 10px 12px; outline: none; transition: border-color .15s, box-shadow .15s; }
+.concern-text { resize: vertical; min-height: 120px; line-height: 1.5; }
+.concern-select:focus, .concern-text:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,.15); }
+.concern-count { margin-top: 4px; font-size: 11.5px; text-align: right; color: #9ca3af; }
+.concern-count.short { color: #b45309; }
+.concern-check { display: flex; align-items: flex-start; gap: 9px; margin: 14px 0 4px; font-size: 13px; line-height: 1.4; color: #374151; cursor: pointer; }
+.concern-check input { width: 17px; height: 17px; margin-top: 1px; accent-color: #dc2626; flex-shrink: 0; }
+.concern-error { margin: 10px 0 4px; padding: 9px 12px; font-size: 13px; color: #991b1b; background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; }
+.concern-foot { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px 18px; border-top: 1px solid #f1f5f9; }
+.concern-btn { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font, inherit); font-size: 14px; font-weight: 600; padding: 10px 18px; border-radius: 10px; cursor: pointer; transition: background-color .18s, opacity .18s, transform .15s, box-shadow .18s; }
+.concern-btn-cancel { color: #374151; background: #fff; border: 1.5px solid #dce3ec; }
+.concern-btn-cancel:hover { background: #f4f7fb; }
+.concern-btn-send { color: #fff; background: #dc2626; border: 1.5px solid #dc2626; }
+.concern-btn-send:hover:not(:disabled) { background: #b91c1c; box-shadow: 0 6px 16px rgba(220,38,38,.4); }
+.concern-btn:active:not(:disabled) { transform: scale(.97); }
+.concern-btn:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 520px) {
+  .concern-overlay { padding: 0; align-items: flex-end; }
+  .concern-modal { max-width: none; border-radius: 18px 18px 0 0; max-height: 92dvh; }
+  .concern-foot { flex-direction: column-reverse; }
+  .concern-btn { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { .concern-overlay, .concern-modal { animation: none; } }
+
+/* A flagged mentee: a red glowing frame while the concern waits for a response; green once an Admin/Head has responded. */
+.mentee-card.is-flagged { border-color: #dc2626; animation: flagGlow 2.4s ease-in-out infinite; }
+@keyframes flagGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(220,38,38,.18), 0 6px 18px rgba(220,38,38,.14); }
+  50% { box-shadow: 0 0 0 5px rgba(220,38,38,.3), 0 8px 26px rgba(220,38,38,.28); }
+}
+.mentee-card.is-flagged .mc-identity { background: linear-gradient(135deg, #fee2e2 0%, #fff5f5 85%); border-right-color: #fca5a5; }
+.mentee-card.is-flagged .mc-flag-btn { color: #fff; background: #dc2626; border-color: #dc2626; }
+.mentee-card.flag-answered { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,.16); }
+.mentee-card.flag-answered .mc-identity { background: linear-gradient(135deg, #dcfce7 0%, #f7fef9 85%); border-right-color: #86efac; }
+.mc-flag-state { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; padding: 4px 10px; font-family: var(--font, inherit); font-size: 11px; font-weight: 700; border-radius: 999px; border: 1.5px solid; cursor: pointer; transition: transform .15s, box-shadow .18s; }
+.mc-flag-state:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.12); }
+.mc-flag-state.open { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
+.mc-flag-state.answered { color: #15803d; background: #dcfce7; border-color: #86efac; }
+@media (prefers-reduced-motion: reduce) { .mentee-card.is-flagged { animation: none; box-shadow: 0 0 0 3px rgba(220,38,38,.25); } }

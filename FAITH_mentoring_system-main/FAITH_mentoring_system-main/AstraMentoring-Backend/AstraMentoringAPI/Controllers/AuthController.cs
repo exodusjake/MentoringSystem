@@ -33,6 +33,14 @@ namespace AstraMentoringAPI.Controllers
             _maintenance = maintenance;
         }
 
+        // Emails the new account's login email + the password the Admin set, when the request asks for it
+        // (the single Add User form does; CSV import doesn't). Returns null when not requested, else whether it was delivered.
+        private async Task<bool?> SendCredentialsIfRequestedAsync(UserRegisterRequest request, string role)
+        {
+            if (request.SendCredentials != true) return null;
+            return await _email.SendAccountCredentialsAsync(request.Email, request.FirstName, role, request.Password);
+        }
+
         // Creates a user with an ARBITRARY role (including Admin/Head) from the
         // request body — this is Admin's User Management "add user" tool, not a
         // public signup form. Admin-only: Head has no account-creation UI.
@@ -75,7 +83,8 @@ namespace AstraMentoringAPI.Controllers
             };
 
             await _service.RegisterAsync(user);
-            return Ok(new { message = "User registered successfully" });
+            var sent = await SendCredentialsIfRequestedAsync(request, request.Role);
+            return Ok(new { message = "User registered successfully", credentialsEmailSent = sent });
         }
 
         // Only ever called from Admin's User Management page (single-add and
@@ -93,7 +102,8 @@ namespace AstraMentoringAPI.Controllers
                 message = result.Message,
                 userId = result.UserId,
                 menteeProfileId = result.MenteeProfileId,
-                isAssigned = result.IsAssigned
+                isAssigned = result.IsAssigned,
+                credentialsEmailSent = await SendCredentialsIfRequestedAsync(request, "Mentee")
             });
         }
 
@@ -110,7 +120,8 @@ namespace AstraMentoringAPI.Controllers
             {
                 message = result.Message,
                 userId = result.UserId,
-                mentorProfileId = result.MentorProfileId
+                mentorProfileId = result.MentorProfileId,
+                credentialsEmailSent = await SendCredentialsIfRequestedAsync(request, "Mentor")
             });
         }
 

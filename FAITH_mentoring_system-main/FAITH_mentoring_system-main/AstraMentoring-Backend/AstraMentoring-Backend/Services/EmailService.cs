@@ -268,6 +268,80 @@ namespace AstraMentoring_Backend.Services
             return await SendEmailAsync(recipientEmail, _brandName, "Confirm your AstraMentoring Settings password change", html);
         }
 
+        // New account: emails the login email and the password the Admin set, so the person can sign in.
+        // Returns false when the email could not be delivered so the Admin can be told. Never logs the password.
+        public async Task<bool> SendAccountCredentialsAsync(string recipientEmail, string? firstName, string role, string password)
+        {
+            if (!SmtpConfigured && (string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_senderEmail)) && _isDevelopment)
+            {
+                _logger.LogWarning("EmailService (Development): no mail provider configured — credentials email for {Email} not sent.", recipientEmail);
+                return true;
+            }
+
+            var html = BuildCredentialsEmailHtml(firstName, recipientEmail, role, password);
+            return await SendEmailAsync(recipientEmail, _brandName, "Your AstraMentoring account details", html);
+        }
+
+        private string BuildCredentialsEmailHtml(string? firstName, string loginEmail, string role, string password)
+        {
+            var baseUrl = _frontendBaseUrl;
+            var logoUrl = baseUrl + "/IMAGES/LOGO-mark.png";
+            const string font = "font-family:Arial,Helvetica,sans-serif;";
+            string Row(string label, string value, bool mono) => $@"<tr>
+              <td style=""padding:10px 14px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#64748b;white-space:nowrap;{font}"">{Enc(label)}</td>
+              <td style=""padding:10px 14px;font-size:15px;font-weight:700;color:#0b1a5c;word-break:break-all;{(mono ? "font-family:Consolas,Menlo,monospace;" : font)}"">{Enc(value)}</td>
+            </tr>";
+
+            return $@"
+<div style=""background:#f1f5f9;padding:24px 12px;{font}"">
+  <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""max-width:560px;margin:0 auto;"">
+    <tr>
+      <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:14px 22px;"">
+        <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto;""><tr>
+          <td style=""padding-right:12px;vertical-align:middle;""><img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""38"" style=""display:block;border:0;height:auto;max-width:38px;background:#ffffff;border-radius:50%;padding:3px;"" /></td>
+          <td style=""vertical-align:middle;text-align:left;"">
+            <div style=""color:#ffffff;font-size:14px;font-weight:700;letter-spacing:.05em;{font}"">ASTRA MENTORING</div>
+            <div style=""color:#b6c4f2;font-size:11px;margin-top:1px;{font}"">FAITH Colleges</div>
+          </td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr><td style=""background:#f0b429;height:4px;line-height:4px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#ffffff;padding:34px 32px 30px;"">
+        <h1 style=""margin:0 0 14px;text-align:center;font-size:26px;color:#0b1a5c;{font}"">Welcome to AstraMentoring</h1>
+        <p style=""margin:0 0 6px;font-size:15px;line-height:1.6;color:#475569;{font}"">Hi {Enc(firstName)},</p>
+        <p style=""margin:0 0 20px;font-size:15px;line-height:1.6;color:#475569;{font}"">An account has been created for you as <strong style=""color:#0b1a5c;"">{Enc(role)}</strong>. Use the credentials below to sign in to the system.</p>
+
+        <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""background:#eef3ff;border:1px solid #c7d6fb;border-radius:10px;margin:0 0 22px;"">
+          {Row("Email", loginEmail, false)}
+          {Row("Password", password, true)}
+        </table>
+
+        <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto 22px;""><tr>
+          <td style=""background:#2563eb;border-radius:8px;""><a href=""{baseUrl}/login"" style=""display:inline-block;padding:12px 28px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;{font}"">Log in to AstraMentoring</a></td>
+        </tr></table>
+
+        <p style=""margin:0 0 10px;font-size:14px;line-height:1.6;color:#475569;{font}""><strong style=""color:#0b1a5c;"">What happens next:</strong> on your first login a verification code is sent to this email address, then you finish a one-time setup (e-signature and Data Privacy Act consent).</p>
+        <p style=""margin:0;font-size:14px;line-height:1.6;color:#475569;{font}"">Keep these credentials private and don’t share your password with anyone. You can change it anytime from your Account page. If you weren’t expecting this email, please tell the Guidance Office.</p>
+      </td>
+    </tr>
+    <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
+        <a href=""{baseUrl}/landing"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/terms"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/privacy"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a>
+        <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
+        <p style=""margin:0;"">You received this email because an AstraMentoring account was created with this address.</p>
+        <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
+        <p style=""margin:12px 0 0;color:#ffffff;font-weight:700;"">AstraMentoring · FAITH Colleges</p>
+      </td>
+    </tr>
+  </table>
+</div>";
+        }
+
         // Branded layout for the emailed codes: navy header with the logo, white
         // card with the code, a help box, and a footer with site links. Table
         // based with inline styles so it renders in Gmail/Outlook/mobile clients.

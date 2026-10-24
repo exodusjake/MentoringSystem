@@ -1,0 +1,49 @@
+// Stylesheet ui-datepicker.js injected into pages that loaded it.
+export const DATEPICKER_CSS = [
+  '.dp-native{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden;clip:rect(0 0 0 0)}',
+  '.dp-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;',
+  'min-width:0;box-sizing:border-box;font-family:inherit;line-height:1.35;outline:none;',
+  'transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}',
+  '.dp-trigger .dp-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+  '.dp-trigger .dp-label.is-placeholder{color:#9ca3af}',
+  '.dp-icon{width:15px;height:15px;flex-shrink:0;color:#6b7280;transition:color .18s}',
+  '.dp-trigger.open .dp-icon,.dp-trigger:hover:not(:disabled) .dp-icon{color:#2563eb}',
+  '.dp-trigger:hover:not(:disabled){border-color:#93c5fd}',
+  '.dp-trigger.open,.dp-trigger:focus-visible{border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.12)}',
+  '.dp-trigger:disabled{cursor:not-allowed;opacity:.6;background-color:#f3f4f6}',
+
+  '.dp-menu{position:fixed;z-index:2147483200;width:284px;max-width:calc(100vw - 16px);box-sizing:border-box;background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:12px;',
+  'box-shadow:0 14px 36px rgba(15,23,42,.16),0 2px 6px rgba(15,23,42,.06);',
+  'opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top center;pointer-events:none;',
+  'transition:opacity .16s ease,transform .2s cubic-bezier(.22,1,.36,1);font-family:inherit;user-select:none}',
+  '.dp-menu.up{transform-origin:bottom center;transform:translateY(6px) scale(.98)}',
+  '.dp-menu.show{opacity:1;transform:none;pointer-events:auto}',
+  '.dp-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px}',
+  '.dp-title{flex:1;text-align:center;font-size:14px;font-weight:700;color:#1f2937}',
+  '.dp-nav{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:#4b5563;cursor:pointer;transition:background .12s,color .12s}',
+  '.dp-nav:hover{background:#eff6ff;color:#1d4ed8}',
+  '.dp-nav svg{width:16px;height:16px}',
+  '.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}',
+  '.dp-dow{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9ca3af;text-align:center;padding:4px 0}',
+  '.dp-day{display:flex;align-items:center;justify-content:center;height:34px;border:0;border-radius:8px;background:transparent;font-size:13px;font-family:inherit;color:#374151;cursor:pointer;transition:background .12s,color .12s;padding:0}',
+  '.dp-day:hover:not(:disabled){background:#eff6ff;color:#1d4ed8}',
+  '.dp-day.out{color:#b6bcc7}',
+  '.dp-day.today{box-shadow:inset 0 0 0 1.5px #93c5fd;font-weight:600}',
+  '.dp-day.selected,.dp-day.selected:hover{background:#2563eb;color:#fff;font-weight:600}',
+  '.dp-day:disabled{color:#d1d5db;cursor:not-allowed}',
+  '.dp-day:focus-visible{outline:2px solid #2563eb;outline-offset:1px}',
+  '.dp-foot{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f6}',
+  '.dp-link{border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:#2563eb;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .12s}',
+  '.dp-link:hover{background:#eff6ff}',
+  '.dp-time{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f6}',
+  '.dp-tin{width:42px;height:34px;box-sizing:border-box;text-align:center;font-family:inherit;font-size:14px;font-weight:600;color:#1f2937;border:1px solid #dce3ec;border-radius:8px;background:#fff;outline:none;padding:0;transition:border-color .15s,box-shadow .15s}',
+  '.dp-tin:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.12)}',
+  '.dp-colon{font-weight:700;color:#6b7280}',
+  '.dp-ampm{height:34px;padding:0 12px;border:1px solid #dce3ec;border-radius:8px;background:#fff;font-family:inherit;font-size:13px;font-weight:700;color:#2563eb;cursor:pointer;transition:background .12s,border-color .12s}',
+  '.dp-ampm:hover{background:#eff6ff;border-color:#93c5fd}',
+  '@media (prefers-reduced-motion:reduce){.dp-menu{transition:none}}'
+].join('');
+
+
+// Stylesheet ui-timepicker.js injected into pages that loaded it.
+export const TIMEPICKER_CSS = ".tp-native{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden;clip:rect(0 0 0 0)}.tp-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;min-width:0;box-sizing:border-box;font-family:inherit;line-height:1.35;outline:none;transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}.tp-trigger .tp-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tp-trigger .tp-label.is-placeholder{color:#9ca3af}.tp-icon{width:15px;height:15px;flex-shrink:0;color:#6b7280;transition:color .18s}.tp-trigger.open .tp-icon,.tp-trigger:hover:not(:disabled) .tp-icon{color:#2563eb}.tp-trigger:hover:not(:disabled){border-color:#93c5fd}.tp-trigger.open,.tp-trigger:focus-visible{border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.12)}.tp-trigger:disabled{cursor:not-allowed;opacity:.6;background-color:#f3f4f6}.tp-menu{position:fixed;z-index:2147483200;width:236px;max-width:calc(100vw - 16px);box-sizing:border-box;background:#fff;border:1px solid #dce3ec;border-radius:12px;padding:10px;box-shadow:0 14px 36px rgba(15,23,42,.16),0 2px 6px rgba(15,23,42,.06);opacity:0;transform:translateY(-6px) scale(.98);transform-origin:top center;pointer-events:none;transition:opacity .16s ease,transform .2s cubic-bezier(.22,1,.36,1);font-family:inherit;user-select:none}.tp-menu.up{transform-origin:bottom center;transform:translateY(6px) scale(.98)}.tp-menu.show{opacity:1;transform:none;pointer-events:auto}.tp-cols{display:grid;grid-template-columns:1fr 1fr 62px;gap:6px}.tp-col{display:flex;flex-direction:column;gap:2px;max-height:196px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}.tp-col::-webkit-scrollbar{width:6px}.tp-col::-webkit-scrollbar-thumb{background:#d6dde8;border-radius:6px}.tp-cell{flex-shrink:0;height:32px;border:0;border-radius:8px;background:transparent;font-family:inherit;font-size:14px;color:#374151;cursor:pointer;transition:background .12s,color .12s;padding:0}.tp-cell:hover{background:#eff6ff;color:#1d4ed8}.tp-cell.selected,.tp-cell.selected:hover{background:#2563eb;color:#fff;font-weight:600}.tp-cell:focus-visible{outline:2px solid #2563eb;outline-offset:1px}.tp-foot{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f6}.tp-link{border:0;background:transparent;font-family:inherit;font-size:13px;font-weight:600;color:#2563eb;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .12s}.tp-link:hover{background:#eff6ff}@media (prefers-reduced-motion:reduce){.tp-menu{transition:none}}";

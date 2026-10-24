@@ -1,0 +1,7 @@
+    /* Bridge missing CSS variables that calendar.css expects */
+    :root {
+      --font:       'DM Sans', sans-serif;
+      --teal:       #0f766e;
+      --teal-light: #f0fdfa;
+    }
+  

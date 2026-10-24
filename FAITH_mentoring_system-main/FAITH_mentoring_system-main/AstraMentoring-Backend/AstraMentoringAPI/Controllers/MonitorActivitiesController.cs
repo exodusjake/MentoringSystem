@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using AstraMentoring_Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 
 namespace AstraMentoringAPI.Controllers
@@ -11,10 +12,16 @@ namespace AstraMentoringAPI.Controllers
     public class MonitorActivitiesController : ControllerBase
     {
         private readonly MonitorActivitiesService _service;
+        private readonly IMemoryCache? _cache;
 
-        public MonitorActivitiesController(MonitorActivitiesService service)
+        // The overview is expensive to compute and the Admin/Head dashboards poll it, so it is shared for a
+        // short time. A request that arrives later than this sees changes made in between.
+        private static readonly TimeSpan OverviewCacheTtl = TimeSpan.FromSeconds(30);
+
+        public MonitorActivitiesController(MonitorActivitiesService service, IMemoryCache? cache = null)
         {
             _service = service;
+            _cache = cache;
         }
 
         // Full oversight dump of every mentor's progress (name, email,
@@ -29,7 +36,15 @@ namespace AstraMentoringAPI.Controllers
             [FromQuery] string? semester = null,
             CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetMentorOverviewAsync(includeInactive, schoolYear, semester, cancellationToken);
+            if (_cache == null)
+                return Ok(await _service.GetMentorOverviewAsync(includeInactive, schoolYear, semester, cancellationToken));
+
+            var key = $"monitor-overview|{includeInactive}|{schoolYear}|{semester}";
+            if (!_cache.TryGetValue(key, out MentorOverviewListDto? result) || result == null)
+            {
+                result = await _service.GetMentorOverviewAsync(includeInactive, schoolYear, semester, cancellationToken);
+                _cache.Set(key, result, OverviewCacheTtl);
+            }
             return Ok(result);
         }
 
