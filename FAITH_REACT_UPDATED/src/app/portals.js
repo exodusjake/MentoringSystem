@@ -123,7 +123,7 @@ export const PORTAL_CONFIG = {
     // Admin/Head pages sent a pending setup to their setup page; Mentor/Mentee sidebars logged out instead.
     onSetupRequired: 'redirect',
     profilePath: 'account',
-    roleLabel: 'Head Mentoring Personnel',
+    roleLabel: 'Head Administration',
     defaultName: 'Head Admin',
     defaultInitials: 'HA',
     pascalFallback: true,
