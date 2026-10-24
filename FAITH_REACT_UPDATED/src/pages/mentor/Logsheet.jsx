@@ -303,6 +303,7 @@ export default function MentorLogsheet() {
   const [statusFilter, setStatusFilter] = useState('');
   const [periodFilter, setPeriodFilter] = useState('');
   const [printMenu, setPrintMenu] = useState(null);
+  const [printUp, setPrintUp] = useState(false);   // open the card menu upward when the page ends right below it
 
   // preview modal
   const [previewId, setPreviewId] = useState(null);
@@ -832,10 +833,16 @@ export default function MentorLogsheet() {
               <button className="btn-print-main" onClick={() => exportOneSession(sid, 'logsheet')}>
                 <i className="ti ti-printer"></i> Print
               </button>
-              <button className="btn-print-caret" onClick={() => setPrintMenu(menuOpen ? null : sid)}>
+              <button className="btn-print-caret" onClick={e => {
+                // .main-wrapper clips anything hanging past its bottom edge, so a last card flips its menu upward.
+                const wrap = e.currentTarget.closest('.main-wrapper');
+                const room = wrap ? wrap.getBoundingClientRect().bottom - e.currentTarget.getBoundingClientRect().bottom : Infinity;
+                setPrintUp(room < 160);
+                setPrintMenu(menuOpen ? null : sid);
+              }}>
                 <i className="ti ti-chevron-down"></i>
               </button>
-              <div className={`print-dropdown${menuOpen ? ' open' : ''}`} id={`printMenu-${sid}`}>
+              <div className={`print-dropdown${menuOpen ? ' open' : ''}${menuOpen && printUp ? ' up' : ''}`} id={`printMenu-${sid}`}>
                 <button className="print-drop-item" onClick={() => { exportOneSession(sid, 'logsheet'); setPrintMenu(null); }}><i className="ti ti-clipboard-list"></i> Logsheet</button>
                 <button className="print-drop-item" onClick={() => { exportOneSession(sid, 'notes'); setPrintMenu(null); }}><i className="ti ti-notes"></i> Mentor's Notes</button>
                 <button className="print-drop-item" onClick={() => { exportOneSession(sid, 'nonattend'); setPrintMenu(null); }}><i className="ti ti-user-x"></i> Non-Attendance</button>
