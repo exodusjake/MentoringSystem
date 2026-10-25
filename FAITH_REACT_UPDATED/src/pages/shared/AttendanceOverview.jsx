@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { leavePage } from '../../lib/pageTransition.js';
 import Page from '../../app/Page.jsx';
+import PagedPanel from '../../components/PagedPanel.jsx';
 import Empty from '../../components/Empty.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import OptionGroups from '../../components/OptionGroups.jsx';
@@ -324,15 +325,15 @@ tr.mentee-row:nth-child(even){background:#f9fafb}
   }
 
   // ── Mentor rows ──
-  let grid;
+  let cards = null, gridMsg = null;
   if (loadState === 'loading') {
-    grid = <Empty className="empty-state" plainText={cfg.loadingText}><span className="spinner"></span> {cfg.loadingText}</Empty>;
+    gridMsg = <Empty className="empty-state" plainText={cfg.loadingText}><span className="spinner"></span> {cfg.loadingText}</Empty>;
   } else if (loadState === 'failed') {
-    grid = <Empty className="empty-state">Failed to load data. Please refresh.</Empty>;
+    gridMsg = <Empty className="empty-state">Failed to load data. Please refresh.</Empty>;
   } else if (!currentFiltered.length) {
-    grid = <Empty className="empty-state">{cfg.emptyText}</Empty>;
+    gridMsg = <Empty className="empty-state">{cfg.emptyText}</Empty>;
   } else {
-    grid = [...currentFiltered].sort((a, b) =>
+    cards = [...currentFiltered].sort((a, b) =>
       `${a.lastName} ${a.firstName}`.localeCompare(`${b.lastName} ${b.firstName}`)
     ).map(m => {
       const initials = ((m.firstName?.[0] || '') + (m.lastName?.[0] || '')).toUpperCase() || 'M';
@@ -546,7 +547,7 @@ tr.mentee-row:nth-child(even){background:#f9fafb}
             </div>
           </div>
           {/* Mentor rows */}
-          <div className="att-mentor-list" id="mentorCardsGrid">{grid}</div>
+          <PagedPanel items={cards} message={gridMsg} gridClass="att-mentor-list" gridId="mentorCardsGrid" unit="mentors" storageKey="pp-att" />
         </main>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Page from '../../app/Page.jsx';
 import DateInput from '../../components/DateInput.jsx';
+import PagedPanel from '../../components/PagedPanel.jsx';
 import Empty from '../../components/Empty.jsx';
 import Overlay from '../../components/Overlay.jsx';
 import OptionGroups from '../../components/OptionGroups.jsx';
@@ -139,9 +140,9 @@ export default function ProofTracking({ pageId }) {
   const showingCount = !byMentor.size ? '' :
     `${filtered.length} session${filtered.length !== 1 ? 's' : ''} · ${mentors.length} mentor${mentors.length !== 1 ? 's' : ''}`;
 
-  let cards;
-  if (!loaded) cards = <Empty as="div" className="table-empty"><span className="spinner"></span> Loading…</Empty>;
-  else if (!byMentor.size) cards = <Empty className="table-empty">No mentors or sessions match the current filters.</Empty>;
+  let cards = null, cardsMsg = null;
+  if (!loaded) cardsMsg = <Empty as="div" className="table-empty"><span className="spinner"></span> Loading…</Empty>;
+  else if (!byMentor.size) cardsMsg = <Empty className="table-empty">No mentors or sessions match the current filters.</Empty>;
   else cards = mentors.map((m, i) => {
     const initials = m.name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase() || '—';
     const uploaded = m.sessions.filter(s => s.hasProof).length;
@@ -150,7 +151,7 @@ export default function ProofTracking({ pageId }) {
     const pct = hasSessions ? Math.round((uploaded / m.sessions.length) * 100) : 0;
     const tier = !hasSessions ? '' : pct >= 80 ? 'good' : pct >= 50 ? 'warn' : 'bad';
     return (
-      <div className="pt-card" key={i}>
+      <div className="pt-card" key={m.sortKey}>
         <div className="pt-card-top">
           <div className="pt-card-id">
             <div className={`pt-avatar av-${i % 6}`}>{initials}</div>
@@ -387,7 +388,7 @@ export default function ProofTracking({ pageId }) {
             {' '}
             <button className="btn-clear" onClick={clearFilters}>Clear</button>
           </div>
-          <div className="pt-cards-grid" id="ptCardsGrid">{cards}</div>
+          <PagedPanel items={cards} message={cardsMsg} gridClass="pt-cards-grid" gridId="ptCardsGrid" unit="mentors" storageKey="pp-proofs" />
         </main>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>

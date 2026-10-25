@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
+import PagedPanel from '../../components/PagedPanel.jsx';
 import Empty from '../../components/Empty.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import OptionGroups from '../../components/OptionGroups.jsx';
@@ -336,11 +337,11 @@ tbody tr:last-child { border-bottom: 1.5px solid #111827; }
   }
 
   // ── Mentor List (row format) ──
-  let mentorGrid;
+  let mentorGrid = null, mentorMsg = null;
   if (!loaded) {
-    mentorGrid = <Empty className="empty-state" plainText="Loading mentors…"><span className="spinner"></span> Loading mentors…</Empty>;
+    mentorMsg = <Empty className="empty-state" plainText="Loading mentors…"><span className="spinner"></span> Loading mentors…</Empty>;
   } else if (!n) {
-    mentorGrid = <Empty className="empty-state">No mentors match the current filter.</Empty>;
+    mentorMsg = <Empty className="empty-state">No mentors match the current filter.</Empty>;
   } else {
     mentorGrid = filtered.map(m => {
       const first = m.firstName || m.FirstName || '';
@@ -520,7 +521,7 @@ tbody tr:last-child { border-bottom: 1.5px solid #111827; }
               {<Select className="filter-select" id="schoolYearFilter" value={year} onChange={e => setYear(e.target.value)}>{periodOptions ? periodOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>) : <option value="">Current Semester</option>}</Select>}
             </div>
             {/* Mentor rows */}
-            {<div className="mentor-list" id="mentorCardsGrid">{mentorGrid}</div>}
+            {<PagedPanel items={mentorGrid} message={mentorMsg} gridClass="mentor-list" gridId="mentorCardsGrid" unit="mentors" storageKey="pp-monitor" />}
           </div>
           {/* end #mentorView */}
         </main>
