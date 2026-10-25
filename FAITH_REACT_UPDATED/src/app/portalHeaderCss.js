@@ -43,6 +43,8 @@ export const PORTAL_HEADER_CSS = [
   'html.portal-has-header .sidebar{top:0!important;left:0!important;width:var(--sb-width,260px)!important;min-width:var(--sb-width,260px)!important;height:100vh!important;height:100dvh!important;border-radius:0!important;border-width:0 1px 0 0!important}',
   '.ph-brand img{width:36px;height:36px}',
   '.ph-brand-text{font-size:10px}',
+  // The drawer's close (X) button sits over its top-right corner: start the menu below it.
+  'html.portal-has-header .sidebar{padding-top:56px}',
   '.ph-actions{gap:8px}',
   '.ph-theme{width:36px;height:36px;font-size:18px}',
   '.ph-avatar{width:36px;height:36px;font-size:13px}',
