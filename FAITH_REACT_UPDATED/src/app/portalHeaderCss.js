@@ -1,14 +1,15 @@
-// Top header bar shared by every portal: theme switch, concern bell and the profile menu on the right. Colours come from each portal's own sidebar tokens (--sb-bg, --sb-border,
+// Top header bar shared by every portal (logo and system name on the left; theme switch, concern bell and the profile menu on the right). Colours come from each portal's own sidebar tokens (--sb-bg, --sb-border,
 // --sb-active …), so Head/Admin stay blue, Mentor teal and Mentee indigo.
 export const PORTAL_HEADER_CSS = [
-  // Sidebar: brand block on top; the logout button moved into the header's profile menu.
-  '.sb-brand{display:flex;align-items:center;gap:10px;height:64px;min-height:64px;padding:0 16px;box-sizing:border-box;position:sticky;top:0;z-index:2;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);text-decoration:none}',
-  '.sb-brand img{width:38px;height:38px;object-fit:contain;flex-shrink:0}',
-  '.sb-brand-text{font-size:10.5px;font-weight:700;letter-spacing:.04em;line-height:1.25;text-transform:uppercase;color:var(--sb-active,#2563eb)}',
-  '.sidebar-nav{padding-bottom:20px}',
+  // Sidebar: a separate rounded panel under the header (full-height drawer on phones).
+  'html.portal-has-header .sidebar{top:76px!important;left:12px!important;width:calc(var(--sb-width,260px) - 24px)!important;min-width:0!important;height:calc(100vh - 88px)!important;height:calc(100dvh - 88px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-radius:14px!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
+  '.sidebar-nav{padding-top:6px;padding-bottom:20px}',
 
   // Header: fixed to the top of the content area, so it follows the page as it scrolls.
-  '.portal-header{position:fixed;top:0;left:var(--sb-width,260px);right:0;height:64px;z-index:90;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);font-family:var(--font,"DM Sans",system-ui,sans-serif)}',
+  '.portal-header{position:fixed;top:0;left:0;right:0;height:64px;z-index:90;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);font-family:var(--font,"DM Sans",system-ui,sans-serif)}',
+  '.ph-brand{display:flex;align-items:center;gap:12px;min-width:0;text-decoration:none}',
+  '.ph-brand img{width:42px;height:42px;object-fit:contain;flex-shrink:0}',
+  '.ph-brand-text{font-size:11.5px;font-weight:700;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;color:var(--sb-active,#2563eb)}',
   '.ph-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-left:auto}',
   '.ph-theme{position:relative;width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--sb-icon,#6b7280);background:var(--sb-bg,#fff);border:1px solid var(--sb-border,#e9ecef);border-radius:50%;cursor:pointer}',
   '.ph-theme:hover{background:var(--sb-item-hover,#f3f4f6);color:var(--sb-active,#2563eb)}',
@@ -37,7 +38,10 @@ export const PORTAL_HEADER_CSS = [
   '@media (min-width:769px){html.portal-has-header body .main-wrapper{padding-top:64px}}',
 
   '@media (max-width:768px){',
-  '.portal-header{left:0;height:58px;padding:0 14px 0 62px}',
+  '.portal-header{height:58px;padding:0 14px 0 62px}',
+  'html.portal-has-header .sidebar{top:0!important;left:0!important;width:var(--sb-width,260px)!important;min-width:var(--sb-width,260px)!important;height:100vh!important;height:100dvh!important;border-radius:0!important;border-width:0 1px 0 0!important}',
+  '.ph-brand img{width:36px;height:36px}',
+  '.ph-brand-text{font-size:10px}',
   '.ph-actions{gap:8px}',
   '.ph-theme{width:36px;height:36px;font-size:18px}',
   '.ph-avatar{width:36px;height:36px;font-size:13px}',
@@ -46,6 +50,7 @@ export const PORTAL_HEADER_CSS = [
   '}',
   '@media (max-width:480px){',
   '.portal-header{height:52px;padding-left:54px}',
+  '.ph-brand-text{display:none}',
   '.ph-avatar{width:34px;height:34px}',
   '.ph-theme{width:34px;height:34px}',
   '}',

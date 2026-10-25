@@ -206,6 +206,10 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
       <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close} style={hide}></div>
 
       <header className="portal-header" style={hide}>
+        <div className="ph-brand">
+          <img src="/IMAGES/LOGO-mark.png" alt="" />
+          <div className="ph-brand-text">A Mentoring Management and Monitoring System</div>
+        </div>
         <div className="ph-actions">
           <button type="button" className="ph-theme" aria-label="Switch light or dark mode" title="Light / dark mode"
             onClick={() => window.astraToggleTheme?.()}>
@@ -231,10 +235,6 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
 
       <aside className={`sidebar${open ? ' open' : ''}`} id="sidebar" ref={sidebarRef}
         style={hide}>
-        <div className="sb-brand">
-          <img src="/IMAGES/LOGO-mark.png" alt="" />
-          <div className="sb-brand-text">A Mentoring Management and Monitoring System</div>
-        </div>
         <nav className={`sidebar-nav${hasIndicator ? ' has-indicator' : ''}`} aria-label="Main navigation" ref={navRef}>
           <div className="sb-indicator" ref={pillRef}></div>
           {config.nav.map((item, i) => item.section ? (
