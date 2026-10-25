@@ -678,3 +678,14 @@ footer p { font-size: 12px; color: var(--gray-400); }
   .log-session-card .btn-view-logsheet, .log-session-card .btn-print-main, .log-session-card .btn-print-caret { height: 36px; font-size: 12.5px; }
   .log-section-group-header { padding: 8px 12px; }
 }
+
+/* Print menu: the card clips its own corners (overflow: hidden), which also cut the menu off. While a menu is open the card lets it show
+   and sits above the cards after it. */
+.log-session-card:has(.print-dropdown.open) { overflow: visible; position: relative; z-index: 20; }
+
+/* ── Phones: the search box is as tall as the filters under it (it had collapsed to a thin strip). ── */
+@media screen and (max-width: 768px) {
+  body .main-wrapper .log-toolbar > .search-wrap { flex: 0 0 auto; width: 100%; height: 44px; min-height: 44px; padding: 0 14px; box-sizing: border-box; }
+  body .main-wrapper .log-toolbar > .search-wrap input { font-size: 14px; }
+  body .main-wrapper .log-toolbar > .dd-trigger { min-height: 44px; }
+}
