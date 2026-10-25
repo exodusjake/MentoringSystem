@@ -495,3 +495,15 @@ body.attendance-detail .mnc-status-badge { white-space: normal; text-transform: 
   body.attendance-detail .history-table tbody td:nth-child(3) { grid-column: 2; grid-row: 1; justify-self: end; }
   body.attendance-detail .history-table tbody td:nth-child(4) { grid-column: 2; grid-row: 2; justify-self: end; }
 }
+
+/* ── Phones: Attendance Logs / Attendance Summary filters (Admin + Head). Search on its own row, the course filter and
+   Clear share the next row at the same height, and Export CSV / Print Report split the last row evenly. ── */
+@media screen and (max-width: 768px) {
+  .att-toolbar--overview { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: stretch; }
+  .att-toolbar--overview .att-filter-group .search-box { grid-column: 1 / -1; width: 100%; }
+  body .att-toolbar--overview .att-filter-group > .dd-trigger.filter-select,
+  body .att-toolbar--overview .att-filter-group > select.filter-select { width: 100% !important; max-width: none; }
+  body .att-toolbar--overview .att-filter-group > .filter-reset { min-height: 44px; padding: 0 20px; margin: 0; align-self: stretch; }
+  .att-toolbar--overview .att-action-group { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-left: 0; }
+  .att-toolbar--overview .att-action-group > button { width: 100%; max-width: none; justify-content: center; }
+}
