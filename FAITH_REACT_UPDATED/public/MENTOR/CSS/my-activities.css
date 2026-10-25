@@ -394,3 +394,15 @@ tbody tr:hover { background: #f4f7fb; }
 .sec-group-name { font-size: 14px; font-weight: 600; }
 .badge, .proof-chip, .mcard-status, .mcard-dropout-chip { font-size: 11.5px; font-weight: 600; }
 .search-box input, .filter-select { font-family: inherit; font-size: 13px; }
+
+/* ── Phones: Attendance Overview profile card. The performance badge sits at the left with its (i) at the right edge, and the avatar
+   lines up with the name and details beside it. ── */
+@media screen and (max-width: 640px) {
+  .mentor-hero { align-items: center; row-gap: 14px; column-gap: 16px; padding: 16px 18px; }
+  .mentor-hero .hero-tip-wrap { justify-self: stretch; width: 100%; justify-content: space-between; }
+  .mentor-hero .hero-badge { font-size: 12px; padding: 5px 12px; }
+  .mentor-hero .hero-avatar { align-self: center; }
+  .mentor-hero .hero-info { align-self: center; }
+  .mentor-hero .hero-name { font-size: 18px; margin-bottom: 6px; overflow-wrap: anywhere; }
+  .mentor-hero .hero-meta { flex-direction: column; flex-wrap: nowrap; gap: 6px; }
+}
