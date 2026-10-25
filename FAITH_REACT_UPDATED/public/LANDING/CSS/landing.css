@@ -232,7 +232,16 @@ footer { background: var(--navy-deep); color: #b8c4f0; padding: 56px 0 0; font-s
   .logo-card img { width: 200px; }
   .chip.c2 { left: 0; }
   .cta { padding: 28px 22px; }
-  .foot-grid { grid-template-columns: 1fr; }
+  /* Footer on phones: logo + blurb centred, the two link lists side by side, contact and legal line centred. */
+  footer { padding-top: 40px; }
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; padding-bottom: 28px; }
+  .foot-brand, .foot-grid > div:last-child { grid-column: 1 / -1; text-align: center; }
+  .foot-brand img { margin-inline: auto; }
+  .foot-grid h4 { margin-bottom: 10px; }
+  .foot-grid ul { gap: 6px; }
+  .foot-grid li { overflow-wrap: anywhere; }
+  .foot-bottom { flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+  .foot-bottom .legal-links { justify-content: center; gap: 8px 18px; }
 }
 
 /* ── FAQ accordion ───────────────────────── */
