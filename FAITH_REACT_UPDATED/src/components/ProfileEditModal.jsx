@@ -62,6 +62,7 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
   const [showNew, setShowNew] = useState(false);
   const [showNew2, setShowNew2] = useState(false);
   const [editError, setEditError] = useState('');
+  const [contactErr, setContactErr] = useState('');
   const [errs, setErrs] = useState({ currentPw: '', newPw: '', confirmPw: '', code: '' });
   const [token, setToken] = useState(null);                 // pwChangeToken
   const [code, setCode] = useState('');
@@ -92,7 +93,7 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
     if (!open) return;
     setContact(currentUser?.contactNumber || currentUser?.ContactNumber || '');
     setCurPw(''); setShowCur(false);
-    setEditError('');
+    setEditError(''); setContactErr('');
     setErrs({ currentPw: '', newPw: '', confirmPw: '', code: '' });
     resetPwFlow();
     setConfirmOpen(false);
@@ -110,7 +111,7 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
     return () => document.removeEventListener('keydown', onKey);
   }, [pe, open, confirmOpen]);
 
-  const clearErrors = () => { setErrs({ currentPw: '', newPw: '', confirmPw: '', code: '' }); setEditError(''); };
+  const clearErrors = () => { setErrs({ currentPw: '', newPw: '', confirmPw: '', code: '' }); setEditError(''); setContactErr(''); };
   const setErr = (k, msg) => setErrs(e => ({ ...e, [k]: msg }));
 
   function startCodeCooldown(seconds) {
@@ -171,6 +172,9 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
 
   function confirmSave() {
     clearErrors();
+    // Typing is free; the number is checked when Save is pressed.
+    const contactVal = contact.trim();
+    if (contactVal && !/^[0-9]+$/.test(contactVal)) { setContactErr('Only valid numbers are allowed.'); return; }
     if (newPw || newPw2) {
       let bad = false;
       const next = { currentPw: '', newPw: '', confirmPw: '', code: '' };
@@ -228,7 +232,8 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
           <div className={c.form}>
             <div className={c.group}>
               {label('editContact', <>Contact Number <span className={c.opt}>(optional)</span></>)}
-              <input type="text" id="editContact" placeholder="09XXXXXXXXX" autoComplete="tel" inputMode="numeric" maxLength={11} value={contact} onChange={e => setContact(e.target.value.replace(/[^0-9]/g, ''))} />
+              <input type="text" id="editContact" placeholder="09XXXXXXXXX" autoComplete="tel" value={contact} onChange={e => { setContact(e.target.value); setContactErr(''); }} aria-invalid={contactErr ? 'true' : undefined} />
+              <span className={c.fieldError} id="contactError">{contactErr}</span>
             </div>
             <div className={c.section}>Change Password</div>
             <div className={c.group}>
