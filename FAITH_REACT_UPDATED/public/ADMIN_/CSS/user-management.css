@@ -1422,3 +1422,16 @@ tbody tr.row-in { animation: umRowIn .34s cubic-bezier(.22, 1, .36, 1) both; }
   body .main-wrapper .um-tabs .um-tab { flex: 1 1 0; min-width: 0; justify-content: center; padding: 9px 6px; font-size: 13px; gap: 5px; }
   body .main-wrapper .um-tabs .um-tab svg { width: 14px; height: 14px; }
 }
+
+/* ── Phones: the row action buttons (edit, remove, ⋮) are real tap targets, not 17px specks. ── */
+@media screen and (max-width: 768px) {
+  .action-cell { gap: 8px; }
+  .action-cell .icon-edit,
+  .action-cell .icon-delete,
+  .action-cell .icon-more { width: 40px; height: 40px; padding: 0; justify-content: center; align-items: center; border: 1px solid #dce3ec; border-radius: 10px; background: #fff; color: #6b7280; }
+  .action-cell .icon-edit svg,
+  .action-cell .icon-delete svg,
+  .action-cell .icon-more svg { width: 22px; height: 22px; }
+  .action-cell .icon-edit:hover { color: var(--blue); background: var(--blue-light); }
+  .action-cell .icon-more:hover:not(:disabled) { color: #374151; background: #f3f4f6; }
+}
