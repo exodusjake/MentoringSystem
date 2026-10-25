@@ -490,3 +490,9 @@ button, .btn-log-session, .btn-sc-qr, .btn-sc-proof-upload, .btn-sc-proof-view, 
   button, .btn-log-session, .btn-form-submit { transition: none; }
   button:hover, button:active { transform: none !important; }
 }
+
+/* ── Phones: the delete confirmation also names the checkpoint (e.g. "Before Prelims"), not only the date. Hidden on desktop. ── */
+.confirm-slot { display: none; }
+@media screen and (max-width: 768px) {
+  .confirm-slot { display: inline; }
+}

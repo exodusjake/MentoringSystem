@@ -452,7 +452,7 @@ export default function MentorSessions() {
             <div className="sc-actions sc-actions-cancelled">
               <div className="sc-secondary-actions">
                 <button className="sc-action-btn btn-sc-edit" onClick={() => openEditModal(sid)} title="Edit session" aria-label="Edit"><i className="ti ti-pencil"></i></button>
-                <button className="sc-action-btn btn-sc-delete" onClick={() => { setDeleteBusy(false); setDeleteTarget({ id: sid, dStr }); }} title="Delete session" aria-label="Delete"><i className="ti ti-trash"></i></button>
+                <button className="sc-action-btn btn-sc-delete" onClick={() => { setDeleteBusy(false); setDeleteTarget({ id: sid, dStr, slot: s.slotName }); }} title="Delete session" aria-label="Delete"><i className="ti ti-trash"></i></button>
               </div>
             </div>
           </div>
@@ -495,7 +495,7 @@ export default function MentorSessions() {
             <div className="sc-secondary-actions">
               <button className="sc-action-btn btn-sc-edit" onClick={() => openEditModal(sid)} title="Edit session" aria-label="Edit"><i className="ti ti-pencil"></i></button>
               {status === 'Completed' || present > 0 ? null : (
-                <button className="sc-action-btn btn-sc-delete" onClick={() => { setDeleteBusy(false); setDeleteTarget({ id: sid, dStr }); }} title="Delete session" aria-label="Delete"><i className="ti ti-trash"></i></button>
+                <button className="sc-action-btn btn-sc-delete" onClick={() => { setDeleteBusy(false); setDeleteTarget({ id: sid, dStr, slot: s.slotName }); }} title="Delete session" aria-label="Delete"><i className="ti ti-trash"></i></button>
               )}
             </div>
           </div>
@@ -672,7 +672,7 @@ export default function MentorSessions() {
           <div className="confirm-icon confirm-icon-danger"><i className="ti ti-trash"></i></div>
           <h3 className="confirm-title">Delete Session?</h3>
           <p className="confirm-body">
-            <strong id="deleteConfirmDate">{deleteTarget?.dStr}</strong><br />
+            <strong id="deleteConfirmDate">{deleteTarget?.dStr}</strong>{deleteTarget?.slot ? <strong className="confirm-slot"> · {deleteTarget.slot}</strong> : null}<br />
             This will permanently remove the session and cannot be undone.
           </p>
           <div className="confirm-actions">
