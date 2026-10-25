@@ -18,7 +18,7 @@ const readPrev = () => { try { return JSON.parse(sessionStorage.getItem(KEY)); }
 // logout modal) and of sidebar-indicator.js (sliding highlight pill, scroll position).
 const todayLabel = () => new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Manila', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
-export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
+export default function Sidebar({ config, activeId, onNavigate, stylesReady, bell }) {
   useStyle('portal-header', PORTAL_HEADER_CSS);
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -213,20 +213,26 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
           <div className="ph-title">{pageTitle}</div>
           <div className="ph-date">{todayLabel()}</div>
         </div>
+        <div className="ph-actions">
+          <button type="button" className="ph-theme" aria-label="Switch light or dark mode" title="Light / dark mode"
+            onClick={() => window.astraToggleTheme?.()}>
+            <i className="ti ti-sun ic-sun"></i><i className="ti ti-moon ic-moon"></i>
+          </button>
+          {bell}
         <div className="ph-user" ref={userRef}>
-          <button type="button" className="ph-avatar" aria-label="Account menu" aria-haspopup="menu" aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(o => !o)}>{initials}</button>
+          <button type="button" className="ph-user-btn" aria-label="Account menu" aria-haspopup="menu" aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(o => !o)}>
+            <span className="ph-avatar" id="sidebarAvatar">{initials}</span>
+            <span className="ph-user-text">
+              <span className="ph-user-name" id="sidebarName">{name}</span>
+              <span className="ph-user-role" id={config.role === 'head' || config.role === 'admin' ? 'sidebarRole' : undefined}>{config.roleLabel}{dept ? ` · ${dept}` : ''}</span>
+            </span>
+          </button>
           <div className={`ph-menu${menuOpen ? ' open' : ''}`} role="menu">
-            <div className="ph-menu-id">
-              <div className="ph-menu-avatar">{initials}</div>
-              <div className="ph-menu-text">
-                <div className="ph-menu-name">{name}</div>
-                <div className="ph-menu-role">{config.roleLabel}</div>
-              </div>
-            </div>
             <button type="button" className="ph-item" role="menuitem" onClick={goProfile}><i className="ti ti-user-circle"></i> Profile</button>
             <button type="button" className="ph-item danger" role="menuitem" onClick={() => { setMenuOpen(false); setLogoutOpen(true); }}><i className="ti ti-logout"></i> Log out</button>
           </div>
+        </div>
         </div>
       </header>
 
@@ -236,16 +242,6 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
           <img src="/IMAGES/LOGO-mark.png" alt="" />
           <div className="sb-brand-text">A Mentoring Management and Monitoring System</div>
         </div>
-        <a href={profileHref} className="sb-profile" id="sbProfileLink"
-          onClick={onProfileClick}>
-          <div className="sb-avatar" id="sidebarAvatar">{initials}</div>
-          <div className="sb-info">
-            <div className="sb-name" id="sidebarName">{name}</div>
-            <div className="sb-role" id={config.role === 'head' || config.role === 'admin' ? 'sidebarRole' : undefined}>{config.roleLabel}</div>
-            {config.dept ? <div className="sb-dept" id="sidebarDept">{dept}</div> : null}
-          </div>
-        </a>
-
         <nav className={`sidebar-nav${hasIndicator ? ' has-indicator' : ''}`} aria-label="Main navigation" ref={navRef}>
           <div className="sb-indicator" ref={pillRef}></div>
           {config.nav.map((item, i) => item.section ? (

@@ -61,7 +61,9 @@
     D + '.theme-toggle .ic-sun{display:block}',
     D + '.theme-toggle .ic-moon{display:none}',
     '@media (max-width:768px){.theme-toggle{right:14px!important;bottom:14px!important;width:42px;height:42px}}',
-    '@media print{.theme-toggle{display:none!important}}'
+    '@media print{.theme-toggle{display:none!important}}',
+    // Portal pages have the toggle in their header; the landing and login pages keep the floating one.
+    'body.portal-has-header>.theme-toggle{display:none!important}'
   ];
 
   // Dark palette (landing + login): deep midnight navy surfaces, soft blue
@@ -165,6 +167,16 @@
     btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
   }
 
+  // Flips the theme. Also used by the portal header's own button (window.astraToggleTheme).
+  function toggle() {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    apply(next);
+    set(next);
+    var b = document.querySelector('.theme-toggle');
+    if (b) label(b);
+  }
+  window.astraToggleTheme = toggle;
+
   function mount() {
     if (document.querySelector('.theme-toggle')) return;
     var btn = document.createElement('button');
@@ -172,13 +184,7 @@
     btn.className = 'theme-toggle';
     btn.innerHTML = SUN + MOON;
     label(btn);
-    btn.addEventListener('click', function () {
-      var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      apply(next);
-      set(next);
-      label(btn);
-      btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin');
-    });
+    btn.addEventListener('click', function () { toggle(); btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin'); });
     document.body.appendChild(btn);
   }
 
