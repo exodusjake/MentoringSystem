@@ -2,8 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api.js';
 import { subscribe as subscribeBadge } from '../lib/announcementBadge.js';
+import { useStyle } from '../lib/injectStyle.js';
 import { playLogoutEffect } from '../lib/logout.js';
 import { getSession } from '../lib/session.js';
+import { PORTAL_HEADER_CSS } from './portalHeaderCss.js';
 
 const KEY = 'sbIndicator';
 const NAV_DELAY = 340;
@@ -14,8 +16,13 @@ const readPrev = () => { try { return JSON.parse(sessionStorage.getItem(KEY)); }
 // The portal sidebar: markup of sidebar.html / mentor-sidebar.html / mentee-sidebar.html, with the
 // behaviour of the sidebar scripts (name/avatar, active item, mobile drawer, announcement badge,
 // logout modal) and of sidebar-indicator.js (sliding highlight pill, scroll position).
+const todayLabel = () => new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Manila', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
 export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
+  useStyle('portal-header', PORTAL_HEADER_CSS);
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const userRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -36,6 +43,21 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
   const initials = user ? (((first[0] || '') + (last[0] || '')).toUpperCase() || config.defaultInitials) : config.defaultInitials;
 
   useEffect(() => subscribeBadge(setBadge), []);
+
+  // The header pushes the page down and moves the concern bell aside (see portalHeaderCss.js).
+  useEffect(() => {
+    document.body.classList.add('portal-has-header');
+    return () => document.body.classList.remove('portal-has-header');
+  }, []);
+  // Profile menu: closes on an outside click or Escape.
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onDown = e => { if (userRef.current && !userRef.current.contains(e.target)) setMenuOpen(false); };
+    const onKey = e => { if (e.key === 'Escape') setMenuOpen(false); };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [menuOpen]);
   useEffect(() => { setPendingId(null); }, [activeId]);
 
   // Mentor sidebar: school under the name (non-critical).
@@ -164,6 +186,14 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
     navigate(profileHref);
   };
 
+  const pageTitle = config.nav.find(item => item.id === activeId)?.label || config.roleLabel;
+  const goProfile = () => {
+    setMenuOpen(false);
+    if (window.location.pathname === profileHref) return;
+    onNavigate();
+    navigate(profileHref);
+  };
+
   const handleLogout = () => {
     setLoggingOut(true);
     playLogoutEffect();
@@ -178,8 +208,34 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
 
       <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close} style={hide}></div>
 
+      <header className="portal-header" style={hide}>
+        <div className="ph-left">
+          <div className="ph-title">{pageTitle}</div>
+          <div className="ph-date">{todayLabel()}</div>
+        </div>
+        <div className="ph-user" ref={userRef}>
+          <button type="button" className="ph-avatar" aria-label="Account menu" aria-haspopup="menu" aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(o => !o)}>{initials}</button>
+          <div className={`ph-menu${menuOpen ? ' open' : ''}`} role="menu">
+            <div className="ph-menu-id">
+              <div className="ph-menu-avatar">{initials}</div>
+              <div className="ph-menu-text">
+                <div className="ph-menu-name">{name}</div>
+                <div className="ph-menu-role">{config.roleLabel}</div>
+              </div>
+            </div>
+            <button type="button" className="ph-item" role="menuitem" onClick={goProfile}><i className="ti ti-user-circle"></i> Profile</button>
+            <button type="button" className="ph-item danger" role="menuitem" onClick={() => { setMenuOpen(false); setLogoutOpen(true); }}><i className="ti ti-logout"></i> Log out</button>
+          </div>
+        </div>
+      </header>
+
       <aside className={`sidebar${open ? ' open' : ''}`} id="sidebar" ref={sidebarRef}
         style={hide}>
+        <div className="sb-brand">
+          <img src="/IMAGES/LOGO-mark.png" alt="" />
+          <div className="sb-brand-text">A Mentoring Management and Monitoring System</div>
+        </div>
         <a href={profileHref} className="sb-profile" id="sbProfileLink"
           onClick={onProfileClick}>
           <div className="sb-avatar" id="sidebarAvatar">{initials}</div>
@@ -209,12 +265,6 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady }) {
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <button className="logout-btn" onClick={() => setLogoutOpen(true)}>
-            <i className="ti ti-logout"></i>
-            Log-out
-          </button>
-        </div>
       </aside>
 
       <div id="logoutModal" className={`logout-modal-overlay${logoutOpen ? ' open' : ''}`} style={hide}>

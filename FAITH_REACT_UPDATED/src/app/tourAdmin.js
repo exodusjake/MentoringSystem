@@ -26,9 +26,9 @@ const ADMIN_STEPS = [
   nav('calendar', 'nav-calendar', 'Calendar & Events', 'Publish the program schedule: session windows, report deadlines and evaluation periods that mentors and mentees see.'),
   nav('evaluations', 'nav-eval', 'Evaluation Forms', 'Create evaluation forms for mentors and mentees and review the submissions.'),
   nav('profile', 'nav-profile', 'Profile', 'Your account details, contact number, password and signature.'),
-  { page: 'profile', sel: '.sig-tour', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
+  { page: 'profile', sel: '.walkthrough-card', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
   nav('settings', 'nav-settings', 'System Settings', 'The academic period (school year and semester), calendar sheet signatories, the Guidance Office details and Maintenance Mode.'),
-  { page: 'settings', sel: '.logout-btn', side: 'right', title: 'Logout', text: 'When you are done, use Logout to sign out safely, especially on a shared computer.' },
+  { page: 'settings', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
   { page: 'settings', center: true, title: 'You’re all set!', text: 'That is the whole Admin Portal. You can replay this tour from your Profile page at any time.' },
 ];
 
@@ -48,8 +48,8 @@ const HEAD_STEPS = [
   nav('evaluations', 'nav-eval', 'Evaluation Forms', 'View the evaluation forms and their submissions.'),
   nav('calendar', 'nav-calendar', 'Calendar', 'The program schedule: session windows, report deadlines and evaluation periods.'),
   nav('account', 'nav-profile', 'Profile', 'Your account details, contact number, password, signature and the current system settings.'),
-  { page: 'account', sel: '.sig-tour', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
-  { page: 'account', sel: '.logout-btn', side: 'right', title: 'Logout', text: 'When you are done, use Logout to sign out safely, especially on a shared computer.' },
+  { page: 'account', sel: '.walkthrough-card', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
+  { page: 'account', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
   { page: 'account', center: true, title: 'You’re all set!', text: 'That is the whole Head Admin Portal. You can replay this tour from your Profile page at any time.' },
 ];
 

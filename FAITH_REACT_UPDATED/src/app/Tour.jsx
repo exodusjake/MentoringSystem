@@ -46,7 +46,7 @@ const STEPS = [
   { page: 'announcements', sel: '.announce-card', sample: true, enter: 'tabMentor', title: 'My Mentor Announcement', text: 'The From My Mentor tab shows what your own mentor posts, and you can comment on them.' },
   // Profile + Logout
   { page: 'profile', sel: '#nav-profile', side: 'right', title: 'Profile', text: 'View your account and academic details, update your contact number, change your password or replace your signature. You can replay this tour from here too.' },
-  { page: 'profile', sel: '.logout-btn', side: 'right', title: 'Logout', text: 'When you are done, use Logout to sign out safely, especially on a shared computer.' },
+  { page: 'profile', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
 ];
 
 function targetOf(step) {

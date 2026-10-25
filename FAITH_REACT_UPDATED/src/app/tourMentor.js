@@ -53,8 +53,8 @@ const STEPS = [
   { page: 'calendar', sel: '#nav-calendar', side: 'right', title: 'Calendar', text: 'The program schedule, deadlines, your sessions and your availability in one calendar. Use the legend to show or hide each kind.' },
   // Profile + Logout
   { page: 'profile', sel: '#nav-profile', side: 'right', title: 'Profile', text: 'View your account details, update your contact number, change your password or replace your signature.' },
-  { page: 'profile', sel: '.sig-tour', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
-  { page: 'profile', sel: '.logout-btn', side: 'right', title: 'Logout', text: 'When you are done, use Logout to sign out safely, especially on a shared computer.' },
+  { page: 'profile', sel: '.walkthrough-card', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
+  { page: 'profile', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
   { page: 'profile', center: true, title: 'You’re all set!', text: 'That is the whole Mentor Portal. Start by posting an availability slot so your mentees can book a session.' },
 ];
 
