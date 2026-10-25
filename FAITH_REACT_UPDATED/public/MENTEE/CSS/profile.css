@@ -235,3 +235,11 @@ input[type="password"]::-ms-clear { display: none; }
 .btn-replay-tour { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font); font-size: 13px; font-weight: 600; color: #fff; background: #4f46e5; border: none; border-radius: 10px; padding: 10px 18px; cursor: pointer; transition: background-color .18s, transform .15s, box-shadow .18s; }
 .btn-replay-tour:hover { background: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(79,70,229,.3); }
 .btn-replay-tour:active { transform: scale(.96); }
+
+/* ── Phones: the walkthrough banner stacks (icon + text on top, full-width button below) instead of squeezing the text. ── */
+@media screen and (max-width: 768px) {
+  .walkthrough-card { gap: 12px; padding: 14px 16px; }
+  .walkthrough-card-icon { width: 40px; height: 40px; font-size: 20px; }
+  .walkthrough-card-text { flex: 1 1 0; min-width: 0; }
+  .walkthrough-card .btn-replay-tour { flex: 1 1 100%; width: 100%; justify-content: center; }
+}

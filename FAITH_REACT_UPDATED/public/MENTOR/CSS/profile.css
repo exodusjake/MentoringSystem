@@ -197,3 +197,11 @@ input[type="password"]::-ms-clear { display: none; }
 .walkthrough-card .btn-replay-tour { width: auto; color: #fff; background: #0f766e; border: none; padding: 10px 18px; }
 .walkthrough-card .btn-replay-tour:hover { background: #0d5f58; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(15,118,110,.3); }
 .walkthrough-card .btn-replay-tour:active { transform: scale(.96); }
+
+/* ── Phones: the walkthrough banner stacks (icon + text on top, full-width button below) instead of squeezing the text. ── */
+@media screen and (max-width: 768px) {
+  .walkthrough-card { gap: 12px; padding: 14px 16px; }
+  .walkthrough-card-icon { width: 40px; height: 40px; font-size: 20px; }
+  .walkthrough-card-text { flex: 1 1 0; min-width: 0; }
+  .walkthrough-card .btn-replay-tour { flex: 1 1 100%; width: 100%; justify-content: center; }
+}
