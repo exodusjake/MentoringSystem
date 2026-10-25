@@ -58,7 +58,10 @@ const CSS = [
   '.cb-foot{padding:9px 16px;text-align:center;font-size:11.5px;color:#9ca3af;border-top:1px solid #f1f5f9}',
   // Phones: the dropdown stays within about 60% of the screen height, with tighter rows.
   '@media (max-width:768px){',
-  '.cb-panel{top:48px;width:calc(100vw - 20px);max-height:min(60dvh,calc(100dvh - 76px))}',
+  // The bell sits inside the header, not at the screen corner: the panel spans the screen under the header instead of hanging off the bell.
+  '.cb-panel{position:fixed;top:66px;left:10px;right:10px;width:auto;max-width:none;max-height:min(60dvh,calc(100dvh - 86px))}',
+  '.cb-panel::before{display:none}',
+  '@media (max-width:480px){.cb-panel{top:60px}}',
   '.cb-head{padding:11px 14px;gap:8px}.cb-title{font-size:14px}.cb-pill-count{font-size:10.5px}',
   '.cb-item{gap:10px;padding:10px 12px}',
   '.cb-avatar{width:34px;height:34px;font-size:12.5px}',
