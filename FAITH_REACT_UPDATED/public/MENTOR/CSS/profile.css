@@ -205,3 +205,9 @@ input[type="password"]::-ms-clear { display: none; }
   .walkthrough-card-text { flex: 1 1 0; min-width: 0; }
   .walkthrough-card .btn-replay-tour { flex: 1 1 100%; width: 100%; justify-content: center; }
 }
+
+/* ── Phones: the profile detail rows keep side padding, so the icon boxes sit inside the card instead of on its edge. ── */
+@media screen and (max-width: 640px) {
+  body .main-wrapper .ph-fields-strip .ph-strip-field,
+  body .main-wrapper .ph-fields-strip .ph-strip-field:first-child { padding: 14px 18px; gap: 12px; }
+}
