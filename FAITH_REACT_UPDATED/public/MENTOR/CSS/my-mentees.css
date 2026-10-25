@@ -238,9 +238,9 @@
 .concern-btn:active:not(:disabled) { transform: scale(.97); }
 .concern-btn:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 520px) {
-  .concern-overlay { padding: 0; align-items: flex-end; }
-  /* A compact bottom sheet instead of a screen-filling one: about three quarters of the height at most. */
-  .concern-modal { max-width: none; border-radius: 16px 16px 0 0; border-top-width: 5px; max-height: 76dvh; }
+  /* A centred card with space on every side, never taller than the screen minus its margins. */
+  .concern-overlay { padding: 20px 16px; align-items: center; justify-content: center; }
+  .concern-modal { width: 100%; max-width: 420px; border-radius: 16px; border-top-width: 5px; max-height: calc(100dvh - 40px); }
   .concern-head { gap: 10px; padding: 12px 14px 8px; }
   .concern-head-icon { width: 34px; height: 34px; font-size: 18px; border-radius: 10px; }
   .concern-title { font-size: 15px; }
