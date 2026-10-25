@@ -239,9 +239,23 @@
 .concern-btn:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 520px) {
   .concern-overlay { padding: 0; align-items: flex-end; }
-  .concern-modal { max-width: none; border-radius: 18px 18px 0 0; max-height: 92dvh; }
-  .concern-foot { flex-direction: column-reverse; }
-  .concern-btn { justify-content: center; }
+  /* A compact bottom sheet instead of a screen-filling one: about three quarters of the height at most. */
+  .concern-modal { max-width: none; border-radius: 16px 16px 0 0; border-top-width: 5px; max-height: 76dvh; }
+  .concern-head { gap: 10px; padding: 12px 14px 8px; }
+  .concern-head-icon { width: 34px; height: 34px; font-size: 18px; border-radius: 10px; }
+  .concern-title { font-size: 15px; }
+  .concern-sub { font-size: 12px; }
+  .concern-body { padding: 2px 14px 4px; }
+  .concern-warning { gap: 8px; padding: 9px 11px; margin: 4px 0 8px; font-size: 11.5px; line-height: 1.4; }
+  .concern-warning i { font-size: 17px; }
+  .concern-label { margin: 8px 0 5px; font-size: 11px; }
+  .concern-select, .concern-text { font-size: 16px; padding: 9px 10px; }   /* 16px keeps iPhones from zooming in on the field */
+  .concern-text { min-height: 84px; height: 84px; }
+  .concern-count { font-size: 11px; }
+  .concern-check { margin: 10px 0 2px; font-size: 12px; }
+  .concern-foot { flex-direction: row; gap: 8px; padding: 10px 14px 14px; }
+  .concern-btn { justify-content: center; padding: 9px 12px; font-size: 13px; }
+  .concern-btn-send { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .concern-overlay, .concern-modal { animation: none; } }
 

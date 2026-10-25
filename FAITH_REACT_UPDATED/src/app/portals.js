@@ -191,7 +191,7 @@ export const PORTAL_CONFIG = {
       sectionItem('Overview'),
       { id: 'nav-dashboard', to: 'dashboard', icon: 'ti-layout-dashboard', label: 'Dashboard' },
       sectionItem('Mentoring'),
-      { id: 'nav-mentees', to: 'mentees', icon: 'ti-users', label: 'My Mentees' },
+      { id: 'nav-mentees', to: 'mentees', icon: 'ti-users', label: 'Mentees' },
       { id: 'nav-sessions', to: 'sessions', icon: 'ti-calendar-event', label: 'Sessions' },
       { id: 'nav-availability', to: 'availability', icon: 'ti-clock-plus', label: 'Availability' },
       { id: 'nav-logsheet', to: 'logsheet', icon: 'ti-clipboard-list', label: 'Logsheet' },

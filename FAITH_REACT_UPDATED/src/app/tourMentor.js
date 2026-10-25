@@ -16,7 +16,7 @@ const STEPS = [
   { page: 'dashboard', sel: '.announcements-card', sample: true, title: 'Dashboard Announcements', text: 'The latest posts from the administration. Click one to open it on the Announcements page.' },
   { page: 'dashboard', sel: '.calendar-overview-card', sample: true, title: 'Activities & Deadlines', text: 'Ongoing and upcoming items from the published program calendar, including report submission deadlines.' },
   // My Mentees
-  { page: 'mentees', sel: '#nav-mentees', side: 'right', title: 'My Mentees', text: 'Everyone assigned to you this semester.' },
+  { page: 'mentees', sel: '#nav-mentees', side: 'right', title: 'Mentees', text: 'Everyone assigned to you this semester.' },
   { page: 'mentees', sel: '.mentee-card', sample: true, title: 'Mentee Card', text: 'Name, email, course, year, section, school, contact number and student number. A Drop Out tag appears if the mentee has dropped out.' },
   { page: 'mentees', sel: '.mc-flag-btn', sample: true, title: 'Flag a Concern', text: 'See something serious, like welfare, safety, repeated absences or conduct? Tap the flag on that mentee, write what you noticed and send it. It goes straight to the Admin and Head Admin, who see it in the bell at the top right of their portal.' },
   // Sessions
