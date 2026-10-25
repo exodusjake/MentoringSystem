@@ -1,9 +1,10 @@
 // Top header bar shared by every portal (logo and system name on the left; theme switch, concern bell and the profile menu on the right). Colours come from each portal's own sidebar tokens (--sb-bg, --sb-border,
 // --sb-active …), so Head/Admin stay blue, Mentor teal and Mentee indigo.
 export const PORTAL_HEADER_CSS = [
-  // Sidebar: a separate panel under the header, flush with the left and bottom edges (full-height drawer on phones).
-  'html.portal-has-header .sidebar{top:76px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 76px)!important;height:calc(100dvh - 76px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:1px 1px 0 0!important;border-radius:14px 14px 0 0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
-  '.sidebar-nav{padding-top:6px;padding-bottom:20px}',
+  // Sidebar: a separate panel directly under the header, flush with the left, top and bottom edges (full-height drawer on phones).
+  'html.portal-has-header .sidebar{top:64px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 64px)!important;height:calc(100dvh - 64px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:0 1px 0 0!important;border-radius:0 14px 0 0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
+  '.sidebar-nav{padding-top:0;padding-bottom:20px}',
+  '.sb-indicator+.nav-section{padding-top:10px}',
 
   // Header: fixed to the top of the content area, so it follows the page as it scrolls.
   '.portal-header{position:fixed;top:0;left:0;right:0;height:64px;z-index:90;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);font-family:var(--font,"DM Sans",system-ui,sans-serif)}',
