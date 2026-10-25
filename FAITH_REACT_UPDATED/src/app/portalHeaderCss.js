@@ -1,4 +1,4 @@
-// Top header bar shared by every portal: page name and date on the left; theme switch, concern bell and the profile menu on the right. Colours come from each portal's own sidebar tokens (--sb-bg, --sb-border,
+// Top header bar shared by every portal: theme switch, concern bell and the profile menu on the right. Colours come from each portal's own sidebar tokens (--sb-bg, --sb-border,
 // --sb-active …), so Head/Admin stay blue, Mentor teal and Mentee indigo.
 export const PORTAL_HEADER_CSS = [
   // Sidebar: brand block on top; the logout button moved into the header's profile menu.
@@ -9,10 +9,7 @@ export const PORTAL_HEADER_CSS = [
 
   // Header: fixed to the top of the content area, so it follows the page as it scrolls.
   '.portal-header{position:fixed;top:0;left:var(--sb-width,260px);right:0;height:64px;z-index:90;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);font-family:var(--font,"DM Sans",system-ui,sans-serif)}',
-  '.ph-left{min-width:0}',
-  '.ph-title{font-size:15px;font-weight:700;line-height:1.25;color:var(--gray-900,#111827);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
-  '.ph-date{font-size:12.5px;line-height:1.3;color:var(--gray-500,#6b7280)}',
-  '.ph-actions{display:flex;align-items:center;gap:12px;flex-shrink:0}',
+  '.ph-actions{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-left:auto}',
   '.ph-theme{position:relative;width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--sb-icon,#6b7280);background:var(--sb-bg,#fff);border:1px solid var(--sb-border,#e9ecef);border-radius:50%;cursor:pointer}',
   '.ph-theme:hover{background:var(--sb-item-hover,#f3f4f6);color:var(--sb-active,#2563eb)}',
   '.ph-theme:focus-visible{outline:2px solid var(--sb-active,#2563eb);outline-offset:2px}',
@@ -49,7 +46,6 @@ export const PORTAL_HEADER_CSS = [
   '}',
   '@media (max-width:480px){',
   '.portal-header{height:52px;padding-left:54px}',
-  '.ph-date{display:none}',
   '.ph-avatar{width:34px;height:34px}',
   '.ph-theme{width:34px;height:34px}',
   '}',

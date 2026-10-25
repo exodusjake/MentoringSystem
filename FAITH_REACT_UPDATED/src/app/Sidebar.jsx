@@ -16,8 +16,6 @@ const readPrev = () => { try { return JSON.parse(sessionStorage.getItem(KEY)); }
 // The portal sidebar: markup of sidebar.html / mentor-sidebar.html / mentee-sidebar.html, with the
 // behaviour of the sidebar scripts (name/avatar, active item, mobile drawer, announcement badge,
 // logout modal) and of sidebar-indicator.js (sliding highlight pill, scroll position).
-const todayLabel = () => new Date().toLocaleDateString('en-US', { timeZone: 'Asia/Manila', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
 export default function Sidebar({ config, activeId, onNavigate, stylesReady, bell }) {
   useStyle('portal-header', PORTAL_HEADER_CSS);
   const navigate = useNavigate();
@@ -186,7 +184,6 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
     navigate(profileHref);
   };
 
-  const pageTitle = config.nav.find(item => item.id === activeId)?.label || config.roleLabel;
   const goProfile = () => {
     setMenuOpen(false);
     if (window.location.pathname === profileHref) return;
@@ -209,10 +206,6 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
       <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close} style={hide}></div>
 
       <header className="portal-header" style={hide}>
-        <div className="ph-left">
-          <div className="ph-title">{pageTitle}</div>
-          <div className="ph-date">{todayLabel()}</div>
-        </div>
         <div className="ph-actions">
           <button type="button" className="ph-theme" aria-label="Switch light or dark mode" title="Light / dark mode"
             onClick={() => window.astraToggleTheme?.()}>
