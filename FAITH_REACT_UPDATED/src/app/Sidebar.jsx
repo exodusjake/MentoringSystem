@@ -44,10 +44,10 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
 
   useEffect(() => subscribeBadge(setBadge), []);
 
-  // The header pushes the page down and moves the concern bell aside (see portalHeaderCss.js).
+  // The header pushes the page down (see portalHeaderCss.js). The class goes on <html>: app/Page.jsx rewrites body's class on every route.
   useEffect(() => {
-    document.body.classList.add('portal-has-header');
-    return () => document.body.classList.remove('portal-has-header');
+    document.documentElement.classList.add('portal-has-header');
+    return () => document.documentElement.classList.remove('portal-has-header');
   }, []);
   // Profile menu: closes on an outside click or Escape.
   useEffect(() => {

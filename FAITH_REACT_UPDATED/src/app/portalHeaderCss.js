@@ -37,7 +37,7 @@ export const PORTAL_HEADER_CSS = [
   '.ph-item.danger:hover{background:var(--danger-bg,#fef2f2)}',
 
   // The page content starts below the bar; the mentor/admin concern bell moves left of the profile circle.
-  '@media (min-width:769px){html body.portal-has-header .main-wrapper{padding-top:64px}}',
+  '@media (min-width:769px){html.portal-has-header body .main-wrapper{padding-top:64px}}',
 
   '@media (max-width:768px){',
   '.portal-header{left:0;height:58px;padding:0 14px 0 62px}',
@@ -53,5 +53,5 @@ export const PORTAL_HEADER_CSS = [
   '.ph-avatar{width:34px;height:34px}',
   '.ph-theme{width:34px;height:34px}',
   '}',
-  '@media print{.portal-header{display:none!important}html body.portal-has-header .main-wrapper{padding-top:0!important}}',
+  '@media print{.portal-header{display:none!important}html.portal-has-header body .main-wrapper{padding-top:0!important}}',
 ].join('\n');

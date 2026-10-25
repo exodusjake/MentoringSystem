@@ -63,7 +63,7 @@
     '@media (max-width:768px){.theme-toggle{right:14px!important;bottom:14px!important;width:42px;height:42px}}',
     '@media print{.theme-toggle{display:none!important}}',
     // Portal pages have the toggle in their header; the landing and login pages keep the floating one.
-    'body.portal-has-header>.theme-toggle{display:none!important}'
+    'html.portal-has-header>body>.theme-toggle{display:none!important}'
   ];
 
   // Dark palette (landing + login): deep midnight navy surfaces, soft blue
