@@ -3215,7 +3215,7 @@ export default function AdminUserManagement() {
                   <span className="optional">(optional)</span>
                 </label>
                 {' '}
-                <input type="text" id="fieldContact" placeholder="e.g. 09123456789" value={form.contact} onChange={e => setF({ contact: e.target.value })} />
+                <input type="text" id="fieldContact" placeholder="e.g. 09123456789" inputMode="numeric" maxLength={11} value={form.contact} onChange={e => setF({ contact: e.target.value.replace(/D/g, '') })} />
               </div>
             </div>
             {/* Mentor Fields */}

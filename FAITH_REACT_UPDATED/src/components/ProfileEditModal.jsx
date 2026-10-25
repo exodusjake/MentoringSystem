@@ -228,7 +228,7 @@ export default function ProfileEditModal({ variant = 'pe', open, onClose, curren
           <div className={c.form}>
             <div className={c.group}>
               {label('editContact', <>Contact Number <span className={c.opt}>(optional)</span></>)}
-              <input type="text" id="editContact" placeholder="09XXXXXXXXX" autoComplete="tel" value={contact} onChange={e => setContact(e.target.value)} />
+              <input type="text" id="editContact" placeholder="09XXXXXXXXX" autoComplete="tel" inputMode="numeric" maxLength={11} value={contact} onChange={e => setContact(e.target.value.replace(/D/g, ''))} />
             </div>
             <div className={c.section}>Change Password</div>
             <div className={c.group}>
