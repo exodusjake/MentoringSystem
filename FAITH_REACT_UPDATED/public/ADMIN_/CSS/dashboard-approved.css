@@ -952,3 +952,15 @@ footer p { font-size: var(--text-2); color: #9ca3af; }
   /* Stacks the chip under the heading once the title wraps to 2 lines. */
   .page-header-top { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
 }
+
+/* ── Phones: the academic period moves from a chip next to the title into a card under the date (same look as the Head dashboard).
+   Hidden on desktop, where the chip stays. ── */
+.adm-period-card { display: none; }
+@media screen and (max-width: 768px) {
+  body.admin-dashboard .main-wrapper .page-header-top .period-chip { display: none !important; }
+  .adm-period-card { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; }
+  .adm-period-icon { width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #dbeafe; color: #2563eb; }
+  .adm-period-icon svg { width: 16px; height: 16px; }
+  .adm-period-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #2563eb; }
+  .adm-period-value { margin-top: 1px; font-size: 13px; font-weight: 700; color: #1e3a8a; }
+}

@@ -367,6 +367,19 @@ export default function AdminDashboard() {
               <span className="period-chip" id="academicPeriod">{period ?? 'Loading…'}</span>
             </div>
             <p id="dashboardDate">{dateStr}</p>
+            {/* Phones only (hidden on desktop): the period as a card under the date, like the Head dashboard. */}
+            <div className="adm-period-card">
+              <div className="adm-period-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </div>
+              <div>
+                <div className="adm-period-label">Academic Period</div>
+                <div className="adm-period-value">{period ? period.replace(' · ', ', ') : 'Loading…'}</div>
+              </div>
+            </div>
           </div>
           {showWarning ? <div id="dashLoadWarning" role="alert" style={{ margin: '0 0 16px', padding: '10px 14px', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', fontSize: '13px', fontWeight: 500 }}>Some dashboard data couldn't be loaded, so the numbers below may be incomplete. Please refresh the page.</div> : null}
           {/* Stat Cards */}
