@@ -2,7 +2,7 @@
 // --sb-active …), so Head/Admin stay blue, Mentor teal and Mentee indigo.
 export const PORTAL_HEADER_CSS = [
   // Sidebar: a separate panel directly under the header, flush with the left, top and bottom edges (full-height drawer on phones).
-  'html.portal-has-header .sidebar{top:64px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 64px)!important;height:calc(100dvh - 64px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:0 1px 0 0!important;border-radius:0 14px 0 0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
+  'html.portal-has-header .sidebar{top:64px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 64px)!important;height:calc(100dvh - 64px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:0 1px 0 0!important;border-radius:0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
   '.sidebar-nav{padding-top:0;padding-bottom:20px}',
   '.sb-indicator+.nav-section{padding-top:10px}',
 
