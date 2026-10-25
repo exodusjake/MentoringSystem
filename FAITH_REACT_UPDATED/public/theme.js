@@ -35,10 +35,14 @@
   var DL = 'html[data-theme="dark"][data-page="landing"] ';   // landing + privacy + terms
   var DG = 'html[data-theme="dark"][data-page="login"] ';
   var DP = 'html[data-theme="dark"]:not([data-page="landing"]):not([data-page="login"]) ';   // portals (inverted)
-  // P = invert → hue-rotate → contrast, applied to the whole page.
+  // P = invert → hue-rotate → contrast → saturate, applied to the whole page. It lands on a near-black navy with
+  // thin dark borders, bright text and an emerald accent (the brand teal comes out ~#29c1a3). The 170deg turn
+  // (10deg short of a full restore) nudges teal toward emerald; contrast .96 keeps white cards at ~#050505.
   // C = its exact inverse, applied to anything that must keep real colours.
-  var P = 'invert(1) hue-rotate(180deg) contrast(.78)';
-  var C = 'contrast(1.2821) hue-rotate(180deg) invert(1)';
+  // PAGE is the colour that P turns into the deep navy page background (#04090f).
+  var P = 'invert(1) hue-rotate(170deg) contrast(.96) saturate(1.5)';
+  var C = 'saturate(.6667) contrast(1.0417) hue-rotate(-170deg) invert(1)';
+  var PAGE = '#f7fbff';
 
   var css = [
     // toggle button
@@ -134,11 +138,13 @@
 
   if (isPortal) css.push(
     '@media screen{',
-    'html[data-theme="dark"]:not([data-page="landing"]):not([data-page="login"]){filter:' + P + ';background:#fff}',
+    'html[data-theme="dark"]:not([data-page="landing"]):not([data-page="login"]){filter:' + P + ';background:' + PAGE + '}',
+    DP + 'body{background:' + PAGE + '!important}',
+    DP + '.sidebar{background:' + PAGE + '!important}',
     DP + 'img,' + DP + 'video,' + DP + 'picture,' + DP + '[class*="qr" i] canvas,' + DP + '[id*="qr" i] canvas,' + DP + '[class*="qr" i] img,' + DP + '[id*="qr" i] img,',
     DP + '.no-invert,' + DP + '[style*="background-image"]{filter:' + C + '}',
     DP + '.theme-toggle{filter:' + C + '}',
-    DP + '.page-skel{background:#eef1f6}',
+    DP + '.page-skel{background:#eef3f8}',
     'html[data-page="portal"]{transition:filter .3s ease}',
     '}'
   );
