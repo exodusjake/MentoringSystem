@@ -255,7 +255,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
               className={`nav-item${item.id === (pendingId || activeId) ? ' active' : ''}`}
               onClick={e => onNavClick(e, item)}>
               <i className={`ti ${item.icon}`}></i>
-              {item.label}
+              <span className="nav-label">{item.label}</span>
               {item.badge ? (
                 <span className="nav-badge" id="annBadge" style={badge > 0 ? undefined : { display: 'none' }}>
                   {badge > 99 ? '99+' : String(badge)}

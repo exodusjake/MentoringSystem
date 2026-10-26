@@ -47,21 +47,32 @@ export const PORTAL_HEADER_CSS = [
   // The page content starts below the bar; the mentor/admin concern bell moves left of the profile circle.
   '@media (min-width:769px){html.portal-has-header body .main-wrapper{padding-top:64px}}',
 
-  // Collapse to an icon rail (desktop only): the menu slides to the left, the labels go, the page grows into the space.
+  // Labels keep a fixed width so they never re-wrap while the menu animates; the item clips them as it narrows. The unread badge is
+  // pinned to the item's right edge so it does not push the label around.
+  '.nav-label{flex:0 0 172px;width:172px;min-width:0;opacity:1;transition:opacity .2s ease}',
+  'html.portal-has-header .sidebar .nav-item .nav-badge{position:absolute;right:10px;top:50%;margin:0;transform:translateY(-50%);transition:top .26s ease,right .26s ease,transform .26s ease}',
+  'html.portal-has-header .sidebar .nav-item{position:relative;overflow:hidden}',
+  // Collapse to an icon rail (desktop only): the menu slides to the left, the labels fade, the page grows into the space.
   '@media (min-width:769px){',
+  '.portal-header{padding-left:12px}',
   '.ph-collapse{display:flex}',
   'html.portal-has-header .sidebar{transition:width .26s cubic-bezier(.22,1,.36,1)}',
   'html.portal-has-header body .main-wrapper{transition:margin-left .26s cubic-bezier(.22,1,.36,1)}',
+  'html.portal-has-header .sidebar .sidebar-nav{transition:padding .26s cubic-bezier(.22,1,.36,1)}',
+  'html.portal-has-header .sidebar .nav-item{transition:padding .26s cubic-bezier(.22,1,.36,1),background .15s ease,color .2s ease}',
+  'html.portal-has-header .sidebar .nav-item i{transition:font-size .26s cubic-bezier(.22,1,.36,1),color .2s ease}',
+  'html.portal-has-header .sidebar .sb-indicator.animate{transition:transform .34s cubic-bezier(.22,1,.36,1),height .34s cubic-bezier(.22,1,.36,1),opacity .2s ease,left .26s cubic-bezier(.22,1,.36,1),right .26s cubic-bezier(.22,1,.36,1)}',
+  'html.portal-has-header .sidebar .nav-section{position:relative;white-space:nowrap;overflow:hidden;transition:color .2s ease}',
+  'html.portal-has-header .sidebar .nav-section::after{content:"";position:absolute;left:12px;right:12px;top:58%;height:1px;background:var(--sb-border,#e9ecef);opacity:0;transition:opacity .26s ease}',
   'html.sb-collapsed{--sb-width:76px}',
-  'html.sb-collapsed .sidebar-nav{padding:6px 8px}',
-  // The sliding pill is hidden in the rail; the active icon gets its own filled square instead.
-  'html.sb-collapsed .sidebar .sb-indicator{display:none}',
-  'html.sb-collapsed .sidebar .sidebar-nav .nav-item.active{background:var(--sb-active,#2563eb)!important;color:#fff!important;box-shadow:0 4px 12px rgba(37,99,235,.28)}',
-  'html.sb-collapsed .sidebar .nav-item{position:relative;justify-content:center;gap:0;padding:8px 0;font-size:0!important;line-height:1}',
+  'html.sb-collapsed .sidebar .sidebar-nav{padding-left:8px;padding-right:8px}',
+  'html.sb-collapsed .sidebar .sb-indicator{left:8px;right:8px}',
+  'html.sb-collapsed .sidebar .nav-item{padding-left:14px}',
   'html.sb-collapsed .sidebar .nav-item i{font-size:20px}',
-  'html.sb-collapsed .sidebar .nav-section{height:1px;margin:10px 12px;padding:0;font-size:0;background:var(--sb-border,#e9ecef)}',
-  'html.sb-collapsed .sidebar .sb-indicator+.nav-section{margin-top:4px}',
-  'html.sb-collapsed .sidebar .nav-badge{position:absolute;top:1px;right:5px;margin:0;min-width:16px;height:16px;padding:0 4px;font-size:10px;line-height:16px}',
+  'html.sb-collapsed .sidebar .nav-label{opacity:0}',
+  'html.sb-collapsed .sidebar .nav-section{color:transparent}',
+  'html.sb-collapsed .sidebar .nav-section::after{opacity:1}',
+  'html.sb-collapsed .sidebar .nav-item .nav-badge{top:3px;right:4px;transform:none;min-width:16px;height:16px;padding:0 4px;font-size:10px;line-height:16px}',
   '}',
   '@media (max-width:768px){',
   '.portal-header{height:58px;padding:0 14px 0 62px}',
