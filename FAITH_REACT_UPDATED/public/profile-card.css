@@ -134,3 +134,13 @@
 .pe-btn-save:active:not(:disabled) { transform: scale(.97); }
 .pe-btn-save:disabled { opacity: .6; cursor: not-allowed; }
 @media (max-width: 480px) { .pe-card { padding: 26px 18px 18px; } .pe-verify-row { flex-wrap: wrap; } .pe-verify-row .btn-verify-act { flex: 1 1 100%; height: 40px; } }
+
+/* ── The Edit button sits on the colored banner: a dark glass pill with white text stays readable on a deep banner, a
+   pale one, and in dark mode (where the banner's colors are flipped). ── */
+.ph-banner .edit-btn {
+  background: rgba(15, 23, 42, .62); color: #fff;
+  border: 1px solid rgba(255, 255, 255, .5);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, .25);
+}
+.ph-banner .edit-btn svg { stroke: #fff; }
+.ph-banner .edit-btn:hover { background: rgba(15, 23, 42, .82); border-color: #fff; }

@@ -231,3 +231,12 @@ input[type="password"]::-ms-reveal, input[type="password"]::-ms-clear { display:
   .walkthrough-card-text { flex: 1 1 0; min-width: 0; }
   .walkthrough-card .btn-replay-tour { flex: 1 1 100%; width: 100%; justify-content: center; }
 }
+
+/* Edit button on the banner (Admin and Head): same readable dark glass pill as the other portals. */
+.ph-banner .edit-btn, .edit-btn {
+  background: rgba(15, 23, 42, .62); color: #fff;
+  border: 1px solid rgba(255, 255, 255, .5);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, .25);
+}
+.edit-btn svg { stroke: #fff; }
+.edit-btn:hover { background: rgba(15, 23, 42, .82); border-color: #fff; }
