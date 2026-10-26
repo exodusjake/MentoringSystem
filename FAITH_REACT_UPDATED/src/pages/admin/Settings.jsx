@@ -638,7 +638,7 @@ export default function AdminSettings() {
                   <div className="maint-col">
                     <div className="settings-field">
                       <label className="settings-label" htmlFor="fieldMaintEta">Estimated time to fix</label>
-                      <input type="datetime-local" className="settings-input" id="fieldMaintEta" value={maint.eta} onChange={e => setMaint(m => ({ ...m, eta: e.target.value }))} disabled={dis} />
+                      <input type="datetime-local" className="settings-input" id="fieldMaintEta" min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)} value={maint.eta} onChange={e => setMaint(m => ({ ...m, eta: e.target.value }))} disabled={dis} />
                       <div className="maint-chips" id="maintChips">
                         <button type="button" className="maint-chip" onClick={() => setMaintEta(30)}>+30 min</button>
                         <button type="button" className="maint-chip" onClick={() => setMaintEta(60)}>+1 hr</button>

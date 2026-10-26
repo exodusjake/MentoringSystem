@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Page from '../../app/Page.jsx';
 import AnnounceContent from '../../components/announcements/AnnounceContent.jsx';
 import DateInput from '../../components/DateInput.jsx';
+import { checkpointToday } from '../../lib/checkpoint-window.js';
 import { ConfirmModal, ErrorModal } from '../../components/InfoModal.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import Overlay from '../../components/Overlay.jsx';
@@ -163,6 +164,9 @@ export default function AdminEvaluations() {
     setModalOpen(true);
   }
   function closeModal() { setModalOpen(false); setEditingId(null); }
+  // Past days cannot be picked for a deadline; a form already saved with an earlier one keeps it while it is edited.
+  const originalDeadline = editingId !== null ? evaluationDeadlineInput(allForms.find(x => x.linkID === editingId)?.deadline) : '';
+  const deadlineMin = originalDeadline && originalDeadline.slice(0, 10) < checkpointToday() ? originalDeadline.slice(0, 10) : checkpointToday();
 
   // ── Submission detail ──
   async function openSubmissionDetail(linkId) {
@@ -191,6 +195,9 @@ export default function AdminEvaluations() {
     }
     if (fieldDeadline && !evaluationDeadline(fieldDeadline)) {
       setErrorMsg('Please enter a valid deadline date and time.'); return;
+    }
+    if (fieldDeadline && fieldDeadline.slice(0, 10) < checkpointToday() && fieldDeadline !== originalDeadline) {
+      setErrorMsg('The deadline cannot be in the past.'); return;
     }
 
     const isEdit = editingId !== null;
@@ -533,7 +540,7 @@ export default function AdminEvaluations() {
             </div>
             <div className="form-group">
               <label>Evaluation Deadline <span style={{ fontWeight: 400, color: '#9ca3af' }}>(optional)</span></label>
-              <DateInput type="datetime-local" id="fieldDeadline" value={fieldDeadline} onChange={e => setFieldDeadline(e.target.value)} />
+              <DateInput type="datetime-local" id="fieldDeadline" min={deadlineMin} value={fieldDeadline} onChange={e => setFieldDeadline(e.target.value)} />
               <small>Specify when access to the form closes in this portal. Leave blank if no deadline applies.</small>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
 import DateInput from '../../components/DateInput.jsx';
+import { checkpointToday } from '../../lib/checkpoint-window.js';
 import { ErrorModal } from '../../components/InfoModal.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import Overlay from '../../components/Overlay.jsx';
@@ -236,13 +237,19 @@ export default function AdminCalendar() {
   const genDone = state === 'ready' && unpublished === 0;
 
   // ── Add / edit ──
+  // Dates before today cannot be picked. An event that already starts in the past keeps its own date selectable while it is edited.
+  const todayIso = checkpointToday();
+  const editedEvent = editingId ? allEvents.find(e => e.eventID === editingId) : null;
+  const editedStart = editedEvent?.startDate?.slice(0, 10) || '';
+  const editedEnd = (editedEvent?.endDate || editedEvent?.startDate || '').slice(0, 10);
+  const startMin = editedStart && editedStart < todayIso ? editedStart : todayIso;
   function openCreate() {
     const defaultDate = selectedDay
       ? toIsoDate(new Date(selectedDay.year, selectedDay.month, selectedDay.day))
       : toIsoDate(new Date(viewYear, viewMonth, 1));
     setEditingId(null);
     setFTitle(''); setFType('Session Schedule'); setFSlot('');
-    setFStart(defaultDate); setFEnd(''); setFNote('');
+    setFStart(defaultDate < todayIso ? todayIso : defaultDate); setFEnd(''); setFNote('');
     setModalOpen(true);
   }
   function openEdit(id) {
@@ -278,6 +285,8 @@ export default function AdminCalendar() {
     if (!slotted && !title) { setErrorMsg('Please enter an activity title.'); return; }
     if (!start) { setErrorMsg('Please select a start date.'); return; }
     if (end < start) { setErrorMsg('End date cannot be before the start date.'); return; }
+    if (start < todayIso && start !== editedStart) { setErrorMsg('The start date cannot be in the past.'); return; }
+    if (end < todayIso && end !== editedEnd) { setErrorMsg('The end date cannot be in the past.'); return; }
 
     const current = editingId ? allEvents.find(e => e.eventID === editingId) : null;
     const orderError = termOrderError(allEvents, {
@@ -708,7 +717,7 @@ export default function AdminCalendar() {
                 <label id="startLabel">
                   {fType === 'Session Schedule' ? 'Session Window Start' : fType === 'Deadline' ? 'Deadline Date' : 'Start Date'} <span className="req">*</span>
                 </label>
-                <DateInput type="date" id="fieldStart" value={fStart} onChange={e => setFStart(e.target.value)} />
+                <DateInput type="date" id="fieldStart" min={startMin} value={fStart} onChange={e => setFStart(e.target.value)} />
               </div>
               <div className="form-group" id="endDateGroup" style={{ display: fType === 'Deadline' ? 'none' : '' }}>
                 <label id="endLabel">
@@ -716,7 +725,7 @@ export default function AdminCalendar() {
                     ? <>Session Window End <span className="req">*</span></>
                     : <>End Date <span className="optional">(leave blank if single day)</span></>}
                 </label>
-                <DateInput type="date" id="fieldEnd" value={fEnd} onChange={e => setFEnd(e.target.value)} />
+                <DateInput type="date" id="fieldEnd" min={fStart || startMin} value={fEnd} onChange={e => setFEnd(e.target.value)} />
               </div>
             </div>
             <div className="form-group">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
 import DateInput from '../../components/DateInput.jsx';
+import { checkpointToday } from '../../lib/checkpoint-window.js';
 import Overlay from '../../components/Overlay.jsx';
 import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
@@ -252,6 +253,13 @@ export default function MentorCalendar() {
   }
   const closePersonalModal = () => setEditing(null);
 
+  // Dates before today cannot be picked; a note that already sits in the past keeps its own date while it is edited.
+  const todayIso = checkpointToday();
+  const editedNote = editing ? personalEvents.find(e => e.eventID === editing) : null;
+  const editedStart = editedNote?.eventDate?.split('T')[0] || '';
+  const editedEnd = editedNote?.endDate?.split('T')[0] || editedStart;
+  const dateMin = editedStart && editedStart < todayIso ? editedStart : todayIso;
+
   async function savePersonalEvent() {
     if (!editing) return;
     const title = pTitle.trim();
@@ -262,6 +270,8 @@ export default function MentorCalendar() {
     if (!title) { showCalError('Please enter a title.'); return; }
     if (!date) { showCalError('Please select a start date.'); return; }
     if (end < date) { showCalError('End date cannot be before the start date.'); return; }
+    if (date < todayIso && date !== editedStart) { showCalError('The start date cannot be in the past.'); return; }
+    if (end < todayIso && end !== editedEnd) { showCalError('The end date cannot be in the past.'); return; }
 
     setSaving(true);
     const payload = {
@@ -535,11 +545,11 @@ export default function MentorCalendar() {
             <div className="form-row">
               <div className="form-group">
                 <label>Start Date <span className="req">*</span></label>
-                <DateInput type="date" id="pFieldDate" value={pDate} onChange={e => setPDate(e.target.value)} />
+                <DateInput type="date" id="pFieldDate" min={dateMin} value={pDate} onChange={e => setPDate(e.target.value)} />
               </div>
               <div className="form-group">
                 <label>End Date <span className="optional">(leave blank if one day)</span></label>
-                <DateInput type="date" id="pFieldEndDate" value={pEnd} onChange={e => setPEnd(e.target.value)} />
+                <DateInput type="date" id="pFieldEndDate" min={pDate || dateMin} value={pEnd} onChange={e => setPEnd(e.target.value)} />
               </div>
             </div>
             <div className="form-group">
