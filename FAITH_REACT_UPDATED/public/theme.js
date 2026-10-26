@@ -157,6 +157,9 @@
     // Paper previews (logsheet forms, the printable calendar) stay white like the printed page; images inside are not restored twice.
     DP + '.paper-form,' + DP + '.sheet-paper{filter:' + C + '}',
     DP + '.paper-form img,' + DP + '.sheet-paper img{filter:none}',
+    // Modal backdrops: a black veil would turn into a pale one under the colour flip. A white veil flips to a soft dark dim, with the blur kept.
+    DP + '.modal-overlay,' + DP + '.info-modal-overlay,' + DP + '.logout-modal-overlay,' + DP + '.sheet-overlay,' + DP + '.mt-overlay,' + DP + '.nf-confirm-overlay,' + DP + '.concern-overlay,' + DP + '.cb-overlay,' + DP + '.qr-modal-overlay,' + DP + '.proof-modal-overlay,' + DP + '.lpm-overlay,' + DP + '.cal-modal-overlay,' + DP + '.ucm-overlay,' + DP + '.settings-modal-overlay,' + DP + '.pt-sessions-overlay,' + DP + '.pe-overlay,' + DP + '.sidebar-overlay{background:rgba(255,255,255,.4)!important;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}',
+    DP + '.lightbox-overlay{background:rgba(255,255,255,.88)!important;-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}',
     DP + '.page-skel{background:#eef3f8}',
     'html[data-page="portal"]{transition:filter .3s ease}',
     '}'

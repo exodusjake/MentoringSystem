@@ -1900,6 +1900,7 @@ export default function AdminUserManagement() {
     const role          = form.role;
     const studentNumber = form.studentNumber.trim();
     const gender        = form.gender;
+    const contactNumber = form.contact.trim();
 
     if (!firstName || !lastName || !email || !role) {
       showErrorModal('Please fill in all required fields (First Name, Last Name, Email, Role).');
