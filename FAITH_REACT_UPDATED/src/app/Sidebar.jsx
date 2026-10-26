@@ -261,11 +261,11 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
           <div className="logout-modal-icon">
             <i className="ti ti-logout"></i>
           </div>
-          <h3>Confirm Log-out</h3>
+          <h3>Confirm Log out</h3>
           <p>{config.logoutMessage}</p>
           <div className="logout-modal-btns">
             <button className="btn-cancel" onClick={() => setLogoutOpen(false)}>Cancel</button>
-            <button className="btn-logout" id="btnLogoutConfirm" disabled={loggingOut} onClick={handleLogout}>{loggingOut ? 'Logging out…' : 'Log-out'}</button>
+            <button className="btn-logout" id="btnLogoutConfirm" disabled={loggingOut} onClick={handleLogout}>{loggingOut ? 'Logging out…' : 'Log out'}</button>
           </div>
         </div>
       </div>
