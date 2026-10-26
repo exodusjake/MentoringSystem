@@ -4,6 +4,11 @@ export const PORTAL_HEADER_CSS = [
   // Sidebar: a separate panel directly under the header, flush with the left, top and bottom edges (full-height drawer on phones).
   'html.portal-has-header .sidebar{top:64px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 64px)!important;height:calc(100dvh - 64px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:0 1px 0 0!important;border-radius:0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
   '.sidebar-nav{padding-top:0;padding-bottom:20px}',
+  // A slightly tighter menu so every item (down to System Settings) fits without scrolling on a laptop screen.
+  'html.portal-has-header .sidebar .nav-item{min-height:38px;padding:8px 12px;font-size:14px;margin-bottom:1px}',
+  'html.portal-has-header .sidebar .nav-item i{font-size:17px}',
+  'html.portal-has-header .sidebar .nav-section{padding:12px 8px 4px}',
+  'html.portal-has-header .sidebar .sb-indicator+.nav-section{padding-top:10px}',
   '.sb-indicator+.nav-section{padding-top:10px}',
 
   // Header: fixed to the top of the content area, so it follows the page as it scrolls.
