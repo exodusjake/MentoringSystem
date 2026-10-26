@@ -1921,6 +1921,11 @@ export default function AdminUserManagement() {
       showErrorModal('ID Number is required.');
       return;
     }
+    // Typing is free; the number is checked on Save (add and edit both come through here).
+    if (contactNumber && !/^[0-9]+$/.test(contactNumber)) {
+      showErrorModal('Only a valid number is required for the Contact Number. Use digits only, with no letters, spaces or symbols.');
+      return;
+    }
     if (role === 'Mentee' && !validSchoolCourse(form.menteeSchool, form.course)) {
       showErrorModal('Choose a valid course for the selected school. Sections are not required.'); return;
     }
