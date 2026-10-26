@@ -8,6 +8,7 @@ import Overlay from '../../components/Overlay.jsx';
 import PasswordMeter from '../../components/PasswordMeter.jsx';
 import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
+import { isPastPeriod } from '../../lib/periods.js';
 import { CONFIG } from '../../lib/config.js';
 import { validate as validatePassword } from '../../lib/passwordPolicy.js';
 import { getSession } from '../../lib/session.js';
@@ -612,10 +613,9 @@ export default function AdminUserManagement() {
         if (!seen.has(key)) { seen.add(key); periods.push({ schoolYear: r.schoolYear, semester: r.semester, key }); }
       });
       periods.sort((a, b) => b.schoolYear.localeCompare(a.schoolYear) || b.semester.localeCompare(a.semester));
-      const currentKey = `${settings.SchoolYear}|${settings.Semester}`;
       const opts = [
         { value: '__current__', label: `${settings.Semester}, SY ${settings.SchoolYear} (Current)` },
-        ...periods.filter(p => p.key !== currentKey).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
+        ...periods.filter(p => isPastPeriod(p, settings)).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
       ];
       return { byUser, opts };
     } catch (e) { console.warn('Could not load period history.'); return null; }

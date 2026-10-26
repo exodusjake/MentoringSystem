@@ -7,6 +7,7 @@ import { showToast } from '../../components/Notify.jsx';
 import OptionGroups from '../../components/OptionGroups.jsx';
 import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
+import { isPastPeriod } from '../../lib/periods.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 
@@ -123,10 +124,9 @@ export default function HeadMonitoring() {
         setPeriodHistoryByUser(byUser);
 
         if (!settings) return;
-        const currentKey = `${settings.SchoolYear}|${settings.Semester}`;
         setPeriodOptions([
           { value: '', label: `${settings.Semester}, SY ${settings.SchoolYear} (Current)` },
-          ...periods.filter(p => p.key !== currentKey).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
+          ...periods.filter(p => isPastPeriod(p, settings)).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
         ]);
       } catch (e) { console.warn('Could not load period history.'); }
     })();
