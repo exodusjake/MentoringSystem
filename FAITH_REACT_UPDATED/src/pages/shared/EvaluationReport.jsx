@@ -7,6 +7,7 @@ import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { darkToast } from '../../lib/darkToast.js';
 import { loadScript } from '../../lib/loadScript.js';
+import { isPastPeriod } from '../../lib/periods.js';
 import { escapeHtml } from '../../lib/security-utils.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 
@@ -117,6 +118,12 @@ export default function EvaluationReport({ cfg }) {
   const [search, setSearch] = useState('');
   const [ratedFilter, setRatedFilter] = useState('');
   const [prSearch, setPrSearch] = useState('');
+  // School Year / Semester filter: '' = the current period; a past period lists the mentors who had an account then
+  // (Settings/period-history). The ratings and attendance figures always come from the current period.
+  const [year, setYear] = useState('');
+  const [periodOptions, setPeriodOptions] = useState(null);          // null until Settings loads: just "Current Semester"
+  const [periodHistoryByUser, setPeriodHistoryByUser] = useState(() => new Map());
+  const inPeriod = m => !year || !!periodHistoryByUser.get(m.mentorID)?.has(year);
   const [tab, setTab] = useState('rankings');
   const [pendingEdits, setPendingEdits] = useState(() => new Map());   // admin: mentorID -> typed value
   const [saveError, setSaveError] = useState('');
@@ -145,6 +152,34 @@ export default function EvaluationReport({ cfg }) {
         if (data) setSysSettings(s => ({ ...s, ...data }));
       } catch (e) { /* use defaults */ }
       await loadMentors();
+    })();
+  }, []);
+
+  // The School Year filter lists the current period and any period the system has already moved past.
+  useEffect(() => {
+    (async () => {
+      try {
+        const [settings, rows] = await Promise.all([
+          apiRequest('Settings', 'GET', null, true),
+          apiRequest('Settings/period-history', 'GET', null, true),
+        ]);
+        const byUser = new Map();
+        const periods = [];
+        const seen = new Set();
+        (rows || []).forEach(r => {
+          const key = `${r.schoolYear}|${r.semester}`;
+          if (!byUser.has(r.userID)) byUser.set(r.userID, new Set());
+          byUser.get(r.userID).add(key);
+          if (!seen.has(key)) { seen.add(key); periods.push({ schoolYear: r.schoolYear, semester: r.semester, key }); }
+        });
+        periods.sort((a, b) => b.schoolYear.localeCompare(a.schoolYear) || b.semester.localeCompare(a.semester));
+        setPeriodHistoryByUser(byUser);
+        if (!settings) return;
+        setPeriodOptions([
+          { value: '', label: `${settings.Semester}, SY ${settings.SchoolYear} (Current)` },
+          ...periods.filter(p => isPastPeriod(p, settings)).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
+        ]);
+      } catch (e) { console.warn('Could not load period history.'); }
     })();
   }, []);
 
@@ -265,6 +300,7 @@ export default function EvaluationReport({ cfg }) {
   const filtered = [...allMentors.filter(m => {
     const name = `${m.firstName} ${m.lastName}`.toLowerCase();
     if (q && !name.includes(q)) return false;
+    if (!inPeriod(m)) return false;
     const isRated = m.evaluationRatingPercent != null;
     if (ratedFilter === 'rated' && !isRated) return false;
     if (ratedFilter === 'unrated' && isRated) return false;
@@ -512,6 +548,7 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
   // mentor's honorarium. Reuses the mentor list the Rankings tab already fetched (no separate API call).
   const prQ = prSearch.trim().toLowerCase();
   const prFiltered = allMentors.filter(m => {
+    if (!inPeriod(m)) return false;
     if (!prQ) return true;
     const name = `${m.firstName} ${m.lastName}`.toLowerCase();
     const dept = (m.departmentName || '').toLowerCase();
@@ -899,6 +936,7 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
                     <input type="text" id="searchInput" placeholder="Search mentor name…" value={search} onChange={e => setSearch(e.target.value)} />
                   </div>
                   {<Select className="filter-select" id="ratedFilter" value={ratedFilter} onChange={e => setRatedFilter(e.target.value)}><option value="">All Mentors</option><option value="rated">Rated</option><option value="unrated">Not Yet Rated</option></Select>}
+                  {<Select className="filter-select" id="schoolYearFilter" value={year} onChange={e => setYear(e.target.value)}>{periodOptions ? periodOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>) : <option value="">Current Semester</option>}</Select>}
                 </div>
                 {cfg.admin ? <div className="form-error" id="saveAllError" style={{ display: saveError ? '' : 'none', margin: '0 22px 14px' }}>{saveError}</div> : null}
                 <div className="table-wrapper">
@@ -950,6 +988,7 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
                     {' '}
                     <input type="text" id="prSearchInput" placeholder="Search mentor name or department…" value={prSearch} onChange={e => setPrSearch(e.target.value)} />
                   </div>
+                  {<Select className="filter-select" id="prSchoolYearFilter" value={year} onChange={e => setYear(e.target.value)}>{periodOptions ? periodOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>) : <option value="">Current Semester</option>}</Select>}
                 </div>
                 <div className="pr-summary" aria-label="Program report summary">
                   <div className="pr-summary-item">

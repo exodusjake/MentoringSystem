@@ -10,6 +10,7 @@ import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { AttendanceMetrics } from '../../lib/attendance-metrics.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
+import { isPastPeriod } from '../../lib/periods.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 
 // HEAD/HTML/attendance-summary.html + HEAD/JS/attendance-summary.js
@@ -54,6 +55,11 @@ export default function AttendanceOverview({ cfg }) {
   const [activeSchool, setActiveSchool] = useState('');
   const [search, setSearch] = useState('');
   const [course, setCourse] = useState('');
+  // School Year / Semester filter: '' = the current period; a past period lists the mentors who had an account then
+  // (Settings/period-history). The attendance figures themselves always come from the current period.
+  const [year, setYear] = useState('');
+  const [periodOptions, setPeriodOptions] = useState(null);          // null until Settings loads: just "Current Semester"
+  const [periodHistoryByUser, setPeriodHistoryByUser] = useState(() => new Map());
   const [courseOpts, setCourseOpts] = useState([{ label: null, options: [{ value: '', label: 'All Courses' }] }]);
 
   useEffect(() => {
@@ -72,6 +78,34 @@ export default function AttendanceOverview({ cfg }) {
         console.error('Failed to load attendance summary:', e);
         setLoadState('failed');
       }
+    })();
+  }, []);
+
+  // The School Year filter lists the current period and any period the system has already moved past.
+  useEffect(() => {
+    (async () => {
+      try {
+        const [settings, rows] = await Promise.all([
+          apiRequest('Settings', 'GET', null, true),
+          apiRequest('Settings/period-history', 'GET', null, true),
+        ]);
+        const byUser = new Map();
+        const periods = [];
+        const seen = new Set();
+        (rows || []).forEach(r => {
+          const key = `${r.schoolYear}|${r.semester}`;
+          if (!byUser.has(r.userID)) byUser.set(r.userID, new Set());
+          byUser.get(r.userID).add(key);
+          if (!seen.has(key)) { seen.add(key); periods.push({ schoolYear: r.schoolYear, semester: r.semester, key }); }
+        });
+        periods.sort((a, b) => b.schoolYear.localeCompare(a.schoolYear) || b.semester.localeCompare(a.semester));
+        setPeriodHistoryByUser(byUser);
+        if (!settings) return;
+        setPeriodOptions([
+          { value: '', label: `${settings.Semester}, SY ${settings.SchoolYear} (Current)` },
+          ...periods.filter(p => isPastPeriod(p, settings)).map(p => ({ value: p.key, label: `${p.semester}, SY ${p.schoolYear}` })),
+        ]);
+      } catch (e) { console.warn('Could not load period history.'); }
     })();
   }, []);
 
@@ -98,6 +132,7 @@ export default function AttendanceOverview({ cfg }) {
     }
     if (!MentorSchools.inCourse(m, course)) return false;
     if (activeSchool && !MentorSchools.inSchool(m, activeSchool)) return false;
+    if (year && !periodHistoryByUser.get(m.mentorID)?.has(year)) return false;
     return true;
   });
 
@@ -133,6 +168,7 @@ export default function AttendanceOverview({ cfg }) {
   function resetFilters() {
     setSearch('');
     setCourse('');
+    setYear('');
   }
 
   function openDetail(mentorId) {
@@ -521,6 +557,8 @@ tr.mentee-row:nth-child(even){background:#f9fafb}
                 <input type="text" id="searchInput" placeholder="Search mentor name…" autoComplete="off" value={search} onChange={e => setSearch(e.target.value)} />
               </div>
               {<Select className="filter-select" id="courseFilter" value={course} onChange={e => setCourse(e.target.value)}><OptionGroups groups={courseOpts} /></Select>}
+              {' '}
+              {<Select className="filter-select" id="schoolYearFilter" value={year} onChange={e => setYear(e.target.value)}>{periodOptions ? periodOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>) : <option value="">Current Semester</option>}</Select>}
               {' '}
               <button className="filter-reset" onClick={resetFilters}>Clear</button>
             </div>

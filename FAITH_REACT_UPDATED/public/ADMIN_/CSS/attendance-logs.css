@@ -503,7 +503,8 @@ body.attendance-detail .mnc-status-badge { white-space: normal; text-transform: 
   .att-toolbar--overview .att-filter-group .search-box { grid-column: 1 / -1; width: 100%; }
   body .att-toolbar--overview .att-filter-group > .dd-trigger.filter-select,
   body .att-toolbar--overview .att-filter-group > select.filter-select { width: 100% !important; max-width: none; }
-  body .att-toolbar--overview .att-filter-group > .filter-reset { min-height: 44px; padding: 0 20px; margin: 0; align-self: stretch; }
+  body .att-toolbar--overview .att-filter-group > .dd-trigger.filter-select { grid-column: 1 / -1; }
+  body .att-toolbar--overview .att-filter-group > .filter-reset { grid-column: 1 / -1; min-height: 44px; padding: 0 20px; margin: 0; }
   .att-toolbar--overview .att-action-group { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-left: 0; }
   .att-toolbar--overview .att-action-group > button { width: 100%; max-width: none; justify-content: center; }
 }
