@@ -362,7 +362,7 @@ export default function AttendanceDetail({ cfg }) {
               <div className="att-tip-wrap">
                 <i className="ti ti-alert-circle att-tip-icon"></i>
                 <div className="att-tip-box" id="attTipBox">
-                  {allMentees !== null ? <><div className="att-tip-title">Semester Completion</div><div className="att-tip-row">Checkpoints attended out of {semesterRequired} required this semester. Regular and make-up sessions for the same checkpoint count once. Present/Absent records are available in View History.</div></> : null}
+                  {allMentees !== null ? <><div className="att-tip-title">Semester Completion</div><div className="att-tip-row">Sessions attended out of {semesterRequired} required this semester. Regular and make-up sessions for the same slot count once. Present/Absent records are available in View History.</div></> : null}
                 </div>
               </div>
               <button className="filter-reset" onClick={resetAllFilters}>Clear</button>

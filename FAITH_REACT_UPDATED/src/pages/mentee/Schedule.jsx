@@ -90,7 +90,7 @@ export default function MenteeSchedule() {
     const done = !!slot.checkpointCompleted;
 
     const badge = done || approved
-      ? <span className="sch-approved-badge"><i className="ti ti-check"></i> {done ? 'Checkpoint Completed' : 'Session Approved'}</span>
+      ? <span className="sch-approved-badge"><i className="ti ti-check"></i> {done ? 'Session Completed' : 'Session Approved'}</span>
       : requested
         ? <span className="sch-requested-badge">Requested</span>
         : <span className="sch-available-badge">Available</span>;
@@ -118,7 +118,7 @@ export default function MenteeSchedule() {
           <i className="ti ti-clock"></i>
           {timeStr}
         </div>
-        {done ? <p className="sch-checkpoint-completed">You have already completed attendance for this mentoring checkpoint.</p> : null}
+        {done ? <p className="sch-checkpoint-completed">You have already completed attendance for this mentoring session.</p> : null}
         {btn}
       </div>
     );

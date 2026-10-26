@@ -78,7 +78,7 @@ function MenteeCard({ m }) {
             <span>Semester Completion</span>
             <span className="mcard-att-count">{attended} / {total > 0 ? total : '—'}</span>
           </div>
-          <div className="mcard-bar-bg" role="progressbar" aria-label="Semester completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct} aria-valuetext={`${attended} of ${total} required checkpoints attended`}>
+          <div className="mcard-bar-bg" role="progressbar" aria-label="Semester completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct} aria-valuetext={`${attended} of ${total} required sessions attended`}>
             <div className="mcard-bar-fill" style={{ width: `${pct}%` }}></div>
           </div>
         </div>
@@ -283,7 +283,7 @@ export default function MyActivities() {
                   {allMentees ? (
                     <>
                       <div className="info-tip-title">Semester Completion</div>
-                      <div className="info-tip-row">Checkpoints attended out of the semester requirement. Regular and make-up sessions for the same checkpoint count once.</div>
+                      <div className="info-tip-row">Sessions attended out of the semester requirement. Regular and make-up sessions for the same slot count once.</div>
                     </>
                   ) : null}
                 </div>

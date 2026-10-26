@@ -143,7 +143,7 @@ export default function Terms() {
                 Report errors through the proper workflow instead of creating duplicate records.
               </li>
               <li>
-                Submission deadlines and checkpoint windows set by the administrators apply to everyone.
+                Submission deadlines and session windows set by the administrators apply to everyone.
               </li>
             </ul>
             <div className="note">

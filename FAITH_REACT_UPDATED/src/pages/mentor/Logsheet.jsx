@@ -767,8 +767,8 @@ export default function MentorLogsheet() {
     const winState = reportStatus === 'Pending' && displayStatus === 'Completed' ? windowState(s, calendar) : 'unknown';
     const outsideWindow = winState === 'late' || winState === 'early';
     const reportLabel = winState === 'late' ? 'Late' : winState === 'early' ? 'Early' : reportStatus;
-    const reportTip = winState === 'late' ? 'Held after the checkpoint window closed, so it is not counted toward this checkpoint.'
-      : winState === 'early' ? 'Held before the checkpoint window opened, so it is not counted toward this checkpoint.' : undefined;
+    const reportTip = winState === 'late' ? 'Held after the session window closed, so it is not counted toward this session.'
+      : winState === 'early' ? 'Held before the session window opened, so it is not counted toward this session.' : undefined;
     const reportBadgeCls = outsideWindow || reportStatus === 'Submitted Late' ? 'report-late' : reportStatus === 'Pending' ? 'report-pending' : '';
     const badgeCls = displayStatus === 'Closed' ? 'badge-closed' : statusBadgeClass(displayStatus === 'In Progress' ? 'Scheduled' : displayStatus);
     const cardCls = `status-${(displayStatus === 'In Progress' ? 'Scheduled' : displayStatus || '').toLowerCase()}`;
@@ -872,7 +872,7 @@ export default function MentorLogsheet() {
             </div>
             <div className="log-makeup-placeholder">
               <i className="ti ti-calendar-plus"></i>
-              <p>Make-up attendance appears under its checkpoint. Only sessions without a checkpoint or section appear here.</p>
+              <p>Make-up attendance appears under its session. Only sessions without a slot or section appear here.</p>
             </div>
           </div>
         );
@@ -953,7 +953,7 @@ export default function MentorLogsheet() {
           <div className="log-section-group" key={sec}>
             <div className="log-section-group-header">
               <div className="log-section-group-label"><i className="ti ti-users-group"></i> {sec}</div>
-              <div className="log-section-group-progress"><span className="log-section-progress-text">{completed} checkpoints completed</span></div>
+              <div className="log-section-group-progress"><span className="log-section-progress-text">{completed} sessions completed</span></div>
             </div>
             <div className="log-section-cards">{secSessions.map(s => renderCard(s, true))}</div>
           </div>
@@ -1041,7 +1041,7 @@ export default function MentorLogsheet() {
               <div className="lstat-progress-bar">
                 <div className="lstat-progress-fill" id="lStatProgressFill" style={{ width: `${wt ? 17 : statsOn ? pct : 0}%` }}></div>
               </div>
-              <div className="lstat-lbl">Checkpoints Completed This Semester <details className="lstat-help"><summary aria-label="About checkpoints completed this semester"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Semester Progress</div>Checkpoint progress is for the current semester.</div></details></div>
+              <div className="lstat-lbl">Sessions Completed This Semester <details className="lstat-help"><summary aria-label="About sessions completed this semester"><i className="ti ti-info-circle" aria-hidden="true"></i></summary><div className="lstat-help-text"><div className="lstat-help-title">Semester Progress</div>Session progress is for the current semester.</div></details></div>
             </div>
             <div className="lstat">
               <div className="lstat-val" id="lStatTotal">{wt ? '2' : statsOn ? sessions.length : pulse}</div>

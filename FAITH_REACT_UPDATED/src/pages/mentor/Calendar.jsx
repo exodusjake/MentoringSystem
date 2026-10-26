@@ -408,7 +408,7 @@ export default function MentorCalendar() {
       </div>
       <div className="cal-event-dates">{CalIcon}{fmtDateRange(slot.availableDate, slot.availableDate)} &middot; {fmtSlotTime(slot.startTime)}</div>
       {!slot.isClosed ? <span className="cal-event-badge badge-availability">{availabilityLabel(slot)}</span> : null}
-      {slot.isClosed ? <span className="cal-event-badge badge-late" title="Checkpoint session window is closed">Closed</span> : null}
+      {slot.isClosed ? <span className="cal-event-badge badge-late" title="Session window is closed">Closed</span> : null}
       {slot.approvedMentees ? <div className="cal-event-desc"><i className="ti ti-user-check"></i> {slot.approvedMentees}</div> : null}
     </div>
   );

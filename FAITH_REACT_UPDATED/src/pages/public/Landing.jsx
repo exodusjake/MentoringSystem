@@ -235,7 +235,7 @@ export default function Landing() {
                 </div>
                 <h3>Logsheets &amp; Proof</h3>
                 <p>
-                  Submit per-checkpoint logsheets with photo proof and e-signatures, ready to print.
+                  Submit per-session logsheets with photo proof and e-signatures, ready to print.
                 </p>
               </div>
               <div className="card">
@@ -268,7 +268,7 @@ export default function Landing() {
               <h4>Today's sessions</h4>
               <div className="session">
                 <div>
-                  Checkpoint 1 Session
+                  Session 1
                   <small>Mon · 9:00 AM</small>
                 </div>
                 <span className="pill ok">Completed</span>
@@ -307,7 +307,7 @@ export default function Landing() {
                     <circle cx="12" cy="12" r="10" />
                     <path d="m8 12 3 3 5-6" />
                   </svg>
-                  Deadlines and checkpoints enforced automatically
+                  Deadlines and sessions enforced automatically
                 </li>
                 <li>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -440,7 +440,7 @@ export default function Landing() {
                 <summary>How do I book a mentoring session?</summary>
                 <div className="faq-body">
                   <p>
-                    Your Mentor schedules your regular sessions within the checkpoint windows set by the Administrator. If you missed a regular session, open the
+                    Your Mentor schedules your regular sessions within the session windows set by the Administrator. If you missed a regular session, open the
                     {' '}
                     <strong>Sessions</strong>
                     {' '}

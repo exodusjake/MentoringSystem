@@ -129,7 +129,7 @@ function SlotCard({ slot, isPast, onDelete }) {
         </div>
         <div className="slot-time"><i className="ti ti-clock"></i> {timeStr}</div>
         {slot.slotName ? <span className="slot-name-tag">{slot.slotName}</span> : null}
-        {slot.isClosed ? <span className="slot-late-tag" title="Checkpoint session window is closed">Closed</span> : null}
+        {slot.isClosed ? <span className="slot-late-tag" title="Session window is closed">Closed</span> : null}
         {slot.approvedMentees ? <div className="slot-approved-names"><i className="ti ti-user-check"></i> {slot.approvedMentees}</div> : null}
       </div>
     </div>
@@ -249,7 +249,7 @@ export default function Availability() {
   }
 
   async function submitSlots() {
-    if (!slotName) { setPostError('Please select which checkpoint this slot is for.'); return; }
+    if (!slotName) { setPostError('Please select which session this slot is for.'); return; }
     if (!slotDate) { setPostError('Please select a date.'); return; }
     if (!ranges.length) { setPostError('Add at least one start time.'); return; }
     for (const r of ranges) {
@@ -404,9 +404,9 @@ export default function Availability() {
           <div id="postError" className="form-error" style={{ display: postError ? 'block' : 'none' }}>{postError}</div>
           <div className="modal-form">
             <div className="form-group">
-              <label>Checkpoint</label>
+              <label>Session</label>
               <Select id="slotName" value={slotName} onChange={e => changeSlotName(e.target.value)}>
-                <option value="">Select a checkpoint…</option>
+                <option value="">Select a session…</option>
                 {windowsLoaded ? slotsForSemester(period.semester).map(name => {
                   const w = slotWindows[name];
                   const closed = w && todayIso > String(w.endDate || w.startDate).slice(0, 10);

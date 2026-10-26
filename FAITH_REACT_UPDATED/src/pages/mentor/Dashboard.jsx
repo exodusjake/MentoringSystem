@@ -311,7 +311,7 @@ export default function MentorDashboard() {
               <div className="stat-icon-wrap green"><i className="ti ti-circle-check"></i></div>
               <div className="stat-body">
                 <div className="stat-value" id="statCompleted" title={stats.completedTitle}>{wt ? SM.dashboard.completed : stats.completed}</div>
-                <div className="stat-label">Course Checkpoints Completed</div>
+                <div className="stat-label">Course Sessions Completed</div>
                 <div className="stat-sub">This semester</div>
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function MentorDashboard() {
               <div className="stat-body">
                 <div className="stat-value" id="statAttRate" title={stats.attTitle}>{wt ? SM.dashboard.attRate : stats.attRate}</div>
                 <div className="stat-label">Semester Completion</div>
-                <div className="stat-sub">Completed course checkpoints / required course checkpoints</div>
+                <div className="stat-sub">Completed course sessions / required course sessions</div>
               </div>
             </div>
           </div>

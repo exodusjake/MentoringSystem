@@ -32,11 +32,11 @@ const STEPS = [
   { page: 'dashboard', all: '.sessions-card', nth: 1, sample: true, title: 'Recent Sessions', text: 'Sessions that are already done or cancelled, with your Present or Absent mark.' },
   // Sessions
   { page: 'sessions', sel: '#nav-sessions', side: 'right', title: 'Sessions', text: 'The full list of your mentoring sessions and your semester record.' },
-  { page: 'sessions', sel: '#attendanceBanner', sample: true, title: 'Record', text: 'Your semester record: how many checkpoints you have completed out of the required total, plus a count of completed, scheduled and cancelled sessions.' },
+  { page: 'sessions', sel: '#attendanceBanner', sample: true, title: 'Record', text: 'Your semester record: how many sessions you have completed out of the required total, plus a count of completed, scheduled and cancelled sessions.' },
   { page: 'sessions', sel: '.btn-qr', sample: true, title: 'Show QR', text: 'On the day of a session, tap Show QR and let your mentor scan it. That is how your attendance is recorded. The code refreshes every couple of minutes.' },
   { page: 'sessions', sel: '.btn-detail', sample: true, title: 'Details', text: 'Open Details to see the date, time, topic, status and whether your attendance has been recorded.' },
   // Schedule
-  { page: 'schedule', sel: '#nav-schedule', side: 'right', title: 'Scheduled Sessions', text: 'Book your checkpoint sessions here, using time slots your mentor has opened.' },
+  { page: 'schedule', sel: '#nav-schedule', side: 'right', title: 'Scheduled Sessions', text: 'Book your sessions here, using time slots your mentor has opened.' },
   { page: 'schedule', sel: '.btn-request', sample: true, title: 'Request This Slot', text: 'Found a time that works for you? Tap Request This Slot.' },
   { page: 'schedule', sel: '#requestModal .btn-save', sample: true, enter: 'openModal', leave: 'closeModal', title: 'Send Request', text: 'Optionally add what you want to discuss, then tap Send Request. The slot is booked right away.' },
   { page: 'schedule', sel: '.sch-slot-card', sample: true, enter: 'approve', title: 'Session Scheduled', text: 'The card now reads Session Scheduled, and the session appears on your Sessions page immediately.' },

@@ -430,13 +430,13 @@ export default function MenteeSessions() {
               <div className="att-progress-left">
                 <div className="att-progress-title">Semester Completion</div>
                 <div className="att-progress-sub" id="attProgressSub">
-                  {wt ? '50% complete — 3 checkpoints remaining' : banner ? (banner.pct >= 100 ? 'Semester requirement met!'
-                    : `${banner.pct}% complete — ${Math.max(0, banner.required - banner.attended)} checkpoint${banner.required - banner.attended !== 1 ? 's' : ''} remaining`) : 'Loading...'}
+                  {wt ? '50% complete — 3 sessions remaining' : banner ? (banner.pct >= 100 ? 'Semester requirement met!'
+                    : `${banner.pct}% complete — ${Math.max(0, banner.required - banner.attended)} session${banner.required - banner.attended !== 1 ? 's' : ''} remaining`) : 'Loading...'}
                 </div>
               </div>
               <div className="att-progress-nums">
                 <span className="att-num" id="attNum">{wt ? '3' : banner ? banner.attended : pulse}</span>
-                <span className="att-denom" id="attDenom">{wt ? '/ 6 checkpoints' : banner ? `/ ${banner.required} checkpoints` : '/ — sessions'}</span>
+                <span className="att-denom" id="attDenom">{wt ? '/ 6 sessions' : banner ? `/ ${banner.required} sessions` : '/ — sessions'}</span>
               </div>
             </div>
             <div className="att-bar-track">

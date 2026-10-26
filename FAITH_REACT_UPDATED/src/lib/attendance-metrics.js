@@ -4,7 +4,7 @@ function percent(attended, total) {
   return total > 0 ? Math.min(100, Math.max(0, attended / total * 100)) : 0;
 }
 function status(rate, total) {
-  if (!(total > 0)) return { cls: 'no-sessions', label: 'No completed checkpoints yet' };
+  if (!(total > 0)) return { cls: 'no-sessions', label: 'No completed sessions yet' };
   if (rate >= 80) return { cls: 'excellent', label: 'Excellent' };
   if (rate >= 60) return { cls: 'on-track', label: 'On Track' };
   if (rate >= 40) return { cls: 'behind', label: 'Behind' };

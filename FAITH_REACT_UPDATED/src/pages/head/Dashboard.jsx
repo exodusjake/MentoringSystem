@@ -267,7 +267,7 @@ export default function HeadDashboard() {
         })
         .slice(0, 3);
       if (!ranked.length) {
-        top3 = <Empty className="top3-empty">No finalized positive performance scores available. Checkpoint attendance alone does not finalize a grade; required reports may still be pending.</Empty>;
+        top3 = <Empty className="top3-empty">No finalized positive performance scores available. Session attendance alone does not finalize a grade; required reports may still be pending.</Empty>;
       } else {
         top3 = (
           <>
@@ -505,7 +505,7 @@ export default function HeadDashboard() {
                       <span className="hd-stat-num excellent" id="mExcellent" title={perfTitle}>{P(perf?.counts.Excellent)}</span>
                       <span className="hd-stat-label">Excellent</span>
                     </Link>
-                    <div className="hd-stat" title="No checkpoint deadline has passed yet, so no score">
+                    <div className="hd-stat" title="No session deadline has passed yet, so no score">
                       <span className="hd-stat-num pending" id="mPending" title={perfTitle}>{P(perf?.counts.Pending)}</span>
                       <span className="hd-stat-label">Pending</span>
                     </div>
@@ -598,33 +598,33 @@ export default function HeadDashboard() {
                       <div className="dash-tip-row">
                         <strong>Attended</strong>
                         {' '}
-                        — currently assigned, non-dropout mentees with attendance at one or more completed checkpoints this semester
+                        — currently assigned, non-dropout mentees with attendance at one or more completed sessions this semester
                       </div>
                       <div className="dash-tip-row">
                         <strong>No attendance</strong>
                         {' '}
-                        — currently assigned, non-dropout mentees with no attendance at completed checkpoints this semester
+                        — currently assigned, non-dropout mentees with no attendance at completed sessions this semester
                       </div>
                       <div className="dash-tip-title">Attendance Levels</div>
                       <div className="dash-tip-row">
                         <strong>Excellent</strong>
                         {' '}
-                        — ≥80% of completed checkpoints attended
+                        — ≥80% of completed sessions attended
                       </div>
                       <div className="dash-tip-row">
                         <strong>On Track</strong>
                         {' '}
-                        — 60–79% of completed checkpoints attended
+                        — 60–79% of completed sessions attended
                       </div>
                       <div className="dash-tip-row">
                         <strong>Needs Attention</strong>
                         {' '}
-                        — below 60% of completed checkpoints attended
+                        — below 60% of completed sessions attended
                       </div>
                       <div className="dash-tip-row">
                         <strong>No Completed Sessions</strong>
                         {' '}
-                        — no completed checkpoints this semester
+                        — no completed sessions this semester
                       </div>
                       <div className="dash-tip-row" style={{ marginTop: "8px", paddingTop: "8px", borderTop: "1px solid #334155", fontSize: "11.5px", color: "#94a3b8" }}>Unassigned and dropped-out mentees are not included in these attendance counts.</div>
                     </div>

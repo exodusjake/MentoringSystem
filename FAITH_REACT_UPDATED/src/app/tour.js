@@ -28,12 +28,12 @@ export const SAMPLE = {
     mentorPreview:
       '<div class="mentor-avatar-lg" data-wt="1">MS</div><div class="mentor-info-block"><div class="mentor-info-name">Maria Santos</div>' +
       '<div class="mentor-info-dept">maria.santos@sample.edu</div><div class="mentor-info-tags"><span class="mentor-tag">CCIT</span><span class="mentor-tag">School of Technology</span></div></div>',
-    attended: '3', required: '/6', attSub: '3 of 6 checkpoints attended',
+    attended: '3', required: '/6', attSub: '3 of 6 sessions attended',
     upcoming: dashSession('NOV', '12', 'Before Prelims', '9:00 AM', '<span class="session-completed-tag" style="background:#ede9fe;color:#6d28d9;border-color:#ddd6fe;">Today</span>'),
     recent:
       dashSession('OCT', '08', 'Mentoring Assembly', '10:00 AM', DONE_TAG, ' session-item-completed') +
       dashSession('SEP', '24', 'Goal Setting', '2:00 PM', '<span class="session-completed-tag" style="background:#fee2e2;color:#dc2626;border-color:#fecaca;">Cancelled</span>', ' session-item-cancelled'),
-    announcements: '<div class="announce-item" data-wt="1"><div class="announce-title">Prelim checkpoint window opens Nov 10</div><div class="announce-body">You can book your Before Prelims session from Nov 10.</div><div class="announce-footer"><span class="announce-date">Oct 15, 2026</span></div></div>',
+    announcements: '<div class="announce-item" data-wt="1"><div class="announce-title">Prelim session window opens Nov 10</div><div class="announce-body">You can book your Before Prelims session from Nov 10.</div><div class="announce-footer"><span class="announce-date">Oct 15, 2026</span></div></div>',
     evaluations: '<div class="announce-item" data-wt="1"><div class="announce-title">Mentoring Program Evaluation</div><div class="announce-body">Share your feedback about your mentoring experience.</div><div class="announce-footer"><span class="announce-date">Oct 12, 2026</span></div></div>',
   },
   sessions: {
@@ -68,7 +68,7 @@ export const SAMPLE = {
       ' <span class="ann-role-badge ' + roleCls + '">' + roleLbl + '</span></div><div class="ann-card-date">' + date + '</div></div></div>' +
       '<div class="announce-title">' + title + '</div><div class="announce-content">' + body + '</div></div>';
     return '<div data-wt-tab="' + tab + '">' + (tab === 'admin'
-      ? annCard(false, 'Daniela Barranda', 'DB', 'role-admin', 'Administrator', 'Oct 15, 2026', 'Prelim checkpoint window opens Nov 10', 'Please be informed that the Before Prelims checkpoint opens on Nov 10. Book your session through Schedule Session before the window closes.', true)
+      ? annCard(false, 'Daniela Barranda', 'DB', 'role-admin', 'Administrator', 'Oct 15, 2026', 'Prelim session window opens Nov 10', 'Please be informed that the Before Prelims session opens on Nov 10. Book your session through Schedule Session before the window closes.', true)
       : annCard(true, 'Maria Santos', 'MS', 'role-mentor', 'Mentor', 'Oct 18, 2026', 'Bring your ID to the next session', 'Hello, Mentees! Please bring your school ID so your attendance can be verified.', false)) + '</div>';
   },
 };

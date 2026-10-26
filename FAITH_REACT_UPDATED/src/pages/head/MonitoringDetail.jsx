@@ -779,7 +779,7 @@ export default function HeadMentorDetail() {
             </div>
             <div className="stat-card sc-purple">
               <div className="stat-top-row">
-                <div className="stat-label">Mentees with Completed Checkpoints</div>
+                <div className="stat-label">Mentees with Completed Sessions</div>
                 <div className="stat-icon purple">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 11.08 22 12 12 22 2 12 2 11.08" />
@@ -789,7 +789,7 @@ export default function HeadMentorDetail() {
                 </div>
               </div>
               <div className="stat-value" id="dStatActiveMentees">{d ? active : pulse}</div>
-              <div className="stat-note" id="dStatInactiveNote">{d ? `${inactive} with no completed checkpoints this semester` : '— inactive'}</div>
+              <div className="stat-note" id="dStatInactiveNote">{d ? `${inactive} with no completed sessions this semester` : '— inactive'}</div>
             </div>
             <div className="stat-card sc-orange">
               <div className="stat-top-row">

@@ -272,7 +272,7 @@ export default function AdminDashboard() {
         })
         .slice(0, 3);
       if (!ranked.length) {
-        top3 = <Empty className="top3-empty">No finalized positive performance scores available. Required reports may still be pending, even when checkpoints have been completed.</Empty>;
+        top3 = <Empty className="top3-empty">No finalized positive performance scores available. Required reports may still be pending, even when sessions have been completed.</Empty>;
       } else {
         top3 = (
           <>
@@ -344,15 +344,15 @@ export default function AdminDashboard() {
   const engTip = (
     <>
       <div className="dash-tip-title">Attendance This Semester</div>
-      <div className="dash-tip-row"><strong>Attended</strong> — currently assigned, non-dropout mentees with attendance at one or more completed checkpoints this semester</div>
-      <div className="dash-tip-row"><strong>No attendance</strong> — currently assigned, non-dropout mentees with no attendance at completed checkpoints this semester</div>
+      <div className="dash-tip-row"><strong>Attended</strong> — currently assigned, non-dropout mentees with attendance at one or more completed sessions this semester</div>
+      <div className="dash-tip-row"><strong>No attendance</strong> — currently assigned, non-dropout mentees with no attendance at completed sessions this semester</div>
       <div className="dash-tip-row"><strong>Total Mentees</strong> — active mentee accounts, including unassigned and dropped-out accounts; those groups are listed separately</div>
       <div className="dash-tip-title">Attendance Tiers</div>
-      <div className="dash-tip-row"><strong>Excellent</strong> — attended at least 80% of completed checkpoints</div>
-      <div className="dash-tip-row"><strong>On Track</strong> — attended 60–79% of completed checkpoints</div>
-      <div className="dash-tip-row"><strong>Needs Attention</strong> — attended below 60% of completed checkpoints (Behind / At Risk / Critical)</div>
-      <div className="dash-tip-row"><strong>No Completed Sessions</strong> — no completed checkpoints this semester</div>
-      <div className="dash-tip-row" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #334155', fontSize: '11.5px', color: '#94a3b8' }}>Attendance tiers compare attended checkpoints with completed checkpoints this semester. Future checkpoints are not counted; unassigned and dropped-out mentees are shown separately.</div>
+      <div className="dash-tip-row"><strong>Excellent</strong> — attended at least 80% of completed sessions</div>
+      <div className="dash-tip-row"><strong>On Track</strong> — attended 60–79% of completed sessions</div>
+      <div className="dash-tip-row"><strong>Needs Attention</strong> — attended below 60% of completed sessions (Behind / At Risk / Critical)</div>
+      <div className="dash-tip-row"><strong>No Completed Sessions</strong> — no completed sessions this semester</div>
+      <div className="dash-tip-row" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #334155', fontSize: '11.5px', color: '#94a3b8' }}>Attendance tiers compare attended sessions with completed sessions this semester. Future sessions are not counted; unassigned and dropped-out mentees are shown separately.</div>
     </>
   );
 
@@ -488,7 +488,7 @@ export default function AdminDashboard() {
                       <span className="eng-bd-val" id="engStatusNeedsAttention" title={engTitle}>{E(eng?.needsAttention)}</span>
                     </Link>
                     {' '}
-                    <Link to="/admin/users?role=Mentee&engagement=no-completed-sessions" className="eng-breakdown-row eng-breakdown-link" aria-label="View assigned mentees with no completed checkpoints this semester">
+                    <Link to="/admin/users?role=Mentee&engagement=no-completed-sessions" className="eng-breakdown-row eng-breakdown-link" aria-label="View assigned mentees with no completed sessions this semester">
                       <span className="eng-status-badge no-sessions">No Completed Sessions</span>
                       {' '}
                       <span className="eng-bd-track">
@@ -576,7 +576,7 @@ export default function AdminDashboard() {
                     <span className="action-dot pending"></span>
                     <div>
                       <div className="action-title">Pending</div>
-                      <div className="action-desc">No checkpoint deadline has passed yet, so no score.</div>
+                      <div className="action-desc">No session deadline has passed yet, so no score.</div>
                     </div>
                   </div>
                 </div>

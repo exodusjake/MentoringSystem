@@ -22,7 +22,7 @@ function mentorCourseProgress(m) {
 // Same chips as markup (for the printable reports, which are standalone HTML documents).
 function mentorCourseLabels(m) {
   const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  return '<div class="mentor-course-progress">' + mentorCourseProgress(m).map(label => '<span class="mentor-course-chip" title="Completed checkpoints / required checkpoints">'+escape(label)+'</span>').join('') + '</div>';
+  return '<div class="mentor-course-progress">' + mentorCourseProgress(m).map(label => '<span class="mentor-course-chip" title="Completed sessions / required sessions">'+escape(label)+'</span>').join('') + '</div>';
 }
 // With 2+ courses, Done shows how many of them finished the checkpoint.
 function checkpointDone(m, slot) {
@@ -212,7 +212,7 @@ export default function EvaluationReport({ cfg }) {
   const isAssemblyNA = s => s === 'Mentoring Assembly' && sysSettings.Semester === '2nd Semester';
   const periodSub = tab === 'rankings'
     ? `Mentor performance rankings for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`
-    : `Per-checkpoint mentee attendance and honorarium computation for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`;
+    : `Per-session mentee attendance and honorarium computation for ${sysSettings.Semester}, SY ${sysSettings.SchoolYear}`;
 
   // ── Stats ──
   const total = allMentors.length;
@@ -344,7 +344,7 @@ export default function EvaluationReport({ cfg }) {
       const inputVal = hasEdit ? pendingEdits.get(m.mentorID) : (m.evaluationRatingPercent ?? '');
       return (
         <tr key={m.mentorID}>
-          <td className="td-primary">{m.firstName} {m.lastName}<div className="mentor-course-progress">{mentorCourseProgress(m).map((label, i) => <span className="mentor-course-chip" title="Completed checkpoints / required checkpoints" key={i}>{label}</span>)}</div></td>
+          <td className="td-primary">{m.firstName} {m.lastName}<div className="mentor-course-progress">{mentorCourseProgress(m).map((label, i) => <span className="mentor-course-chip" title="Completed sessions / required sessions" key={i}>{label}</span>)}</div></td>
           {slots.map(s => (
             <td className="td-center" key={s}>{!isAssemblyNA(s) ? <CheckpointDone m={m} slot={s} empty={<span className="slot-empty">—</span>} /> : <span style={{ color: '#6b7280', background: '#f3f4f6' }}>N/A</span>}</td>
           ))}

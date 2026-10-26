@@ -232,7 +232,7 @@ export default function MentorSessions() {
     const finalNotes = validSection ? `[${validSection}]${notes ? ' ' + notes : ''}` : (notes || null);
     const slotName = logSlot || null;
     if (!checkpointDateAllowed(checkpointWindow(calendar, slotName, period.schoolYear, period.semester), logDate)) {
-      const msg = 'Choose an available checkpoint and a date within its session window.';
+      const msg = 'Choose an available session and a date within its session window.';
       setLogError(msg);
       showToast(msg); return;
     }

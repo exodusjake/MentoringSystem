@@ -104,7 +104,7 @@ export default function MenteeDashboard() {
         attended, required: `/${required}`,
         sub: required === 0 ? 'No requirement set'
           : attended >= required ? 'Semester requirement met!'
-          : `${Math.max(0, required - attended)} checkpoint${required - attended !== 1 ? 's' : ''} remaining`,
+          : `${Math.max(0, required - attended)} session${required - attended !== 1 ? 's' : ''} remaining`,
       });
     } catch (e) {
       console.error('Attendance progress load failed:', e);
