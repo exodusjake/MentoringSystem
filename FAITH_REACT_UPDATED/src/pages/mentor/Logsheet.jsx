@@ -9,6 +9,7 @@ import { CONFIG } from '../../lib/config.js';
 import { dashboardSessionState } from '../../lib/dashboard-sessions.js';
 import { windowState } from '../../lib/checkpoint-window-state.js';
 import { LogsheetData } from '../../lib/logsheet-data.js';
+import { printDateLabel } from '../../lib/printDate.js';
 import { buildMentorNotesForm, buildNonAttendanceForm, buildPrintForm, openLogsheetPrintWindow } from '../../lib/logsheetForms.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
@@ -150,7 +151,7 @@ const SigRow = ({ mentorName, mentor, dateBlock = true }) => (
       <div className="paper-sig-line"></div>
       <div className="paper-sig-label">Mentor's Signature over printed name</div>
     </div>
-    {dateBlock ? <div className="paper-sig-block paper-date-block"><div className="paper-sig-line"></div><div className="paper-sig-label">DATE</div></div> : null}
+    {dateBlock ? <div className="paper-sig-block paper-date-block"><div style={{ textAlign: 'center' }}><div className="paper-sig-value">{printDateLabel()}</div></div><div className="paper-sig-line"></div><div className="paper-sig-label">DATE</div></div> : null}
   </div>
 );
 

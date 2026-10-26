@@ -2343,6 +2343,14 @@ export default function AdminUserManagement() {
       ))
     : null;
 
+  // Small lines under the Mentors / Mentees cards: how many accounts are deactivated, and how many mentees dropped out.
+  const isOff = u => (u.isActive ?? u.IsActive) === false;
+  const mentorOff = allUsers.filter(u => u.role === 'Mentor' && isOff(u)).length;
+  const menteeOff = allUsers.filter(u => u.role === 'Mentee' && isOff(u)).length;
+  const menteeDrop = allUsers.filter(u => u.role === 'Mentee' && isMenteeDropOut(u.userID)).length;
+  const subMentors = usersRendered ? `${mentorOff} deactivated` : '';
+  const subMentees = usersRendered ? `${menteeDrop} dropout${menteeDrop === 1 ? '' : 's'} · ${menteeOff} deactivated` : '';
+
   const dateStr = new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const statCell = v => (stats ? v : <span className="stat-pulse">—</span>);
   const editingUserName = `${form.firstName.trim()} ${form.lastName.trim()}`;
@@ -2651,11 +2659,11 @@ export default function AdminUserManagement() {
                 <div className="stat-value" id="totalUsers">{statCell(stats?.total)}</div>
               </div>
               <div className="stat-card">
-                <div className="stat-label">Mentors</div>
+                <div className="stat-label">Mentors{subMentors ? <span className="stat-sub">{subMentors}</span> : null}</div>
                 <div className="stat-value" id="statMentorCount">{statCell(stats?.mentors)}</div>
               </div>
               <div className="stat-card">
-                <div className="stat-label">Mentees</div>
+                <div className="stat-label">Mentees{subMentees ? <span className="stat-sub">{subMentees}</span> : null}</div>
                 <div className="stat-value" id="statMenteeCount">{statCell(stats?.mentees)}</div>
               </div>
               <div className="stat-card">

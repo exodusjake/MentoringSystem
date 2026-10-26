@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { printDateLabel } from '../../lib/printDate.js';
 import { Navigate, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
 import Empty from '../../components/Empty.jsx';
@@ -73,6 +74,7 @@ function SigRow({ mentor, withDate = true }) {
       </div>
       {withDate ? (
         <div className="paper-sig-block paper-date-block">
+          <div style={{ textAlign: 'center' }}><div className="paper-sig-value">{printDateLabel()}</div></div>
           <div className="paper-sig-line"></div>
           <div className="paper-sig-label">DATE</div>
         </div>

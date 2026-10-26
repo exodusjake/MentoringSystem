@@ -604,7 +604,7 @@ export default function Login() {
                     <label htmlFor="email">Email Address</label>
                     <div className="input-wrap">
                       {MAIL_ICON}
-                      <input type="email" id="email" placeholder="yourname@faith.edu.ph" autoComplete="email" ref={emailRef}
+                      <input type="email" id="email" placeholder="yourname@firstasia.edu.ph" autoComplete="email" ref={emailRef}
                         value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
                   </div>
@@ -695,7 +695,7 @@ export default function Login() {
                       <label htmlFor="fpEmail">Email Address</label>
                       <div className="input-wrap">
                         {MAIL_ICON}
-                        <input type="email" id="fpEmail" placeholder="yourname@faith.edu.ph" autoComplete="email" ref={fpEmailRef}
+                        <input type="email" id="fpEmail" placeholder="yourname@firstasia.edu.ph" autoComplete="email" ref={fpEmailRef}
                           value={fpEmail} onChange={e => setFpEmail(e.target.value)} />
                       </div>
                     </div>

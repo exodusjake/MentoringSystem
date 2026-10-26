@@ -1,4 +1,5 @@
 import { CONFIG } from './config.js';
+import { printDateLabel } from './printDate.js';
 import { LogsheetData } from './logsheet-data.js';
 import { getLogsheetPrintStyles } from './print-logsheet-styles.js';
 import { escapeHtml } from './security-utils.js';
@@ -85,6 +86,7 @@ export function buildPrintForm(session, mentor, label) {
           <div class="sig-role">Mentor's Signature over printed name</div>
         </div>
         <div class="sig-block date-block">
+          <div style="text-align:center"><div class="sig-name">${lsEsc(printDateLabel())}</div></div>
           <div class="sig-line"></div>
           <div class="sig-role">DATE</div>
         </div>
@@ -142,6 +144,7 @@ export function buildMentorNotesForm(session, mentor, label) {
           <div class="notes-sig-role">Mentor's Signature over printed name</div>
         </div>
         <div class="notes-sig-block notes-date-block">
+          <div style="text-align:center"><div class="notes-sig-name">${lsEsc(printDateLabel())}</div></div>
           <div class="notes-sig-line"></div>
           <div class="notes-sig-role">DATE</div>
         </div>

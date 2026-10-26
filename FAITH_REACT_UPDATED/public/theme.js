@@ -154,6 +154,9 @@
     DP + 'img,' + DP + 'video,' + DP + 'picture,' + DP + '[class*="qr" i] canvas,' + DP + '[id*="qr" i] canvas,' + DP + '[class*="qr" i] img,' + DP + '[id*="qr" i] img,',
     DP + '.no-invert,' + DP + '[style*="background-image"]{filter:' + C + '}',
     DP + '.theme-toggle{filter:' + C + '}',
+    // Paper previews (logsheet forms, the printable calendar) stay white like the printed page; images inside are not restored twice.
+    DP + '.paper-form,' + DP + '.sheet-paper{filter:' + C + '}',
+    DP + '.paper-form img,' + DP + '.sheet-paper img{filter:none}',
     DP + '.page-skel{background:#eef3f8}',
     'html[data-page="portal"]{transition:filter .3s ease}',
     '}'

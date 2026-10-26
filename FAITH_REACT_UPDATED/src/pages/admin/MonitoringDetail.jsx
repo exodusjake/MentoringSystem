@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { printDateLabel } from '../../lib/printDate.js';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import Page from '../../app/Page.jsx';
@@ -97,7 +98,7 @@ function SigRow({ ctx, withDate = true }) {
         <div className="paper-sig-line"></div>
         <div className="paper-sig-label">Mentor's Signature over printed name</div>
       </div>
-      {withDate ? <div className="paper-sig-block paper-date-block"><div className="paper-sig-line"></div><div className="paper-sig-label">DATE</div></div> : null}
+      {withDate ? <div className="paper-sig-block paper-date-block"><div style={{ textAlign: 'center' }}><div className="paper-sig-value">{printDateLabel()}</div></div><div className="paper-sig-line"></div><div className="paper-sig-label">DATE</div></div> : null}
     </div>
   );
 }
