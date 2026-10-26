@@ -5,8 +5,8 @@ export const PORTAL_HEADER_CSS = [
   'html.portal-has-header .sidebar{top:64px!important;left:0!important;width:calc(var(--sb-width,260px) - 12px)!important;min-width:0!important;height:calc(100vh - 64px)!important;height:calc(100dvh - 64px)!important;border:1px solid var(--sb-border,#e9ecef)!important;border-width:0 1px 0 0!important;border-radius:0!important;box-shadow:0 2px 10px rgba(15,23,42,.07)}',
   '.sidebar-nav{padding-top:0;padding-bottom:20px}',
   // The small grey line under a card's number or title ("Active mentor accounts", "0 unassigned · 0 dropped out") reads a little larger.
-  'html.portal-has-header .stat-sub,html.portal-has-header .stat-note,html.portal-has-header .school-card-sub,html.portal-has-header .hd-card-sub,html.portal-has-header .mcard-sub,html.portal-has-header .settings-card-sub{font-size:13px!important;line-height:1.45}',
-  'html.portal-has-header .stat-label .stat-sub{font-size:12.5px!important}',
+  'html.portal-has-header .stat-sub,html.portal-has-header .stat-note,html.portal-has-header .school-card-sub,html.portal-has-header .hd-card-sub,html.portal-has-header .mcard-sub,html.portal-has-header .settings-card-sub{font-size:14.5px!important;line-height:1.45}',
+  'html.portal-has-header .stat-label .stat-sub{font-size:13.5px!important}',
   // A slightly tighter menu so every item (down to System Settings) fits without scrolling on a laptop screen.
   'html.portal-has-header .sidebar .nav-item{min-height:38px;padding:8px 12px;font-size:14px;margin-bottom:1px}',
   'html.portal-has-header .sidebar .nav-item i{font-size:17px}',
