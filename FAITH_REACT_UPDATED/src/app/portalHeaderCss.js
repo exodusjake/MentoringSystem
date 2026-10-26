@@ -13,6 +13,10 @@ export const PORTAL_HEADER_CSS = [
 
   // Header: fixed to the top of the content area, so it follows the page as it scrolls.
   '.portal-header{position:fixed;top:0;left:0;right:0;height:64px;z-index:90;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;background:var(--sb-bg,#fff);border-bottom:1px solid var(--sb-border,#e9ecef);font-family:var(--font,"DM Sans",system-ui,sans-serif)}',
+  '.ph-lead{display:flex;align-items:center;gap:12px;min-width:0}',
+  '.ph-collapse{display:none;width:40px;height:40px;padding:0;flex-shrink:0;align-items:center;justify-content:center;font-size:20px;color:var(--sb-icon,#6b7280);background:var(--sb-bg,#fff);border:1px solid var(--sb-border,#e9ecef);border-radius:10px;cursor:pointer}',
+  '.ph-collapse:hover{background:var(--sb-item-hover,#f3f4f6);color:var(--sb-active,#2563eb)}',
+  '.ph-collapse:focus-visible{outline:2px solid var(--sb-active,#2563eb);outline-offset:2px}',
   '.ph-brand{display:flex;align-items:center;gap:12px;min-width:0;text-decoration:none}',
   '.ph-brand img{width:42px;height:42px;object-fit:contain;flex-shrink:0}',
   '.ph-brand-text{font-size:11.5px;font-weight:700;letter-spacing:.05em;line-height:1.3;text-transform:uppercase;color:var(--sb-active,#2563eb)}',
@@ -43,6 +47,20 @@ export const PORTAL_HEADER_CSS = [
   // The page content starts below the bar; the mentor/admin concern bell moves left of the profile circle.
   '@media (min-width:769px){html.portal-has-header body .main-wrapper{padding-top:64px}}',
 
+  // Collapse to an icon rail (desktop only): the menu slides to the left, the labels go, the page grows into the space.
+  '@media (min-width:769px){',
+  '.ph-collapse{display:flex}',
+  'html.portal-has-header .sidebar{transition:width .26s cubic-bezier(.22,1,.36,1)}',
+  'html.portal-has-header body .main-wrapper{transition:margin-left .26s cubic-bezier(.22,1,.36,1)}',
+  'html.sb-collapsed{--sb-width:76px}',
+  'html.sb-collapsed .sidebar-nav{padding:6px 8px}',
+  'html.sb-collapsed .sidebar .sb-indicator{left:8px;right:8px}',
+  'html.sb-collapsed .sidebar .nav-item{position:relative;justify-content:center;gap:0;padding:8px 0;font-size:0}',
+  'html.sb-collapsed .sidebar .nav-item i{font-size:20px}',
+  'html.sb-collapsed .sidebar .nav-section{height:1px;margin:10px 12px;padding:0;font-size:0;background:var(--sb-border,#e9ecef)}',
+  'html.sb-collapsed .sidebar .sb-indicator+.nav-section{margin-top:4px}',
+  'html.sb-collapsed .sidebar .nav-badge{position:absolute;top:1px;right:5px;margin:0;min-width:16px;height:16px;padding:0 4px;font-size:10px;line-height:16px}',
+  '}',
   '@media (max-width:768px){',
   '.portal-header{height:58px;padding:0 14px 0 62px}',
   'html.portal-has-header .sidebar{top:0!important;left:0!important;width:var(--sb-width,260px)!important;min-width:var(--sb-width,260px)!important;height:100vh!important;height:100dvh!important;border-radius:0!important;border-width:0 1px 0 0!important}',

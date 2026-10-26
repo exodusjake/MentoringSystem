@@ -20,6 +20,8 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
   useStyle('portal-header', PORTAL_HEADER_CSS);
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  // Desktop: the menu can slide away to a thin icon rail. The choice is remembered; CSS does the rest (class on <html>).
+  const [collapsed, setCollapsed] = useState(() => { try { return localStorage.getItem('astraSbCollapsed') === '1'; } catch (e) { return false; } });
   const userRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -47,6 +49,11 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
     document.documentElement.classList.add('portal-has-header');
     return () => document.documentElement.classList.remove('portal-has-header');
   }, []);
+  useEffect(() => {
+    document.documentElement.classList.toggle('sb-collapsed', collapsed);
+    try { localStorage.setItem('astraSbCollapsed', collapsed ? '1' : '0'); } catch (e) { /* storage unavailable */ }
+  }, [collapsed]);
+  useEffect(() => () => document.documentElement.classList.remove('sb-collapsed'), []);
   // Profile menu: closes on an outside click or Escape.
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -206,9 +213,13 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
       <div className={`sidebar-overlay${open ? ' active' : ''}`} id="sidebarOverlay" onClick={close} style={hide}></div>
 
       <header className="portal-header" style={hide}>
-        <div className="ph-brand">
-          <img src="/IMAGES/LOGO-mark.png" alt="" />
-          <div className="ph-brand-text">A Mentoring Management and Monitoring System</div>
+        <div className="ph-lead">
+          <button type="button" className="ph-collapse" aria-label={collapsed ? 'Expand menu' : 'Collapse menu'} title={collapsed ? 'Expand menu' : 'Collapse menu'}
+            aria-pressed={collapsed} onClick={() => setCollapsed(c => !c)}><i className="ti ti-menu-2"></i></button>
+          <div className="ph-brand">
+            <img src="/IMAGES/LOGO-mark.png" alt="" />
+            <div className="ph-brand-text">A Mentoring Management and Monitoring System</div>
+          </div>
         </div>
         <div className="ph-actions">
           <button type="button" className="ph-theme" aria-label="Switch light or dark mode" title="Light / dark mode"
@@ -240,7 +251,7 @@ export default function Sidebar({ config, activeId, onNavigate, stylesReady, bel
           {config.nav.map((item, i) => item.section ? (
             <div key={i} className={`nav-section${item.className ? ' ' + item.className : ''}`}>{item.section}</div>
           ) : (
-            <a key={item.id} href={`${config.base}/${item.to}`} id={item.id}
+            <a key={item.id} href={`${config.base}/${item.to}`} id={item.id} title={item.label}
               className={`nav-item${item.id === (pendingId || activeId) ? ' active' : ''}`}
               onClick={e => onNavClick(e, item)}>
               <i className={`ti ${item.icon}`}></i>
