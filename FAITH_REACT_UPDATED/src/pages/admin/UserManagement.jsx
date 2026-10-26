@@ -340,6 +340,7 @@ export default function AdminUserManagement() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [contactError, setContactError] = useState('');   // shown under the Contact Number field when Save is pressed
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', password: '', contact: '', studentNumber: '', role: '', gender: '',
     mentorSchool: '', mentorDept: '', menteeSchool: '', menteeAssignMentor: '', course: '', editMentor: '',
@@ -1800,6 +1801,7 @@ export default function AdminUserManagement() {
 
   function openAdd() {
     setEditingId(null);
+    setContactError('');
     setForm({
       firstName: '', lastName: '', email: '', password: '', contact: '', studentNumber: '', role: '', gender: '',
       mentorSchool: '', mentorDept: '', menteeSchool: '', menteeAssignMentor: '', course: '', editMentor: '',
@@ -1824,6 +1826,7 @@ export default function AdminUserManagement() {
 
     const isMentor = user.role === 'Mentor';
     const isMentee = user.role === 'Mentee';
+    setContactError('');
     const next = {
       firstName: user.firstName, lastName: user.lastName, email: user.email, password: '',
       contact: user.contactNumber || '', studentNumber: user.studentNumber || '', role: user.role, gender: user.gender || '',
@@ -1924,9 +1927,11 @@ export default function AdminUserManagement() {
     }
     // Typing is free; the number is checked on Save (add and edit both come through here).
     if (contactNumber && !/^[0-9]+$/.test(contactNumber)) {
-      showErrorModal('Only a valid number is required for the Contact Number. Use digits only, with no letters, spaces or symbols.');
+      setContactError('Only a valid number is required. Use digits only, with no letters, spaces or symbols.');
+      document.getElementById('fieldContact')?.focus();
       return;
     }
+    setContactError('');
     if (role === 'Mentee' && !validSchoolCourse(form.menteeSchool, form.course)) {
       showErrorModal('Choose a valid course for the selected school. Sections are not required.'); return;
     }
@@ -3229,7 +3234,9 @@ export default function AdminUserManagement() {
                   <span className="optional">(optional)</span>
                 </label>
                 {' '}
-                <input type="text" id="fieldContact" placeholder="e.g. 09123456789" value={form.contact} onChange={e => setF({ contact: e.target.value })} />
+                <input type="text" id="fieldContact" placeholder="e.g. 09123456789" value={form.contact} aria-invalid={contactError ? 'true' : undefined} aria-describedby={contactError ? 'fieldContactError' : undefined}
+                  className={contactError ? 'has-error' : undefined} onChange={e => { setF({ contact: e.target.value }); setContactError(''); }} />
+                {contactError ? <div className="field-error-text" id="fieldContactError" role="alert">{contactError}</div> : null}
               </div>
             </div>
             {/* Mentor Fields */}
