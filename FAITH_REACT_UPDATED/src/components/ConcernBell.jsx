@@ -69,6 +69,10 @@ const CSS = [
   '.cb-msg{font-size:12px}.cb-reply{margin-top:6px;padding:0 8px;font-size:11.5px;-webkit-line-clamp:1}',
   '.cb-foot{padding:7px 12px;font-size:11px}',
   '}',
+  // The header button follows the portal's own colors (blue for Admin and Head, teal for Mentor) like the theme switch beside it.
+  '.concern-bell .cb-btn,.concern-bell.mentor .cb-btn{color:var(--sb-active,#2563eb);background:var(--sb-bg,#fff);border-color:var(--sb-border,#e9ecef);box-shadow:none}',
+  '.concern-bell .cb-btn:hover,.concern-bell.mentor .cb-btn:hover{background:var(--sb-item-hover,#f3f4f6);box-shadow:none}',
+  '.concern-bell .cb-badge{border-color:var(--sb-bg,#fff)}',
   '@media (prefers-reduced-motion:reduce){.cb-panel,.cb-btn.ring i{animation:none}}',
 ].join('');
 
@@ -159,13 +163,13 @@ export default function ConcernBell({ role = 'staff' }) {
         <button type="button" className={`cb-btn${ring ? ' ring' : ''}`} aria-haspopup="true" aria-expanded={open}
           aria-label={count ? `${title}, ${countLabel}` : title} title={title}
           onClick={() => { setOpen(o => !o); if (!open) load(); }}>
-          <i className="ti ti-bell"></i>
+          <i className="ti ti-alert-triangle"></i>
           {count > 0 ? <span className="cb-badge">{count > 99 ? '99+' : count}</span> : null}
         </button>
         {open ? (
           <div className="cb-panel" role="dialog" aria-label={title}>
             <div className="cb-head">
-              <i className="ti ti-bell cb-head-icon"></i>
+              <i className="ti ti-alert-triangle cb-head-icon"></i>
               <div className="cb-title">{title}</div>
               {count > 0 ? <span className="cb-pill-count">{countLabel}</span> : null}
             </div>

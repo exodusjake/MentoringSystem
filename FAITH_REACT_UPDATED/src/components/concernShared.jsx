@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStyle } from '../lib/injectStyle.js';
 
 // Shared by the concern bells (Admin/Head and Mentor) and the mentor's My Mentees page: the detail window and helpers.
@@ -114,7 +115,8 @@ export function ConcernDetailModal({ item, role, onClose, onRespond }) {
     catch (e) { setError(e.message || 'Could not send the response. Please try again.'); setBusy(false); }
   }
 
-  return (
+  // Rendered on <body>: inside the fixed header the window was trapped below the menu and could not cover it.
+  return createPortal(
     <div className="cb-overlay" onClick={e => { if (e.target === e.currentTarget && !busy) onClose(); }}>
       <div className={`cb-modal${answered ? ' answered' : ''}`} role="dialog" aria-modal="true" aria-labelledby="cbDetailTitle">
         <div className="cb-mhead">
@@ -163,6 +165,7 @@ export function ConcernDetailModal({ item, role, onClose, onRespond }) {
           ) : <button type="button" className="cb-mbtn" onClick={onClose}>{staff ? 'Close' : 'Got it'}</button>}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
