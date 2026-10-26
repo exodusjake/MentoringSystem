@@ -54,8 +54,10 @@ export const PORTAL_HEADER_CSS = [
   'html.portal-has-header body .main-wrapper{transition:margin-left .26s cubic-bezier(.22,1,.36,1)}',
   'html.sb-collapsed{--sb-width:76px}',
   'html.sb-collapsed .sidebar-nav{padding:6px 8px}',
-  'html.sb-collapsed .sidebar .sb-indicator{left:8px;right:8px}',
-  'html.sb-collapsed .sidebar .nav-item{position:relative;justify-content:center;gap:0;padding:8px 0;font-size:0}',
+  // The sliding pill is hidden in the rail; the active icon gets its own filled square instead.
+  'html.sb-collapsed .sidebar .sb-indicator{display:none}',
+  'html.sb-collapsed .sidebar .sidebar-nav .nav-item.active{background:var(--sb-active,#2563eb)!important;color:#fff!important;box-shadow:0 4px 12px rgba(37,99,235,.28)}',
+  'html.sb-collapsed .sidebar .nav-item{position:relative;justify-content:center;gap:0;padding:8px 0;font-size:0!important;line-height:1}',
   'html.sb-collapsed .sidebar .nav-item i{font-size:20px}',
   'html.sb-collapsed .sidebar .nav-section{height:1px;margin:10px 12px;padding:0;font-size:0;background:var(--sb-border,#e9ecef)}',
   'html.sb-collapsed .sidebar .sb-indicator+.nav-section{margin-top:4px}',
