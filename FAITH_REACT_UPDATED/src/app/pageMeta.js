@@ -837,7 +837,7 @@ export const PAGE_META = {
    "/evaluation-author.css"
   ],
   "enhancers": {
-   "select": false,
+   "select": true,
    "date": false,
    "time": false,
    "modalMotion": false,
