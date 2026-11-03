@@ -579,37 +579,37 @@ namespace AstraMentoring_Backend.Services
                 "SELECT FirstName, LastName, Role FROM Users WHERE UserID = @Id",
                 new { Id = data.PostedByUserID });
 
-            List<(int UserID, string Email, string Role)> recipients;
+            List<(int UserID, string Email, string Role, string? FirstName)> recipients;
             if (data.TargetAudience == "Mentee" && poster.Role == "Mentor")
             {
-                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
-                    @"SELECT u.UserID, u.Email, u.Role FROM MentorMentee mm
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role, string? FirstName)>(
+                    @"SELECT u.UserID, u.Email, u.Role, u.FirstName FROM MentorMentee mm
                       JOIN Users u ON u.UserID = mm.MenteeID
                       WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
                     new { MentorID = data.PostedByUserID })).ToList();
             }
             else if (data.TargetAudience == "Mentee")
             {
-                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
-                    "SELECT UserID, Email, Role FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role, string? FirstName)>(
+                    "SELECT UserID, Email, Role, FirstName FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
             }
             else if (data.TargetAudience == "Mentor")
             {
-                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
-                    "SELECT UserID, Email, Role FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role, string? FirstName)>(
+                    "SELECT UserID, Email, Role, FirstName FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
             }
             else // "Both" or anything else unrecognized falls back to the widest audience
             {
-                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
-                    "SELECT UserID, Email, Role FROM Users WHERE Role IN ('Mentor','Mentee') AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role, string? FirstName)>(
+                    "SELECT UserID, Email, Role, FirstName FROM Users WHERE Role IN ('Mentor','Mentee') AND IsActive = 1")).ToList();
             }
 
             var posterName  = poster.FirstName != null ? $"{poster.FirstName} {poster.LastName}".Trim() : "Someone";
-            var senderName  = SenderNameFor(poster.Role, posterName);
+            var senderName  = _brandName;   // plain brand name, like the verification email
             var subject     = $"New Announcement: {data.Title}";
             var excerpt     = PlainTextExcerpt(data.Content);
 
-            foreach (var (userId, email, role) in recipients)
+            foreach (var (userId, email, role, firstName) in recipients)
             {
                 if (role == "Mentee")
                     await AddMenteeNotificationAsync(conn, userId, "Announcement", $"{posterName} posted a new announcement: {data.Title}", data.AnnouncementID);
@@ -617,11 +617,9 @@ namespace AstraMentoring_Backend.Services
                 var portalPath = role == "Mentor" ? "mentor" : "mentee";
                 var ctaUrl     = $"{_frontendBaseUrl}/{portalPath}/announcements?id={data.AnnouncementID}";
 
-                var body = $@"
-                    <p><strong>{Enc(posterName)}</strong> posted a new announcement.</p>
-                    <p>{Enc(excerpt)}</p>";
-
-                var html = BuildEmailHtml(data.Title, body, "View Announcement", ctaUrl);
+                var details = $@"<strong>{Enc(data.Title)}</strong><br />{Enc(excerpt)}
+                    <br /><a href=""{ctaUrl}"" style=""color:#0b1a5c;font-weight:700;"">View announcement</a>";
+                var html = BuildNoticeEmailHtml(firstName, "New Announcement", $"{posterName} posted a new announcement.", details, "a new announcement was posted on AstraMentoring");
                 await SendEmailAsync(email, senderName, subject, html);
             }
         }
