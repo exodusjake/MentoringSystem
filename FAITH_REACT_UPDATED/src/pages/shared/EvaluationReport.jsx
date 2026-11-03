@@ -6,6 +6,7 @@ import Overlay from '../../components/Overlay.jsx';
 import Select from '../../components/Select.jsx';
 import { apiRequest } from '../../lib/api.js';
 import { darkToast } from '../../lib/darkToast.js';
+import { checkpointWindow } from '../../lib/checkpoint-window.js';
 import { loadScript } from '../../lib/loadScript.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { escapeHtml } from '../../lib/security-utils.js';
@@ -38,6 +39,20 @@ function CheckpointDone({ m, slot, empty }) {
   if (!d) return empty;
   if (!d.pending.length) return 'Done';
   return <span className="slot-partial" data-done={d.done.join(', ') || 'None'} data-pending={d.pending.join(', ')}>{d.text}</span>;
+}
+// What an unfinished checkpoint cell says, from the published session calendar: Open (window running), Upcoming
+// (not open yet), Closed (the window ended and the mentor did not conduct it), Not set (no schedule published).
+const SLOT_STATE_COLOR = { Open: '#16a34a', Upcoming: '#94a3b8', Closed: '#ef4444', 'Not set': '#94a3b8' };
+function slotState(events, slot, settings) {
+  const w = checkpointWindow(events, slot, settings.SchoolYear, settings.Semester);
+  if (w.label === 'Calendar unavailable') return '';
+  if (w.label === 'Not scheduled') return 'Not set';
+  if (w.disabled) return 'Closed';
+  return w.upcoming ? 'Upcoming' : 'Open';
+}
+function SlotState({ state }) {
+  if (!state) return <span className="slot-empty">—</span>;
+  return <span style={{ color: SLOT_STATE_COLOR[state], fontWeight: 600, fontSize: '0.92em' }}>{state}</span>;
 }
 function checkpointDoneText(m, slot) {
   const d = checkpointDone(m, slot);
@@ -114,6 +129,7 @@ export default function EvaluationReport({ cfg }) {
 
   const [sysSettings, setSysSettings] = useState({ SchoolYear: '2026-2027', Semester: '1st Semester' });
   const [allMentors, setAllMentors] = useState([]);
+  const [calendar, setCalendar] = useState(null);   // published calendar events, for the Open / Upcoming / Closed labels
   const [mentorsLoaded, setMentorsLoaded] = useState(false);
   const [search, setSearch] = useState('');
   const [ratedFilter, setRatedFilter] = useState('');
@@ -145,6 +161,9 @@ export default function EvaluationReport({ cfg }) {
     setPendingEdits(new Map());
     setMentorsLoaded(true);
   }
+  useEffect(() => {
+    apiRequest('CalendarEvents', 'GET', null, true).then(setCalendar).catch(() => setCalendar(null));
+  }, []);
   useEffect(() => {
     (async () => {
       try {
@@ -346,7 +365,7 @@ export default function EvaluationReport({ cfg }) {
         <tr key={m.mentorID}>
           <td className="td-primary">{m.firstName} {m.lastName}<div className="mentor-course-progress">{mentorCourseProgress(m).map((label, i) => <span className="mentor-course-chip" title="Completed sessions / required sessions" key={i}>{label}</span>)}</div></td>
           {slots.map(s => (
-            <td className="td-center" key={s}>{!isAssemblyNA(s) ? <CheckpointDone m={m} slot={s} empty={<span className="slot-empty">—</span>} /> : <span style={{ color: '#6b7280', background: '#f3f4f6' }}>N/A</span>}</td>
+            <td className="td-center" key={s}>{!isAssemblyNA(s) ? <CheckpointDone m={m} slot={s} empty={<SlotState state={slotState(calendar, s, sysSettings)} />} /> : <span style={{ color: '#6b7280', background: '#f3f4f6' }}>N/A</span>}</td>
           ))}
           <td className="td-center">{m.timelinessPercent == null ? 'Pending' : m.timelinessPercent + '%'}</td>
           <td className="td-center">{m.completenessPercent ?? 0}%</td>
@@ -361,7 +380,7 @@ export default function EvaluationReport({ cfg }) {
             </td>
           )}
           <td className="td-primary td-center">{m.overallPercent == null ? 'Pending' : m.overallPercent + '%'}</td>
-          <td className="td-center">{rank ? `#${rank}` : '—'}</td>
+          <td className="td-center">{rank ? `#${rank}` : 'Pending'}</td>
         </tr>
       );
     });
@@ -442,12 +461,12 @@ export default function EvaluationReport({ cfg }) {
       return [
         `${m.lastName}, ${m.firstName}`,
         mentorCourseProgress(m).join('; '),
-        ...slots.map(s => !isAssemblyNA(s) ? checkpointDoneText(m, s) : 'N/A'),
+        ...slots.map(s => !isAssemblyNA(s) ? (checkpointDoneText(m, s) || slotState(calendar, s, sysSettings)) : 'N/A'),
         m.timelinessPercent ?? 'Pending',
         m.completenessPercent ?? 0,
         m.evaluationRatingPercent ?? '',
         m.overallPercent ?? 'Pending',
-        rank ? rank : '',
+        rank ? rank : 'Pending',
       ];
     });
 
@@ -474,7 +493,7 @@ export default function EvaluationReport({ cfg }) {
     const tableRows = sorted.map(m => {
       const rank = rankMap.get(m.mentorID);
       const slotCells = slots.map(s =>
-        `<td style="text-align:center">${!isAssemblyNA(s) ? checkpointDoneText(m, s) || '&mdash;' : '<span style="color:#6b7280;background:#f3f4f6">N/A</span>'}</td>`
+        `<td style="text-align:center">${!isAssemblyNA(s) ? checkpointDoneText(m, s) || slotState(calendar, s, sysSettings) || '&mdash;' : '<span style="color:#6b7280;background:#f3f4f6">N/A</span>'}</td>`
       ).join('');
       return `<tr>
       <td><strong>${escapeHtml(m.lastName)}, ${escapeHtml(m.firstName)}</strong><div style="font-size:10px;font-weight:normal">${mentorCourseLabels(m)}</div></td>
@@ -483,7 +502,7 @@ export default function EvaluationReport({ cfg }) {
       <td style="text-align:center">${m.completenessPercent ?? 0}%</td>
       <td style="text-align:center">${m.evaluationRatingPercent != null ? m.evaluationRatingPercent + '%' : '&mdash;'}</td>
       <td style="text-align:center;font-weight:700">${m.overallPercent == null ? 'Pending' : m.overallPercent + '%'}</td>
-      <td style="text-align:center">${rank ? '#' + rank : '&mdash;'}</td>
+      <td style="text-align:center">${rank ? '#' + rank : 'Pending'}</td>
     </tr>`;
     }).join('');
 
