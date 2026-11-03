@@ -879,31 +879,72 @@ namespace AstraMentoring_Backend.Services
         // Notifies only that slot's own mentor — a single recipient.
         public async Task NotifySlotBookedAsync(int menteeId, int availabilityId, string? purpose)
         {
-            using var conn = new SqlConnection(_connectionString);
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
 
-            var slot = await conn.QueryFirstOrDefaultAsync<(string MentorEmail, DateTime AvailableDate, TimeSpan StartTime, TimeSpan? EndTime)>(
-                @"SELECT u.Email AS MentorEmail, a.AvailableDate, a.StartTime, a.EndTime
-                  FROM Availability a
-                  JOIN Users u ON u.UserID = a.MentorID
-                  WHERE a.AvailabilityID = @Id",
-                new { Id = availabilityId });
-            if (slot.MentorEmail == null) return;
+                var slot = await conn.QueryFirstOrDefaultAsync<(int MentorID, string MentorEmail, string? MentorFirstName, string MentorLastName, DateTime AvailableDate, TimeSpan StartTime)>(
+                    @"SELECT a.MentorID, u.Email AS MentorEmail, u.FirstName AS MentorFirstName, u.LastName AS MentorLastName, a.AvailableDate, a.StartTime
+                      FROM Availability a
+                      JOIN Users u ON u.UserID = a.MentorID
+                      WHERE a.AvailabilityID = @Id",
+                    new { Id = availabilityId });
+                if (slot.MentorEmail == null) return;
 
-            var mentee = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
-                "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = menteeId });
+                var mentee = await conn.QueryFirstOrDefaultAsync<(string Email, string? FirstName, string LastName)>(
+                    "SELECT Email, FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = menteeId });
 
-            var menteeName  = mentee.FirstName != null ? $"{mentee.FirstName} {mentee.LastName}".Trim() : "A mentee";
-            var senderName  = SenderNameFor("Mentee", menteeName);
-            var purposeLine = !string.IsNullOrWhiteSpace(purpose) ? $"<p><strong>Purpose:</strong> {Enc(purpose)}</p>" : string.Empty;
+                var menteeName = mentee.FirstName != null ? $"{mentee.FirstName} {mentee.LastName}".Trim() : "A mentee";
+                var mentorName = $"{slot.MentorFirstName} {slot.MentorLastName}".Trim();
+                var when = FormatAvailabilityStart(slot.AvailableDate, slot.StartTime);
+                var purposeLine = !string.IsNullOrWhiteSpace(purpose) ? $"<br /><strong>Purpose:</strong> {Enc(purpose)}" : string.Empty;
 
-            var subject = "Your Slot Has Been Booked";
-            var body = $@"
-                <p><strong>{Enc(menteeName)}</strong> booked your available slot:</p>
-                <p>{FormatAvailabilityStart(slot.AvailableDate, slot.StartTime)}</p>
-                {purposeLine}";
-            var html = BuildEmailHtml("Slot Booked", body, "View Availability", $"{_frontendBaseUrl}/mentor/availability");
+                // Mentor: bell + email.
+                await AddMenteeNotificationAsync(conn, slot.MentorID, "SlotBooked", $"{menteeName} booked your available slot: {when}.", availabilityId);
+                var mentorHtml = BuildNoticeEmailHtml(slot.MentorFirstName, "Slot Booked", $"{menteeName} booked your available slot.",
+                    $"<strong>Slot:</strong> {Enc(when)}{purposeLine}<br /><a href=\"{_frontendBaseUrl}/mentor/availability\" style=\"color:#0b1a5c;font-weight:700;\">View availability</a>",
+                    "a mentee booked your available slot");
+                await SendEmailAsync(slot.MentorEmail, _brandName, "Your Slot Has Been Booked", mentorHtml);
 
-            await SendEmailAsync(slot.MentorEmail, senderName, subject, html);
+                // Mentee: a confirmation of their own booking.
+                if (mentee.Email != null)
+                {
+                    await AddMenteeNotificationAsync(conn, menteeId, "BookingConfirmed", $"You booked a session with {mentorName}: {when}.", availabilityId);
+                    var menteeHtml = BuildNoticeEmailHtml(mentee.FirstName, "Booking Confirmed", $"Your session with {mentorName} is booked.",
+                        $"<strong>Session:</strong> {Enc(when)}{purposeLine}<br /><a href=\"{_frontendBaseUrl}/mentee/sessions\" style=\"color:#0b1a5c;font-weight:700;\">View my sessions</a>",
+                        "you booked a mentoring session");
+                    await SendEmailAsync(mentee.Email, _brandName, "Your Session Is Booked", menteeHtml);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: booking notice for availability {AvailabilityId} failed.", availabilityId);
+            }
+        }
+
+        // A booked (make-up) session was deleted by the mentor: the mentee who booked it is told it is cancelled.
+        public async Task NotifyBookedSessionRemovedAsync(int menteeId, int mentorId, DateTime sessionDate, string? slotName)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+                var mentee = await conn.QueryFirstOrDefaultAsync<(string Email, string? FirstName)>(
+                    "SELECT Email, FirstName FROM Users WHERE UserID = @Id AND IsActive = 1", new { Id = menteeId });
+                if (mentor.FirstName == null || mentee.Email == null) return;
+
+                var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+                var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
+                var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
+                await AddMenteeNotificationAsync(conn, menteeId, "SessionCancelled", $"{mentorName} cancelled the session{slotSuffix} on {when}.", null);
+                var html = BuildNoticeEmailHtml(mentee.FirstName, "Session Cancelled", $"{mentorName} cancelled your mentoring session{slotSuffix}.", $"<strong>Session:</strong> {Enc(when)}", "your mentor changed a session");
+                await SendEmailAsync(mentee.Email, _brandName, $"Session Cancelled{slotSuffix}", html);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: removed-session notice to mentee {MenteeId} failed.", menteeId);
+            }
         }
 
         // ── Mentor schedules a regular (non-makeup) session ──────────────

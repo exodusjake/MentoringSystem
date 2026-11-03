@@ -361,7 +361,17 @@ namespace AstraMentoringAPI.Controllers
             if (await _service.HasScannedAttendanceAsync(id))
                 return BadRequest(new { message = "This session already has scanned attendance and can't be deleted." });
 
+            // A booked make-up session: the mentee who booked it must hear it is gone (read before the cascade removes the request).
+            int? bookedMenteeId = null;
+            if (existing.RequestID != null && existing.Status != "Cancelled")
+            {
+                using var reqConn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+                bookedMenteeId = await reqConn.ExecuteScalarAsync<int?>("SELECT MenteeID FROM SessionRequests WHERE RequestID=@Id", new { Id = existing.RequestID });
+            }
+
             var result = await _service.DeleteCascadeAsync(id);
+            if (result && bookedMenteeId != null)
+                await _emailService.NotifyBookedSessionRemovedAsync(bookedMenteeId.Value, existing.MentorID, existing.SessionDate, existing.SlotName);
             return result ? Ok(new { message = "Session deleted" }) : NotFound();
         }
     }
