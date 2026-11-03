@@ -925,24 +925,23 @@ namespace AstraMentoring_Backend.Services
                 "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
             if (mentor.FirstName == null) return;
 
-            var recipients = (await conn.QueryAsync<(int UserID, string Email)>(
-                @"SELECT u.UserID, u.Email FROM MentorMentee mm
+            var recipients = (await conn.QueryAsync<(int UserID, string Email, string? FirstName)>(
+                @"SELECT u.UserID, u.Email, u.FirstName FROM MentorMentee mm
                   JOIN Users u ON u.UserID = mm.MenteeID
                   WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
                 new { MentorID = mentorId })).ToList();
 
             var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
-            var senderName = SenderNameFor("Mentor", mentorName);
             var subject    = "New Available Session Slot";
-            var body = $@"
-                <p><strong>{Enc(mentorName)}</strong> posted a new available session slot:</p>
-                <p>{FormatAvailabilityStart(availableDate, startTime)}</p>";
-            var html = BuildEmailHtml("New Available Slot", body, "Book This Slot", $"{_frontendBaseUrl}/mentee/schedule");
+            var when       = FormatAvailabilityStart(availableDate, startTime);
+            var details    = $@"<strong>Slot:</strong> {Enc(when)}<br /><strong>Mentor:</strong> {Enc(mentorName)}
+                <br /><a href=""{_frontendBaseUrl}/mentee/schedule"" style=""color:#0b1a5c;font-weight:700;"">Book this slot</a>";
 
-            foreach (var (userId, email) in recipients)
+            foreach (var (userId, email, firstName) in recipients)
             {
-                await AddMenteeNotificationAsync(conn, userId, "Availability", $"{mentorName} posted a new available session slot: {FormatAvailabilityStart(availableDate, startTime)}", null);
-                await SendEmailAsync(email, senderName, subject, html);
+                await AddMenteeNotificationAsync(conn, userId, "Availability", $"{mentorName} posted a new available session slot: {when}", null);
+                var html = BuildNoticeEmailHtml(firstName, "New Available Slot", $"{mentorName} posted a new available session slot.", details, "your mentor posted a new available slot");
+                await SendEmailAsync(email, _brandName, subject, html);
             }
         }
 
