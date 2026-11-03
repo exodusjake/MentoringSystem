@@ -387,10 +387,10 @@ namespace AstraMentoring_Backend.Services
     <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
     <tr>
       <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
-        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
+        <a href=""{baseUrl}/landing"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/terms"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/privacy"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/landing#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
         <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
         <p style=""margin:0;"">You received this email because {Enc(reason)}.</p>
         <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
@@ -433,10 +433,10 @@ namespace AstraMentoring_Backend.Services
     <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
     <tr>
       <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
-        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
-        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
+        <a href=""{baseUrl}/landing"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/terms"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/privacy"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/landing#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
         <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
         <p style=""margin:0;"">You received this email because {Enc(reason)}.</p>
         <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
@@ -599,8 +599,8 @@ namespace AstraMentoring_Backend.Services
             foreach (var (email, role) in recipients)
             {
                 // Each role reads announcements on its own portal page.
-                var portalPath = role == "Mentor" ? "MENTOR" : "MENTEE";
-                var ctaUrl     = $"{_frontendBaseUrl}/{portalPath}/HTML/announcements.html?id={data.AnnouncementID}";
+                var portalPath = role == "Mentor" ? "mentor" : "mentee";
+                var ctaUrl     = $"{_frontendBaseUrl}/{portalPath}/announcements?id={data.AnnouncementID}";
 
                 var body = $@"
                     <p><strong>{Enc(posterName)}</strong> posted a new announcement.</p>
@@ -628,7 +628,7 @@ namespace AstraMentoring_Backend.Services
                 <p>A new evaluation form has been posted.</p>
                 <p>{data.Description}</p>
                 {deadlineLine}";
-            var html = BuildEmailHtml(data.Title, body, "Open Evaluation", $"{_frontendBaseUrl}/MENTEE/HTML/announcements.html?id=eval-{data.LinkID}");
+            var html = BuildEmailHtml(data.Title, body, "Open Evaluation", $"{_frontendBaseUrl}/mentee/announcements?id=eval-{data.LinkID}");
 
             foreach (var email in recipients)
                 await SendEmailAsync(email, _brandName, subject, html);
@@ -662,7 +662,7 @@ namespace AstraMentoring_Backend.Services
             var mentorName = $"{session.MentorFirstName} {session.MentorLastName}".Trim();
             var senderName = SenderNameFor("Mentor", mentorName);
             var dateStr    = session.SessionDate.ToString("MMMM d, yyyy");
-            var ctaUrl     = $"{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}";
+            var ctaUrl     = $"{_frontendBaseUrl}/mentee/sessions?id={sessionId}";
             // Null for a makeup session or one logged before slots existed —
             // falls back to the date-only phrasing that was already here.
             var slotLine   = !string.IsNullOrWhiteSpace(session.SlotName) ? $" ({session.SlotName})" : "";
@@ -705,7 +705,7 @@ namespace AstraMentoring_Backend.Services
                 <p>A new item has been published to the academic calendar:</p>
                 <p><strong>{Enc(data.Title)}</strong> ({Enc(data.EventType)})</p>
                 <p>{dateLine}</p>";
-            var html = BuildEmailHtml("Calendar Updated", body, "View Calendar", $"{_frontendBaseUrl}/MENTOR/HTML/calendar.html");
+            var html = BuildEmailHtml("Calendar Updated", body, "View Calendar", $"{_frontendBaseUrl}/mentor/calendar");
 
             foreach (var email in recipients)
                 await SendEmailAsync(email, _brandName, subject, html);
@@ -734,7 +734,7 @@ namespace AstraMentoring_Backend.Services
             var body = $@"
                 <p><strong>{Enc(mentorName)}</strong> posted a new available session slot:</p>
                 <p>{FormatAvailabilityStart(availableDate, startTime)}</p>";
-            var html = BuildEmailHtml("New Available Slot", body, "Book This Slot", $"{_frontendBaseUrl}/MENTEE/HTML/schedule-session.html");
+            var html = BuildEmailHtml("New Available Slot", body, "Book This Slot", $"{_frontendBaseUrl}/mentee/schedule");
 
             foreach (var email in recipients)
                 await SendEmailAsync(email, senderName, subject, html);
@@ -766,7 +766,7 @@ namespace AstraMentoring_Backend.Services
                 <p><strong>{Enc(menteeName)}</strong> booked your available slot:</p>
                 <p>{FormatAvailabilityStart(slot.AvailableDate, slot.StartTime)}</p>
                 {purposeLine}";
-            var html = BuildEmailHtml("Slot Booked", body, "View Availability", $"{_frontendBaseUrl}/MENTOR/HTML/availability.html");
+            var html = BuildEmailHtml("Slot Booked", body, "View Availability", $"{_frontendBaseUrl}/mentor/availability");
 
             await SendEmailAsync(slot.MentorEmail, senderName, subject, html);
         }
@@ -836,7 +836,7 @@ namespace AstraMentoring_Backend.Services
 
             var subject = $"New Session Scheduled{slotSuffix}";
             var details = $@"<strong>Session:</strong> {Enc($"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}")}{sectionLine}
-                <br /><a href=""{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}"" style=""color:#0b1a5c;font-weight:700;"">View session</a>";
+                <br /><a href=""{_frontendBaseUrl}/mentee/sessions?id={sessionId}"" style=""color:#0b1a5c;font-weight:700;"">View session</a>";
 
             foreach (var (email, firstName) in recipients)
                 await SendEmailAsync(email, senderName,
