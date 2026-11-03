@@ -68,6 +68,18 @@ export default function NotificationBell() {
     try { await apiRequest(`MenteeNotifications/${item.notificationID}/read`, 'PATCH', null, true); } catch (e) { load(); }
   }
 
+  async function remove(item) {
+    setFeed(f => ({ count: item.isRead ? f.count : Math.max(0, f.count - 1), items: f.items.filter(i => i.notificationID !== item.notificationID) }));
+    if (!item.isRead) lastCount.current = Math.max(0, (lastCount.current ?? 1) - 1);
+    try { await apiRequest(`MenteeNotifications/${item.notificationID}`, 'DELETE', null, true); } catch (e) { load(); }
+  }
+
+  async function removeAll() {
+    setFeed({ count: 0, items: [] });
+    lastCount.current = 0;
+    try { await apiRequest('MenteeNotifications', 'DELETE', null, true); } catch (e) { load(); }
+  }
+
   function openItem(item) {
     markRead(item);
     const k = KINDS[item.type];
@@ -98,6 +110,7 @@ export default function NotificationBell() {
             <i className="ti ti-bell cb-head-icon"></i>
             <div className="cb-title">{title}</div>
             {count > 0 ? <button type="button" className="cb-pill-count" style={{ border: 'none', cursor: 'pointer' }} onClick={markAll}>Mark all read</button> : null}
+            {items.length > 0 ? <button type="button" className="cb-pill-count" style={{ border: 'none', cursor: 'pointer', color: '#6b7280', background: '#f1f5f9' }} onClick={removeAll}>Clear all</button> : null}
           </div>
           <div className="cb-list">
             {items.length === 0 ? (
@@ -105,7 +118,8 @@ export default function NotificationBell() {
             ) : items.map(item => {
               const [label, icon, red] = KINDS[item.type] || ['Notification', 'ti-bell', false];
               return (
-                <button type="button" key={item.notificationID} className={`cb-item ${item.isRead ? '' : 'fresh'}`} onClick={() => openItem(item)}>
+                <div key={item.notificationID} style={{ position: 'relative' }}>
+                <button type="button" className={`cb-item ${item.isRead ? '' : 'fresh'}`} onClick={() => openItem(item)}>
                   <span className="cb-avatar" aria-hidden="true" style={red ? { background: '#dc2626' } : undefined}>
                     <i className={`ti ${icon}`}></i>
                   </span>
@@ -114,9 +128,16 @@ export default function NotificationBell() {
                       <span className="cb-name">{label}</span>
                       <span className="cb-time">{ago(item.createdAt)}</span>
                     </span>
-                    <span className="cb-msg" style={{ WebkitLineClamp: 4 }}>{item.message}</span>
+                    <span className="cb-msg" style={{ WebkitLineClamp: 4, paddingRight: 26 }}>{item.message}</span>
                   </span>
                 </button>
+                <button type="button" aria-label="Delete notification" title="Delete" onClick={() => remove(item)}
+                  style={{ position: 'absolute', right: 10, bottom: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, color: '#9ca3af', background: 'transparent', border: 'none', borderRadius: 8, cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#dc2626'; e.currentTarget.style.background = '#fee2e2'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; e.currentTarget.style.background = 'transparent'; }}>
+                  <i className="ti ti-trash"></i>
+                </button>
+                </div>
               );
             })}
           </div>

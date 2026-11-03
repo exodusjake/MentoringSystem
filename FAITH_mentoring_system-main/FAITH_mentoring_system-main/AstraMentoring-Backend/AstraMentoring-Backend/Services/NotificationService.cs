@@ -45,6 +45,21 @@ namespace AstraMentoring_Backend.Services
         }
 
       
+        // Deletes only if the notification belongs to that user.
+        public async Task<bool> DeleteForRecipientAsync(int notificationId, int userId)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            return await conn.ExecuteAsync(
+                "DELETE FROM Notifications WHERE NotificationID = @Id AND RecipientUserID = @UserId",
+                new { Id = notificationId, UserId = userId }) > 0;
+        }
+
+        public async Task DeleteAllForRecipientAsync(int userId)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync("DELETE FROM Notifications WHERE RecipientUserID = @UserId", new { UserId = userId });
+        }
+
         public async Task<bool> MarkAllAsReadAsync(int userId)
         {
             using var conn = new SqlConnection(_connectionString);

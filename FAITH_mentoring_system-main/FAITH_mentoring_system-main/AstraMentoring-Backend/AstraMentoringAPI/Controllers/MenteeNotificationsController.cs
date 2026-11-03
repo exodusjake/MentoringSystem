@@ -32,6 +32,17 @@ namespace AstraMentoringAPI.Controllers
             return Ok(new { message = "Marked as read" });
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+            => await _service.DeleteForRecipientAsync(id, CallerId) ? Ok(new { message = "Deleted" }) : NotFound();
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAll()
+        {
+            await _service.DeleteAllForRecipientAsync(CallerId);
+            return Ok(new { message = "All notifications deleted" });
+        }
+
         [HttpPatch("read-all")]
         public async Task<IActionResult> MarkAllRead()
         {
