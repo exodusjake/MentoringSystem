@@ -571,6 +571,31 @@ namespace AstraMentoring_Backend.Services
         private static string FirstNonEmpty(params string[] values)
             => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v)) ?? string.Empty;
 
+        // A mentor's direct message to one mentee: bell notification + email in the verification-email design.
+        public async Task NotifyDirectMessageAsync(int mentorId, int menteeId, string message)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+                var mentee = await conn.QueryFirstOrDefaultAsync<(string Email, string? FirstName)>(
+                    "SELECT Email, FirstName FROM Users WHERE UserID = @Id AND IsActive = 1", new { Id = menteeId });
+                if (mentor.FirstName == null || mentee.Email == null) return;
+
+                var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+                await AddMenteeNotificationAsync(conn, menteeId, "DirectMessage", $"{mentorName}: {message}", mentorId);
+
+                var details = $@"<span style=""white-space:pre-wrap;"">{Enc(message)}</span>";
+                var html = BuildNoticeEmailHtml(mentee.FirstName, "New Message", $"{mentorName} sent you a message.", details, "your mentor sent you a message");
+                await SendEmailAsync(mentee.Email, _brandName, "New message from your mentor", html);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: direct message from mentor {MentorId} to mentee {MenteeId} failed.", mentorId, menteeId);
+            }
+        }
+
         // ── Announcement ─────────────────────────────────────────────────
         public async Task NotifyNewAnnouncementAsync(Announcement data)
         {

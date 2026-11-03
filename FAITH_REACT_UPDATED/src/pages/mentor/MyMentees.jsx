@@ -88,6 +88,61 @@ function ConcernModal({ target, onClose }) {
   );
 }
 
+// "Message a mentee": a one-way note to that mentee only (their bell and email). Reuses the concern window's look.
+const MESSAGE_MAX = 400;
+
+function MessageModal({ target, onClose }) {
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const open = !!target;
+  useEffect(() => { if (open) { setMessage(''); setBusy(false); setError(''); } }, [target]);
+
+  const trimmed = message.trim();
+  const valid = trimmed.length > 0 && trimmed.length <= MESSAGE_MAX;
+
+  async function send() {
+    if (!valid || busy) return;
+    setBusy(true); setError('');
+    try {
+      await apiRequest('MentorMessages', 'POST', { menteeId: target.id, message: trimmed }, true);
+      showToast(`Message sent to ${target.name}.`, 'success');
+      onClose();
+    } catch (e) {
+      setError(e.message || 'Could not send the message. Please try again.');
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Overlay open={open} className="concern-overlay" activeClass={null} display="flex" onClick={e => { if (e.target === e.currentTarget && !busy) onClose(); }}>
+      <div className="concern-modal" role="dialog" aria-modal="true" aria-labelledby="mentorMsgTitle">
+        <div className="concern-head">
+          <div className="concern-head-icon" style={{ background: '#ccfbf1', color: '#0f766e' }}><i className="ti ti-message-circle"></i></div>
+          <div className="concern-head-text">
+            <div className="concern-title" id="mentorMsgTitle">Send a message</div>
+            <div className="concern-sub">Only <strong>{target?.name}</strong> will see this</div>
+          </div>
+          <button type="button" className="concern-close" onClick={onClose} disabled={busy} aria-label="Close">&times;</button>
+        </div>
+        <div className="concern-body">
+          <label className="concern-label" htmlFor="mentorMsgText">Your message</label>
+          <textarea id="mentorMsgText" className="concern-text" rows={5} maxLength={MESSAGE_MAX} disabled={busy}
+            placeholder="Write a short note, reminder or announcement for this mentee..." value={message} onChange={e => setMessage(e.target.value)} />
+          <div className="concern-count">{message.length}/{MESSAGE_MAX} · They get it in their notification bell and by email.</div>
+          {error ? <div className="concern-error" role="alert">{error}</div> : null}
+        </div>
+        <div className="concern-foot">
+          <button type="button" className="concern-btn concern-btn-cancel" onClick={onClose} disabled={busy}>Cancel</button>
+          <button type="button" className="concern-btn concern-btn-send" onClick={send} disabled={!valid || busy}>
+            {busy ? 'Sending...' : <><i className="ti ti-send"></i> Send</>}
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
+}
+
 export default function MyMentees() {
   useBackGuard();
   const wt = useTour().active;   // walkthrough: show sample data
@@ -127,6 +182,7 @@ export default function MyMentees() {
   const [search, setSearch] = useState('');
   const [sortMode, setSortMode] = useState('section');
   const [activeSection, setActiveSection] = useState(null);
+  const [messageTarget, setMessageTarget] = useState(null);     // { id, name } of the mentee being messaged
   const [concernTarget, setConcernTarget] = useState(null);   // { id, name } of the mentee being flagged
 
   useEffect(() => {
@@ -262,6 +318,8 @@ export default function MyMentees() {
 
       return (
         <div className={`mentee-card${isDropOut ? ' is-dropout' : ''}${flag.open ? ' is-flagged' : flag.fresh ? ' flag-answered' : ''}`} key={m.assignmentID ?? m.menteeUserID}>
+          <button type="button" className="mc-msg-btn" title="Send a message to this mentee" aria-label={`Message ${name}`}
+            onClick={() => setMessageTarget({ id: m.menteeUserID, name })}><i className="ti ti-message-circle"></i></button>
           <button type="button" className="mc-flag-btn" title="Report a concern to the Admin and Head Admin" aria-label={`Report a concern about ${name}`}
             onClick={() => setConcernTarget({ id: m.menteeUserID, name })}><i className="ti ti-flag"></i></button>
           <div className="mc-identity">
@@ -351,6 +409,7 @@ export default function MyMentees() {
         </footer>
       </div>
       <ConcernModal target={concernTarget} onClose={() => setConcernTarget(null)} />
+      <MessageModal target={messageTarget} onClose={() => setMessageTarget(null)} />
       <ConcernDetailModal item={concernDetail} role="mentor" onClose={() => setConcernDetail(null)} />
     </Page>
   );

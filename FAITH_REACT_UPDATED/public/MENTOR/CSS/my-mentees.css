@@ -200,10 +200,13 @@
 
 /* ── Flag a mentee: report a serious concern to the Admin and Head Admin ── */
 .mc-flag-btn { position: absolute; top: 10px; right: 10px; z-index: 2; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: #b91c1c; background: #fff; border: 1.5px solid #fecaca; border-radius: 10px; cursor: pointer; transition: background-color .18s, color .18s, border-color .18s, transform .15s, box-shadow .18s; }
+.mc-msg-btn { position: absolute; top: 10px; right: 52px; z-index: 2; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; font-size: 17px; color: #0f766e; background: #fff; border: 1px solid #cfe9e5; border-radius: 10px; cursor: pointer; transition: background-color .15s, color .15s, transform .12s; }
+.mc-msg-btn:hover { background: #0f766e; border-color: #0f766e; color: #fff; }
+.mc-msg-btn:active { transform: scale(.92); }
 .mc-flag-btn:hover { background: #dc2626; border-color: #dc2626; color: #fff; box-shadow: 0 4px 12px rgba(220,38,38,.35); }
 .mc-flag-btn:active { transform: scale(.92); }
 .mc-flag-btn:focus-visible { outline: 2px solid #f87171; outline-offset: 2px; }
-.mc-identity { padding-right: 52px; }
+.mc-identity { padding-right: 94px; }
 
 .concern-overlay { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15,23,42,.62); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: concernFade .2s ease both; }
 @keyframes concernFade { from { opacity: 0; } to { opacity: 1; } }

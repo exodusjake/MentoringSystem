@@ -17,6 +17,7 @@ const KINDS = {
   SessionScheduled: ['New session', 'ti-calendar-plus', false, '/mentee/sessions'],
   Availability: ['New available slot', 'ti-clock-plus', false, '/mentee/schedule'],
   Announcement: ['New announcement', 'ti-speakerphone', false, '/mentee/announcements'],
+  DirectMessage: ['Message from your mentor', 'ti-message-circle', false, null],
 };
 
 export default function NotificationBell() {
@@ -70,7 +71,7 @@ export default function NotificationBell() {
   function openItem(item) {
     markRead(item);
     const k = KINDS[item.type];
-    if (k) { setOpen(false); navigate(k[3]); }
+    if (k && k[3]) { setOpen(false); navigate(k[3]); }
   }
 
   async function markAll() {
