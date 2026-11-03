@@ -1,19 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api.js';
 import { useStyle } from '../lib/injectStyle.js';
 import { CSS } from './ConcernBell.jsx';
 import { ago } from './concernShared.jsx';
 
-// Mentee-portal bell: session changes (cancelled / rescheduled / new notes) sent by the mentor.
+// Mentee-portal bell: what the mentor does: session scheduled / cancelled / changed, new availability, announcements.
 // Same look as the Concern bell in the other portals; the red count is the unread notifications.
 
 const POLL_MS = 60000;
+
+// type -> [title, icon, red?, page to open]
+const KINDS = {
+  SessionCancelled: ['Session cancelled', 'ti-calendar-x', true, '/mentee/sessions'],
+  SessionUpdated: ['Session updated', 'ti-calendar-event', false, '/mentee/sessions'],
+  SessionScheduled: ['New session', 'ti-calendar-plus', false, '/mentee/sessions'],
+  Availability: ['New available slot', 'ti-clock-plus', false, '/mentee/schedule'],
+  Announcement: ['New announcement', 'ti-speakerphone', false, '/mentee/announcements'],
+};
 
 export default function NotificationBell() {
   useStyle('concern-bell', CSS);
   const [feed, setFeed] = useState({ count: 0, items: [] });
   const [open, setOpen] = useState(false);
   const [ring, setRing] = useState(false);
+  const navigate = useNavigate();
   const rootRef = useRef(null);
   const lastCount = useRef(null);
 
@@ -56,6 +67,12 @@ export default function NotificationBell() {
     try { await apiRequest(`MenteeNotifications/${item.notificationID}/read`, 'PATCH', null, true); } catch (e) { load(); }
   }
 
+  function openItem(item) {
+    markRead(item);
+    const k = KINDS[item.type];
+    if (k) { setOpen(false); navigate(k[3]); }
+  }
+
   async function markAll() {
     setFeed(f => ({ count: 0, items: f.items.map(i => ({ ...i, isRead: true })) }));
     lastCount.current = 0;
@@ -85,15 +102,15 @@ export default function NotificationBell() {
             {items.length === 0 ? (
               <div className="cb-empty"><i className="ti ti-bell-off"></i>No notifications yet.</div>
             ) : items.map(item => {
-              const cancelled = item.type === 'SessionCancelled';
+              const [label, icon, red] = KINDS[item.type] || ['Notification', 'ti-bell', false];
               return (
-                <button type="button" key={item.notificationID} className={`cb-item ${item.isRead ? '' : 'fresh'}`} onClick={() => markRead(item)}>
-                  <span className="cb-avatar" aria-hidden="true" style={cancelled ? { background: '#dc2626' } : undefined}>
-                    <i className={`ti ${cancelled ? 'ti-calendar-x' : 'ti-calendar-event'}`}></i>
+                <button type="button" key={item.notificationID} className={`cb-item ${item.isRead ? '' : 'fresh'}`} onClick={() => openItem(item)}>
+                  <span className="cb-avatar" aria-hidden="true" style={red ? { background: '#dc2626' } : undefined}>
+                    <i className={`ti ${icon}`}></i>
                   </span>
                   <span className="cb-main">
                     <span className="cb-row">
-                      <span className="cb-name">{cancelled ? 'Session cancelled' : 'Session updated'}</span>
+                      <span className="cb-name">{label}</span>
                       <span className="cb-time">{ago(item.createdAt)}</span>
                     </span>
                     <span className="cb-msg" style={{ WebkitLineClamp: 4 }}>{item.message}</span>

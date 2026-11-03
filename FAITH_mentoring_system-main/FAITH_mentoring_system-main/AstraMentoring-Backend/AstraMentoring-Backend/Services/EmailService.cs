@@ -551,6 +551,19 @@ namespace AstraMentoring_Backend.Services
             return await SendEmailAsync(to, _brandName, $"[Inquiry] {topic} — {name}", html);
         }
 
+        // In-app notification for a mentee (the mentee portal's bell). Best-effort: never fails the caller.
+        private async Task AddMenteeNotificationAsync(SqlConnection conn, int userId, string type, string message, int? referenceId)
+        {
+            try
+            {
+                if (message.Length > 480) message = message[..477] + "...";
+                await conn.ExecuteAsync(
+                    "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@userId, @type, @message, @referenceId, 0, GETDATE())",
+                    new { userId, type, message, referenceId });
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "EmailService: could not save a {Type} notification.", type); }
+        }
+
         private static string FirstNonEmpty(params string[] values)
             => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v)) ?? string.Empty;
 
@@ -566,29 +579,29 @@ namespace AstraMentoring_Backend.Services
                 "SELECT FirstName, LastName, Role FROM Users WHERE UserID = @Id",
                 new { Id = data.PostedByUserID });
 
-            List<(string Email, string Role)> recipients;
+            List<(int UserID, string Email, string Role)> recipients;
             if (data.TargetAudience == "Mentee" && poster.Role == "Mentor")
             {
-                recipients = (await conn.QueryAsync<(string Email, string Role)>(
-                    @"SELECT u.Email, u.Role FROM MentorMentee mm
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
+                    @"SELECT u.UserID, u.Email, u.Role FROM MentorMentee mm
                       JOIN Users u ON u.UserID = mm.MenteeID
                       WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
                     new { MentorID = data.PostedByUserID })).ToList();
             }
             else if (data.TargetAudience == "Mentee")
             {
-                recipients = (await conn.QueryAsync<(string Email, string Role)>(
-                    "SELECT Email, Role FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
+                    "SELECT UserID, Email, Role FROM Users WHERE Role = 'Mentee' AND IsActive = 1")).ToList();
             }
             else if (data.TargetAudience == "Mentor")
             {
-                recipients = (await conn.QueryAsync<(string Email, string Role)>(
-                    "SELECT Email, Role FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
+                    "SELECT UserID, Email, Role FROM Users WHERE Role = 'Mentor' AND IsActive = 1")).ToList();
             }
             else // "Both" or anything else unrecognized falls back to the widest audience
             {
-                recipients = (await conn.QueryAsync<(string Email, string Role)>(
-                    "SELECT Email, Role FROM Users WHERE Role IN ('Mentor','Mentee') AND IsActive = 1")).ToList();
+                recipients = (await conn.QueryAsync<(int UserID, string Email, string Role)>(
+                    "SELECT UserID, Email, Role FROM Users WHERE Role IN ('Mentor','Mentee') AND IsActive = 1")).ToList();
             }
 
             var posterName  = poster.FirstName != null ? $"{poster.FirstName} {poster.LastName}".Trim() : "Someone";
@@ -596,8 +609,10 @@ namespace AstraMentoring_Backend.Services
             var subject     = $"New Announcement: {data.Title}";
             var excerpt     = PlainTextExcerpt(data.Content);
 
-            foreach (var (email, role) in recipients)
+            foreach (var (userId, email, role) in recipients)
             {
+                if (role == "Mentee")
+                    await AddMenteeNotificationAsync(conn, userId, "Announcement", $"{posterName} posted a new announcement: {data.Title}", data.AnnouncementID);
                 // Each role reads announcements on its own portal page.
                 var portalPath = role == "Mentor" ? "mentor" : "mentee";
                 var ctaUrl     = $"{_frontendBaseUrl}/{portalPath}/announcements?id={data.AnnouncementID}";
@@ -722,8 +737,8 @@ namespace AstraMentoring_Backend.Services
                 "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
             if (mentor.FirstName == null) return;
 
-            var recipients = (await conn.QueryAsync<string>(
-                @"SELECT u.Email FROM MentorMentee mm
+            var recipients = (await conn.QueryAsync<(int UserID, string Email)>(
+                @"SELECT u.UserID, u.Email FROM MentorMentee mm
                   JOIN Users u ON u.UserID = mm.MenteeID
                   WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND u.IsActive = 1",
                 new { MentorID = mentorId })).ToList();
@@ -736,8 +751,11 @@ namespace AstraMentoring_Backend.Services
                 <p>{FormatAvailabilityStart(availableDate, startTime)}</p>";
             var html = BuildEmailHtml("New Available Slot", body, "Book This Slot", $"{_frontendBaseUrl}/mentee/schedule");
 
-            foreach (var email in recipients)
+            foreach (var (userId, email) in recipients)
+            {
+                await AddMenteeNotificationAsync(conn, userId, "Availability", $"{mentorName} posted a new available session slot: {FormatAvailabilityStart(availableDate, startTime)}", null);
                 await SendEmailAsync(email, senderName, subject, html);
+            }
         }
 
         // ── Mentee books a posted slot (auto-confirmed session) ─────────
@@ -801,28 +819,28 @@ namespace AstraMentoring_Backend.Services
             var course = await conn.QuerySingleOrDefaultAsync<CourseGroup>(
                 "SELECT c.School,c.CourseCode FROM SessionCourseScopes c JOIN Sessions s ON s.SessionID=c.SessionID WHERE c.SessionID=@SessionID AND c.Origin='Regular' AND s.MentorID=@MentorID",
                 new { SessionID=sessionId, MentorID=mentorId });
-            var mentees = await conn.QueryAsync<(string Email, string? FirstName, string? Section, string? School, string? Course)>(
-                @"SELECT vmd.Email, vmd.FirstName, vmd.SectionCode AS Section, vmd.School, vmd.Course
+            var mentees = await conn.QueryAsync<(int UserID, string Email, string? FirstName, string? Section, string? School, string? Course)>(
+                @"SELECT vmd.UserID, vmd.Email, vmd.FirstName, vmd.SectionCode AS Section, vmd.School, vmd.Course
                   FROM MentorMentee mm
                   JOIN vw_MenteeDetails vmd ON vmd.UserID = mm.MenteeID
                   WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND vmd.IsActive = 1
                     AND (@CourseScoped=0 OR EXISTS(SELECT 1 FROM MenteeProfiles mp WHERE mp.UserID=mm.MenteeID AND ISNULL(mp.IsDropOut,0)=0))",
                 new { MentorID = mentorId, CourseScoped=course!=null });
 
-            IEnumerable<(string Email, string? FirstName)> recipients;
+            IEnumerable<(int UserID, string Email, string? FirstName)> recipients;
             if (course != null)
             {
                 recipients = mentees.Where(m => string.Equals(m.School,course.School,StringComparison.OrdinalIgnoreCase)
-                    && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course)==AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode)).Select(m=>(m.Email,m.FirstName));
+                    && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course)==AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode)).Select(m=>(m.UserID,m.Email,m.FirstName));
             }
             else if (string.IsNullOrWhiteSpace(sectionCode))
             {
-                recipients = mentees.Select(m => (m.Email,m.FirstName));
+                recipients = mentees.Select(m => (m.UserID,m.Email,m.FirstName));
             }
             else
             {
                 var wantedSections = sectionCode.Split(',').Select(s => s.Trim()).ToHashSet();
-                recipients = mentees.Where(m => m.Section != null && wantedSections.Contains(m.Section)).Select(m => (m.Email,m.FirstName));
+                recipients = mentees.Where(m => m.Section != null && wantedSections.Contains(m.Section)).Select(m => (m.UserID,m.Email,m.FirstName));
             }
 
             var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
@@ -838,10 +856,14 @@ namespace AstraMentoring_Backend.Services
             var details = $@"<strong>Session:</strong> {Enc($"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}")}{sectionLine}
                 <br /><a href=""{_frontendBaseUrl}/mentee/sessions?id={sessionId}"" style=""color:#0b1a5c;font-weight:700;"">View session</a>";
 
-            foreach (var (email, firstName) in recipients)
+            foreach (var (userId, email, firstName) in recipients)
+            {
+                await AddMenteeNotificationAsync(conn, userId, "SessionScheduled",
+                    $"{mentorName} scheduled a new session{slotSuffix} on {sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}.", sessionId);
                 await SendEmailAsync(email, senderName,
                     subject,
                     BuildNoticeEmailHtml(firstName, "Session Scheduled", $"{mentorName} scheduled a new mentoring session{slotSuffix}.", details, "your mentor scheduled a session"));
+            }
         }
     }
 }
