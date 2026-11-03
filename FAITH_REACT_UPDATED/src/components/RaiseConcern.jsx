@@ -31,6 +31,17 @@ export const CSS = [
   '.rc-cancel,.rc-send{font:inherit;font-size:13.5px;font-weight:700;border-radius:10px;padding:9px 16px;cursor:pointer}',
   '.rc-cancel{color:var(--ink,#1f2937);background:transparent;border:1px solid var(--sb-border,#d1d5db)}',
   '.rc-send{color:#fff;background:#dc2626;border:none}.rc-send:disabled,.rc-cancel:disabled{opacity:.5;cursor:not-allowed}',
+  // Phones: a bottom sheet, full-width stacked buttons, 16px fields (iPhones zoom into smaller ones).
+  '@media (max-width:600px){',
+  '.rc-overlay{align-items:flex-end;padding:0}',
+  '.rc-modal{width:100%;max-height:92dvh;border-radius:18px 18px 0 0}',
+  '.rc-head{padding:14px 16px}.rc-body{padding:14px 16px}',
+  '.rc-body select,.rc-text{font-size:16px}',
+  '.rc-foot{flex-direction:column-reverse;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}',
+  '.rc-cancel,.rc-send{width:100%;min-height:44px}',
+  '.rc-btn{padding:7px 11px;font-size:12.5px}',
+  '.card-header-row:has(.rc-btn){flex-wrap:wrap}',
+  '}',
 ].join('');
 
 export function RaiseConcernButton({ onClick }) {

@@ -31,6 +31,13 @@ const SELECT_CSS = [
   '.mc-pickbar .mc-link{color:#1d4ed8;background:transparent;border:none}',
   '.mc-pickbar .mc-cancel{color:#374151;background:#fff;border:1px solid #d1d5db}',
   '.mc-pickbar .mc-send{color:#fff;background:#dc2626;border:none}.mc-pickbar .mc-send:disabled{opacity:.5;cursor:not-allowed}',
+  '@media (max-width:640px){',
+  '.mc-pickbar{padding:10px 12px;gap:8px}',
+  '.mc-pickbar .mc-pickbar-count{flex:1 1 100%}',
+  '.mc-pickbar button{flex:1 1 auto;min-height:40px}',
+  '.mc-pickbar .mc-send{flex-basis:100%}',
+  '.mc-pick{width:26px;height:26px}',
+  '}',
 ].join('');
 
 // Groups the 4 backend tiers into the 4 the UI shows (Not Started = zero sessions this semester).

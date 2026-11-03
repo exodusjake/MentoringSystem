@@ -12,6 +12,20 @@ import { ago } from './concernShared.jsx';
 const POLL_MS = 60000;
 const REPLY_MAX = 400;
 
+// Phone-only adjustments (the desktop look is the inline/default styling).
+const NB_CSS = [
+  '@media (max-width:768px){',
+  '.concern-bell.nb .cb-head{flex-wrap:wrap;row-gap:6px}',
+  '.concern-bell.nb .cb-title{min-width:110px}',
+  '.concern-bell.nb .cb-pill-count{padding:5px 10px;font-size:11px}',
+  '.concern-bell.nb .nb-row{padding-left:56px!important;padding-right:40px!important}',
+  '.concern-bell.nb .nb-row textarea{font-size:16px!important}',
+  '.concern-bell.nb .nb-row button{min-height:34px}',
+  '.concern-bell.nb .nb-trash{width:34px!important;height:34px!important}',
+  '}',
+  '@media (max-width:380px){.concern-bell.nb .nb-row{padding-left:48px!important}}',
+].join('');
+
 // type -> [title, icon, red?, page to open]
 const KINDS = {
   SessionCancelled: ['Session cancelled', 'ti-calendar-x', true, '/mentee/sessions'],
@@ -28,6 +42,7 @@ const KINDS = {
 
 export default function NotificationBell() {
   useStyle('concern-bell', CSS);
+  useStyle('notification-bell', NB_CSS);
   const [feed, setFeed] = useState({ count: 0, items: [] });
   const [open, setOpen] = useState(false);
   const [ring, setRing] = useState(false);
@@ -121,7 +136,7 @@ export default function NotificationBell() {
   const countLabel = `${count} new`;
 
   return (
-    <div className="concern-bell mentor" ref={rootRef}>
+    <div className="concern-bell mentor nb" ref={rootRef}>
       <button type="button" className={`cb-btn${ring ? ' ring' : ''}`} aria-haspopup="true" aria-expanded={open}
         aria-label={count ? `${title}, ${countLabel}` : title} title={title}
         onClick={() => { setOpen(o => !o); if (!open) load(); }}>
@@ -155,17 +170,17 @@ export default function NotificationBell() {
                     <span className="cb-msg" style={{ WebkitLineClamp: 4, paddingRight: 26 }}>{item.message}</span>
                   </span>
                 </button>
-                <button type="button" aria-label="Delete notification" title="Delete" onClick={() => remove(item)}
+                <button type="button" className="nb-trash" aria-label="Delete notification" title="Delete" onClick={() => remove(item)}
                   style={{ position: 'absolute', right: 10, bottom: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, color: '#9ca3af', background: 'transparent', border: 'none', borderRadius: 8, cursor: 'pointer' }}
                   onMouseEnter={e => { e.currentTarget.style.color = '#dc2626'; e.currentTarget.style.background = '#fee2e2'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; e.currentTarget.style.background = 'transparent'; }}>
                   <i className="ti ti-trash"></i>
                 </button>
                 {item.type === 'DirectMessageReplied' ? (
-                  <div style={{ padding: '0 44px 10px 62px', fontSize: 12, fontWeight: 600, color: '#15803d' }}><i className="ti ti-check"></i> You replied</div>
+                  <div className="nb-row" style={{ padding: '0 44px 10px 62px', fontSize: 12, fontWeight: 600, color: '#15803d' }}><i className="ti ti-check"></i> You replied</div>
                 ) : item.type === 'DirectMessage' ? (
                   replyId === item.notificationID ? (
-                    <div style={{ padding: '0 44px 12px 62px' }}>
+                    <div className="nb-row" style={{ padding: '0 44px 12px 62px' }}>
                       <textarea rows={3} maxLength={REPLY_MAX} autoFocus disabled={replyBusy} placeholder="Write your reply (you can reply once)..."
                         value={replyText} onChange={e => setReplyText(e.target.value)}
                         style={{ width: '100%', boxSizing: 'border-box', font: 'inherit', fontSize: 13, padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 10, resize: 'vertical' }} />
@@ -177,7 +192,7 @@ export default function NotificationBell() {
                       </div>
                     </div>
                   ) : (
-                    <div style={{ padding: '0 44px 10px 62px' }}>
+                    <div className="nb-row" style={{ padding: '0 44px 10px 62px' }}>
                       <button type="button" onClick={() => { setReplyId(item.notificationID); setReplyText(''); markRead(item); }}
                         style={{ font: 'inherit', fontSize: 12.5, fontWeight: 700, color: 'var(--sb-active,#0f766e)', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}><i className="ti ti-arrow-back-up"></i> Reply</button>
                     </div>
