@@ -632,7 +632,7 @@ namespace AstraMentoring_Backend.Services
 
         // The Head Admin raised a concern with the selected mentors: bell + email (verification-email design) for each.
         // Returns how many active mentors it was sent to.
-        public async Task<int> NotifyMentorsOfHeadConcernAsync(int senderId, string senderRole, IReadOnlyCollection<int> mentorIds, string message)
+        public async Task<int> NotifyMentorsOfHeadConcernAsync(int senderId, string senderRole, IReadOnlyCollection<int> mentorIds, string category, string message)
         {
             try
             {
@@ -644,8 +644,8 @@ namespace AstraMentoring_Backend.Services
                     "SELECT UserID, Email, FirstName FROM Users WHERE Role = 'Mentor' AND IsActive = 1 AND UserID IN @Ids",
                     new { Ids = mentorIds })).ToList();
 
-                var inApp = $"{senderRole} {senderName} raised a concern: {message}";
-                var details = $@"<strong>From:</strong> {Enc(senderName)} ({Enc(senderRole)})<br /><span style=""white-space:pre-wrap;"">{Enc(message)}</span>";
+                var inApp = $"{senderRole} {senderName} raised a concern ({category}): {message}";
+                var details = $@"<strong>From:</strong> {Enc(senderName)} ({Enc(senderRole)})<br /><strong>About:</strong> {Enc(category)}<br /><span style=""white-space:pre-wrap;"">{Enc(message)}</span>";
                 foreach (var m in mentors)
                 {
                     await AddMenteeNotificationAsync(conn, m.UserID, "HeadConcern", inApp, senderId);

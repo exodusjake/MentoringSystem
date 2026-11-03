@@ -19,6 +19,7 @@ import { useBackGuard } from '../../lib/useBackGuard.js';
 // "Raise a concern": the Head picks mentors (all start selected, circle on each card to unselect) and sends one message
 // to them: their notification bell and email.
 const CONCERN_MIN = 10, CONCERN_MAX = 500;
+const CONCERN_CATEGORIES = ['Low session progress', 'Late logsheet or proof', 'Attendance concern', 'Conduct or professionalism', 'Follow-up or reminder', 'Other'];
 const SELECT_CSS = [
   '.mentor-card.mc-selectable{position:relative;cursor:pointer}',
   '.mentor-card.mc-selectable.mc-picked{box-shadow:0 0 0 2px #2563eb,0 6px 18px rgba(37,99,235,.15)}',
@@ -85,6 +86,7 @@ export default function HeadMonitoring() {
   const [selecting, setSelecting] = useState(false);
   const [picked, setPicked] = useState(() => new Set());
   const [concernOpen, setConcernOpen] = useState(false);
+  const [concernCategory, setConcernCategory] = useState('');
   const [concernMsg, setConcernMsg] = useState('');
   const [concernBusy, setConcernBusy] = useState(false);
   const [concernError, setConcernError] = useState('');
@@ -368,15 +370,15 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
   function stopSelecting() { setSelecting(false); setPicked(new Set()); }
   function togglePick(id) { setPicked(p => { const x = new Set(p); x.has(id) ? x.delete(id) : x.add(id); return x; }); }
   const concernTrimmed = concernMsg.trim();
-  const concernValid = concernTrimmed.length >= CONCERN_MIN && concernTrimmed.length <= CONCERN_MAX;
+  const concernValid = !!concernCategory && concernTrimmed.length >= CONCERN_MIN && concernTrimmed.length <= CONCERN_MAX;
 
   async function sendConcern() {
     if (!concernValid || concernBusy || !visiblePicked.length) return;
     setConcernBusy(true); setConcernError('');
     try {
-      const res = await apiRequest('HeadConcerns', 'POST', { mentorIds: visiblePicked.map(idOf), message: concernTrimmed }, true);
+      const res = await apiRequest('HeadConcerns', 'POST', { mentorIds: visiblePicked.map(idOf), category: concernCategory, message: concernTrimmed }, true);
       showToast(res?.message || 'Your concern was sent.', 'success');
-      setConcernOpen(false); setConcernMsg(''); stopSelecting();
+      setConcernOpen(false); setConcernMsg(''); setConcernCategory(''); stopSelecting();
     } catch (e) {
       setConcernError(e.message || 'Could not send the concern. Please try again.');
     } finally { setConcernBusy(false); }
@@ -598,6 +600,13 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
               <button type="button" className="rc-close" onClick={() => setConcernOpen(false)} disabled={concernBusy} aria-label="Close">&times;</button>
             </div>
             <div className="rc-body">
+              <label className="rc-label" htmlFor="hcCategory">What is this about?</label>
+              <div className="rc-gap">
+                <Select id="hcCategory" value={concernCategory} onChange={e => setConcernCategory(e.target.value)} disabled={concernBusy}>
+                  <option value="" disabled>Choose...</option>
+                  {CONCERN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </Select>
+              </div>
               <label className="rc-label" htmlFor="hcMessage">Your message</label>
               <textarea id="hcMessage" className="rc-text" maxLength={CONCERN_MAX} disabled={concernBusy} placeholder="Describe the concern..."
                 value={concernMsg} onChange={e => setConcernMsg(e.target.value)} />

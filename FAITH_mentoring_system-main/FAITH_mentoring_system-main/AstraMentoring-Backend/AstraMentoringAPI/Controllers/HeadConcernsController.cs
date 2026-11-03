@@ -16,6 +16,9 @@ namespace AstraMentoringAPI.Controllers
     {
         public const int MinLength = 10, MaxLength = 500, MaxMentors = 300;
 
+        private static readonly string[] Categories =
+            { "Low session progress", "Late logsheet or proof", "Attendance concern", "Conduct or professionalism", "Follow-up or reminder", "Other" };
+
         private readonly IConfiguration _config;
         private readonly EmailService _emailService;
 
@@ -30,12 +33,15 @@ namespace AstraMentoringAPI.Controllers
         public class HeadConcernDto
         {
             public List<int>? MentorIds { get; set; }
+            public string? Category { get; set; }
             public string? Message { get; set; }
         }
 
         [HttpPost]
         public async Task<IActionResult> Send([FromBody] HeadConcernDto data)
         {
+            var category = data.Category?.Trim() ?? "";
+            if (!Categories.Contains(category)) return BadRequest(new { message = "Please choose what the concern is about." });
             var message = data.Message?.Trim() ?? "";
             var ids = (data.MentorIds ?? new List<int>()).Distinct().ToList();
             if (ids.Count == 0) return BadRequest(new { message = "Select at least one mentor." });
@@ -49,7 +55,7 @@ namespace AstraMentoringAPI.Controllers
                 new { Id = CallerId });
             if (recent > 0) return StatusCode(409, new { message = "A concern was just sent. Please wait a moment before sending another." });
 
-            var sent = await _emailService.NotifyMentorsOfHeadConcernAsync(CallerId, User.IsInRole("Head") ? "Head Admin" : "Admin", ids, message);
+            var sent = await _emailService.NotifyMentorsOfHeadConcernAsync(CallerId, User.IsInRole("Head") ? "Head Admin" : "Admin", ids, category, message);
             return Ok(new { message = $"Your concern was sent to {sent} mentor{(sent == 1 ? "" : "s")}.", sent });
         }
     }
