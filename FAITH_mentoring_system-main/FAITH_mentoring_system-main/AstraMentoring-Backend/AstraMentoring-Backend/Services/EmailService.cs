@@ -523,8 +523,8 @@ namespace AstraMentoring_Backend.Services
                 foreach (var r in recipients)
                 {
                     await conn.ExecuteAsync(
-                        "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@UserID, @Type, @Message, @SessionID, 0, GETDATE())",
-                        new { r.UserID, Type = cancelled ? "SessionCancelled" : "SessionUpdated", Message = inApp, SessionID = sessionId });
+                        "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@UserID, @Type, @Message, @SessionID, 0, @Now)",
+                        new { r.UserID, Type = cancelled ? "SessionCancelled" : "SessionUpdated", Message = inApp, SessionID = sessionId, Now = DateTime.UtcNow.AddHours(8) });
                     var html = BuildNoticeEmailHtml(r.FirstName, title, intro, details.ToString(), "your mentor changed a session");
                     await SendEmailAsync(r.Email, senderName, subject, html);
                 }
@@ -562,8 +562,8 @@ namespace AstraMentoring_Backend.Services
             {
                 if (message.Length > 480) message = message[..477] + "...";
                 await conn.ExecuteAsync(
-                    "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@userId, @type, @message, @referenceId, 0, GETDATE())",
-                    new { userId, type, message, referenceId });
+                    "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@userId, @type, @message, @referenceId, 0, @now)",
+                    new { userId, type, message, referenceId, now = DateTime.UtcNow.AddHours(8) });
             }
             catch (Exception ex) { _logger.LogWarning(ex, "EmailService: could not save a {Type} notification.", type); }
         }
@@ -683,6 +683,77 @@ namespace AstraMentoring_Backend.Services
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "EmailService: reply from mentee {MenteeId} to mentor {MentorId} failed to send.", menteeId, mentorId);
+            }
+        }
+
+        // Reminder shortly before a session: bell + email to each of its mentees, once per mentee per session
+        // (a SessionReminder notification for that session is the record that it was sent).
+        public async Task NotifySessionReminderAsync(int sessionId, int mentorId, DateTime sessionDate, string? slotName, int minutes)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+                if (mentor.FirstName == null) return;
+
+                List<(int UserID, string Email, string? FirstName)> recipients;
+                var requestId = await conn.ExecuteScalarAsync<int?>("SELECT RequestID FROM Sessions WHERE SessionID=@SessionID", new { SessionID = sessionId });
+                if (requestId != null)
+                {
+                    recipients = (await conn.QueryAsync<(int, string, string?)>(
+                        @"SELECT u.UserID, u.Email, u.FirstName FROM SessionRequests r JOIN Users u ON u.UserID=r.MenteeID
+                          WHERE r.RequestID=@RequestID AND u.IsActive=1", new { RequestID = requestId })).ToList();
+                }
+                else
+                {
+                    var course = await conn.QuerySingleOrDefaultAsync<CourseGroup>(
+                        "SELECT c.School,c.CourseCode FROM SessionCourseScopes c WHERE c.SessionID=@SessionID AND c.Origin='Regular'",
+                        new { SessionID = sessionId });
+                    var sectionCode = await conn.ExecuteScalarAsync<string?>("SELECT SectionCode FROM Sessions WHERE SessionID=@SessionID", new { SessionID = sessionId });
+                    var mentees = (await conn.QueryAsync<(int UserID, string Email, string? FirstName, string? Section, string? School, string? Course)>(
+                        @"SELECT vmd.UserID, vmd.Email, vmd.FirstName, vmd.SectionCode AS Section, vmd.School, vmd.Course
+                          FROM MentorMentee mm
+                          JOIN vw_MenteeDetails vmd ON vmd.UserID = mm.MenteeID
+                          WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND vmd.IsActive = 1
+                            AND (@CourseScoped=0 OR EXISTS(SELECT 1 FROM MenteeProfiles mp WHERE mp.UserID=mm.MenteeID AND ISNULL(mp.IsDropOut,0)=0))",
+                        new { MentorID = mentorId, CourseScoped = course != null })).ToList();
+                    IEnumerable<(int UserID, string Email, string? FirstName, string? Section, string? School, string? Course)> picked;
+                    if (course != null)
+                        picked = mentees.Where(m => string.Equals(m.School, course.School, StringComparison.OrdinalIgnoreCase)
+                            && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course) == AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode));
+                    else if (string.IsNullOrWhiteSpace(sectionCode))
+                        picked = mentees;
+                    else
+                    {
+                        var wanted = sectionCode.Split(',').Select(s => s.Trim()).ToHashSet();
+                        picked = mentees.Where(m => m.Section != null && wanted.Contains(m.Section));
+                    }
+                    recipients = picked.Select(m => (m.UserID, m.Email, m.FirstName)).ToList();
+                }
+
+                var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+                var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
+                var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
+                var inApp = $"Reminder: your session{slotSuffix} with {mentorName} starts in about {minutes} minute{(minutes == 1 ? "" : "s")} ({sessionDate:h:mm tt}).";
+                var details = $@"<strong>Session:</strong> {Enc(when)}<br /><strong>Mentor:</strong> {Enc(mentorName)}
+                    <br /><a href=""{_frontendBaseUrl}/mentee/sessions"" style=""color:#0b1a5c;font-weight:700;"">View my sessions</a>";
+
+                foreach (var r in recipients)
+                {
+                    var already = await conn.ExecuteScalarAsync<int>(
+                        "SELECT COUNT(*) FROM Notifications WHERE Type='SessionReminder' AND ReferenceID=@SessionID AND RecipientUserID=@UserID",
+                        new { SessionID = sessionId, r.UserID });
+                    if (already > 0) continue;
+                    await AddMenteeNotificationAsync(conn, r.UserID, "SessionReminder", inApp, sessionId);
+                    var html = BuildNoticeEmailHtml(r.FirstName, "Session Reminder",
+                        $"Your mentoring session{slotSuffix} starts in about {minutes} minute{(minutes == 1 ? "" : "s")}.", details, "you have a mentoring session coming up");
+                    await SendEmailAsync(r.Email, _brandName, $"Reminder: your session starts soon{slotSuffix}", html);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: reminder for session {SessionId} failed.", sessionId);
             }
         }
 

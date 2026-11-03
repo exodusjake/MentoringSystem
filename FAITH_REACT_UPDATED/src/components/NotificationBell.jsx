@@ -32,6 +32,7 @@ const KINDS = {
   SessionUpdated: ['Session updated', 'ti-calendar-event', false, '/mentee/sessions'],
   SessionScheduled: ['New session', 'ti-calendar-plus', false, '/mentee/sessions'],
   Availability: ['New available slot', 'ti-clock-plus', false, '/mentee/schedule'],
+  SessionReminder: ['Session starting soon', 'ti-alarm', false, '/mentee/sessions'],
   SlotBooked: ['Slot booked', 'ti-calendar-check', false, '/mentor/availability'],
   BookingConfirmed: ['Booking confirmed', 'ti-calendar-check', false, '/mentee/sessions'],
   Announcement: ['New announcement', 'ti-speakerphone', false, '/mentee/announcements'],

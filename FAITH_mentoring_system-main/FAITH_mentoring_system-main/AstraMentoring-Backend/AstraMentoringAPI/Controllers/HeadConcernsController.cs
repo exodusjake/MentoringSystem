@@ -51,7 +51,7 @@ namespace AstraMentoringAPI.Controllers
 
             using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             var recent = await conn.ExecuteScalarAsync<int>(
-                "SELECT COUNT(*) FROM Notifications WHERE Type='HeadConcern' AND ReferenceID=@Id AND CreatedAt > DATEADD(SECOND,-15,GETDATE())",
+                "SELECT COUNT(*) FROM Notifications WHERE Type='HeadConcern' AND ReferenceID=@Id AND CreatedAt > DATEADD(SECOND,-15,DATEADD(HOUR,8,GETUTCDATE()))",
                 new { Id = CallerId });
             if (recent > 0) return StatusCode(409, new { message = "A concern was just sent. Please wait a moment before sending another." });
 

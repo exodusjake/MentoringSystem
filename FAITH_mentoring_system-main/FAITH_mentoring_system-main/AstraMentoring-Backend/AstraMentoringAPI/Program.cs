@@ -141,6 +141,7 @@ builder.Services.AddScoped<EvaluationAttachmentsService>();
 builder.Services.AddScoped<EvaluationRatingsService>();
 builder.Services.AddHttpClient();          // built-in — powers EmailService's Brevo API calls
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddHostedService<AstraMentoringAPI.SessionReminderService>();   // 30-minute session reminders
 
 // Honor the local reverse proxy only; retain the default trusted loopback proxies.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
