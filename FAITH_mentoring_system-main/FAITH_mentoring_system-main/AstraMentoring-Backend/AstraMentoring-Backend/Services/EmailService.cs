@@ -630,6 +630,37 @@ namespace AstraMentoring_Backend.Services
             }
         }
 
+        // The Head Admin raised a concern with the selected mentors: bell + email (verification-email design) for each.
+        // Returns how many active mentors it was sent to.
+        public async Task<int> NotifyMentorsOfHeadConcernAsync(int senderId, string senderRole, IReadOnlyCollection<int> mentorIds, string message)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var sender = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = senderId });
+                var senderName = sender.FirstName != null ? $"{sender.FirstName} {sender.LastName}".Trim() : senderRole;
+                var mentors = (await conn.QueryAsync<(int UserID, string Email, string? FirstName)>(
+                    "SELECT UserID, Email, FirstName FROM Users WHERE Role = 'Mentor' AND IsActive = 1 AND UserID IN @Ids",
+                    new { Ids = mentorIds })).ToList();
+
+                var inApp = $"{senderRole} {senderName} raised a concern: {message}";
+                var details = $@"<strong>From:</strong> {Enc(senderName)} ({Enc(senderRole)})<br /><span style=""white-space:pre-wrap;"">{Enc(message)}</span>";
+                foreach (var m in mentors)
+                {
+                    await AddMenteeNotificationAsync(conn, m.UserID, "HeadConcern", inApp, senderId);
+                    var html = BuildNoticeEmailHtml(m.FirstName, "Concern from the Head Admin", $"{senderName} ({senderRole}) raised a concern with you.", details, $"the {senderRole} raised a concern with you on AstraMentoring");
+                    await SendEmailAsync(m.Email, _brandName, $"Concern from the {senderRole}", html);
+                }
+                return mentors.Count;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: head concern from {SenderId} failed to send.", senderId);
+                return 0;
+            }
+        }
+
         // ── Announcement ─────────────────────────────────────────────────
         public async Task NotifyNewAnnouncementAsync(Announcement data)
         {

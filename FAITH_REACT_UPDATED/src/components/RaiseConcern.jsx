@@ -10,7 +10,7 @@ import { useStyle } from '../lib/injectStyle.js';
 const CATEGORIES = ['About my mentor', 'Session problem', 'Attendance record', 'Personal or welfare', 'Safety', 'Other'];
 const MIN = 10, MAX = 500;
 
-const CSS = [
+export const CSS = [
   '.rc-btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;color:#b91c1c;background:#fff;border:1px solid #fca5a5;border-radius:10px;padding:8px 13px;cursor:pointer;white-space:nowrap}',
   '.rc-btn:hover{color:#fff;background:#dc2626;border-color:#dc2626}',
   '.rc-overlay{position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;padding:14px;background:rgba(15,23,42,.5);font-family:"DM Sans",system-ui,sans-serif}',

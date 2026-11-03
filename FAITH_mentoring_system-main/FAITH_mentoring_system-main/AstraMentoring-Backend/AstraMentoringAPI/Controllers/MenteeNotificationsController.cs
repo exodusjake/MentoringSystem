@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AstraMentoringAPI.Controllers
 {
-    // The signed-in user's own in-app notifications (the bell of the mentee portal, and of Admin/Head for mentee concerns). Always scoped to the caller.
+    // The signed-in user's own in-app notifications (the bell of the mentee portal, of Admin/Head for mentee concerns, of the mentor portal for Head concerns). Always scoped to the caller.
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Mentee,Admin,Head")]
+    [Authorize(Roles = "Mentee,Mentor,Admin,Head")]
     public class MenteeNotificationsController : ControllerBase
     {
         private readonly NotificationsService _service;

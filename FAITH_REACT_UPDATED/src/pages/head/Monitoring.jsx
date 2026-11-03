@@ -6,12 +6,31 @@ import Empty from '../../components/Empty.jsx';
 import { showToast } from '../../components/Notify.jsx';
 import OptionGroups from '../../components/OptionGroups.jsx';
 import Select from '../../components/Select.jsx';
+import Overlay from '../../components/Overlay.jsx';
+import { CSS as CONCERN_CSS } from '../../components/RaiseConcern.jsx';
+import { useStyle } from '../../lib/injectStyle.js';
 import { apiRequest } from '../../lib/api.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 
 // HEAD/HTML/mentor-performance.html + HEAD/JS/mentor-performance.js
+
+// "Raise a concern": the Head picks mentors (all start selected, circle on each card to unselect) and sends one message
+// to them: their notification bell and email.
+const CONCERN_MIN = 10, CONCERN_MAX = 500;
+const SELECT_CSS = [
+  '.mentor-card.mc-selectable{position:relative;cursor:pointer}',
+  '.mentor-card.mc-selectable.mc-picked{box-shadow:0 0 0 2px #2563eb,0 6px 18px rgba(37,99,235,.15)}',
+  '.mc-pick{position:absolute;top:10px;right:10px;z-index:2;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;background:#fff;border:2px solid #cbd5e1;border-radius:50%;pointer-events:none}',
+  '.mc-picked .mc-pick{background:#2563eb;border-color:#2563eb}',
+  '.mc-pickbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 14px;padding:12px 16px;color:#1e3a8a;background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;font-size:14px;font-weight:600}',
+  '.mc-pickbar .mc-pickbar-count{flex:1;min-width:150px}',
+  '.mc-pickbar button{font:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:8px 14px;cursor:pointer}',
+  '.mc-pickbar .mc-link{color:#1d4ed8;background:transparent;border:none}',
+  '.mc-pickbar .mc-cancel{color:#374151;background:#fff;border:1px solid #d1d5db}',
+  '.mc-pickbar .mc-send{color:#fff;background:#dc2626;border:none}.mc-pickbar .mc-send:disabled{opacity:.5;cursor:not-allowed}',
+].join('');
 
 // Groups the 4 backend tiers into the 4 the UI shows (Not Started = zero sessions this semester).
 function mentorTierGroup(status, completedSessions) {
@@ -61,6 +80,14 @@ function escCsv(v) {
 export default function HeadMonitoring() {
   useBackGuard();
   const navigate = useNavigate();
+  useStyle('raise-concern', CONCERN_CSS);
+  useStyle('monitor-select', SELECT_CSS);
+  const [selecting, setSelecting] = useState(false);
+  const [picked, setPicked] = useState(() => new Set());
+  const [concernOpen, setConcernOpen] = useState(false);
+  const [concernMsg, setConcernMsg] = useState('');
+  const [concernBusy, setConcernBusy] = useState(false);
+  const [concernError, setConcernError] = useState('');
   const [params] = useSearchParams();
 
   // Deep-link from the Dashboard's Mentor Performance stat cells (set before the first render comes in filtered).
@@ -335,6 +362,26 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
     setTimeout(() => w.print(), 400);
   }
 
+  const idOf = m => m.mentorID || m.MentorID;
+  const visiblePicked = filtered.filter(m => picked.has(idOf(m)));
+  function startSelecting() { setPicked(new Set(filtered.map(idOf))); setSelecting(true); }
+  function stopSelecting() { setSelecting(false); setPicked(new Set()); }
+  function togglePick(id) { setPicked(p => { const x = new Set(p); x.has(id) ? x.delete(id) : x.add(id); return x; }); }
+  const concernTrimmed = concernMsg.trim();
+  const concernValid = concernTrimmed.length >= CONCERN_MIN && concernTrimmed.length <= CONCERN_MAX;
+
+  async function sendConcern() {
+    if (!concernValid || concernBusy || !visiblePicked.length) return;
+    setConcernBusy(true); setConcernError('');
+    try {
+      const res = await apiRequest('HeadConcerns', 'POST', { mentorIds: visiblePicked.map(idOf), message: concernTrimmed }, true);
+      showToast(res?.message || 'Your concern was sent.', 'success');
+      setConcernOpen(false); setConcernMsg(''); stopSelecting();
+    } catch (e) {
+      setConcernError(e.message || 'Could not send the concern. Please try again.');
+    } finally { setConcernBusy(false); }
+  }
+
   // ── Mentor List (row format) ──
   let mentorGrid = null, mentorMsg = null;
   if (!loaded) {
@@ -356,7 +403,9 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
       const secTags = MentorSchools.courseTags(m.sections || m.Sections, activeSchool, course);
 
       return (
-        <div className="mentor-card" key={id}>
+        <div className={`mentor-card${selecting ? ' mc-selectable' : ''}${selecting && picked.has(id) ? ' mc-picked' : ''}`} key={id}
+          onClick={selecting ? () => togglePick(id) : undefined}>
+          {selecting ? <span className="mc-pick" aria-hidden="true"><i className="ti ti-check"></i></span> : null}
           <div className="mrc-top">
             <div className={`mr-avatar av-${avIdx}`}>{inits}</div>
             <div className="mr-info">
@@ -371,7 +420,7 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
               <span className={`mc-badge ${sc}`} style={{ fontSize: '12px' }}>{status}</span>
               <span className="mr-stat-badge">{done}/{req} Sessions</span>
             </div>
-            <button className="mr-view-btn" onClick={() => viewDetail(id)}>
+            <button className="mr-view-btn" onClick={e => { if (selecting) { e.stopPropagation(); togglePick(id); return; } viewDetail(id); }}>
               View Details
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="9 18 15 12 9 6" /></svg>
             </button>
@@ -480,6 +529,12 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
                 <span className="panel-count" id="mentorCount">{loaded ? `(${n})` : ''}</span>
               </div>
               <div className="panel-actions">
+                <button className="btn-export" onClick={selecting ? stopSelecting : startSelecting} title="Pick mentors and raise a concern with them">
+                  <i className="ti ti-flag"></i>
+                  {' '}
+                  {selecting ? 'Cancel selection' : 'Raise Concern'}
+                </button>
+                {' '}
                 <button className="btn-export" onClick={exportCSV} title="Download as CSV">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -518,9 +573,45 @@ tbody tr:last-child{border-bottom:1.5px solid #111827}
               {' '}
               {<Select className="filter-select" id="schoolYearFilter" value={year} onChange={e => setYear(e.target.value)}>{periodOptions ? periodOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>) : <option value="">Current Semester</option>}</Select>}
             </div>
+            {selecting ? (
+              <div className="mc-pickbar">
+                <span className="mc-pickbar-count">{visiblePicked.length} of {n} mentor{n === 1 ? '' : 's'} selected</span>
+                <button type="button" className="mc-link" onClick={() => setPicked(new Set(filtered.map(idOf)))}>Select all</button>
+                <button type="button" className="mc-link" onClick={() => setPicked(new Set())}>Unselect all</button>
+                <button type="button" className="mc-cancel" onClick={stopSelecting}>Cancel</button>
+                <button type="button" className="mc-send" disabled={!visiblePicked.length} onClick={() => { setConcernError(''); setConcernOpen(true); }}>
+                  <i className="ti ti-flag"></i> Raise concern
+                </button>
+              </div>
+            ) : null}
             {<PagedPanel items={mentorGrid} message={mentorMsg} gridClass="mentor-list" gridId="mentorGrid" unit="mentors" storageKey="pp-monitor" />}
           </div>
         </main>
+        <Overlay open={concernOpen} className="rc-overlay" activeClass={null} display="flex" onClick={e => { if (e.target === e.currentTarget && !concernBusy) setConcernOpen(false); }}>
+          <div className="rc-modal" role="dialog" aria-modal="true" aria-labelledby="hcTitle">
+            <div className="rc-head">
+              <div className="rc-head-icon"><i className="ti ti-flag"></i></div>
+              <div className="rc-head-text">
+                <div className="rc-title" id="hcTitle">Raise a concern</div>
+                <div className="rc-sub">To {visiblePicked.length} mentor{visiblePicked.length === 1 ? '' : 's'}, by notification and email</div>
+              </div>
+              <button type="button" className="rc-close" onClick={() => setConcernOpen(false)} disabled={concernBusy} aria-label="Close">&times;</button>
+            </div>
+            <div className="rc-body">
+              <label className="rc-label" htmlFor="hcMessage">Your message</label>
+              <textarea id="hcMessage" className="rc-text" maxLength={CONCERN_MAX} disabled={concernBusy} placeholder="Describe the concern..."
+                value={concernMsg} onChange={e => setConcernMsg(e.target.value)} />
+              <div className={`rc-count${concernTrimmed.length > 0 && concernTrimmed.length < CONCERN_MIN ? ' short' : ''}`}>
+                {concernTrimmed.length < CONCERN_MIN ? `At least ${CONCERN_MIN} characters · ` : ''}{concernMsg.length}/{CONCERN_MAX}
+              </div>
+              {concernError ? <div className="rc-error" role="alert">{concernError}</div> : null}
+            </div>
+            <div className="rc-foot">
+              <button type="button" className="rc-cancel" onClick={() => setConcernOpen(false)} disabled={concernBusy}>Cancel</button>
+              <button type="button" className="rc-send" onClick={sendConcern} disabled={!concernValid || concernBusy}>{concernBusy ? 'Sending...' : 'Send concern'}</button>
+            </div>
+          </div>
+        </Overlay>
         <footer>
           <p>&copy; 2026 AstraMentoring. All rights reserved.</p>
         </footer>
