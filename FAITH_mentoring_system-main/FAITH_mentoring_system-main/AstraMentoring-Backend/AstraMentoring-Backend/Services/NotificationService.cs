@@ -45,6 +45,18 @@ namespace AstraMentoring_Backend.Services
         }
 
       
+        // A mentee may answer a mentor's direct message once: flipping the type is the claim, and only one caller can win it.
+        // Returns the mentor's user id (the message's ReferenceID), or null if this was not an unanswered direct message of theirs.
+        public async Task<int?> ClaimDirectMessageReplyAsync(int notificationId, int userId)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            return await conn.ExecuteScalarAsync<int?>(
+                @"UPDATE Notifications SET Type = 'DirectMessageReplied', IsRead = 1
+                  OUTPUT inserted.ReferenceID
+                  WHERE NotificationID = @Id AND RecipientUserID = @UserId AND Type = 'DirectMessage' AND ReferenceID IS NOT NULL",
+                new { Id = notificationId, UserId = userId });
+        }
+
         // Deletes only if the notification belongs to that user.
         public async Task<bool> DeleteForRecipientAsync(int notificationId, int userId)
         {

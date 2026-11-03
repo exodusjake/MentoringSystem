@@ -12,7 +12,10 @@ namespace AstraMentoringAPI.Controllers
     public class MenteeNotificationsController : ControllerBase
     {
         private readonly NotificationsService _service;
-        public MenteeNotificationsController(NotificationsService service) { _service = service; }
+
+        private const int ReplyMax = 400;
+        private readonly EmailService _emailService;
+        public MenteeNotificationsController(NotificationsService service, EmailService emailService) { _service = service; _emailService = emailService; }
 
         private int CallerId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
@@ -30,6 +33,24 @@ namespace AstraMentoringAPI.Controllers
             if (!mine) return NotFound();
             await _service.MarkAsReadAsync(id);
             return Ok(new { message = "Marked as read" });
+        }
+
+        public class ReplyDto { public string? Message { get; set; } }
+
+        // The mentee answers a mentor's direct message, once.
+        [HttpPost("{id}/reply")]
+        [Authorize(Roles = "Mentee")]
+        public async Task<IActionResult> Reply(int id, [FromBody] ReplyDto data)
+        {
+            var message = data.Message?.Trim() ?? "";
+            if (message.Length == 0) return BadRequest(new { message = "Write your reply first." });
+            if (message.Length > ReplyMax) return BadRequest(new { message = $"Keep the reply under {ReplyMax} characters." });
+
+            var mentorId = await _service.ClaimDirectMessageReplyAsync(id, CallerId);
+            if (mentorId == null) return Conflict(new { message = "You already replied to this message." });
+
+            await _emailService.NotifyMentorOfReplyAsync(CallerId, mentorId.Value, message);
+            return Ok(new { message = "Reply sent" });
         }
 
         [HttpDelete("{id}")]

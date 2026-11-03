@@ -661,6 +661,31 @@ namespace AstraMentoring_Backend.Services
             }
         }
 
+        // A mentee's one reply to their mentor's direct message: bell + email for the mentor.
+        public async Task NotifyMentorOfReplyAsync(int menteeId, int mentorId, string message)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var mentee = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = menteeId });
+                var mentor = await conn.QueryFirstOrDefaultAsync<(string Email, string? FirstName)>(
+                    "SELECT Email, FirstName FROM Users WHERE UserID = @Id AND IsActive = 1", new { Id = mentorId });
+                if (mentee.FirstName == null || mentor.Email == null) return;
+
+                var menteeName = $"{mentee.FirstName} {mentee.LastName}".Trim();
+                await AddMenteeNotificationAsync(conn, mentorId, "MenteeReply", $"{menteeName} replied: {message}", menteeId);
+
+                var details = $@"<strong>From:</strong> {Enc(menteeName)}<br /><span style=""white-space:pre-wrap;"">{Enc(message)}</span>";
+                var html = BuildNoticeEmailHtml(mentor.FirstName, "Reply from your Mentee", $"{menteeName} replied to your message.", details, "a mentee replied to your message");
+                await SendEmailAsync(mentor.Email, _brandName, $"Reply from {menteeName}", html);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: reply from mentee {MenteeId} to mentor {MentorId} failed to send.", menteeId, mentorId);
+            }
+        }
+
         // ── Announcement ─────────────────────────────────────────────────
         public async Task NotifyNewAnnouncementAsync(Announcement data)
         {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../lib/api.js';
+import { showToast } from './Notify.jsx';
 import { useStyle } from '../lib/injectStyle.js';
 import { CSS } from './ConcernBell.jsx';
 import { ago } from './concernShared.jsx';
@@ -9,6 +10,7 @@ import { ago } from './concernShared.jsx';
 // Same look as the Concern bell in the other portals; the red count is the unread notifications.
 
 const POLL_MS = 60000;
+const REPLY_MAX = 400;
 
 // type -> [title, icon, red?, page to open]
 const KINDS = {
@@ -20,6 +22,8 @@ const KINDS = {
   HeadConcern: ['Concern from the Head Admin', 'ti-flag', true, null],
   MenteeConcern: ['Concern from a mentee', 'ti-flag', true, null],
   DirectMessage: ['Message from your mentor', 'ti-message-circle', false, null],
+  DirectMessageReplied: ['Message from your mentor', 'ti-message-circle', false, null],
+  MenteeReply: ['Reply from a mentee', 'ti-message-circle-2', false, null],
 };
 
 export default function NotificationBell() {
@@ -28,6 +32,9 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [ring, setRing] = useState(false);
   const navigate = useNavigate();
+  const [replyId, setReplyId] = useState(null);   // the direct message being answered
+  const [replyText, setReplyText] = useState('');
+  const [replyBusy, setReplyBusy] = useState(false);
   const rootRef = useRef(null);
   const lastCount = useRef(null);
 
@@ -80,6 +87,21 @@ export default function NotificationBell() {
     setFeed({ count: 0, items: [] });
     lastCount.current = 0;
     try { await apiRequest('MenteeNotifications', 'DELETE', null, true); } catch (e) { load(); }
+  }
+
+  async function sendReply(item) {
+    const text = replyText.trim();
+    if (!text || replyBusy) return;
+    setReplyBusy(true);
+    try {
+      await apiRequest(`MenteeNotifications/${item.notificationID}/reply`, 'POST', { message: text }, true);
+      setFeed(f => ({ ...f, items: f.items.map(i => i.notificationID === item.notificationID ? { ...i, type: 'DirectMessageReplied', isRead: true } : i) }));
+      setReplyId(null); setReplyText('');
+      showToast('Your reply was sent.', 'success');
+    } catch (e) {
+      showToast(e.message || 'Could not send your reply.');
+      if (e.status === 409) load();
+    } finally { setReplyBusy(false); }
   }
 
   function openItem(item) {
@@ -139,6 +161,28 @@ export default function NotificationBell() {
                   onMouseLeave={e => { e.currentTarget.style.color = '#9ca3af'; e.currentTarget.style.background = 'transparent'; }}>
                   <i className="ti ti-trash"></i>
                 </button>
+                {item.type === 'DirectMessageReplied' ? (
+                  <div style={{ padding: '0 44px 10px 62px', fontSize: 12, fontWeight: 600, color: '#15803d' }}><i className="ti ti-check"></i> You replied</div>
+                ) : item.type === 'DirectMessage' ? (
+                  replyId === item.notificationID ? (
+                    <div style={{ padding: '0 44px 12px 62px' }}>
+                      <textarea rows={3} maxLength={REPLY_MAX} autoFocus disabled={replyBusy} placeholder="Write your reply (you can reply once)..."
+                        value={replyText} onChange={e => setReplyText(e.target.value)}
+                        style={{ width: '100%', boxSizing: 'border-box', font: 'inherit', fontSize: 13, padding: '8px 10px', border: '1px solid #d1d5db', borderRadius: 10, resize: 'vertical' }} />
+                      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 6 }}>
+                        <button type="button" disabled={replyBusy} onClick={() => { setReplyId(null); setReplyText(''); }}
+                          style={{ font: 'inherit', fontSize: 12.5, fontWeight: 700, color: '#374151', background: '#fff', border: '1px solid #d1d5db', borderRadius: 8, padding: '6px 12px', cursor: 'pointer' }}>Cancel</button>
+                        <button type="button" disabled={replyBusy || !replyText.trim()} onClick={() => sendReply(item)}
+                          style={{ font: 'inherit', fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'var(--sb-active,#0f766e)', border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', opacity: replyBusy || !replyText.trim() ? 0.5 : 1 }}>{replyBusy ? 'Sending...' : 'Send reply'}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ padding: '0 44px 10px 62px' }}>
+                      <button type="button" onClick={() => { setReplyId(item.notificationID); setReplyText(''); markRead(item); }}
+                        style={{ font: 'inherit', fontSize: 12.5, fontWeight: 700, color: 'var(--sb-active,#0f766e)', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}><i className="ti ti-arrow-back-up"></i> Reply</button>
+                    </div>
+                  )
+                ) : null}
                 </div>
               );
             })}
