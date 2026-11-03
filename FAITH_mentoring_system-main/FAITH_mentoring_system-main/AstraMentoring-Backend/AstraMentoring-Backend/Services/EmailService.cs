@@ -506,17 +506,20 @@ namespace AstraMentoring_Backend.Services
                 var senderName = _brandName;   // plain brand name, like the verification email (a personal "X via ..." name gets filtered as spam)
                 var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
                 var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
-                var title = cancelled ? "Session Cancelled" : "Session Updated";
-                var subject = cancelled ? $"Session Cancelled{slotSuffix}" : $"Session Updated{slotSuffix}";
+                var isMakeup = requestId != null;
+                var kind = isMakeup ? "make-up session" : "regular session";
+                var Kind = isMakeup ? "Make-up Session" : "Regular Session";
+                var title = cancelled ? $"{Kind} Cancelled" : $"{Kind} Updated";
+                var subject = cancelled ? $"{Kind} Cancelled{slotSuffix}" : $"{Kind} Updated{slotSuffix}";
                 var intro = cancelled
-                    ? $"{mentorName} cancelled your mentoring session{slotSuffix}."
-                    : $"{mentorName} made changes to your mentoring session{slotSuffix}.";
+                    ? (isMakeup ? $"{mentorName} cancelled the make-up session you booked{slotSuffix}." : $"{mentorName} cancelled your regular mentoring session{slotSuffix}.")
+                    : (isMakeup ? $"{mentorName} made changes to the make-up session you booked{slotSuffix}." : $"{mentorName} made changes to your regular mentoring session{slotSuffix}.");
                 var inApp = cancelled
-                    ? $"{mentorName} cancelled the session{slotSuffix} on {when}."
-                    : $"{mentorName} updated the session{slotSuffix}: {string.Join("; ", changes)}";
+                    ? $"{mentorName} cancelled the {kind}{slotSuffix} on {when}."
+                    : $"{mentorName} updated the {kind}{slotSuffix}: {string.Join("; ", changes)}";
                 if (inApp.Length > 480) inApp = inApp[..477] + "...";
 
-                var details = new StringBuilder($"<strong>Session:</strong> {Enc(when)}");
+                var details = new StringBuilder($"<strong>Type:</strong> {(isMakeup ? "Make-up session (you booked this slot)" : "Regular session")}<br /><strong>Session:</strong> {Enc(when)}");
                 if (!cancelled)
                     foreach (var c in changes) details.Append($"<br />{Enc(c)}");
 
@@ -735,8 +738,9 @@ namespace AstraMentoring_Backend.Services
                 var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
                 var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
                 var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
-                var inApp = $"Reminder: your session{slotSuffix} with {mentorName} starts in about {minutes} minute{(minutes == 1 ? "" : "s")} ({sessionDate:h:mm tt}).";
-                var details = $@"<strong>Session:</strong> {Enc(when)}<br /><strong>Mentor:</strong> {Enc(mentorName)}
+                var kind = requestId != null ? "make-up session" : "session";
+                var inApp = $"Reminder: your {kind}{slotSuffix} with {mentorName} starts in about {minutes} minute{(minutes == 1 ? "" : "s")} ({sessionDate:h:mm tt}).";
+                var details = $@"<strong>Type:</strong> {(requestId != null ? "Make-up session (you booked this slot)" : "Regular session")}<br /><strong>Session:</strong> {Enc(when)}<br /><strong>Mentor:</strong> {Enc(mentorName)}
                     <br /><a href=""{_frontendBaseUrl}/mentee/sessions"" style=""color:#0b1a5c;font-weight:700;"">View my sessions</a>";
 
                 foreach (var r in recipients)
@@ -747,7 +751,7 @@ namespace AstraMentoring_Backend.Services
                     if (already > 0) continue;
                     await AddMenteeNotificationAsync(conn, r.UserID, "SessionReminder", inApp, sessionId);
                     var html = BuildNoticeEmailHtml(r.FirstName, "Session Reminder",
-                        $"Your mentoring session{slotSuffix} starts in about {minutes} minute{(minutes == 1 ? "" : "s")}.", details, "you have a mentoring session coming up");
+                        $"Your {kind}{slotSuffix} starts in about {minutes} minute{(minutes == 1 ? "" : "s")}.", details, "you have a mentoring session coming up");
                     await SendEmailAsync(r.Email, _brandName, $"Reminder: your session starts soon{slotSuffix}", html);
                 }
             }
@@ -1007,9 +1011,9 @@ namespace AstraMentoring_Backend.Services
                 var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
                 var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
                 var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
-                await AddMenteeNotificationAsync(conn, menteeId, "SessionCancelled", $"{mentorName} cancelled the session{slotSuffix} on {when}.", null);
-                var html = BuildNoticeEmailHtml(mentee.FirstName, "Session Cancelled", $"{mentorName} cancelled your mentoring session{slotSuffix}.", $"<strong>Session:</strong> {Enc(when)}", "your mentor changed a session");
-                await SendEmailAsync(mentee.Email, _brandName, $"Session Cancelled{slotSuffix}", html);
+                await AddMenteeNotificationAsync(conn, menteeId, "SessionCancelled", $"{mentorName} cancelled the make-up session{slotSuffix} on {when}.", null);
+                var html = BuildNoticeEmailHtml(mentee.FirstName, "Make-up Session Cancelled", $"{mentorName} cancelled the make-up session you booked{slotSuffix}.", $"<strong>Type:</strong> Make-up session (you booked this slot)<br /><strong>Session:</strong> {Enc(when)}", "your mentor changed a session");
+                await SendEmailAsync(mentee.Email, _brandName, $"Make-up Session Cancelled{slotSuffix}", html);
             }
             catch (Exception ex)
             {
