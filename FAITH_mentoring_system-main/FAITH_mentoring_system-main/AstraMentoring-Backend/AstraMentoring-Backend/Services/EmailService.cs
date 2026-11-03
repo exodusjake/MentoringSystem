@@ -497,6 +497,7 @@ namespace AstraMentoring_Backend.Services
                     recipients = picked.Select(m => (m.UserID, m.Email, m.FirstName)).ToList();
                 }
 
+                _logger.LogWarning("EmailService: session {SessionId} change notice (cancelled={Cancelled}) has {Count} recipient(s).", sessionId, cancelled, recipients.Count);
                 var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
                 var senderName = SenderNameFor("Mentor", mentorName);
                 var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";

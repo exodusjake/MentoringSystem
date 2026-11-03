@@ -318,7 +318,11 @@ namespace AstraMentoringAPI.Controllers
                 if (changes.Count > 0)
                     await _emailService.NotifySessionChangedAsync(existing.SessionID, existing.MentorID, false, data.SessionDate, data.SlotName, changes);
             }
-            catch { /* notices are best-effort */ }
+            catch (Exception ex)
+            {
+                HttpContext.RequestServices.GetRequiredService<ILogger<SessionsController>>()
+                    .LogWarning(ex, "Session {SessionId}: change notice failed.", existing.SessionID);
+            }
         }
 
         [HttpPatch("{id}/log-status")]
