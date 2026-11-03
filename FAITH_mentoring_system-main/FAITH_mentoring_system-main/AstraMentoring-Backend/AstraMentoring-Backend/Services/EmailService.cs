@@ -53,6 +53,10 @@ namespace AstraMentoring_Backend.Services
             _brandName       = config["Brevo:SenderName"]  ?? "AstraMentoring";
             _frontendBaseUrl = (config["Frontend:BaseUrl"] ?? "http://localhost:5501").TrimEnd('/');
             _isDevelopment   = string.Equals(config["ASPNETCORE_ENVIRONMENT"], "Development", StringComparison.OrdinalIgnoreCase);
+            // The live site only answers on its domain: links built from a bare IP or localhost 404 for the recipient.
+            if (!_isDevelopment && Uri.TryCreate(_frontendBaseUrl, UriKind.Absolute, out var baseUri)
+                && (baseUri.HostNameType == UriHostNameType.IPv4 || baseUri.HostNameType == UriHostNameType.IPv6 || baseUri.IsLoopback))
+                _frontendBaseUrl = "https://astramentoring.live";
             _smtpHost        = config["Smtp:Host"] ?? "smtp.gmail.com";
             _smtpPort        = int.TryParse(config["Smtp:Port"], out var sp) ? sp : 587;
             _smtpUser        = config["Smtp:User"] ?? string.Empty;
