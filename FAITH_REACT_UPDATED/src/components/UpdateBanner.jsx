@@ -9,8 +9,8 @@ const CHECK_MS = 5 * 60 * 1000;
 const ENTRY = /\/assets\/index-[\w-]+\.js/;
 
 const CSS = [
-  '.update-banner{position:fixed;left:50%;bottom:22px;z-index:3000;width:min(440px,calc(100vw - 24px));box-sizing:border-box;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;font-family:"DM Sans",system-ui,sans-serif;color:var(--ink,#1f2937);background:var(--sb-bg,#fff);border:1.5px solid var(--sb-active,#0f766e);border-radius:16px;box-shadow:0 14px 40px rgba(15,23,42,.22);transform:translateX(-50%);animation:ubIn .35s cubic-bezier(.22,1,.36,1) both}',
-  '@keyframes ubIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}',
+  '.update-banner{position:fixed;left:50%;top:14px;z-index:3000;width:min(440px,calc(100vw - 24px));box-sizing:border-box;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;font-family:"DM Sans",system-ui,sans-serif;color:var(--ink,#1f2937);background:var(--sb-bg,#fff);border:1.5px solid var(--sb-active,#0f766e);border-radius:16px;box-shadow:0 14px 40px rgba(15,23,42,.22);transform:translateX(-50%);animation:ubIn .35s cubic-bezier(.22,1,.36,1) both}',
+  '@keyframes ubIn{from{opacity:0;transform:translate(-50%,-16px)}to{opacity:1;transform:translate(-50%,0)}}',
   '.update-banner .ub-icon{flex-shrink:0;font-size:22px;color:var(--sb-active,#0f766e);animation:ubSpin 2.4s linear infinite}',
   '@keyframes ubSpin{to{transform:rotate(360deg)}}',
   '.update-banner .ub-text{flex:1;min-width:170px;font-size:14.5px;font-weight:600;line-height:1.4}',
@@ -19,7 +19,7 @@ const CSS = [
   '.update-banner .ub-btn:hover{filter:brightness(1.1)}',
   '.update-banner .ub-later{font:inherit;font-size:13px;font-weight:600;color:var(--muted,#6b7280);background:transparent;border:none;padding:9px 8px;cursor:pointer}',
   '.update-banner .ub-later:hover{color:var(--ink,#1f2937)}',
-  '@media (max-width:480px){.update-banner{bottom:14px;padding:12px 14px}.update-banner .ub-actions{width:100%;justify-content:flex-end}}',
+  '@media (max-width:480px){.update-banner{top:8px;padding:12px 14px}.update-banner .ub-actions{width:100%;justify-content:flex-end}}',
   '@media (prefers-reduced-motion:reduce){.update-banner,.update-banner .ub-icon{animation:none}}',
 ].join('');
 
