@@ -10,6 +10,7 @@ import { sanitizeHtml } from '../../lib/security-utils.js';
 import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 import { SAMPLE, sampleHtml, useTour } from '../../app/tour.js';
+import RaiseConcernModal, { RaiseConcernButton } from '../../components/RaiseConcern.jsx';
 
 // MENTEE/HTML/mentee-dashboard.html + MENTEE/JS/mentee-dashboard.js
 
@@ -46,6 +47,7 @@ export default function MenteeDashboard() {
   const menteeId = currentUser?.userID;
 
   const [badge, setBadge] = useState('');
+  const [concernOpen, setConcernOpen] = useState(false);
   const [mentor, setMentor] = useState(null);     // null = loading; { error } | { none } | { name, ... }
   const [att, setAtt] = useState({ attended: pulse, required: '/—', sub: 'Loading...' });
   const [sessions, setSessions] = useState(null); // null = loading, string = message, { list, attMap, calendar }
@@ -434,6 +436,7 @@ export default function MenteeDashboard() {
             <span className="semester-badge" id="semesterBadge">{badge}</span>
           </div>
 
+          <RaiseConcernModal open={concernOpen} onClose={() => setConcernOpen(false)} />
           <div className="top-row">
             <div className="card mentor-preview-card">
               <div className="card-header-row">
@@ -441,6 +444,7 @@ export default function MenteeDashboard() {
                   <h2>My Mentor</h2>
                   <p className="card-desc">Your assigned mentor for this semester.</p>
                 </div>
+                {mentor && !mentor.none && !mentor.error ? <RaiseConcernButton onClick={() => setConcernOpen(true)} /> : null}
               </div>
               <div id="mentorPreview" className="mentor-preview" key={wt ? 'wt' : 'real'} dangerouslySetInnerHTML={sampleHtml(wt, S.mentorPreview)}>{wt ? undefined : mentorPreview}</div>
             </div>

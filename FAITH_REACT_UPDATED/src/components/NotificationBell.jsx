@@ -17,6 +17,7 @@ const KINDS = {
   SessionScheduled: ['New session', 'ti-calendar-plus', false, '/mentee/sessions'],
   Availability: ['New available slot', 'ti-clock-plus', false, '/mentee/schedule'],
   Announcement: ['New announcement', 'ti-speakerphone', false, '/mentee/announcements'],
+  MenteeConcern: ['Concern from a mentee', 'ti-flag', true, null],
   DirectMessage: ['Message from your mentor', 'ti-message-circle', false, null],
 };
 

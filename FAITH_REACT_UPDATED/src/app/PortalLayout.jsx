@@ -69,7 +69,7 @@ function PortalShell({ config }) {
     <ChromeContext.Provider value={{ pageReady }}>
       {/* Mentor-flagged concerns: Admin/Head see them and respond; the mentor sees the responses. The bell lives in the header. */}
       <Sidebar config={config} activeId={active?.id} onNavigate={showSkel} stylesReady={stylesReady}
-        bell={(config.base === '/admin' || config.base === '/head') ? <ConcernBell role="staff" /> : config.base === '/mentor' ? <ConcernBell role="mentor" /> : config.base === '/mentee' ? <NotificationBell /> : null} />
+        bell={(config.base === '/admin' || config.base === '/head') ? <><NotificationBell /><ConcernBell role="staff" /></> : config.base === '/mentor' ? <ConcernBell role="mentor" /> : config.base === '/mentee' ? <NotificationBell /> : null} />
       <Outlet />
       <div className="page-skel show" aria-hidden="true" ref={skelRef}>
         <div className="sk sk-title"></div>

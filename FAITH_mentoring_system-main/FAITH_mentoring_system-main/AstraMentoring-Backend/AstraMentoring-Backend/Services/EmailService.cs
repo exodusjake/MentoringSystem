@@ -596,6 +596,40 @@ namespace AstraMentoring_Backend.Services
             }
         }
 
+        // A mentee raised a concern: notify every active Admin and Head Admin (bell + email, verification-email design).
+        public async Task NotifyMenteeConcernAsync(int menteeId, string category, string message)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                var mentee = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName, string? Course)>(
+                    "SELECT FirstName, LastName, NULL FROM Users WHERE UserID = @Id", new { Id = menteeId });
+                if (mentee.FirstName == null) return;
+                var mentorName = await conn.ExecuteScalarAsync<string?>(
+                    @"SELECT TOP 1 u.FirstName + ' ' + u.LastName FROM MentorMentee mm JOIN Users u ON u.UserID = mm.MentorID
+                      WHERE mm.MenteeID = @Id AND mm.IsActive = 1", new { Id = menteeId });
+                var staff = (await conn.QueryAsync<(int UserID, string Email, string? FirstName)>(
+                    "SELECT UserID, Email, FirstName FROM Users WHERE Role IN ('Admin','Head') AND IsActive = 1")).ToList();
+
+                var menteeName = $"{mentee.FirstName} {mentee.LastName}".Trim();
+                var inApp = $"{menteeName} (mentee) raised a concern: {category}. {message}";
+                var details = new StringBuilder($"<strong>Mentee:</strong> {Enc(menteeName)}");
+                if (!string.IsNullOrWhiteSpace(mentorName)) details.Append($"<br /><strong>Mentor:</strong> {Enc(mentorName.Trim())}");
+                details.Append($"<br /><strong>About:</strong> {Enc(category)}<br /><span style=\"white-space:pre-wrap;\">{Enc(message)}</span>");
+
+                foreach (var r in staff)
+                {
+                    await AddMenteeNotificationAsync(conn, r.UserID, "MenteeConcern", inApp, menteeId);
+                    var html = BuildNoticeEmailHtml(r.FirstName, "Concern from a Mentee", $"{menteeName} raised a concern and needs your attention.", details.ToString(), "a mentee raised a concern on AstraMentoring");
+                    await SendEmailAsync(r.Email, _brandName, $"Concern from a mentee: {menteeName}", html);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: mentee concern from {MenteeId} failed to send.", menteeId);
+            }
+        }
+
         // ── Announcement ─────────────────────────────────────────────────
         public async Task NotifyNewAnnouncementAsync(Announcement data)
         {
