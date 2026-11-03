@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { Outlet, useLocation } from 'react-router-dom';
 import { refresh as refreshBadge } from '../lib/announcementBadge.js';
 import ConcernBell from '../components/ConcernBell.jsx';
+import NotificationBell from '../components/NotificationBell.jsx';
 import { useStyle } from '../lib/injectStyle.js';
 import { getSession } from '../lib/session.js';
 import { RequirePortal } from './guards.jsx';
@@ -68,7 +69,7 @@ function PortalShell({ config }) {
     <ChromeContext.Provider value={{ pageReady }}>
       {/* Mentor-flagged concerns: Admin/Head see them and respond; the mentor sees the responses. The bell lives in the header. */}
       <Sidebar config={config} activeId={active?.id} onNavigate={showSkel} stylesReady={stylesReady}
-        bell={(config.base === '/admin' || config.base === '/head') ? <ConcernBell role="staff" /> : config.base === '/mentor' ? <ConcernBell role="mentor" /> : null} />
+        bell={(config.base === '/admin' || config.base === '/head') ? <ConcernBell role="staff" /> : config.base === '/mentor' ? <ConcernBell role="mentor" /> : config.base === '/mentee' ? <NotificationBell /> : null} />
       <Outlet />
       <div className="page-skel show" aria-hidden="true" ref={skelRef}>
         <div className="sk sk-title"></div>

@@ -292,7 +292,33 @@ namespace AstraMentoringAPI.Controllers
             // Completion is recorded by QR attendance / Finish, never by a generic edit.
             if (data.Status == "Completed" && existing.Status != "Completed") data.Status=existing.Status;
             var result = await _service.Update(data);
+            if (result) await NotifyMenteesOfChangeAsync(existing, data);
             return result ? Ok(new { message = "Session updated" }) : NotFound();
+        }
+
+        // Cancel / reschedule / new notes: tell the mentees (email + portal notification). Never fails the save.
+        private async Task NotifyMenteesOfChangeAsync(Session existing, Session data)
+        {
+            try
+            {
+                if (existing.Status == "Cancelled" && data.Status == "Cancelled") return;
+                static string Topic(string? n) => System.Text.RegularExpressions.Regex.Replace(n ?? "", @"^\[[^\]]+\]\s*", "").Trim();
+                if (data.Status == "Cancelled")
+                {
+                    await _emailService.NotifySessionChangedAsync(existing.SessionID, existing.MentorID, true, existing.SessionDate, existing.SlotName, Array.Empty<string>());
+                    return;
+                }
+                var changes = new List<string>();
+                if (data.SessionDate != existing.SessionDate)
+                    changes.Add($"New date and time: {data.SessionDate:MMMM d, yyyy} at {data.SessionDate:h:mm tt} (was {existing.SessionDate:MMMM d, yyyy} at {existing.SessionDate:h:mm tt})");
+                if (data.SlotName != existing.SlotName && !string.IsNullOrWhiteSpace(data.SlotName))
+                    changes.Add($"Session slot: {data.SlotName}");
+                if (Topic(data.Notes) != Topic(existing.Notes))
+                    changes.Add(string.IsNullOrWhiteSpace(Topic(data.Notes)) ? "Notes removed." : $"Notes from your mentor: {Topic(data.Notes)}");
+                if (changes.Count > 0)
+                    await _emailService.NotifySessionChangedAsync(existing.SessionID, existing.MentorID, false, data.SessionDate, data.SlotName, changes);
+            }
+            catch { /* notices are best-effort */ }
         }
 
         [HttpPatch("{id}/log-status")]

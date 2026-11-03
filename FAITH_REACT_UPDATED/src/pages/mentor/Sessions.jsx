@@ -322,12 +322,11 @@ export default function MentorSessions() {
   }
 
   // ── cancel session ──
-  function openCancelSessionConfirm() {
-    const s = editSession;
+  function openCancelSessionConfirm(sessionId) {
+    const s = sessions.find(x => x.sessionID === sessionId);
     if (!s || s.sessionStatus === 'Completed' || (s.presentCount ?? 0) > 0) return;
     setCancelBusy(false);
-    setCancelTarget({ id: editId, dStr: fmtLongDate(s.sessionDate) });
-    setEditId(null);
+    setCancelTarget({ id: sessionId, dStr: fmtLongDate(s.sessionDate) });
   }
   async function confirmCancelSession() {
     if (!cancelTarget) return;
@@ -495,7 +494,7 @@ export default function MentorSessions() {
             <div className="sc-secondary-actions">
               <button className="sc-action-btn btn-sc-edit" onClick={() => openEditModal(sid)} title="Edit session" aria-label="Edit"><i className="ti ti-pencil"></i></button>
               {status === 'Completed' || present > 0 ? null : (
-                <button className="sc-action-btn btn-sc-delete" onClick={() => { setDeleteBusy(false); setDeleteTarget({ id: sid, dStr, slot: s.slotName }); }} title="Delete session" aria-label="Delete"><i className="ti ti-trash"></i></button>
+                <button className="sc-action-btn btn-sc-delete" onClick={() => openCancelSessionConfirm(sid)} title="Cancel session" aria-label="Cancel session"><i className="ti ti-calendar-x"></i></button>
               )}
             </div>
           </div>
@@ -510,7 +509,6 @@ export default function MentorSessions() {
   const editSectionForSlots = editPickOn ? editSection : editSecCode;
   const logBounds = dateBounds(logSlot);
   const editBounds = dateBounds(editSlot);
-  const cancelHidden = editSession && (editSession.sessionStatus === 'Completed' || (editSession.presentCount ?? 0) > 0);
 
   return (
     <Page id="MENTOR/sessions">
@@ -621,7 +619,7 @@ export default function MentorSessions() {
         <div className="modal-card" onClick={e => e.stopPropagation()}>
           <button className="modal-close-btn" onClick={closeEditModal}><i className="ti ti-x"></i></button>
           <h2 className="modal-title">Edit Session</h2>
-          <p className="modal-subtitle">Update session details or mark as cancelled</p>
+          <p className="modal-subtitle">Update session details</p>
           <form id="editSessionForm" onSubmit={submitEditSession}>
             <div className="form-error" id="editSessionError" style={{ display: editError ? '' : 'none' }}>{editError}</div>
             <div className="form-group" id="editSectionPickGroup" style={{ display: editPickOn ? '' : 'none' }}>
@@ -650,10 +648,7 @@ export default function MentorSessions() {
               <label className="form-label">Notes <span className="form-optional">(optional)</span></label>
               <textarea id="editNotesInput" className="form-textarea" rows="3" placeholder="Topic or notes..." value={editNotes} onChange={e => setEditNotes(e.target.value)}></textarea>
             </div>
-            <div className="form-actions form-actions-split">
-              <button type="button" className="btn-cancel-session" onClick={openCancelSessionConfirm} style={{ display: cancelHidden ? 'none' : '' }}>
-                <i className="ti ti-calendar-x"></i> Cancel Session
-              </button>
+            <div className="form-actions form-actions-split" style={{ justifyContent: 'flex-end' }}>
               <div className="form-actions-right">
                 <button type="button" className="btn-form-cancel" onClick={closeEditModal}>Close</button>
                 <button type="submit" className="btn-form-submit" id="submitEditBtn" disabled={editBusy}>

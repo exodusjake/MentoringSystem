@@ -12,7 +12,7 @@ import { ConcernDetailModal, ago, initials, roleLabel } from './concernShared.js
 
 const POLL_MS = 60000;
 
-const CSS = [
+export const CSS = [
   // The page's own top band stays clear of the bell on desktop (on phones the hamburger band already does it).
   '@media (min-width:769px){body.has-concern-bell .main-wrapper{padding-top:52px}}',
   '.concern-bell{position:fixed;top:10px;right:18px;z-index:1200;font-family:"DM Sans",system-ui,sans-serif}',

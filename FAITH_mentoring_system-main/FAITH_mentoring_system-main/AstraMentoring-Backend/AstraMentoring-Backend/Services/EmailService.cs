@@ -401,6 +401,135 @@ namespace AstraMentoring_Backend.Services
 </div>";
         }
 
+        // Same branded shell as the verification-code email (BuildCodeEmailHtml), with a details card instead of the code boxes.
+        private string BuildNoticeEmailHtml(string? firstName, string title, string intro, string detailsHtml, string reason)
+        {
+            var baseUrl = _frontendBaseUrl;
+            var logoUrl = baseUrl + "/IMAGES/LOGO-mark.png";
+            const string font = "font-family:Arial,Helvetica,sans-serif;";
+            return $@"
+<div style=""background:#f1f5f9;padding:24px 12px;{font}"">
+  <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""max-width:560px;margin:0 auto;"">
+    <tr>
+      <td style=""background:#0b1a5c;border-radius:12px 12px 0 0;padding:14px 22px;"">
+        <table role=""presentation"" cellpadding=""0"" cellspacing=""0"" style=""margin:0 auto;""><tr>
+          <td style=""padding-right:12px;vertical-align:middle;""><img src=""{logoUrl}"" alt=""Astra Mentoring"" width=""38"" style=""display:block;border:0;height:auto;max-width:38px;background:#ffffff;border-radius:50%;padding:3px;"" /></td>
+          <td style=""vertical-align:middle;text-align:left;"">
+            <div style=""color:#ffffff;font-size:14px;font-weight:700;letter-spacing:.05em;{font}"">ASTRA MENTORING</div>
+            <div style=""color:#b6c4f2;font-size:11px;margin-top:1px;{font}"">FAITH Colleges</div>
+          </td>
+        </tr></table>
+      </td>
+    </tr>
+    <tr><td style=""background:#f0b429;height:4px;line-height:4px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#ffffff;padding:34px 32px 30px;"">
+        <h1 style=""margin:0 0 14px;text-align:center;font-size:26px;color:#0b1a5c;{font}"">{Enc(title)}</h1>
+        <p style=""margin:0 0 6px;font-size:15px;line-height:1.6;color:#475569;{font}"">Hi {Enc(firstName)},</p>
+        <p style=""margin:0 0 22px;font-size:15px;line-height:1.6;color:#475569;{font}"">{Enc(intro)}</p>
+        <div style=""background:#eef3ff;border:1px solid #c7d6fb;border-radius:8px;padding:16px 18px;font-size:14px;line-height:1.7;color:#0b1a5c;{font}"">{detailsHtml}</div>
+      </td>
+    </tr>
+    <tr><td style=""height:14px;line-height:14px;font-size:0;"">&nbsp;</td></tr>
+    <tr>
+      <td style=""background:#0b1a5c;border-radius:12px;padding:22px 24px;text-align:center;font-size:12px;line-height:1.7;color:#b6c4f2;{font}"">
+        <a href=""{baseUrl}/LANDING/HTML/landing.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Home</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/terms.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Terms</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/privacy.html"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Privacy</a> &nbsp;<span style=""color:#f0b429;"">•</span>&nbsp;
+        <a href=""{baseUrl}/LANDING/HTML/landing.html#faq"" style=""color:#ffffff;font-weight:700;text-decoration:none;"">Help</a>
+        <div style=""height:2px;width:40px;background:#f0b429;margin:14px auto;line-height:2px;font-size:0;"">&nbsp;</div>
+        <p style=""margin:0;"">You received this email because {Enc(reason)}.</p>
+        <p style=""margin:6px 0 0;"">This is an automated message — please don’t reply.</p>
+        <p style=""margin:12px 0 0;color:#ffffff;font-weight:700;"">AstraMentoring · FAITH Colleges</p>
+      </td>
+    </tr>
+  </table>
+</div>";
+        }
+
+        // A mentor cancelled, moved or re-noted a session: tell each affected mentee by email (the verification-email
+        // design) and with an in-app notification (Notifications table, shown by the mentee portal's bell).
+        // changes holds the human-readable lines ("Date: ... → ..."), cancelled switches the wording.
+        public async Task NotifySessionChangedAsync(int sessionId, int mentorId, bool cancelled, DateTime sessionDate, string? slotName, IReadOnlyList<string> changes)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+
+                var mentor = await conn.QueryFirstOrDefaultAsync<(string FirstName, string LastName)>(
+                    "SELECT FirstName, LastName FROM Users WHERE UserID = @Id", new { Id = mentorId });
+                if (mentor.FirstName == null) return;
+
+                var requestId = await conn.ExecuteScalarAsync<int?>("SELECT RequestID FROM Sessions WHERE SessionID=@SessionID", new { SessionID = sessionId });
+                List<(int UserID, string Email, string? FirstName)> recipients;
+                if (requestId != null)
+                {
+                    // Make-up session: only the mentee who booked it.
+                    recipients = (await conn.QueryAsync<(int, string, string?)>(
+                        @"SELECT u.UserID, u.Email, u.FirstName FROM SessionRequests r JOIN Users u ON u.UserID=r.MenteeID
+                          WHERE r.RequestID=@RequestID AND u.IsActive=1", new { RequestID = requestId })).ToList();
+                }
+                else
+                {
+                    // Same roster rule as NotifySessionScheduledAsync: the session's course, else its section.
+                    var course = await conn.QuerySingleOrDefaultAsync<CourseGroup>(
+                        "SELECT c.School,c.CourseCode FROM SessionCourseScopes c WHERE c.SessionID=@SessionID AND c.Origin='Regular'",
+                        new { SessionID = sessionId });
+                    var sectionCode = await conn.ExecuteScalarAsync<string?>("SELECT SectionCode FROM Sessions WHERE SessionID=@SessionID", new { SessionID = sessionId });
+                    var mentees = (await conn.QueryAsync<(int UserID, string Email, string? FirstName, string? Section, string? School, string? Course)>(
+                        @"SELECT vmd.UserID, vmd.Email, vmd.FirstName, vmd.SectionCode AS Section, vmd.School, vmd.Course
+                          FROM MentorMentee mm
+                          JOIN vw_MenteeDetails vmd ON vmd.UserID = mm.MenteeID
+                          WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND vmd.IsActive = 1
+                            AND (@CourseScoped=0 OR EXISTS(SELECT 1 FROM MenteeProfiles mp WHERE mp.UserID=mm.MenteeID AND ISNULL(mp.IsDropOut,0)=0))",
+                        new { MentorID = mentorId, CourseScoped = course != null })).ToList();
+                    IEnumerable<(int UserID, string Email, string? FirstName, string? Section, string? School, string? Course)> picked;
+                    if (course != null)
+                        picked = mentees.Where(m => string.Equals(m.School, course.School, StringComparison.OrdinalIgnoreCase)
+                            && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course) == AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode));
+                    else if (string.IsNullOrWhiteSpace(sectionCode))
+                        picked = mentees;
+                    else
+                    {
+                        var wanted = sectionCode.Split(',').Select(s => s.Trim()).ToHashSet();
+                        picked = mentees.Where(m => m.Section != null && wanted.Contains(m.Section));
+                    }
+                    recipients = picked.Select(m => (m.UserID, m.Email, m.FirstName)).ToList();
+                }
+
+                var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
+                var senderName = SenderNameFor("Mentor", mentorName);
+                var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
+                var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
+                var title = cancelled ? "Session Cancelled" : "Session Updated";
+                var subject = cancelled ? $"Session Cancelled{slotSuffix}" : $"Session Updated{slotSuffix}";
+                var intro = cancelled
+                    ? $"{mentorName} cancelled your mentoring session{slotSuffix}."
+                    : $"{mentorName} made changes to your mentoring session{slotSuffix}.";
+                var inApp = cancelled
+                    ? $"{mentorName} cancelled the session{slotSuffix} on {when}."
+                    : $"{mentorName} updated the session{slotSuffix}: {string.Join("; ", changes)}";
+                if (inApp.Length > 480) inApp = inApp[..477] + "...";
+
+                var details = new StringBuilder($"<strong>Session:</strong> {Enc(when)}");
+                if (!cancelled)
+                    foreach (var c in changes) details.Append($"<br />{Enc(c)}");
+
+                foreach (var r in recipients)
+                {
+                    await conn.ExecuteAsync(
+                        "INSERT INTO Notifications (RecipientUserID, Type, Message, ReferenceID, IsRead, CreatedAt) VALUES (@UserID, @Type, @Message, @SessionID, 0, GETDATE())",
+                        new { r.UserID, Type = cancelled ? "SessionCancelled" : "SessionUpdated", Message = inApp, SessionID = sessionId });
+                    var html = BuildNoticeEmailHtml(r.FirstName, title, intro, details.ToString(), "your mentor changed a session");
+                    await SendEmailAsync(r.Email, senderName, subject, html);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "EmailService: session change notice for session {SessionId} failed.", sessionId);
+            }
+        }
+
         // Contact-us form on the login page: forwards the visitor's message to
         // the Guidance Office inbox (Contact:To, else the sending address).
         public async Task<bool> SendContactInquiryAsync(string name, string senderEmail, string topic, string message)
