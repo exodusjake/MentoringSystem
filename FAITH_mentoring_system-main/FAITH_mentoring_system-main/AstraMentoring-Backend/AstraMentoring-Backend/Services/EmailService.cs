@@ -499,7 +499,7 @@ namespace AstraMentoring_Backend.Services
 
                 _logger.LogWarning("EmailService: session {SessionId} change notice (cancelled={Cancelled}) has {Count} recipient(s).", sessionId, cancelled, recipients.Count);
                 var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
-                var senderName = SenderNameFor("Mentor", mentorName);
+                var senderName = _brandName;   // plain brand name, like the verification email (a personal "X via ..." name gets filtered as spam)
                 var slotSuffix = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
                 var when = $"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}";
                 var title = cancelled ? "Session Cancelled" : "Session Updated";
@@ -801,48 +801,47 @@ namespace AstraMentoring_Backend.Services
             var course = await conn.QuerySingleOrDefaultAsync<CourseGroup>(
                 "SELECT c.School,c.CourseCode FROM SessionCourseScopes c JOIN Sessions s ON s.SessionID=c.SessionID WHERE c.SessionID=@SessionID AND c.Origin='Regular' AND s.MentorID=@MentorID",
                 new { SessionID=sessionId, MentorID=mentorId });
-            var mentees = await conn.QueryAsync<(string Email, string? Section, string? School, string? Course)>(
-                @"SELECT vmd.Email, vmd.SectionCode AS Section, vmd.School, vmd.Course
+            var mentees = await conn.QueryAsync<(string Email, string? FirstName, string? Section, string? School, string? Course)>(
+                @"SELECT vmd.Email, vmd.FirstName, vmd.SectionCode AS Section, vmd.School, vmd.Course
                   FROM MentorMentee mm
                   JOIN vw_MenteeDetails vmd ON vmd.UserID = mm.MenteeID
                   WHERE mm.MentorID = @MentorID AND mm.IsActive = 1 AND vmd.IsActive = 1
                     AND (@CourseScoped=0 OR EXISTS(SELECT 1 FROM MenteeProfiles mp WHERE mp.UserID=mm.MenteeID AND ISNULL(mp.IsDropOut,0)=0))",
                 new { MentorID = mentorId, CourseScoped=course!=null });
 
-            IEnumerable<string> recipients;
+            IEnumerable<(string Email, string? FirstName)> recipients;
             if (course != null)
             {
                 recipients = mentees.Where(m => string.Equals(m.School,course.School,StringComparison.OrdinalIgnoreCase)
-                    && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course)==AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode)).Select(m=>m.Email);
+                    && AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(m.Course)==AstraMentoring_Backend.Constants.SchoolCourses.NormalizeCode(course.CourseCode)).Select(m=>(m.Email,m.FirstName));
             }
             else if (string.IsNullOrWhiteSpace(sectionCode))
             {
-                recipients = mentees.Select(m => m.Email);
+                recipients = mentees.Select(m => (m.Email,m.FirstName));
             }
             else
             {
                 var wantedSections = sectionCode.Split(',').Select(s => s.Trim()).ToHashSet();
-                recipients = mentees.Where(m => m.Section != null && wantedSections.Contains(m.Section)).Select(m => m.Email);
+                recipients = mentees.Where(m => m.Section != null && wantedSections.Contains(m.Section)).Select(m => (m.Email,m.FirstName));
             }
 
             var mentorName = $"{mentor.FirstName} {mentor.LastName}".Trim();
-            var senderName = SenderNameFor("Mentor", mentorName);
-            var sectionLine = course != null ? $"<p><strong>Course:</strong> {Enc(course.CourseCode)}</p>"
-                : !string.IsNullOrWhiteSpace(sectionCode) ? $"<p><strong>Section:</strong> {Enc(sectionCode)}</p>" : string.Empty;
+            var senderName = _brandName;   // plain brand name, like the verification email
+            var sectionLine = course != null ? $"<br /><strong>Course:</strong> {Enc(course.CourseCode)}"
+                : !string.IsNullOrWhiteSpace(sectionCode) ? $"<br /><strong>Section:</strong> {Enc(sectionCode)}" : string.Empty;
             // Null for a makeup session — a makeup slot comes from the
             // mentee's own booking request, which already has its own
             // notification (NotifySlotBookedAsync), not this one.
             var slotSuffix  = !string.IsNullOrWhiteSpace(slotName) ? $" ({slotName})" : "";
 
             var subject = $"New Session Scheduled{slotSuffix}";
-            var body = $@"
-                <p><strong>{Enc(mentorName)}</strong> scheduled a new session{Enc(slotSuffix)}:</p>
-                <p>{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}</p>
-                {sectionLine}";
-            var html = BuildEmailHtml("Session Scheduled", body, "View Session", $"{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}");
+            var details = $@"<strong>Session:</strong> {Enc($"{sessionDate:MMMM d, yyyy} at {sessionDate:h:mm tt}")}{sectionLine}
+                <br /><a href=""{_frontendBaseUrl}/MENTEE/HTML/sessions.html?id={sessionId}"" style=""color:#0b1a5c;font-weight:700;"">View session</a>";
 
-            foreach (var email in recipients)
-                await SendEmailAsync(email, senderName, subject, html);
+            foreach (var (email, firstName) in recipients)
+                await SendEmailAsync(email, senderName,
+                    subject,
+                    BuildNoticeEmailHtml(firstName, "Session Scheduled", $"{mentorName} scheduled a new mentoring session{slotSuffix}.", details, "your mentor scheduled a session"));
         }
     }
 }
