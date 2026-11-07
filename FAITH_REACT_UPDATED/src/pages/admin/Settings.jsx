@@ -410,7 +410,7 @@ export default function AdminSettings() {
 
     const who = [mentor && 'Mentor', mentee && 'Mentee'].filter(Boolean).join(' and ');
     const prompt = (mentor || mentee)
-      ? `Put the ${who} portal${mentor && mentee ? 's' : ''} under maintenance?\n\nEveryone in ${mentor && mentee ? 'those portals' : 'that portal'} will be stopped right away and shown the maintenance screen${etaIso ? ' with your estimated time' : ''}. Admin and Head are not affected.`
+      ? `Put the ${who} portal${mentor && mentee ? 's' : ''} under maintenance?\n\nEveryone in ${mentor && mentee ? 'those portals' : 'that portal'} will be stopped right away and shown the maintenance screen${etaIso ? ' with your estimated time' : ''}. Administrator and Super Administrator are not affected.`
       : (wasOn ? 'Reopen the Mentor and Mentee portals?\n\nEveryone can log in and use the system again.' : 'Save these maintenance details?');
     const ok = await showConfirm(prompt, { confirmText: (mentor || mentee) ? 'Start Maintenance' : (wasOn ? 'Reopen Portals' : 'Save'), cancelText: 'Cancel', variant: (mentor || mentee) ? 'danger' : 'primary' });
     if (!ok) return;
@@ -427,7 +427,7 @@ export default function AdminSettings() {
       });
       if (mentor || mentee) {
         const etaTxt = etaIso ? ` Back by ${new Date(etaIso).toLocaleString('en-PH', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}.` : '';
-        notify(`${who} ${mentor && mentee ? 'portals are' : 'portal is'} now closed to users. Admin and Head can still sign in.${etaTxt}`, 'warning', 8000, 'Maintenance mode is on');
+        notify(`${who} ${mentor && mentee ? 'portals are' : 'portal is'} now closed to users. Administrator and Super Administrator can still sign in.${etaTxt}`, 'warning', 8000, 'Maintenance mode is on');
       } else {
         notify('The Mentor and Mentee portals are open again. Everyone can sign in and use the system.', 'success', 6000, 'Portals reopened');
       }
@@ -617,7 +617,7 @@ export default function AdminSettings() {
                 </div>
                 <div>
                   <div className="settings-card-title">Maintenance Mode</div>
-                  <div className="settings-card-sub">Temporarily close the Mentor and/or Mentee portal. Admin and Head stay available. Closed users see a maintenance screen with your message and estimated time.</div>
+                  <div className="settings-card-sub">Temporarily close the Mentor and/or Mentee portal. Administrator and Super Administrator stay available. Closed users see a maintenance screen with your message and estimated time.</div>
                 </div>
               </div>
               <div className="settings-fields">

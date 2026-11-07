@@ -212,7 +212,7 @@ export default function AdminProfile() {
                       <div className="walkthrough-card-icon"><i className="ti ti-route"></i></div>
                       <div className="walkthrough-card-text">
                         <div className="walkthrough-card-title">Portal Walkthrough</div>
-                        <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Admin Portal.</div>
+                        <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Administrator Portal.</div>
                       </div>
                       <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
                     </div>

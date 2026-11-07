@@ -303,7 +303,7 @@ export default function HeadMentorDetail() {
   useEffect(() => {
     if (hero) {
       const first = hero.firstName || hero.FirstName || '', last = hero.lastName || hero.LastName || '';
-      document.title = `${first} ${last} — Head Admin Portal`;
+      document.title = `${first} ${last} — Super Administrator Portal`;
     }
   }, [hero]);
 

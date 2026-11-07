@@ -302,7 +302,7 @@ export default function AdminMentorDetail() {
   }, []);
 
   const mentorName = mentor ? `${mentor.firstName} ${mentor.lastName}` : '';
-  useEffect(() => { if (mentor) document.title = `${mentorName} — Admin Portal`; }, [mentor]);
+  useEffect(() => { if (mentor) document.title = `${mentorName} — Administrator Portal`; }, [mentor]);
 
   // a click anywhere closes the Print All menu
   useEffect(() => {

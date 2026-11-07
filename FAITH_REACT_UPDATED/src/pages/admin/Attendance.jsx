@@ -4,7 +4,7 @@ import AttendanceOverview from '../shared/AttendanceOverview.jsx';
 const CFG = {
   pageId: 'ADMIN_/attendance-logs', base: '/admin', heading: 'Attendance Logs',
   loadingText: 'Loading…', emptyText: 'No mentors found.',
-  sessionsSuffix: '', roleLabel: 'Admin',
+  sessionsSuffix: '', roleLabel: 'Administrator',
 };
 export default function Attendance() {
   return <AttendanceOverview cfg={CFG} />;

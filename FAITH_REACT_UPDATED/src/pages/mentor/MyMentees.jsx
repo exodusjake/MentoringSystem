@@ -13,7 +13,7 @@ import { MENTOR_SAMPLE as SM } from '../../app/tourMentor.js';
 
 // MENTOR/HTML/my-mentees.html + MENTOR/JS/my-mentees.js
 
-// "Flag a mentee": a serious written report that goes straight to the Admin and Head Admin (their bell, top right).
+// "Flag a mentee": a serious written report that goes straight to the Administrator and Super Administrator (their bell, top right).
 const CONCERN_CATEGORIES = ['Attendance', 'Academic performance', 'Behavior or conduct', 'Personal or welfare', 'Safety', 'Other'];
 const CONCERN_MIN = 10, CONCERN_MAX = 1000;
 
@@ -34,7 +34,7 @@ function ConcernModal({ target, onClose }) {
     setBusy(true); setError('');
     try {
       await apiRequest('MenteeConcerns', 'POST', { menteeId: target.id, category, message: trimmed }, true);
-      showToast('Your concern was sent to the Admin and Head Admin.', 'success');
+      showToast('Your concern was sent to the Administrator and Super Administrator.', 'success');
       emit('concerns:changed');   // this page's flag marks and the bell refresh
       onClose();
     } catch (e) {
@@ -57,7 +57,7 @@ function ConcernModal({ target, onClose }) {
         <div className="concern-body">
           <div className="concern-warning">
             <i className="ti ti-shield-exclamation"></i>
-            <span><strong>This is a serious report.</strong> It goes straight to the Admin and Head Admin, who will see your name, the mentee's name and everything you write. Use it for welfare, safety, repeated absences or conduct. For normal progress notes, use the Logsheet.</span>
+            <span><strong>This is a serious report.</strong> It goes straight to the Administrator and Super Administrator, who will see your name, the mentee's name and everything you write. Use it for welfare, safety, repeated absences or conduct. For normal progress notes, use the Logsheet.</span>
           </div>
           <label className="concern-label" htmlFor="concernCategory">What is this about?</label>
           <Select id="concernCategory" className="concern-select" value={category} onChange={e => setCategory(e.target.value)} disabled={busy}>
@@ -73,14 +73,14 @@ function ConcernModal({ target, onClose }) {
           </div>
           <label className="concern-check">
             <input type="checkbox" checked={understood} onChange={e => setUnderstood(e.target.checked)} disabled={busy} />
-            <span>I understand this will be seen by the Admin and Head Admin.</span>
+            <span>I understand this will be seen by the Administrator and Super Administrator.</span>
           </label>
           {error ? <div className="concern-error" role="alert">{error}</div> : null}
         </div>
         <div className="concern-foot">
           <button type="button" className="concern-btn concern-btn-cancel" onClick={onClose} disabled={busy}>Cancel</button>
           <button type="button" className="concern-btn concern-btn-send" onClick={send} disabled={!valid || busy}>
-            <i className="ti ti-send"></i> {busy ? 'Sending…' : 'Send to Admin & Head'}
+            <i className="ti ti-send"></i> {busy ? 'Sending…' : 'Send to Administrator & Super Administrator'}
           </button>
         </div>
       </div>
@@ -320,7 +320,7 @@ export default function MyMentees() {
         <div className={`mentee-card${isDropOut ? ' is-dropout' : ''}${flag.open ? ' is-flagged' : flag.fresh ? ' flag-answered' : ''}`} key={m.assignmentID ?? m.menteeUserID}>
           <button type="button" className="mc-msg-btn" title="Send a message to this mentee" aria-label={`Message ${name}`}
             onClick={() => setMessageTarget({ id: m.menteeUserID, name })}><i className="ti ti-message-circle"></i></button>
-          <button type="button" className="mc-flag-btn" title="Report a concern to the Admin and Head Admin" aria-label={`Report a concern about ${name}`}
+          <button type="button" className="mc-flag-btn" title="Report a concern to the Administrator and Super Administrator" aria-label={`Report a concern about ${name}`}
             onClick={() => setConcernTarget({ id: m.menteeUserID, name })}><i className="ti ti-flag"></i></button>
           <div className="mc-identity">
             <div className="mc-avatar">{photoURL ? <img src={photoURL} alt={name} /> : initials}</div>
@@ -331,7 +331,7 @@ export default function MyMentees() {
               {flag.open
                 ? <div><button type="button" className="mc-flag-state open" onClick={() => openFlag(flag.open)}><i className="ti ti-flag-filled"></i> Flagged · awaiting response</button></div>
                 : flag.fresh
-                  ? <div><button type="button" className="mc-flag-state answered" onClick={() => openFlag(flag.fresh)}><i className="ti ti-message-check"></i> Admin responded · view</button></div>
+                  ? <div><button type="button" className="mc-flag-state answered" onClick={() => openFlag(flag.fresh)}><i className="ti ti-message-check"></i> Administrator responded · view</button></div>
                   : null}
             </div>
           </div>

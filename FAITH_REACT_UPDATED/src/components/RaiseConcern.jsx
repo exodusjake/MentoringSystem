@@ -5,7 +5,7 @@ import Select from './Select.jsx';
 import { apiRequest } from '../lib/api.js';
 import { useStyle } from '../lib/injectStyle.js';
 
-// Mentee portal: "Raise a concern" goes straight to the Admin and Head Admin (their bell and email).
+// Mentee portal: "Raise a concern" goes straight to the Administrator and Super Administrator (their bell and email).
 
 const CATEGORIES = ['About my mentor', 'Session problem', 'Attendance record', 'Personal or welfare', 'Safety', 'Other'];
 const MIN = 10, MAX = 500;
@@ -47,7 +47,7 @@ export const CSS = [
 export function RaiseConcernButton({ onClick }) {
   useStyle('raise-concern', CSS);
   return (
-    <button type="button" className="rc-btn" onClick={onClick} title="Send a concern to the Admin and Head Admin">
+    <button type="button" className="rc-btn" onClick={onClick} title="Send a concern to the Administrator and Super Administrator">
       <i className="ti ti-flag"></i> Raise a concern
     </button>
   );
@@ -69,7 +69,7 @@ export default function RaiseConcernModal({ open, onClose }) {
     setBusy(true); setError('');
     try {
       await apiRequest('MenteeReports', 'POST', { category, message: trimmed }, true);
-      showToast('Your concern was sent to the Admin and Head Admin.', 'success');
+      showToast('Your concern was sent to the Administrator and Super Administrator.', 'success');
       onClose();
     } catch (e) {
       setError(e.message || 'Could not send your concern. Please try again.');
@@ -84,7 +84,7 @@ export default function RaiseConcernModal({ open, onClose }) {
           <div className="rc-head-icon"><i className="ti ti-flag"></i></div>
           <div className="rc-head-text">
             <div className="rc-title" id="rcTitle">Raise a concern</div>
-            <div className="rc-sub">Goes straight to the Admin and Head Admin</div>
+            <div className="rc-sub">Goes straight to the Administrator and Super Administrator</div>
           </div>
           <button type="button" className="rc-close" onClick={onClose} disabled={busy} aria-label="Close">&times;</button>
         </div>

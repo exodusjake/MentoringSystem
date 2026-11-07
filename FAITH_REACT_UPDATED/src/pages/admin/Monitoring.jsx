@@ -325,7 +325,7 @@ tbody tr:last-child { border-bottom: 1.5px solid #111827; }
   </thead>
   <tbody>${tableRows}</tbody>
 </table>
-<div class="rpt-footer">FAITH Colleges Mentoring System &mdash; Admin Portal &mdash; ${now}</div>
+<div class="rpt-footer">FAITH Colleges Mentoring System &mdash; Administrator Portal &mdash; ${now}</div>
 <script>window.onload = function() { window.print(); }<\/script>
 </body>
 </html>`;

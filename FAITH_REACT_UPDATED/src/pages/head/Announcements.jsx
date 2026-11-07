@@ -16,9 +16,9 @@ import { getSession } from '../../lib/session.js';
 // HEAD/HTML/announcements.html + HEAD/JS/announcements.js
 
 const AUD_MAP = {
-  Admin:  { cls: 'aud-admin',  label: 'Admin only'                   },
-  Mentor: { cls: 'aud-mentor', label: 'Admin and Mentors'            },
-  Both:   { cls: 'aud-both',   label: 'Admin, Mentors, and Mentees'  },
+  Admin:  { cls: 'aud-admin',  label: 'Administrator only'                   },
+  Mentor: { cls: 'aud-mentor', label: 'Administrator and Mentors'            },
+  Both:   { cls: 'aud-both',   label: 'Administrator, Mentors, and Mentees'  },
   Mentee: { cls: 'aud-mentee', label: 'Mentees only'                 },
 };
 const MAX_ATTACHMENTS = 5;
@@ -258,7 +258,7 @@ export default function Announcements() {
       const date = a.postedAt ? new Date(a.postedAt).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
       const posterName = (a.posterFirstName && a.posterLastName)
         ? `${a.posterFirstName} ${a.posterLastName}`.trim()
-        : currentUser ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : 'Head Admin';
+        : currentUser ? `${currentUser.firstName} ${currentUser.lastName}`.trim() : 'Super Administrator';
       const posterInits = ((a.posterFirstName?.[0] || '') + (a.posterLastName?.[0] || '')).toUpperCase() || myInits;
 
       const aud = AUD_MAP[a.targetAudience] ?? { cls: 'aud-both', label: a.targetAudience || '—' };
@@ -333,9 +333,9 @@ export default function Announcements() {
               </div>
               <Select className="ann-filter-select" id="annAudienceFilter" value={audience} onChange={e => setAudience(e.target.value)}>
                 <option value="">All Audiences</option>
-                <option value="Admin">Admin only</option>
-                <option value="Mentor">Admin and Mentors</option>
-                <option value="Both">Admin, Mentors, and Mentees</option>
+                <option value="Admin">Administrator only</option>
+                <option value="Mentor">Administrator and Mentors</option>
+                <option value="Both">Administrator, Mentors, and Mentees</option>
                 <option value="Mentee">Mentees only</option>
               </Select>
             </div>
@@ -401,9 +401,9 @@ export default function Announcements() {
             <div className="form-group">
               <label>Who can see this?</label>
               <Select id="fieldAudience" value={fieldAudience} onChange={e => setFieldAudience(e.target.value)}>
-                <option value="Admin">Admin only</option>
-                <option value="Mentor">Admin and Mentors</option>
-                <option value="Both">Admin, Mentors, and Mentees</option>
+                <option value="Admin">Administrator only</option>
+                <option value="Mentor">Administrator and Mentors</option>
+                <option value="Both">Administrator, Mentors, and Mentees</option>
                 <option value="Mentee">Mentees only</option>
               </Select>
             </div>

@@ -47,7 +47,7 @@ async function fetchCalendarSheetData() {
 
   // Resolved from calPreparedByEmail/calApprovedByEmail (Settings, Admin-
   // managed) — whatever real signature that account has on file, same
-  // image already shown on Logsheet. Admin and Head can both call this
+  // image already shown on Logsheet. Administrator and Super Administrator can both call this
   // endpoint; only Admin can change the emails it reads.
   try {
     const sig = await apiRequest('Settings/calendar-signatures', 'GET', null, true);

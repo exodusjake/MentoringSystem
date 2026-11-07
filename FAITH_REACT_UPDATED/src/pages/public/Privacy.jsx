@@ -185,7 +185,7 @@ export default function Privacy() {
                 manage users and can view attendance, sessions, proofs and logsheets across the program.
               </li>
               <li>
-                <strong>Heads</strong>
+                <strong>Super Administrators</strong>
                 {' '}
                 have read-only, institution-level monitoring views and reports.
               </li>

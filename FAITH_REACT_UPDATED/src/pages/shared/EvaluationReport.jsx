@@ -480,7 +480,7 @@ export default function EvaluationReport({ cfg }) {
     URL.revokeObjectURL(url);
   }
 
-  const portalLabel = cfg.admin ? 'Admin Portal' : 'Head Admin Portal';
+  const portalLabel = cfg.admin ? 'Administrator Portal' : 'Super Administrator Portal';
 
   // ── PRINT ── (a standalone printable HTML document opened in a new tab)
   function printRatings() {

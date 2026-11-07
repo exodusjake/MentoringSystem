@@ -234,7 +234,7 @@ export default function Availability() {
       const fmt = iso => new Date(iso).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' });
       hint = `${slotName}'s window: ${fmt(win.startDate)} – ${fmt(win.endDate)}. Choose a date within this window.`;
     } else {
-      hint = `Admin hasn't scheduled ${slotName} yet this semester — posting is unavailable until they do.`;
+      hint = `Administrator hasn't scheduled ${slotName} yet this semester — posting is unavailable until they do.`;
     }
   }
 

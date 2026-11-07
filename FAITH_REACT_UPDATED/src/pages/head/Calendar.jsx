@@ -219,7 +219,7 @@ export default function HeadCalendar() {
   }
 
   // ── Export / Print ──
-  // Fetch + document-building both live in the shared calendar-sheet.js (also used by Admin's own copy of this
+  // Fetch + document-building both live in the shared calendar-sheet.js (also used by Administrator's own copy of this
   // same sheet) — this just supplies Head's own (published-only) event list.
   async function exportCalendar() {
     const popup = window.open('', '_blank', 'width=900,height=700');
@@ -240,7 +240,7 @@ export default function HeadCalendar() {
           <div className="page-header">
             <div>
               <h1>Calendar</h1>
-              <p>Academic schedule — published by Admin, view-only</p>
+              <p>Academic schedule — published by Administrator, view-only</p>
             </div>
           </div>
           {/* Academic Calendar (published schedule, read-only) */}

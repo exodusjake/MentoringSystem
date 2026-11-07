@@ -365,7 +365,7 @@ export default function MenteeAnnouncements() {
   function announcementCard(a) {
     const id = a.announcementID;
     const isMentor = a.postedByUserID === data.mentorUserId;
-    // Head Admin's posts get their own label instead of being folded into Admin's.
+    // Super Administrator's posts get their own label instead of being folded into Administrator's.
     const isHead = !isMentor && (a.posterRole || '').toLowerCase() === 'head';
     const rawTitle = a.title || 'Announcement';
     const secMatch = isMentor ? rawTitle.match(/^\[([^\]]+)\]/) : null;
@@ -376,7 +376,7 @@ export default function MenteeAnnouncements() {
     const fromInitials = initialsOf(fromName) || (isMentor ? 'MT' : 'AD');
     const pinned = !!a.isPinned;
     const roleClass = isMentor ? 'role-mentor' : isHead ? 'role-head' : 'role-admin';
-    const roleLabel = isMentor ? 'Mentor' : isHead ? 'Head Admin' : 'Administrator';
+    const roleLabel = isMentor ? 'Mentor' : isHead ? 'Super Administrator' : 'Administrator';
     return (
       <div className={`announce-card ${isMentor ? 'announce-card-mentor' : 'announce-card-admin'}${pinned ? ' announce-card--pinned' : ''}`} id={`announce-card-${id}`} key={id}>
         {pinned ? <div className="ann-pin-banner"><i className="ti ti-pinned"></i> Pinned</div> : null}

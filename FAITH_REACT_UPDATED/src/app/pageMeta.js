@@ -81,7 +81,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/account": {
-  "title": "Account — Head Admin Portal",
+  "title": "Account — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -103,7 +103,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/announcements": {
-  "title": "Announcements — Head Admin Portal",
+  "title": "Announcements — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -124,7 +124,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/attendance-detail": {
-  "title": "Attendance Detail — Head Admin Portal",
+  "title": "Attendance Detail — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish attendance-detail",
   "styles": [
@@ -144,7 +144,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/attendance-summary": {
-  "title": "Attendance Summary — Head Admin Portal",
+  "title": "Attendance Summary — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -165,7 +165,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/calendar": {
-  "title": "Academic Calendar — Head Admin Portal",
+  "title": "Academic Calendar — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -188,7 +188,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/evaluation-forms": {
-  "title": "Evaluation Forms — Head Admin Portal",
+  "title": "Evaluation Forms — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -210,7 +210,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/evaluation-ratings": {
-  "title": "Mentoring Program Report — Head Admin Portal",
+  "title": "Mentoring Program Report — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -230,7 +230,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/head-dashboard": {
-  "title": "Dashboard — Head Admin Portal",
+  "title": "Dashboard — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -253,7 +253,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/mentor-detail": {
-  "title": "Mentor Detail — Head Admin Portal",
+  "title": "Mentor Detail — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish session-detail",
   "styles": [
@@ -276,7 +276,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/mentor-performance": {
-  "title": "Mentor Monitoring — Head Admin Portal",
+  "title": "Mentor Monitoring — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -298,7 +298,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/proof-tracking": {
-  "title": "Proof Tracking — Head Admin Portal",
+  "title": "Proof Tracking — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -319,7 +319,7 @@ export const PAGE_META = {
   }
  },
  "HEAD/setup": {
-  "title": "Account Setup — Head Admin Portal",
+  "title": "Account Setup — Super Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish head-polish",
   "styles": [
@@ -339,7 +339,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/announcements": {
-  "title": "Announcements — Admin Portal",
+  "title": "Announcements — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -358,7 +358,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/attendance-detail": {
-  "title": "Attendance Detail — Admin Portal",
+  "title": "Attendance Detail — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish attendance-detail",
   "styles": [
@@ -377,7 +377,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/attendance-logs": {
-  "title": "Attendance Logs — Admin Portal",
+  "title": "Attendance Logs — Administrator Portal",
   "description": "",
   "bodyClass": "admin-attendance",
   "styles": [
@@ -396,7 +396,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/calendar-events": {
-  "title": "Calendar & Events — Admin Portal",
+  "title": "Calendar & Events — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -416,7 +416,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/dashboard": {
-  "title": "Dashboard — Admin Portal",
+  "title": "Dashboard — Administrator Portal",
   "description": "",
   "bodyClass": "admin-dashboard portal-ui",
   "styles": [
@@ -436,7 +436,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/evaluation-forms": {
-  "title": "Evaluation Forms — Admin Portal",
+  "title": "Evaluation Forms — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -457,7 +457,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/evaluation-ratings": {
-  "title": "Mentoring Program Report — Admin Portal",
+  "title": "Mentoring Program Report — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -476,7 +476,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/profile": {
-  "title": "Account — Admin Portal",
+  "title": "Account — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -498,7 +498,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/session-proofs": {
-  "title": "Proof Tracking — Admin Portal",
+  "title": "Proof Tracking — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -518,7 +518,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/sessions-detail": {
-  "title": "Mentor Detail — Admin Portal",
+  "title": "Mentor Detail — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish session-detail",
   "styles": [
@@ -539,7 +539,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/sessions": {
-  "title": "Mentor Monitoring — Admin Portal",
+  "title": "Mentor Monitoring — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -560,7 +560,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/settings": {
-  "title": "System Settings — Admin Portal",
+  "title": "System Settings — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -579,7 +579,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/setup": {
-  "title": "Account Setup — Admin Portal",
+  "title": "Account Setup — Administrator Portal",
   "description": "",
   "bodyClass": "admin-polish",
   "styles": [
@@ -598,7 +598,7 @@ export const PAGE_META = {
   }
  },
  "ADMIN_/user-management": {
-  "title": "User Management — Admin Portal",
+  "title": "User Management — Administrator Portal",
   "description": "",
   "bodyClass": "portal-ui",
   "styles": [

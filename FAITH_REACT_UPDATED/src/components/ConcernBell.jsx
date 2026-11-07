@@ -5,7 +5,7 @@ import { useStyle } from '../lib/injectStyle.js';
 import { ConcernDetailModal, ago, initials, roleLabel } from './concernShared.jsx';
 
 // Top-right bell for concerns that mentors flag about their mentees (pages/mentor/MyMentees.jsx).
-//   role "staff"  (Admin and Head Admin portals): every concern, awaiting-response ones first. The red count stays
+//   role "staff"  (Admin and Super Administrator portals): every concern, awaiting-response ones first. The red count stays
 //                 until someone responds (viewing a concern does not clear it); responding is done in the detail window.
 //   role "mentor" (Mentor portal): the mentor's own concerns. The count is the responses they have not opened yet.
 // Other components that change a concern announce it with emit('concerns:changed') so the bell reloads.
@@ -69,7 +69,7 @@ export const CSS = [
   '.cb-msg{font-size:12px}.cb-reply{margin-top:6px;padding:0 8px;font-size:11.5px;-webkit-line-clamp:1}',
   '.cb-foot{padding:7px 12px;font-size:11px}',
   '}',
-  // The header button follows the portal's own colors (blue for Admin and Head, teal for Mentor) like the theme switch beside it.
+  // The header button follows the portal's own colors (blue for Administrator and Head, teal for Mentor) like the theme switch beside it.
   '.concern-bell .cb-btn,.concern-bell.mentor .cb-btn{color:var(--sb-active,#2563eb);background:var(--sb-bg,#fff);border-color:var(--sb-border,#e9ecef);box-shadow:none}',
   '.concern-bell .cb-btn:hover,.concern-bell.mentor .cb-btn:hover{background:var(--sb-item-hover,#f3f4f6);box-shadow:none}',
   '.concern-bell .cb-badge{border-color:var(--sb-bg,#fff)}',

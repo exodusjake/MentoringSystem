@@ -7,7 +7,7 @@ import { validate as validatePassword } from '../lib/passwordPolicy.js';
 // "Edit Profile" dialog + "Save changes?" confirmation: contact number, and change password
 // (current password -> emailed 6-digit code -> new password unlocked).
 //   HEAD/JS/account.js (variant 'head', .modal-overlay / .edit-modal-card markup) and
-//   profile-edit.js for the Admin, Mentor and Mentee profile pages (variant 'pe', .pe-* markup).
+//   profile-edit.js for the Administrator, Mentor and Mentee profile pages (variant 'pe', .pe-* markup).
 //
 // Props:
 //   variant        'head' | 'pe'

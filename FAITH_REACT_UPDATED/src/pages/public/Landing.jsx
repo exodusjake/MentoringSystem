@@ -109,7 +109,7 @@ export default function Landing() {
               <p className="hero-note">
                 For
                 {' '}
-                <strong>Head Admins, Admins, Mentors and Mentees</strong>
+                <strong>Super Administrators, Administrators, Mentors and Mentees</strong>
                 . Use your institutional email.
               </p>
             </div>
@@ -152,7 +152,7 @@ export default function Landing() {
               </svg>
               <div>
                 <b>4 Portals</b>
-                <span>Head Admin, Admin, Mentor, Mentee</span>
+                <span>Super Administrator, Administrator, Mentor, Mentee</span>
               </div>
             </div>
             <div className="strip-item">
@@ -196,7 +196,7 @@ export default function Landing() {
                 <h2>Everything a mentoring program needs</h2>
               </div>
               <p>
-                From scheduling to reporting, each step is recorded so that Head Administrator, Administrator, Mentors, and Mentees work from the same records.
+                From scheduling to reporting, each step is recorded so that Super Administrator, Administrator, Mentors, and Mentees work from the same records.
               </p>
             </div>
             <div className="cards">
@@ -245,7 +245,7 @@ export default function Landing() {
                   </svg>
                 </div>
                 <h3>Monitoring</h3>
-                <p>Admins and Heads track progress, timeliness and completeness for every mentor.</p>
+                <p>Administrators and Super Administrators track progress, timeliness and completeness for every mentor.</p>
               </div>
               <div className="card">
                 <div className="icon-bubble ib-red">
@@ -340,7 +340,7 @@ export default function Landing() {
             </div>
             <div className="role-grid">
               <div className="role">
-                <h3>Head Administrator</h3>
+                <h3>Super Administrator</h3>
                 <p>
                   Monitor Mentors, review progress and attendance, print reports, and post announcements. View-only access keeps management with the Administrator.
                 </p>
@@ -388,7 +388,7 @@ export default function Landing() {
               </div>
               <div className="step">
                 <h3>Record and Review</h3>
-                <p>The Mentor completes the logsheet with proof of the session and submits it. Head Administrators and Administrators monitor submissions.</p>
+                <p>The Mentor completes the logsheet with proof of the session and submits it. Super Administrators and Administrators monitor submissions.</p>
               </div>
             </div>
           </div>
@@ -432,7 +432,7 @@ export default function Landing() {
                 <summary>Why do I see different menus from another user?</summary>
                 <div className="faq-body">
                   <p>
-                    There is a separate portal for each role (Head Admin, Admin, Mentor, Mentee), and the options you see depend on your account permissions.
+                    There is a separate portal for each role (Super Administrator, Administrator, Mentor, Mentee), and the options you see depend on your account permissions.
                   </p>
                 </div>
               </details>

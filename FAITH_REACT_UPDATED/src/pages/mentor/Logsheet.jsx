@@ -1067,7 +1067,7 @@ export default function MentorLogsheet() {
               </span>
               <div className="log-remarks-tooltip">
                 <strong>Logsheet status</strong><br />
-                A session counts as <em>not yet logged</em> until you click <em>Upload Logsheet</em> inside it — that's when it's marked Submitted and visible to Admin.<br /><br />
+                A session counts as <em>not yet logged</em> until you click <em>Upload Logsheet</em> inside it — that's when it's marked Submitted and visible to Administrator.<br /><br />
                 The <em>Logsheet</em> button turns green once submitted, orange while a Completed session is still waiting to be submitted.
               </div>
             </div>
@@ -1163,7 +1163,7 @@ export default function MentorLogsheet() {
         <div className="modal-card modal-card-sm" onClick={e => e.stopPropagation()}>
           <div className="confirm-icon confirm-icon-primary"><i className="ti ti-upload"></i></div>
           <h3 className="confirm-title">Upload Logsheet for Review?</h3>
-          <p className="confirm-body">This marks it <strong>Submitted</strong> and visible to the Admin.</p>
+          <p className="confirm-body">This marks it <strong>Submitted</strong> and visible to the Administrator.</p>
           <div className="confirm-actions">
             <button className="btn-form-cancel" onClick={() => ucmResolve(false)}>Cancel</button>
             <button className="btn-confirm-primary" id="confirmUploadBtn" onClick={() => ucmResolve(true)}><i className="ti ti-upload"></i> Upload Logsheet</button>
@@ -1177,7 +1177,7 @@ export default function MentorLogsheet() {
         <div className="modal-card modal-card-sm" onClick={e => e.stopPropagation()}>
           <div className="confirm-icon confirm-icon-warn"><i className="ti ti-arrow-back-up"></i></div>
           <h3 className="confirm-title">Unsubmit this Logsheet?</h3>
-          <p className="confirm-body">This will revert the logsheet to <strong>Draft</strong> and hide it from Admin until you resubmit.</p>
+          <p className="confirm-body">This will revert the logsheet to <strong>Draft</strong> and hide it from Administrator until you resubmit.</p>
           <div className="confirm-actions">
             <button className="btn-form-cancel" onClick={() => ucmUnsubmitResolve(false)}>Cancel</button>
             <button className="btn-confirm-warn" id="confirmUnsubmitBtn" onClick={() => ucmUnsubmitResolve(true)}><i className="ti ti-arrow-back-up"></i> Unsubmit</button>

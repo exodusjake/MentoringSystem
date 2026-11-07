@@ -28,7 +28,7 @@ export function buildPrintForm(session, mentor, label) {
     ? (session.slotName ? `Make-Up: ${session.slotName}` : 'Make-Up')
     : (session.slotName || 'Session');
 
-  // Matches Mentor's and Admin's own print forms: a mentee's signature only ever appears once the mentor has
+  // Matches Mentor's and Administrator's own print forms: a mentee's signature only ever appears once the mentor has
   // uploaded a proof photo for this session.
   const hasProof = !!session.proofFilePath;
 

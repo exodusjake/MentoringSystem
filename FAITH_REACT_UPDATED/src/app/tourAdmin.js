@@ -1,4 +1,4 @@
-// Admin and Head Admin walkthroughs for Tour.jsx's engine (same engine as the mentor and mentee tours, themed
+// Admin and Super Administrator walkthroughs for Tour.jsx's engine (same engine as the mentor and mentee tours, themed
 // in the portals' blue via `wt-admin`). The dashboards show SAMPLE data while the tour runs (tourSample.js);
 // the other pages show the real data, so those steps just highlight the real sidebar items.
 //   - Runs once, right after the account finishes first-time setup (pages/{admin,head}/Setup.jsx set the flag).
@@ -8,7 +8,7 @@ const nav = (page, id, title, text) => ({ page, sel: '#' + id, side: 'right', ti
 const welcome = (portal, text) => ({ page: 'dashboard', center: true, title: 'Welcome to the ' + portal, text });
 
 const ADMIN_STEPS = [
-  welcome('Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
+  welcome('Administrator Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
   { page: 'dashboard', sel: '.concern-bell', title: 'Concern Alerts', text: 'When a mentor flags a mentee with a serious concern, the bell at the top right shows a red count. Click it to read the concern and who sent it.' },
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentors, mentees, engagement and alerts.'),
   { page: 'dashboard', sel: '.stats-grid', sample: true, title: 'Key Numbers', text: 'Total mentors and mentees, and the mentee status counts. Click the Mentors card to jump to Mentor Monitoring.' },
@@ -29,11 +29,11 @@ const ADMIN_STEPS = [
   { page: 'profile', sel: '.walkthrough-card', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
   nav('settings', 'nav-settings', 'System Settings', 'The academic period (school year and semester), calendar sheet signatories, the Guidance Office details and Maintenance Mode.'),
   { page: 'settings', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
-  { page: 'settings', center: true, title: 'You’re all set!', text: 'That is the whole Admin Portal. You can replay this tour from your Profile page at any time.' },
+  { page: 'settings', center: true, title: 'You’re all set!', text: 'That is the whole Administrator Portal. You can replay this tour from your Profile page at any time.' },
 ];
 
 const HEAD_STEPS = [
-  welcome('Head Admin Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
+  welcome('Super Administrator Portal', 'Let us show you around. This short tour walks through each part of the sidebar. Nothing will be changed. Use Next, or the arrow keys, to move on.'),
   { page: 'dashboard', sel: '.concern-bell', title: 'Concern Alerts', text: 'When a mentor flags a mentee with a serious concern, the bell at the top right shows a red count. Click it to read the concern and who sent it.' },
   nav('dashboard', 'nav-dashboard', 'Dashboard', 'A live overview of the whole program: mentor performance, mentee engagement and alerts.'),
   { page: 'dashboard', sel: '.hd-performance-card', sample: true, title: 'Mentor Performance', text: 'How mentors are doing this semester, grouped by status, with the breakdown by school.' },
@@ -50,11 +50,11 @@ const HEAD_STEPS = [
   nav('account', 'nav-profile', 'Profile', 'Your account details, contact number, password, signature and the current system settings.'),
   { page: 'account', sel: '.walkthrough-card', title: 'Replay Walkthrough', text: 'Want to see this tour again? Tap Replay Walkthrough here, under your signature, any time.' },
   { page: 'account', sel: '.ph-avatar', title: 'Profile and Log out', text: 'Click your profile circle for Profile and Log out. Log out when you are done, especially on a shared computer.' },
-  { page: 'account', center: true, title: 'You’re all set!', text: 'That is the whole Head Admin Portal. You can replay this tour from your Profile page at any time.' },
+  { page: 'account', center: true, title: 'You’re all set!', text: 'That is the whole Super Administrator Portal. You can replay this tour from your Profile page at any time.' },
 ];
 
 const ICONS = {
-  'Concern Alerts': 'ti-bell', 'Welcome to the Admin Portal': 'ti-hand-stop', 'Welcome to the Head Admin Portal': 'ti-hand-stop', 'You’re all set!': 'ti-circle-check',
+  'Concern Alerts': 'ti-bell', 'Welcome to the Administrator Portal': 'ti-hand-stop', 'Welcome to the Super Administrator Portal': 'ti-hand-stop', 'You’re all set!': 'ti-circle-check',
   'Dashboard': 'ti-layout-dashboard', 'Key Numbers': 'ti-chart-bar', 'Mentee Engagement': 'ti-users', 'Mentor Performance': 'ti-chart-bar',
   'System Alerts': 'ti-alert-triangle', 'Top 3 Mentors': 'ti-trophy', 'Recent Activities': 'ti-history',
   'User Management': 'ti-users', 'Attendance Logs': 'ti-calendar-stats', 'Attendance Summary': 'ti-calendar-stats',

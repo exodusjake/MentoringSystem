@@ -984,7 +984,7 @@ export default function AdminUserManagement() {
     'Last Name',
     'Email',
     'Password',
-    'Role  (Admin / Mentor / Mentee)',
+    'Role  (Administrator / Mentor / Mentee)',
     'Gender  (Male / Female)',
     'ID Number',
     'Contact Number',
@@ -1730,7 +1730,7 @@ export default function AdminUserManagement() {
             <td>{period.schoolYear}</td>
             <td>{period.semester}</td>
             <td>{u.gender ? <span className={`badge gender-${(u.gender || '').toLowerCase()}`}>{u.gender}</span> : '—'}</td>
-            <td><span className={`badge ${(u.role || '').toLowerCase()}`}>{u.role === 'Head' ? 'Head Admin' : u.role}</span></td>
+            <td><span className={`badge ${(u.role || '').toLowerCase()}`}>{u.role === 'Head' ? 'Super Administrator' : u.role === 'Admin' ? 'Administrator' : u.role}</span></td>
             <td>{schoolDeptCell(u)}</td>
             <td><span className={`badge ${statusCls}`}>{status.label === 'Inactive' ? 'Deactivated' : status.label}</span></td>
             <td style={{ textAlign: 'center' }}>{sig ?? '—'}</td>
@@ -2385,8 +2385,8 @@ export default function AdminUserManagement() {
       resetUsersPage();
     }}>
       <option value="">All Roles</option>
-      <option value="Admin">Admin</option>
-      <option value="Head">Head Admin</option>
+      <option value="Admin">Administrator</option>
+      <option value="Head">Super Administrator</option>
       <option value="Mentor">Mentor</option>
       <option value="Mentee">Mentee</option>
     </Select>
@@ -2479,8 +2479,8 @@ export default function AdminUserManagement() {
   const fieldRoleSel = (
     <Select id="fieldRole" required value={form.role} onChange={e => handleRoleChange(e.target.value)}>
       {ph('Select role...')}
-      <option value="Admin">Admin</option>
-      <option value="Head">Head Admin</option>
+      <option value="Admin">Administrator</option>
+      <option value="Head">Super Administrator</option>
       <option value="Mentor">Mentor</option>
       <option value="Mentee">Mentee</option>
     </Select>
@@ -2840,7 +2840,7 @@ export default function AdminUserManagement() {
                               <span>
                                 <span className="tip-label">Deactivated:</span>
                                 {' '}
-                                Login disabled; records retained. Admin can reactivate.
+                                Login disabled; records retained. Administrator can reactivate.
                               </span>
                             </div>
                           </div>
@@ -3508,7 +3508,7 @@ export default function AdminUserManagement() {
                   <li>
                     For
                     {' '}
-                    <strong>Admins/Head</strong>
+                    <strong>Administrators/Super Administrators</strong>
                     {' '}
                     — basic info only. Leave School, Department, Course, and Mentor Email blank.
                   </li>

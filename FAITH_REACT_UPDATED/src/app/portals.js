@@ -26,7 +26,7 @@ async function adminFreshBadge(userId, lastRead) {
       apiRequest(`AnnouncementComments/announcer/${userId}/latest`, 'GET', null, true),
     ]);
 
-    // New announcements from others (e.g. Head Admin) — Admin's own Announcements page shows every
+    // New announcements from others (e.g. Super Administrator) — Admin's own Announcements page shows every
     // audience unfiltered (Admin oversees all of them), so there's no targetAudience check here,
     // just "not posted by me".
     const announcements = annRes.status === 'fulfilled' ? annRes.value || [] : [];
@@ -123,8 +123,8 @@ export const PORTAL_CONFIG = {
     // Admin/Head pages sent a pending setup to their setup page; Mentor/Mentee sidebars logged out instead.
     onSetupRequired: 'redirect',
     profilePath: 'account',
-    roleLabel: 'Head Administration',
-    defaultName: 'Head Admin',
+    roleLabel: 'Super Administrator',
+    defaultName: 'Super Administrator',
     defaultInitials: 'HA',
     pascalFallback: true,
     logoutMessage: 'Are you sure you want to log out?',
@@ -152,7 +152,7 @@ export const PORTAL_CONFIG = {
     onSetupRequired: 'redirect',
     profilePath: 'profile',
     roleLabel: 'Administrator',
-    defaultName: 'Admin User',
+    defaultName: 'Administrator',
     defaultInitials: 'AU',
     pascalFallback: true,
     logoutMessage: 'Are you sure you want to log out of the admin portal?',

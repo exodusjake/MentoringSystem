@@ -36,7 +36,7 @@ const KINDS = {
   SlotBooked: ['Slot booked', 'ti-calendar-check', false, '/mentor/availability'],
   BookingConfirmed: ['Booking confirmed', 'ti-calendar-check', false, '/mentee/sessions'],
   Announcement: ['New announcement', 'ti-speakerphone', false, '/mentee/announcements'],
-  HeadConcern: ['Concern from the Head Admin', 'ti-flag', true, null],
+  HeadConcern: ['Concern from the Super Administrator', 'ti-flag', true, null],
   MenteeConcern: ['Concern from a mentee', 'ti-flag', true, null],
   DirectMessage: ['Message from your mentor', 'ti-message-circle', false, null],
   DirectMessageReplied: ['Message from your mentor', 'ti-message-circle', false, null],

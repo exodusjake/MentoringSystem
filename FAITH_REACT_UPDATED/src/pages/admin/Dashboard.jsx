@@ -363,7 +363,7 @@ export default function AdminDashboard() {
           {/* Page Header */}
           <div className="page-header">
             <div className="page-header-top">
-              <h1>Admin Dashboard</h1>
+              <h1>Administrator Dashboard</h1>
               <span className="period-chip" id="academicPeriod">{period ?? 'Loading…'}</span>
             </div>
             <p id="dashboardDate">{dateStr}</p>

@@ -329,7 +329,7 @@ export default function MenteeDashboard() {
         const isFromMentor = a.postedByUserID === ann.mentorId;
         const isHead = !isFromMentor && (a.posterRole || '').toLowerCase() === 'head';
         const sourceClass = isFromMentor ? 'mentor' : isHead ? 'head' : 'admin';
-        const sourceLabel = isFromMentor ? 'Mentor' : isHead ? 'Head Admin' : 'Admin';
+        const sourceLabel = isFromMentor ? 'Mentor' : isHead ? 'Super Administrator' : 'Administrator';
         const posterName = `${a.posterFirstName || ''} ${a.posterLastName || ''}`.trim();
         return (
           <div className={`announce-item${isFromMentor ? ' from-mentor' : ''}${seen.has(a.announcementID) ? ' viewed' : ''}`}

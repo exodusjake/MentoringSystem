@@ -287,7 +287,7 @@ export default function SessionProofModal({ open, sessionId, dateStr, onClose, o
           </div>
           <h3 className="confirm-title">Upload this as Session Proof?</h3>
           <p className="confirm-body">
-            Once uploaded, this session will be marked <strong>Completed</strong> and visible to Admin and Head Admin.
+            Once uploaded, this session will be marked <strong>Completed</strong> and visible to Administrator and Super Administrator.
           </p>
           <div className="confirm-actions">
             <button className="btn-form-cancel" onClick={() => ucmResolve(false)}>Cancel</button>

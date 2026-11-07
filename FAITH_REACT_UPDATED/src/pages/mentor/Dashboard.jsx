@@ -251,7 +251,7 @@ export default function MentorDashboard() {
           onClick={() => { markAnnouncementViewed(Number(a.announcementID)); navigate(`/mentor/announcements?id=${Number(a.announcementID)}`); }}>
           <div className="announce-author-row"><span className="announce-source-wrap">
             <span className="announce-poster-name">{posterName}</span>
-            <span className={`announce-source ${isHead ? 'head' : 'admin'}`}>{isHead ? 'Head Admin' : 'Admin'}</span>
+            <span className={`announce-source ${isHead ? 'head' : 'admin'}`}>{isHead ? 'Super Administrator' : 'Administrator'}</span>
           </span></div>
           <div className="announce-title">{title}</div>
           <div className="announce-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}></div>

@@ -42,7 +42,7 @@ const STEPS = [
   { page: 'schedule', sel: '.sch-slot-card', sample: true, enter: 'approve', title: 'Session Scheduled', text: 'The card now reads Session Scheduled, and the session appears on your Sessions page immediately.' },
   // Announcements
   { page: 'announcements', sel: '#nav-announce', side: 'right', title: 'Announcements', text: 'News and evaluation forms from the program team and your mentor. A red badge shows when something is new.' },
-  { page: 'announcements', sel: '.announce-card', sample: true, enter: 'tabAdmin', title: 'Admin Announcement', text: 'The Administration tab holds official announcements and evaluation forms from the admins. Pinned posts stay on top.' },
+  { page: 'announcements', sel: '.announce-card', sample: true, enter: 'tabAdmin', title: 'Administrator Announcement', text: 'The Administration tab holds official announcements and evaluation forms from the admins. Pinned posts stay on top.' },
   { page: 'announcements', sel: '.announce-card', sample: true, enter: 'tabMentor', title: 'My Mentor Announcement', text: 'The From My Mentor tab shows what your own mentor posts, and you can comment on them.' },
   // Profile + Logout
   { page: 'profile', sel: '#nav-profile', side: 'right', title: 'Profile', text: 'View your account and academic details, update your contact number, change your password or replace your signature. You can replay this tour from here too.' },
@@ -113,7 +113,7 @@ const ICONS = {
   'Dashboard': 'ti-layout-dashboard', 'My Mentor': 'ti-user-circle', 'Upcoming Sessions': 'ti-calendar-event', 'Recent Sessions': 'ti-history',
   'Sessions': 'ti-calendar-event', 'Record': 'ti-chart-bar', 'Show QR': 'ti-qrcode', 'Details': 'ti-info-circle',
   'Scheduled Sessions': 'ti-clock-plus', 'Request This Slot': 'ti-pointer', 'Send Request': 'ti-send', 'Session Scheduled': 'ti-calendar-check',
-  'Announcements': 'ti-speakerphone', 'Admin Announcement': 'ti-building', 'My Mentor Announcement': 'ti-speakerphone',
+  'Announcements': 'ti-speakerphone', 'Administrator Announcement': 'ti-building', 'My Mentor Announcement': 'ti-speakerphone',
   'Profile': 'ti-user-circle', 'Logout': 'ti-logout',
 };
 const MENTEE_TOUR = {

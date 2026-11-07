@@ -180,7 +180,7 @@ export default function Account() {
                   <div className="ph-identity-info">
                     <div className="ph-name" id="profileName">{user ? fullName : '—'}</div>
                     <div className="ph-chips">
-                      <span className="profile-role-badge">Head Admin</span>
+                      <span className="profile-role-badge">Super Administrator</span>
                     </div>
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function Account() {
                     <span className="ph-field-icon"><i className="ti ti-user-shield"></i></span>
                     <span className="ph-field-body">
                       <span className="ph-field-label">Role</span>
-                      <span className="ph-field-value">Head Admin</span>
+                      <span className="ph-field-value">Super Administrator</span>
                     </span>
                   </div>
                   <div className="ph-strip-field">
@@ -223,7 +223,7 @@ export default function Account() {
               <div className="walkthrough-card-icon"><i className="ti ti-route"></i></div>
               <div className="walkthrough-card-text">
                 <div className="walkthrough-card-title">Portal Walkthrough</div>
-                <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Head Admin Portal.</div>
+                <div className="walkthrough-card-sub">New here or need a refresher? Take a quick guided tour of the Super Administrator Portal.</div>
               </div>
               <button type="button" className="btn-replay-tour" onClick={() => tour.start()}><i className="ti ti-player-play"></i> Replay Walkthrough</button>
             </div>
@@ -252,7 +252,7 @@ export default function Account() {
             <div className="section-block">
               <div className="section-block-head">
                 <div className="section-block-title">System Information</div>
-                <div className="section-block-sub">Current system configuration — managed by Admin</div>
+                <div className="section-block-sub">Current system configuration — managed by Administrator</div>
               </div>
               <div className="section-block-body">
                 <div className="sysinfo-grid">
@@ -271,7 +271,7 @@ export default function Account() {
                       <span className="sysinfo-label">Semester</span>
                       <span className="sysinfo-value" id="valSemester">{sysVal(settings?.sem, 'e.g. 1st Semester')}</span>
                     </div>
-                    <div className="ro-note"><i className="ti ti-lock"></i> Managed by Admin</div>
+                    <div className="ro-note"><i className="ti ti-lock"></i> Managed by Administrator</div>
                   </div>
                   <div className="sysinfo-card">
                     <div className="sysinfo-card-head">
@@ -288,7 +288,7 @@ export default function Account() {
                       <span className="sysinfo-label">2nd Semester</span>
                       <span className="sysinfo-value" id="valLimit2nd">{settings ? MENTORING_SLOTS_COUNT_2ND + ' sessions' : ph('e.g. 5 sessions')}</span>
                     </div>
-                    <div className="ro-note"><i className="ti ti-lock"></i> Managed by Admin</div>
+                    <div className="ro-note"><i className="ti ti-lock"></i> Managed by Administrator</div>
                   </div>
                 </div>
               </div>

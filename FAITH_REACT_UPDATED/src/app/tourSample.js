@@ -1,4 +1,4 @@
-// Sample dashboard data for the Admin and Head Admin walkthroughs (tourAdmin.js). While the tour runs, the
+// Sample dashboard data for the Administrator and Super Administrator walkthroughs (tourAdmin.js). While the tour runs, the
 // two dashboards render this instead of the real data (same shapes the API returns); nothing real is read,
 // changed or saved. Names and numbers follow a real program snapshot: 6 mentors, 7 mentees, 1 unassigned,
 // 1 dropped out, 1 completed session without proof. A few mentors are given finalized scores so Mentor

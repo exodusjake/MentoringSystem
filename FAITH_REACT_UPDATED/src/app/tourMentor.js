@@ -18,7 +18,7 @@ const STEPS = [
   // My Mentees
   { page: 'mentees', sel: '#nav-mentees', side: 'right', title: 'Mentees', text: 'Everyone assigned to you this semester.' },
   { page: 'mentees', sel: '.mentee-card', sample: true, title: 'Mentee Card', text: 'Name, email, course, year, section, school, contact number and student number. A Drop Out tag appears if the mentee has dropped out.' },
-  { page: 'mentees', sel: '.mc-flag-btn', sample: true, title: 'Flag a Concern', text: 'See something serious, like welfare, safety, repeated absences or conduct? Tap the flag on that mentee, write what you noticed and send it. It goes straight to the Admin and Head Admin, who see it in the bell at the top right of their portal.' },
+  { page: 'mentees', sel: '.mc-flag-btn', sample: true, title: 'Flag a Concern', text: 'See something serious, like welfare, safety, repeated absences or conduct? Tap the flag on that mentee, write what you noticed and send it. It goes straight to the Administrator and Super Administrator, who see it in the bell at the top right of their portal.' },
   // Sessions
   { page: 'sessions', sel: '#nav-sessions', side: 'right', title: 'Sessions', text: 'Every mentoring session you have logged, with attendance and proof.' },
   { page: 'sessions', sel: '#logSessionBtn', title: 'Log Session', text: 'Create a session for a slot: pick the slot, date and start time, and add notes. The end time is recorded when you save the end of the session.' },
@@ -33,7 +33,7 @@ const STEPS = [
   // Logsheet / Attendance
   { page: 'logsheet', sel: '#nav-logsheet', side: 'right', title: 'Logsheet', text: 'Your logsheet is built automatically from your Sessions: attendance, time and mentees are pulled in for you. Here you add remarks, submit each session and print the forms.' },
   { page: 'logsheet', sel: '.log-stats-strip', sample: true, title: 'Logsheet Progress', text: 'How many of the required sessions you have completed this semester, plus your total, scheduled, closed (not conducted) and cancelled sessions.' },
-  { page: 'logsheet', sel: '.log-remarks-bar', sample: true, title: 'Logged or Not Yet', text: 'A session counts as not yet logged until you click Upload Logsheet inside it. That is when it is marked Submitted and becomes visible to the Admin.' },
+  { page: 'logsheet', sel: '.log-remarks-bar', sample: true, title: 'Logged or Not Yet', text: 'A session counts as not yet logged until you click Upload Logsheet inside it. That is when it is marked Submitted and becomes visible to the Administrator.' },
   { page: 'logsheet', all: '.log-session-card', nth: 0, sample: true, title: 'Scheduled Session', text: 'A session that has not happened yet. Its Logsheet button stays grey, and the report shows Pending, until the session is completed and attendance is recorded.' },
   { page: 'logsheet', all: '.log-session-card', nth: 1, sample: true, title: 'Completed Session', text: 'Date, time and who was present (1 of 2 here). The green Logsheet button and “Submitted On Time” mean this session is already submitted.' },
   { page: 'logsheet', all: '.log-card-actions', nth: 1, sample: true, title: 'Print', text: 'Print this session’s logsheet. The arrow next to Print lets you pick the Logsheet, Mentor’s Notes or Non-Attendance form instead.' },
@@ -116,7 +116,7 @@ export const MENTOR_SAMPLE = {
       '<span class="sess-att-pill expected"><i class="ti ti-users"></i> 4 expected</span>'),
     recentList: dashSession('OCT', '21', 'Before Prelims', 'BSIT', '6:25 PM', '<span class="session-status-tag tag-completed">Completed</span>',
       '<span class="sess-att-pill"><i class="ti ti-users"></i> 1/2 attended</span>', ' session-item-completed'),
-    announcements: '<div class="announce-item from-admin" data-wt="1"><div class="announce-author-row"><span class="announce-source-wrap"><span class="announce-poster-name">System Admin</span><span class="announce-source admin">Admin</span></span></div>' +
+    announcements: '<div class="announce-item from-admin" data-wt="1"><div class="announce-author-row"><span class="announce-source-wrap"><span class="announce-poster-name">System Admin</span><span class="announce-source admin">Administrator</span></span></div>' +
       '<div class="announce-title">Title: Mentoring Program – Welcome and Important Reminders</div><div class="announce-body">Good day, Mentors! Welcome to our Mentoring Program! As mentors, you play an important role in guiding, supporting, and inspiring your assigned mentees.</div><div class="announce-footer"><span class="announce-date">Oct 19, 2026</span></div></div>',
     calendar:
       '<a class="calendar-overview-item" data-wt="1"><span class="calendar-overview-type">Session Schedule</span><strong>Mentoring Session Before Prelims</strong><span class="calendar-overview-date"><i class="ti ti-calendar"></i> Oct 16, 2026 – Oct 21, 2026</span></a>' +

@@ -82,7 +82,7 @@ export function ago(iso) {
   return new Date(iso).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 export const fullDate = iso => new Date(iso).toLocaleString('en-PH', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
-export const roleLabel = role => (role === 'Head' ? 'Head Admin' : role || 'Admin');
+export const roleLabel = role => (role === 'Head' ? 'Super Administrator' : role || 'Administrator');
 
 export function ConcernDetailModal({ item, role, onClose, onRespond }) {
   useConcernStyles();
@@ -149,11 +149,11 @@ export function ConcernDetailModal({ item, role, onClose, onRespond }) {
               <textarea className="cb-text" maxLength={RESPONSE_MAX} disabled={busy} autoFocus
                 placeholder="Tell the mentor what will be done, or what they should do next."
                 value={text} onChange={e => setText(e.target.value)}></textarea>
-              <div className="cb-hint"><span>The mentor is notified and sees this. Responding closes the concern for every Admin and Head Admin.</span><span>{text.length}/{RESPONSE_MAX}</span></div>
+              <div className="cb-hint"><span>The mentor is notified and sees this. Responding closes the concern for every Administrator and Super Administrator.</span><span>{text.length}/{RESPONSE_MAX}</span></div>
               {error ? <div className="cb-err" role="alert">{error}</div> : null}
             </>
           ) : (
-            <div className="cb-wait"><i className="ti ti-hourglass"></i><span>Waiting for the Admin or Head Admin to respond. You will get a notification here when they do.</span></div>
+            <div className="cb-wait"><i className="ti ti-hourglass"></i><span>Waiting for the Administrator or Super Administrator to respond. You will get a notification here when they do.</span></div>
           )}
         </div>
         <div className="cb-mfoot">
