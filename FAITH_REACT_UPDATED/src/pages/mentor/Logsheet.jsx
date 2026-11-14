@@ -124,18 +124,18 @@ function SampleLogsheetModal({ open, tab, mentor, guidanceOfficer }) {
 // ── paper forms shown in the preview modal ──
 function Logo() {
   const [failed, setFailed] = useState(false);
-  return failed ? null : <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={() => setFailed(true)} />;
+  return failed ? null : <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={() => setFailed(true)} />;
 }
 function MentorSig({ mentor }) {
   const [failed, setFailed] = useState(false);
   if (!mentor?.signatureFilePath || failed) return null;
-  return <img src={CONFIG.getFileUrl(mentor.signatureFilePath)} onError={() => setFailed(true)}
+  return <img alt="Signature" src={CONFIG.getFileUrl(mentor.signatureFilePath)} onError={() => setFailed(true)}
     style={{ maxHeight: '60px', maxWidth: '190px', objectFit: 'contain', display: 'block', margin: '0 auto -10px', mixBlendMode: 'multiply', position: 'relative', zIndex: 1 }} />;
 }
 function MenteeSig({ src }) {
   const [failed, setFailed] = useState(false);
   if (failed) return '—';
-  return <img src={src} onError={() => setFailed(true)} style={{ maxHeight: '44px', maxWidth: '120px', objectFit: 'contain' }} />;
+  return <img alt="Signature" src={src} onError={() => setFailed(true)} style={{ maxHeight: '44px', maxWidth: '120px', objectFit: 'contain' }} />;
 }
 const FaithHeader = ({ s }) => (
   <div className="paper-header">

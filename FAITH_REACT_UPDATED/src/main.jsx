@@ -7,6 +7,7 @@ import { setNavigator } from './lib/events.js';
 import LoadingBar from './components/LoadingBar.jsx';
 import MaintenanceScreen from './components/MaintenanceScreen.jsx';
 import NotifyHost from './components/Notify.jsx';
+import CookieBanner from './components/CookieBanner.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
 
 installScrollContainment();
@@ -23,6 +24,7 @@ function App() {
       <RouterProvider router={router} future={{ v7_startTransition: true }} />
       <NotifyHost />
       <UpdateBanner />
+      <CookieBanner />
       <LoadingBar />
       <MaintenanceScreen />
     </>

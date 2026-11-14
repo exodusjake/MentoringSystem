@@ -3,7 +3,7 @@
 export const PAGE_META = {
  "LOGIN/login": {
   "title": "Astra Mentoring – Log in",
-  "description": "",
+  "description": "Sign in to Astra Mentoring to schedule sessions, record QR attendance and manage logsheets.",
   "bodyClass": "",
   "styles": [
    "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap",
@@ -82,7 +82,7 @@ export const PAGE_META = {
  },
  "HEAD/account": {
   "title": "Account — Super Administrator Portal",
-  "description": "",
+  "description": "View and update your account details and password in the Astra Mentoring system (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -104,7 +104,7 @@ export const PAGE_META = {
  },
  "HEAD/announcements": {
   "title": "Announcements — Super Administrator Portal",
-  "description": "",
+  "description": "Read and manage announcements and comments from the mentoring program (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -125,7 +125,7 @@ export const PAGE_META = {
  },
  "HEAD/attendance-detail": {
   "title": "Attendance Detail — Super Administrator Portal",
-  "description": "",
+  "description": "Session-by-session attendance records for a mentor and their mentees (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish attendance-detail",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -145,7 +145,7 @@ export const PAGE_META = {
  },
  "HEAD/attendance-summary": {
   "title": "Attendance Summary — Super Administrator Portal",
-  "description": "",
+  "description": "Program-wide mentoring attendance summary by mentor, school and period (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -166,7 +166,7 @@ export const PAGE_META = {
  },
  "HEAD/calendar": {
   "title": "Academic Calendar — Super Administrator Portal",
-  "description": "",
+  "description": "The academic calendar of mentoring dates, events and deadlines (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -189,7 +189,7 @@ export const PAGE_META = {
  },
  "HEAD/evaluation-forms": {
   "title": "Evaluation Forms — Super Administrator Portal",
-  "description": "",
+  "description": "Build, schedule and review mentoring evaluation forms and ratings (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/tabler-icons.min.css",
@@ -211,7 +211,7 @@ export const PAGE_META = {
  },
  "HEAD/evaluation-ratings": {
   "title": "Mentoring Program Report — Super Administrator Portal",
-  "description": "",
+  "description": "Printable report of mentoring activity, attendance and evaluations (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -231,7 +231,7 @@ export const PAGE_META = {
  },
  "HEAD/head-dashboard": {
   "title": "Dashboard — Super Administrator Portal",
-  "description": "",
+  "description": "Your mentoring overview: upcoming sessions, progress and recent activity (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -254,7 +254,7 @@ export const PAGE_META = {
  },
  "HEAD/mentor-detail": {
   "title": "Mentor Detail — Super Administrator Portal",
-  "description": "",
+  "description": "Detailed monitoring record of a mentor: sessions, proofs and logsheets (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish session-detail",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -277,7 +277,7 @@ export const PAGE_META = {
  },
  "HEAD/mentor-performance": {
   "title": "Mentor Monitoring — Super Administrator Portal",
-  "description": "",
+  "description": "Monitor mentors, their sessions and submitted logsheets across the program (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -299,7 +299,7 @@ export const PAGE_META = {
  },
  "HEAD/proof-tracking": {
   "title": "Proof Tracking — Super Administrator Portal",
-  "description": "",
+  "description": "Review proof of mentoring sessions submitted by mentors (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -320,7 +320,7 @@ export const PAGE_META = {
  },
  "HEAD/setup": {
   "title": "Account Setup — Super Administrator Portal",
-  "description": "",
+  "description": "Finish setting up your Astra Mentoring account: profile, signature and password (Super Administrator portal).",
   "bodyClass": "admin-polish head-polish",
   "styles": [
    "/HEAD/CSS/setup.css",
@@ -340,7 +340,7 @@ export const PAGE_META = {
  },
  "ADMIN_/announcements": {
   "title": "Announcements — Administrator Portal",
-  "description": "",
+  "description": "Read and manage announcements and comments from the mentoring program (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -359,7 +359,7 @@ export const PAGE_META = {
  },
  "ADMIN_/attendance-detail": {
   "title": "Attendance Detail — Administrator Portal",
-  "description": "",
+  "description": "Session-by-session attendance records for a mentor and their mentees (Administrator portal).",
   "bodyClass": "admin-polish attendance-detail",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -378,7 +378,7 @@ export const PAGE_META = {
  },
  "ADMIN_/attendance-logs": {
   "title": "Attendance Logs — Administrator Portal",
-  "description": "",
+  "description": "Review mentoring attendance logs recorded through QR check-in (Administrator portal).",
   "bodyClass": "admin-attendance",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -397,7 +397,7 @@ export const PAGE_META = {
  },
  "ADMIN_/calendar-events": {
   "title": "Calendar & Events — Administrator Portal",
-  "description": "",
+  "description": "Create and manage calendar events and mentoring dates (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -417,7 +417,7 @@ export const PAGE_META = {
  },
  "ADMIN_/dashboard": {
   "title": "Dashboard — Administrator Portal",
-  "description": "",
+  "description": "Your mentoring overview: upcoming sessions, progress and recent activity (Administrator portal).",
   "bodyClass": "admin-dashboard portal-ui",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -437,7 +437,7 @@ export const PAGE_META = {
  },
  "ADMIN_/evaluation-forms": {
   "title": "Evaluation Forms — Administrator Portal",
-  "description": "",
+  "description": "Build, schedule and review mentoring evaluation forms and ratings (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/tabler-icons.min.css",
@@ -458,7 +458,7 @@ export const PAGE_META = {
  },
  "ADMIN_/evaluation-ratings": {
   "title": "Mentoring Program Report — Administrator Portal",
-  "description": "",
+  "description": "Printable report of mentoring activity, attendance and evaluations (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -477,7 +477,7 @@ export const PAGE_META = {
  },
  "ADMIN_/profile": {
   "title": "Account — Administrator Portal",
-  "description": "",
+  "description": "View and update your account details and password in the Astra Mentoring system (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -499,7 +499,7 @@ export const PAGE_META = {
  },
  "ADMIN_/session-proofs": {
   "title": "Proof Tracking — Administrator Portal",
-  "description": "",
+  "description": "Review proof of mentoring sessions submitted by mentors (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -519,7 +519,7 @@ export const PAGE_META = {
  },
  "ADMIN_/sessions-detail": {
   "title": "Mentor Detail — Administrator Portal",
-  "description": "",
+  "description": "Detailed monitoring record of a mentor: sessions, proofs and logsheets (Administrator portal).",
   "bodyClass": "admin-polish session-detail",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -540,7 +540,7 @@ export const PAGE_META = {
  },
  "ADMIN_/sessions": {
   "title": "Mentor Monitoring — Administrator Portal",
-  "description": "",
+  "description": "Monitor mentors, their sessions and submitted logsheets across the program (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -561,7 +561,7 @@ export const PAGE_META = {
  },
  "ADMIN_/settings": {
   "title": "System Settings — Administrator Portal",
-  "description": "",
+  "description": "Configure system-wide settings for the Astra Mentoring platform (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -580,7 +580,7 @@ export const PAGE_META = {
  },
  "ADMIN_/setup": {
   "title": "Account Setup — Administrator Portal",
-  "description": "",
+  "description": "Finish setting up your Astra Mentoring account: profile, signature and password (Administrator portal).",
   "bodyClass": "admin-polish",
   "styles": [
    "/ADMIN_/CSS/setup.css",
@@ -599,7 +599,7 @@ export const PAGE_META = {
  },
  "ADMIN_/user-management": {
   "title": "User Management — Administrator Portal",
-  "description": "",
+  "description": "Add, import, edit and deactivate mentor, mentee and administrator accounts (Administrator portal).",
   "bodyClass": "portal-ui",
   "styles": [
    "/ADMIN_/CSS/sidebar.css",
@@ -619,7 +619,7 @@ export const PAGE_META = {
  },
  "MENTOR/announcements": {
   "title": "Announcements — Mentor Portal",
-  "description": "",
+  "description": "Read and manage announcements and comments from the mentoring program (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -638,7 +638,7 @@ export const PAGE_META = {
  },
  "MENTOR/availability": {
   "title": "Availability — Mentor Portal",
-  "description": "",
+  "description": "Set the days and times you are available for mentoring sessions (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -656,7 +656,7 @@ export const PAGE_META = {
  },
  "MENTOR/calendar": {
   "title": "Calendar — Mentor Portal",
-  "description": "",
+  "description": "Your mentoring sessions and program events on a calendar (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -676,7 +676,7 @@ export const PAGE_META = {
  },
  "MENTOR/logsheet": {
   "title": "Logsheet — Mentor Portal",
-  "description": "",
+  "description": "Complete, e-sign and submit your mentoring logsheet (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/ADMIN_/CSS/tabler-icons.min.css",
@@ -696,7 +696,7 @@ export const PAGE_META = {
  },
  "MENTOR/mentor-dashboard": {
   "title": "Dashboard — Mentor Portal",
-  "description": "",
+  "description": "Your mentoring overview: upcoming sessions, progress and recent activity (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -714,7 +714,7 @@ export const PAGE_META = {
  },
  "MENTOR/my-activities": {
   "title": "Attendance Overview — Mentor Portal",
-  "description": "",
+  "description": "Track attendance for your mentoring sessions and mentees (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -733,7 +733,7 @@ export const PAGE_META = {
  },
  "MENTOR/my-mentees": {
   "title": "My Mentees — Mentor Portal",
-  "description": "",
+  "description": "See the mentees assigned to you and their session progress (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -752,7 +752,7 @@ export const PAGE_META = {
  },
  "MENTOR/profile": {
   "title": "Profile — Mentor Portal",
-  "description": "",
+  "description": "View and update your profile, photo and signature (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -772,7 +772,7 @@ export const PAGE_META = {
  },
  "MENTOR/sessions": {
   "title": "Sessions — Mentor Portal",
-  "description": "",
+  "description": "View, manage and confirm your mentoring sessions (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/mentor-sidebar.css",
@@ -790,7 +790,7 @@ export const PAGE_META = {
  },
  "MENTOR/setup": {
   "title": "Account Setup — Mentor Portal",
-  "description": "",
+  "description": "Finish setting up your Astra Mentoring account: profile, signature and password (Mentor portal).",
   "bodyClass": "",
   "styles": [
    "/MENTOR/CSS/setup.css",
@@ -808,7 +808,7 @@ export const PAGE_META = {
  },
  "MENTEE/announcements": {
   "title": "Announcements & Evaluations — Mentee Portal",
-  "description": "",
+  "description": "Read program announcements and answer your mentoring evaluation forms (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/mentee-sidebar.css",
@@ -828,7 +828,7 @@ export const PAGE_META = {
  },
  "MENTEE/mentee-dashboard": {
   "title": "Dashboard — Mentee Portal",
-  "description": "",
+  "description": "Your mentoring overview: upcoming sessions, progress and recent activity (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/mentee-sidebar.css",
@@ -848,7 +848,7 @@ export const PAGE_META = {
  },
  "MENTEE/profile": {
   "title": "Profile — Mentee Portal",
-  "description": "",
+  "description": "View and update your profile, photo and signature (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/mentee-sidebar.css",
@@ -869,7 +869,7 @@ export const PAGE_META = {
  },
  "MENTEE/schedule-session": {
   "title": "Schedule Session — Mentee Portal",
-  "description": "",
+  "description": "Book a mentoring session with your mentor from their open slots (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/mentee-sidebar.css",
@@ -888,7 +888,7 @@ export const PAGE_META = {
  },
  "MENTEE/sessions": {
   "title": "Sessions — Mentee Portal",
-  "description": "",
+  "description": "View, manage and confirm your mentoring sessions (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/ADMIN_/CSS/tabler-icons.min.css",
@@ -908,7 +908,7 @@ export const PAGE_META = {
  },
  "MENTEE/setup": {
   "title": "Account Setup — Mentee Portal",
-  "description": "",
+  "description": "Finish setting up your Astra Mentoring account: profile, signature and password (Mentee portal).",
   "bodyClass": "mentee-polish",
   "styles": [
    "/MENTEE/CSS/setup.css",

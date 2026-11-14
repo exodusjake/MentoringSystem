@@ -305,7 +305,7 @@ tbody tr:last-child { border-bottom: 1.5px solid #111827; }
 </head>
 <body>
 <div class="rpt-header">
-  <img src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
+  <img alt="FAITH Colleges logo" src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
   <div class="rpt-title">Mentoring Program — Mentor Progress Report</div>
   <div class="rpt-meta">${school} &nbsp;|&nbsp; Generated: ${now} &nbsp;|&nbsp; Total Mentors: ${filtered.length}</div>
 </div>

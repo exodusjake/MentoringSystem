@@ -4,8 +4,13 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
   <title>AstraMentoring</title>
-  <link rel="icon" href="/IMAGES/fav-con.png"/>
-  <link rel="apple-touch-icon" href="/IMAGES/icons/apple-touch-icon.png"/>
+  <meta name="description" content="AstraMentoring, a mentoring management and monitoring system for FAITH Colleges."/>
+  <meta name="theme-color" content="#1e4b8c"/>
+  <link rel="icon" href="/favicon.ico" sizes="any"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+  <link rel="icon" type="image/png" sizes="192x192" href="/IMAGES/icons/icon-192.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/IMAGES/icons/apple-touch-icon.png"/>
   <link rel="manifest" href="/manifest.json"/>
   <!-- Each route's stylesheets are inserted here, in the original page's order (src/app/pageStyles.js). -->
   <meta name="astra-page-styles"/>
@@ -28,6 +33,10 @@
     .main-wrapper :is(.table-wrapper,.table-scroll,.history-table-wrap,[class*="table-wrap"]){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
     img,video,canvas,iframe,svg{max-width:100%}
   }
+
+  /* Form error state: a field the user touched and left invalid, or one a page flagged with aria-invalid. */
+  :where(input,select,textarea):is([aria-invalid="true"],:user-invalid):not([type="checkbox"]):not([type="radio"]){border-color:#dc2626!important;box-shadow:0 0 0 3px rgba(220,38,38,.14)}
+  .field-error{display:block;margin-top:4px;font-size:12px;font-weight:600;color:#dc2626}
 
   /* Swipe hint under sideways-scrolling strips (see installScrollHints) */
   .scroll-hint{display:none}

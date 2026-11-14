@@ -44,7 +44,7 @@ function SesDesc({ trunc, full }) {
 function SigImg({ src, style, mode }) {
   const [failed, setFailed] = useState(false);
   if (failed) return mode === 'dash' ? '—' : null;
-  return <img src={src} style={style} onError={() => setFailed(true)} />;
+  return <img alt="Signature" src={src} style={style} onError={() => setFailed(true)} />;
 }
 const MENTOR_SIG_STYLE = { maxHeight: '60px', maxWidth: '190px', objectFit: 'contain', display: 'block', margin: '0 auto -10px', mixBlendMode: 'multiply', position: 'relative', zIndex: 1 };
 
@@ -56,7 +56,7 @@ function MentorSig({ mentor }) {
 function PaperHeader({ periodLabel, program = true, bold = false }) {
   return (
     <div className="paper-header">
-      <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+      <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
       {program ? <div className="paper-program" style={bold ? { fontWeight: 700 } : undefined}>MENTORING PROGRAM</div> : null}
       {periodLabel !== undefined ? <div className="paper-program">{periodLabel}</div> : null}
     </div>
@@ -92,7 +92,7 @@ function LogsheetTab({ d, mentor, periodLabel }) {
   return (
     <div className="paper-form">
       <div className="paper-header">
-        <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+        <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
         <div className="paper-program">MENTORING PROGRAM</div>
         <div className="paper-program">{periodLabel}</div>
       </div>
@@ -170,7 +170,7 @@ function NotesTab({ d, mentor }) {
     <div className="paper-form">
       <div className="guidance-copy-label">GUIDANCE COPY</div>
       <div className="paper-header">
-        <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+        <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
       </div>
       <div className="paper-form-title" style={{ textDecoration: 'none' }}>MENTOR'S NOTES</div>
       <div className="note-entries">{entries.length ? entries : <div style={{ textAlign: 'center', padding: '24px', color: '#9ca3af' }}>No mentees for this session.</div>}</div>
@@ -188,7 +188,7 @@ function NonAttendTab({ d, mentor, periodLabel, guidanceOfficer, submittedDate }
   return (
     <div className="paper-form">
       <div className="paper-header">
-        <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+        <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
         <div className="paper-program" style={{ fontWeight: 700 }}>MENTORING PROGRAM</div>
       </div>
       <div className="paper-form-title" style={{ textDecoration: 'none' }}>NON-ATTENDANCE OF MENTEES</div>

@@ -6,6 +6,7 @@ import PortalLayout from './PortalLayout.jsx';
 import { PORTAL_CONFIG } from './portals.js';
 import { PAGES } from '../pages/index.js';
 import { TourProvider } from './Tour.jsx';
+import NotFound from '../components/NotFound.jsx';
 
 const MentorTourProvider = props => <TourProvider portal="mentor" {...props} />;
 const AdminTourProvider = props => <TourProvider portal="admin" {...props} />;
@@ -101,5 +102,5 @@ export const router = createBrowserRouter([
 
   { path: '/index.html', element: <RootRedirect /> },
   { path: '/:portal/HTML/:file', element: <LegacyRedirect /> },
-  { path: '*', element: <Navigate to="/" replace /> },
+  { path: '*', element: <NotFound /> },
 ]);

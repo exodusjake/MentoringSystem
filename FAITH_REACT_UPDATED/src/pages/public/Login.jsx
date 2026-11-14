@@ -108,6 +108,8 @@ export default function Login() {
     goWithLoading(HOME_ROUTES[role] || '/login');
   }
 
+  const loginErr = !!banner.text && !banner.ok;
+
   function showError(msg) {
     const next = { text: msg, ok: false };
     if (challengeRef.current) setCodeBanner(next); else setBanner(next);
@@ -604,7 +606,7 @@ export default function Login() {
                     <label htmlFor="email">Email Address</label>
                     <div className="input-wrap">
                       {MAIL_ICON}
-                      <input type="email" id="email" placeholder="yourname@firstasia.edu.ph" autoComplete="email" ref={emailRef}
+                      <input type="email" id="email" aria-invalid={loginErr ? "true" : undefined} aria-describedby={loginErr ? "errorBanner" : undefined} placeholder="yourname@firstasia.edu.ph" autoComplete="email" ref={emailRef}
                         value={email} onChange={e => setEmail(e.target.value)} />
                     </div>
                   </div>
@@ -614,7 +616,7 @@ export default function Login() {
                     <label htmlFor="password">Password <span className="caps-hint" id="capsHint" style={{ display: caps ? '' : 'none' }}>Caps Lock is on</span></label>
                     <div className="pw-wrap input-wrap">
                       {LOCK_ICON}
-                      <input type={showPw ? 'text' : 'password'} id="password" placeholder="••••••••••" autoComplete="current-password" ref={passwordRef}
+                      <input type={showPw ? 'text' : 'password'} id="password" aria-invalid={loginErr ? "true" : undefined} aria-describedby={loginErr ? "errorBanner" : undefined} placeholder="••••••••••" autoComplete="current-password" ref={passwordRef}
                         value={password} onChange={e => setPassword(e.target.value)}
                         onKeyDown={checkCaps} onKeyUp={checkCaps} onBlur={() => setCaps(false)} />
                       <button type="button" className="pw-toggle" onClick={() => setShowPw(s => !s)} tabIndex={-1} aria-label="Toggle password visibility">
@@ -643,7 +645,7 @@ export default function Login() {
                   </div>
 
                   {/* Error banner (hidden by default) */}
-                  <div className={`error-banner${banner.ok ? ' success' : ''}`} id="errorBanner" style={{ display: banner.text ? 'block' : 'none' }}>{banner.text}</div>
+                  <div className={`error-banner${banner.ok ? ' success' : ''}`} id="errorBanner" role={banner.text && !banner.ok ? "alert" : undefined} style={{ display: banner.text ? 'block' : 'none' }}>{banner.text}</div>
 
                   {/* Log in button */}
                   <button className="btn-signin" id="signinBtn" onClick={handleSignIn} disabled={signingIn}>

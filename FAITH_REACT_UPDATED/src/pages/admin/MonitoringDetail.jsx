@@ -86,7 +86,7 @@ async function fetchMergedMentees(s) {
 function SigImg({ src, style, dash }) {
   const [failed, setFailed] = useState(false);
   if (failed) return dash ? '—' : null;
-  return <img src={src} style={style} onError={() => setFailed(true)} />;
+  return <img alt="Signature" src={src} style={style} onError={() => setFailed(true)} />;
 }
 const MENTOR_SIG = { maxHeight: '60px', maxWidth: '190px', objectFit: 'contain', display: 'block', margin: '0 auto -10px', mixBlendMode: 'multiply', position: 'relative', zIndex: 1 };
 
@@ -94,7 +94,7 @@ function SigRow({ ctx, withDate = true }) {
   return (
     <div className="paper-sig-row">
       <div className="paper-sig-block wide">
-        <div className="paper-sig-fit">{ctx.mentorSig ? <img src={CONFIG.getFileUrl(ctx.mentorSig)} style={MENTOR_SIG} /> : null}<div className="paper-sig-value">{ctx.mentorName}</div></div>
+        <div className="paper-sig-fit">{ctx.mentorSig ? <img alt="Signature" src={CONFIG.getFileUrl(ctx.mentorSig)} style={MENTOR_SIG} /> : null}<div className="paper-sig-value">{ctx.mentorName}</div></div>
         <div className="paper-sig-line"></div>
         <div className="paper-sig-label">Mentor's Signature over printed name</div>
       </div>
@@ -113,7 +113,7 @@ function LogsheetTab({ d, ctx }) {
   return (
     <div className="paper-form">
       <div className="paper-header">
-        <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+        <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
         <div className="paper-program">MENTORING PROGRAM</div>
         <div className="paper-program">{ctx.periodLabel}</div>
       </div>
@@ -185,7 +185,7 @@ function NotesTab({ d, ctx }) {
   return (
     <div className="paper-form">
       <div className="guidance-copy-label">GUIDANCE COPY</div>
-      <div className="paper-header"><img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} /></div>
+      <div className="paper-header"><img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} /></div>
       <div className="paper-form-title" style={{ textDecoration: 'none' }}>MENTOR'S NOTES</div>
       <div className="note-entries">{entries.length ? entries : <div style={{ textAlign: 'center', padding: '24px', color: '#9ca3af' }}>No mentees for this session.</div>}</div>
       <SigRow ctx={ctx} />
@@ -202,7 +202,7 @@ function NonAttendTab({ d, ctx }) {
   return (
     <div className="paper-form">
       <div className="paper-header">
-        <img src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
+        <img alt="FAITH Colleges logo" src="/IMAGES/FAITH-Colleges-Logo.png" className="paper-logo-img" onError={e => { e.target.style.display = 'none'; }} />
         <div className="paper-program" style={{ fontWeight: 700 }}>MENTORING PROGRAM</div>
       </div>
       <div className="paper-form-title" style={{ textDecoration: 'none' }}>NON-ATTENDANCE OF MENTEES</div>

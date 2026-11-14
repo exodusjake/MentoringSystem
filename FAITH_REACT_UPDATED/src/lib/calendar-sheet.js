@@ -77,13 +77,13 @@ function fmtPrintDate(startIso, endIso) {
 
 function calendarSheetEscape(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function buildCalendarSheetBodyHtml({semester, schoolYear, events, prepName, prepTitle, prepSig, appName, appTitle, appSig}) {
- const signature = path => path ? '<img src="' + calendarSheetEscape(CONFIG.getFileUrl(path)) + '" style="max-height:50px;max-width:170px;object-fit:contain;display:block;margin:0 0 -10px;mix-blend-mode:multiply;position:relative;z-index:1;">' : '';
+ const signature = path => path ? '<img alt="Signature" src="' + calendarSheetEscape(CONFIG.getFileUrl(path)) + '" style="max-height:50px;max-width:170px;object-fit:contain;display:block;margin:0 0 -10px;mix-blend-mode:multiply;position:relative;z-index:1;">' : '';
  const prepSigHtml=signature(prepSig), appSigHtml=signature(appSig);
  const sorted=[...(events || [])].sort((a,b)=>new Date(a.startDate || a.StartDate)-new Date(b.startDate || b.StartDate));
  const rows=sorted.length ? sorted.map(ev=>'<tr><td>'+calendarSheetEscape(ev.title || ev.Title)+'</td><td>'+calendarSheetEscape(fmtPrintDate(ev.startDate || ev.StartDate, ev.endDate || ev.EndDate))+'</td></tr>').join('') : '<tr><td colspan="2" style="text-align:center;padding:20px;">No activities added yet.</td></tr>';
   return `
     <div class="pp-header">
-      <img src="${window.location.origin}/IMAGES/FAITH-Colleges-Logo.png" class="pp-logo" onerror="this.style.display='none'"/>
+      <img alt="FAITH Colleges logo" src="${window.location.origin}/IMAGES/FAITH-Colleges-Logo.png" class="pp-logo" onerror="this.style.display='none'"/>
       <div class="pp-dept">STUDENT AND ALUMNI SERVICES</div>
       <div class="pp-dept">STUDENT WELFARE SERVICES</div>
       <div class="pp-dept">GUIDANCE AND COUNSELING OFFICE</div>

@@ -246,6 +246,9 @@ export default function Privacy() {
               or the mentoring program contact designated by your department at FAITH Colleges. Please do not include your password in any message.
             </p>
             <p>
+              Address: FAITH Colleges, #2 Pres. Laurel Highway, Darasa, Tanauan City, Batangas 4232, Philippines.
+            </p>
+            <p>
               See also our
               {' '}
               <Link to="/terms">Terms of Service</Link>

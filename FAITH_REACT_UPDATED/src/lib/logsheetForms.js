@@ -16,7 +16,7 @@ export function lsIsMakeup(session) {
 }
 
 const sigImg = (mentor) => mentor?.signatureFilePath
-  ? `<img src="${CONFIG.getFileUrl(mentor.signatureFilePath)}" style="max-height:60px;max-width:190px;object-fit:contain;display:block;margin:0 auto -10px;mix-blend-mode:multiply;position:relative;z-index:1;" onerror="this.style.display='none'">`
+  ? `<img alt="Signature" src="${CONFIG.getFileUrl(mentor.signatureFilePath)}" style="max-height:60px;max-width:190px;object-fit:contain;display:block;margin:0 auto -10px;mix-blend-mode:multiply;position:relative;z-index:1;" onerror="this.style.display='none'">`
   : '';
 
 export function buildPrintForm(session, mentor, label) {
@@ -39,7 +39,7 @@ export function buildPrintForm(session, mentor, label) {
     const mDateStr  = m._attendedDate ? lsFmtDateShort(m._attendedDate) : dateStr;
     const mHasProof = m._hasProof !== undefined ? m._hasProof : hasProof;
     const sigHtml = (mHasProof && m.signatureFilePath)
-      ? `<img src="${CONFIG.getFileUrl(m.signatureFilePath)}" style="max-height:44px;max-width:120px;object-fit:contain;" onerror="this.replaceWith(document.createTextNode('—'))">`
+      ? `<img alt="Signature" src="${CONFIG.getFileUrl(m.signatureFilePath)}" style="max-height:44px;max-width:120px;object-fit:contain;" onerror="this.replaceWith(document.createTextNode('—'))">`
       : '';
     return `
     <tr>
@@ -58,7 +58,7 @@ export function buildPrintForm(session, mentor, label) {
   return `
     <div class="form-page">
       <div class="header">
-        <img src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
+        <img alt="FAITH Colleges logo" src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
         <div class="sub">MENTORING PROGRAM</div>
         <div class="sub">${label}</div>
         <div class="doc-title">MENTORING LOGSHEET</div>
@@ -132,7 +132,7 @@ export function buildMentorNotesForm(session, mentor, label) {
     <div class="notes-page">
       <div class="guidance-copy">GUIDANCE COPY</div>
       <div class="header">
-        <img src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
+        <img alt="FAITH Colleges logo" src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
         <div class="doc-title" style="text-decoration:none;margin-top:2px;font-size:13px;">MENTOR'S NOTES</div>
         <div class="sub">${label}</div>
       </div>
@@ -177,7 +177,7 @@ export function buildNonAttendanceForm(session, mentor, label, guidanceOfficer) 
   return `
     <div class="na-page">
       <div class="header">
-        <img src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
+        <img alt="FAITH Colleges logo" src="${logoUrl}" class="logo" onerror="this.style.display='none'"/>
         <div class="sub">MENTORING PROGRAM</div>
         <div class="doc-title">NON-ATTENDANCE OF MENTEES</div>
         <div class="sub">${label}</div>

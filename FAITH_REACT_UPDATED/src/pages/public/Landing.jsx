@@ -576,6 +576,7 @@ export default function Landing() {
               <ul>
                 <li>astramentoring.iot@gmail.com</li>
                 <li>FAITH Colleges</li>
+                <li><address style={{ fontStyle: 'normal' }}>#2 Pres. Laurel Highway, Darasa, Tanauan City, Batangas 4232, Philippines</address></li>
               </ul>
             </div>
           </div>

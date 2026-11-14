@@ -530,7 +530,7 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
 </head>
 <body>
 <div class="rpt-header">
-  <img src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
+  <img alt="FAITH Colleges logo" src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
   <div class="rpt-dept">Student and Alumni Services</div>
   <div class="rpt-dept">Guidance and Counseling Office</div>
   <div class="rpt-title">Mentor Monitoring Program</div>
@@ -720,7 +720,7 @@ td { border: 1px solid #111; padding: 5px 8px; vertical-align: middle; }
 </head>
 <body>
 <div class="rpt-header">
-  <img src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
+  <img alt="FAITH Colleges logo" src="${logoUrl}" class="rpt-logo" onerror="this.style.display='none'"/>
   <div class="rpt-dept">Student and Alumni Services</div>
   <div class="rpt-dept">Guidance and Counseling Office</div>
   <div class="rpt-title">Mentoring Program Report</div>
