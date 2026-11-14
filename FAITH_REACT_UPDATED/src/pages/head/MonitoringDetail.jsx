@@ -11,6 +11,7 @@ import { CONFIG } from '../../lib/config.js';
 import { sessionDisplayStatus } from '../../lib/dashboard-sessions.js';
 import { LogsheetData } from '../../lib/logsheet-data.js';
 import { buildMentorNotesForm, buildNonAttendanceForm, buildPrintForm, lsEsc, openLogsheetPrintWindow } from '../../lib/logsheetForms.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/mentor-detail.html + HEAD/JS/mentor-detail.js
 
@@ -237,7 +238,7 @@ function NonAttendTab({ d, mentor, periodLabel, guidanceOfficer, submittedDate }
 export default function HeadMentorDetail() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const mentorId = parseInt(params.get('id'), 10);
+  const mentorId = decId(params.get('id'));
   const school = params.get('school');
 
   const [hero, setHero] = useState(null);
@@ -879,7 +880,7 @@ export default function HeadMentorDetail() {
                 {' '}
                 <input type="text" id="menteeSearch" placeholder="Search mentee…" autoComplete="off" value={menteeSearch} onChange={e => setMenteeSearch(e.target.value)} />
               </div>
-              <Link to={`/head/attendance/detail?id=${mentorId}`} id="menteeAttendanceLink" className="btn-primary">
+              <Link to={`/head/attendance/detail?id=${encId(mentorId)}`} id="menteeAttendanceLink" className="btn-primary">
                 <i className="ti ti-calendar-stats"></i>
                 {' '}
                 View Attendance Details

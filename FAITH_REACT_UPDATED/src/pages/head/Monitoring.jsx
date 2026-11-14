@@ -13,6 +13,7 @@ import { apiRequest } from '../../lib/api.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/mentor-performance.html + HEAD/JS/mentor-performance.js
 
@@ -255,7 +256,7 @@ export default function HeadMonitoring() {
 
   function viewDetail(id) {
     const school = activeSchool ? `&school=${encodeURIComponent(activeSchool)}` : '';
-    navigate(`/head/monitoring/detail?id=${id}${school}`);
+    navigate(`/head/monitoring/detail?id=${encId(id)}${school}`);
   }
 
   // ── EXPORT ──

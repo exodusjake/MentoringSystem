@@ -10,6 +10,7 @@ import { apiRequest } from '../../lib/api.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // ADMIN_/HTML/sessions.html + ADMIN_/JS/sessions.js
 
@@ -216,7 +217,7 @@ export default function AdminMonitoring() {
 
   function viewDetail(id) {
     const school = activeSchool ? `&school=${encodeURIComponent(activeSchool)}` : '';
-    navigate(`/admin/monitoring/detail?id=${id}${school}`);
+    navigate(`/admin/monitoring/detail?id=${encId(id)}${school}`);
   }
 
   // ── EXPORT ──

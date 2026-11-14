@@ -11,6 +11,7 @@ import { loadScript } from '../../lib/loadScript.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { escapeHtml } from '../../lib/security-utils.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/evaluation-ratings.html + HEAD/JS/evaluation-ratings.js  (read-only)
 // ADMIN_/HTML/evaluation-ratings.html + ADMIN_/JS/evaluation-ratings.js (Evaluation Rating column is editable)
@@ -250,7 +251,7 @@ export default function EvaluationReport({ cfg }) {
       const inits = ((m.firstName?.[0] || '') + (m.lastName?.[0] || '')).toUpperCase() || '?';
       const dept = [m.departmentName, m.school].filter(Boolean).join(' · ') || '—';
       return (
-        <div className="top3-row" key={m.mentorID} onClick={() => navigate(`${cfg.base}/monitoring/detail?id=${m.mentorID}`)}>
+        <div className="top3-row" key={m.mentorID} onClick={() => navigate(`${cfg.base}/monitoring/detail?id=${encId(m.mentorID)}`)}>
           <div className={`top3-rank rank-${rank}`}>{rank}</div>
           <div className="top3-avatar">{inits}</div>
           <div className="top3-info">

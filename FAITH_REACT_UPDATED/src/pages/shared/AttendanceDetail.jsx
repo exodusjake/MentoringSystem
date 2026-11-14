@@ -8,6 +8,7 @@ import { apiRequest } from '../../lib/api.js';
 import { AttendanceMetrics } from '../../lib/attendance-metrics.js';
 import { LogsheetData } from '../../lib/logsheet-data.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/attendance-detail.html + HEAD/JS/attendance-detail.js
 // ADMIN_/HTML/attendance-detail.html + ADMIN_/JS/attendance-detail.js
@@ -38,7 +39,7 @@ export default function AttendanceDetail({ cfg }) {
   useBackGuard();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const mentorId = parseInt(params.get('id'), 10);
+  const mentorId = decId(params.get('id'));
   const school = params.get('school');
   const listPath = `${cfg.base}/attendance`;
   const unit = cfg.admin ? 'group' : 'section';

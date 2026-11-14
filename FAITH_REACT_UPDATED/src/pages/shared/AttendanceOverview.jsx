@@ -12,6 +12,7 @@ import { AttendanceMetrics } from '../../lib/attendance-metrics.js';
 import { MentorSchools } from '../../lib/mentor-schools.js';
 import { isPastPeriod } from '../../lib/periods.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/attendance-summary.html + HEAD/JS/attendance-summary.js
 // ADMIN_/HTML/attendance-logs.html + ADMIN_/JS/attendance-logs.js
@@ -173,7 +174,7 @@ export default function AttendanceOverview({ cfg }) {
 
   function openDetail(mentorId) {
     const school = activeSchool ? `&school=${encodeURIComponent(activeSchool)}` : '';
-    leavePage(() => navigate(`${cfg.base}/attendance/detail?id=${mentorId}${school}`));
+    leavePage(() => navigate(`${cfg.base}/attendance/detail?id=${encId(mentorId)}${school}`));
   }
 
   // ── EXPORT ──

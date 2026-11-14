@@ -13,6 +13,7 @@ import { sessionDisplayStatus } from '../../lib/dashboard-sessions.js';
 import { LogsheetData } from '../../lib/logsheet-data.js';
 import { getLogsheetPrintStyles } from '../../lib/print-logsheet-styles.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // ADMIN_/HTML/sessions-detail.html + ADMIN_/JS/sessions-detail.js
 
@@ -258,7 +259,7 @@ export default function AdminMentorDetail() {
   useBackGuard();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const mentorId = parseInt(params.get('id'), 10);
+  const mentorId = decId(params.get('id'));
   const school = params.get('school');
 
   const [sysSettings, setSysSettings] = useState({ SchoolYear: '2026-2027', Semester: '1st Semester', GuidanceOfficer: 'Guidance Officer' });

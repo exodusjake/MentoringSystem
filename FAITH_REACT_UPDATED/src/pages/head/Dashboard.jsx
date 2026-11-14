@@ -9,6 +9,7 @@ import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 import { useTour } from '../../app/tour.js';
 import { TOUR_SAMPLE } from '../../app/tourSample.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // HEAD/HTML/head-dashboard.html + HEAD/JS/dashboard.js
 
@@ -280,7 +281,7 @@ export default function HeadDashboard() {
               const pct = m.overallPercent ?? m.OverallPercent ?? 0;
               const id = m.mentorID || m.MentorID;
               return (
-                <div className="top3-row" key={id ?? i} onClick={() => navigate(`/head/monitoring/detail?id=${id}`)}>
+                <div className="top3-row" key={id ?? i} onClick={() => navigate(`/head/monitoring/detail?id=${encId(id)}`)}>
                   <div className={`top3-rank rank-${i + 1}`}>{i + 1}</div>
                   <div className="top3-avatar">{inits}</div>
                   <div className="top3-info">
@@ -532,7 +533,7 @@ export default function HeadDashboard() {
                         const id = m.mentorID || m.MentorID;
                         const pct = m.overallPercent ?? m.OverallPercent ?? 0;
                         return (
-                          <Link className="hd-followup-row" key={id ?? i} to={`/head/monitoring/detail?id=${id}`}>
+                          <Link className="hd-followup-row" key={id ?? i} to={`/head/monitoring/detail?id=${encId(id)}`}>
                             <span className="top3-avatar">{((first[0] || '') + (last[0] || '')).toUpperCase() || '?'}</span>
                             <span className="hd-followup-name">{first} {last}</span>
                             <span className="hd-followup-tag">{group}</span>

@@ -9,6 +9,7 @@ import { getSession } from '../../lib/session.js';
 import { useBackGuard } from '../../lib/useBackGuard.js';
 import { useTour } from '../../app/tour.js';
 import { TOUR_SAMPLE } from '../../app/tourSample.js';
+import { encId, decId } from '../../lib/linkId.js';
 
 // ADMIN_/HTML/dashboard.html + ADMIN_/JS/dashboard.js
 
@@ -284,7 +285,7 @@ export default function AdminDashboard() {
               const pct = m.overallPercent ?? m.OverallPercent ?? 0;
               const id = m.mentorID || m.MentorID;
               return (
-                <div className="top3-row" key={id ?? i} onClick={() => navigate(`/admin/monitoring/detail?id=${id}`)}>
+                <div className="top3-row" key={id ?? i} onClick={() => navigate(`/admin/monitoring/detail?id=${encId(id)}`)}>
                   <div className={`top3-rank rank-${i + 1}`}>{i + 1}</div>
                   <div className="top3-avatar">{inits}</div>
                   <div className="top3-info">
