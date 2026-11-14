@@ -26,6 +26,23 @@ function mentorCourseLabels(m) {
   const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   return '<div class="mentor-course-progress">' + mentorCourseProgress(m).map(label => '<span class="mentor-course-chip" title="Completed sessions / required sessions">'+escape(label)+'</span>').join('') + '</div>';
 }
+// A 25%-weight column: the percentage earned and the points it adds (e.g. 21% -> 5.25 / 25 pts).
+const pts25 = pct => String(Math.round((Number(pct) || 0) * 25) / 100);
+function PointsLine({ pct }) {
+  return <div style={{ fontSize: '11px', fontWeight: 500, color: '#6b7280', marginTop: '2px' }}>{pts25(pct)} / 25 pts</div>;
+}
+// Small (i) next to a column heading: hover, focus or tap to read how the column is worked out.
+function HeadTip({ title, rows }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', marginLeft: '5px', verticalAlign: 'middle', cursor: 'pointer' }}>
+      <i className="ti ti-info-circle" aria-hidden="true" style={{ fontSize: '15px', color: '#9ca3af' }}></i>
+      <div className="info-tip-box" style={{ display: 'none' }}>
+        <div className="info-tip-title">{title}</div>
+        {rows.map((r, i) => <div className="info-tip-row" key={i}>{r}</div>)}
+      </div>
+    </span>
+  );
+}
 // With 2+ courses, Done shows how many of them finished the checkpoint.
 function checkpointDone(m, slot) {
   if (!(m.completedSlots || []).includes(slot)) return null;
@@ -332,10 +349,10 @@ export default function EvaluationReport({ cfg }) {
     <>
       <th>Mentors</th>
       {slots.map(s => <th className="td-center" key={s}>{s}</th>)}
-      <th className="td-center">Timeliness of Submission (25%)</th>
-      <th className="td-center">Completeness of the Required Documents (25%)</th>
-      <th className={cfg.admin ? undefined : 'td-center'}>Evaluation Rating (50%)</th>
-      <th className="td-center">Performance Score</th>
+      <th className="td-center">Timeliness of Submission (25%)<HeadTip title="Timeliness (25 points)" rows={['How on time the mentor submits the reports and logsheets for each checkpoint.', 'Late or missing submissions lower it.', 'Shows Pending until the first submission is due.', 'Cell shows the percentage and the points it adds to the 100-point score.']} /></th>
+      <th className="td-center">Completeness of the Required Documents (25%)<HeadTip title="Completeness (25 points)" rows={['How many of the required documents (session proof, logsheet and other required files) the mentor has submitted.', 'Missing documents lower it.', 'Cell shows the percentage and the points it adds to the 100-point score.']} /></th>
+      <th className={cfg.admin ? undefined : 'td-center'}>Evaluation Rating (50%)<HeadTip title="Evaluation Rating (50 points)" rows={['The rating from the evaluation forms, entered by the administrator.', 'Not yet rated means the score has no evaluation part yet.']} /></th>
+      <th className="td-center">Performance Score<HeadTip title="Performance Score" rows={['Timeliness (25) + Completeness (25) + Evaluation Rating (50) = 100 points.', 'Rank orders mentors by this score.']} /></th>
       <th className="td-center">Rank</th>
     </>
   );
@@ -368,8 +385,8 @@ export default function EvaluationReport({ cfg }) {
           {slots.map(s => (
             <td className="td-center" key={s}>{!isAssemblyNA(s) ? <CheckpointDone m={m} slot={s} empty={<SlotState state={slotState(calendar, s, sysSettings)} />} /> : <span style={{ color: '#6b7280', background: '#f3f4f6' }}>N/A</span>}</td>
           ))}
-          <td className="td-center">{m.timelinessPercent == null ? 'Pending' : m.timelinessPercent + '%'}</td>
-          <td className="td-center">{m.completenessPercent ?? 0}%</td>
+          <td className="td-center">{m.timelinessPercent == null ? 'Pending' : <>{m.timelinessPercent}%<PointsLine pct={m.timelinessPercent} /></>}</td>
+          <td className="td-center">{m.completenessPercent ?? 0}%<PointsLine pct={m.completenessPercent ?? 0} /></td>
           {cfg.admin ? (
             <td>
               <input type="number" className={`rating-input${hasEdit ? ' dirty' : ''}`} min="0" max="100" step="0.01"
@@ -499,8 +516,8 @@ export default function EvaluationReport({ cfg }) {
       return `<tr>
       <td><strong>${escapeHtml(m.lastName)}, ${escapeHtml(m.firstName)}</strong><div style="font-size:10px;font-weight:normal">${mentorCourseLabels(m)}</div></td>
       ${slotCells}
-      <td style="text-align:center">${m.timelinessPercent == null ? 'Pending' : m.timelinessPercent + '%'}</td>
-      <td style="text-align:center">${m.completenessPercent ?? 0}%</td>
+      <td style="text-align:center">${m.timelinessPercent == null ? 'Pending' : m.timelinessPercent + '%<div style="font-size:10px;font-weight:normal">' + pts25(m.timelinessPercent) + ' / 25 pts</div>'}</td>
+      <td style="text-align:center">${m.completenessPercent ?? 0}%<div style="font-size:10px;font-weight:normal">${pts25(m.completenessPercent ?? 0)} / 25 pts</div></td>
       <td style="text-align:center">${m.evaluationRatingPercent != null ? m.evaluationRatingPercent + '%' : '&mdash;'}</td>
       <td style="text-align:center;font-weight:700">${m.overallPercent == null ? 'Pending' : m.overallPercent + '%'}</td>
       <td style="text-align:center">${rank ? '#' + rank : 'Pending'}</td>
